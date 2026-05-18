@@ -28,15 +28,15 @@ export type Species = {
   emoji: string;
   image: string;
   description: string;
-  base: { hp: number; atk: number; def: number; spd: number };
+  base: { hp: number; atk: number; def: number; spd: number; int: number };
 };
 
 export const ROLE_INFO: Record<Role, { name: string; emoji: string; description: string; color: string }> = {
   tank: { name: "Tank", emoji: "🛡️", description: "Provoca: inimigos atacam ele primeiro. Muito HP/DEF.", color: "bg-blue-500" },
   dps: { name: "DPS", emoji: "⚔️", description: "Dano consistente alto (+15% de dano).", color: "bg-orange-500" },
   assassin: { name: "Assassino", emoji: "🗡️", description: "Crítico em 35% dos golpes e mira no mais fraco.", color: "bg-purple-500" },
-  mage: { name: "Mago", emoji: "🔮", description: "Dano mágico ignora 60% da DEF inimiga.", color: "bg-fuchsia-500" },
-  healer: { name: "Healer", emoji: "✨", description: "A cada 2 turnos cura o aliado mais ferido.", color: "bg-emerald-500" },
+  mage: { name: "Mago", emoji: "🔮", description: "Dano mágico escala com 🧠 INT e ignora 60% da DEF.", color: "bg-fuchsia-500" },
+  healer: { name: "Healer", emoji: "✨", description: "Cura escala com 🧠 INT. A cada 2 turnos cura o aliado mais ferido.", color: "bg-emerald-500" },
 };
 
 export const RARITY_INFO: Record<Rarity, { name: string; emoji: string; color: string; ringColor: string; statMult: number; skillMult: number }> = {
@@ -75,7 +75,7 @@ export const ROLE_SKILLS: Record<Role, Skill> = {
   },
   healer: {
     name: "Bênção Restauradora", emoji: "✨", kind: "team_heal", cooldown: 4,
-    description: "Cura todos os aliados vivos (~ATK×1.5 + 10% HP máx).",
+    description: "Cura todos os aliados vivos (~INT×1.8 + 10% HP máx).",
   },
 };
 
@@ -85,31 +85,31 @@ export const SPECIES: Record<string, Species> = {
     id: "flarepup", name: "Flarepup", element: "fire", role: "dps", rarity: "rare",
     emoji: "🔥", image: flarepupImg,
     description: "Raposinha de fogo puro. DPS clássico de dano alto.",
-    base: { hp: 55, atk: 15, def: 8, spd: 12 },
+    base: { hp: 55, atk: 15, def: 8, spd: 12, int: 7 },
   },
   aquakitty: {
     id: "aquakitty", name: "Aquakitty", element: "water", role: "healer", rarity: "rare",
     emoji: "💧", image: aquakittyImg,
     description: "Gatinho aquático puro. Cura o time a cada 2 turnos.",
-    base: { hp: 60, atk: 9, def: 11, spd: 13 },
+    base: { hp: 60, atk: 9, def: 11, spd: 13, int: 20 },
   },
   leafox: {
     id: "leafox", name: "Leafox", element: "grass", role: "tank", rarity: "rare",
     emoji: "🌿", image: leafoxImg,
     description: "Raposa-folha pura. Tank: provoca e absorve dano.",
-    base: { hp: 80, atk: 8, def: 18, spd: 8 },
+    base: { hp: 80, atk: 8, def: 18, spd: 8, int: 8 },
   },
   voltbun: {
     id: "voltbun", name: "Voltbun", element: "electric", role: "assassin", rarity: "rare",
     emoji: "⚡", image: voltbunImg,
     description: "Coelhinho elétrico puro. Assassino veloz com muito crit.",
-    base: { hp: 48, atk: 13, def: 8, spd: 18 },
+    base: { hp: 48, atk: 13, def: 8, spd: 18, int: 6 },
   },
   shadepup: {
     id: "shadepup", name: "Shadepup", element: "shadow", role: "mage", rarity: "rare",
     emoji: "🌙", image: shadepupImg,
     description: "Lobinho das sombras puro. Mago: dano ignora defesa.",
-    base: { hp: 55, atk: 16, def: 9, spd: 12 },
+    base: { hp: 55, atk: 16, def: 9, spd: 12, int: 22 },
   },
 
   // ===== MESTIÇOS (comuns) — combinações 2 a 2 dos 5 elementos =====
@@ -117,61 +117,61 @@ export const SPECIES: Record<string, Species> = {
     id: "steamcub", name: "Steamcub", element: "fire", secondaryElement: "water", role: "tank", rarity: "common",
     emoji: "♨️", image: steamcubImg,
     description: "Ursinho de vapor. Tank meio fogo, meio água.",
-    base: { hp: 70, atk: 9, def: 14, spd: 9 },
+    base: { hp: 70, atk: 9, def: 14, spd: 9, int: 8 },
   },
   emberleaf: {
     id: "emberleaf", name: "Emberleaf", element: "fire", secondaryElement: "grass", role: "dps", rarity: "common",
     emoji: "🍂", image: emberleafImg,
     description: "Raposa de folhas em brasa. DPS de outono.",
-    base: { hp: 52, atk: 13, def: 9, spd: 12 },
+    base: { hp: 52, atk: 13, def: 9, spd: 12, int: 7 },
   },
   sparkpup: {
     id: "sparkpup", name: "Sparkpup", element: "fire", secondaryElement: "electric", role: "assassin", rarity: "common",
     emoji: "⚡🔥", image: sparkpupImg,
     description: "Filhote chamuscado e elétrico. Assassino rápido.",
-    base: { hp: 46, atk: 12, def: 8, spd: 16 },
+    base: { hp: 46, atk: 12, def: 8, spd: 16, int: 6 },
   },
   cinderwisp: {
     id: "cinderwisp", name: "Cinderwisp", element: "fire", secondaryElement: "shadow", role: "mage", rarity: "common",
     emoji: "👻🔥", image: cinderwispImg,
     description: "Fantasminha de brasa. Mago ofensivo.",
-    base: { hp: 50, atk: 14, def: 9, spd: 11 },
+    base: { hp: 50, atk: 14, def: 9, spd: 11, int: 22 },
   },
   mossfin: {
     id: "mossfin", name: "Mossfin", element: "water", secondaryElement: "grass", role: "healer", rarity: "common",
     emoji: "🐸", image: mossfinImg,
     description: "Sapinho do brejo. Healer rústico.",
-    base: { hp: 58, atk: 8, def: 12, spd: 10 },
+    base: { hp: 58, atk: 8, def: 12, spd: 10, int: 20 },
   },
   stormtad: {
     id: "stormtad", name: "Stormtad", element: "water", secondaryElement: "electric", role: "mage", rarity: "common",
     emoji: "⚡💧", image: stormtadImg,
     description: "Girino-relâmpago. Mago elétrico.",
-    base: { hp: 48, atk: 13, def: 8, spd: 14 },
+    base: { hp: 48, atk: 13, def: 8, spd: 14, int: 22 },
   },
   tidewraith: {
     id: "tidewraith", name: "Tidewraith", element: "water", secondaryElement: "shadow", role: "assassin", rarity: "common",
     emoji: "🌊👻", image: tidewraithImg,
     description: "Fantasma das marés. Assassino furtivo.",
-    base: { hp: 44, atk: 12, def: 8, spd: 16 },
+    base: { hp: 44, atk: 12, def: 8, spd: 16, int: 6 },
   },
   voltsprout: {
     id: "voltsprout", name: "Voltsprout", element: "grass", secondaryElement: "electric", role: "healer", rarity: "common",
     emoji: "🌱⚡", image: voltsproutImg,
     description: "Broto voltaico. Healer com punch.",
-    base: { hp: 54, atk: 9, def: 11, spd: 12 },
+    base: { hp: 54, atk: 9, def: 11, spd: 12, int: 20 },
   },
   nightbloom: {
     id: "nightbloom", name: "Nightbloom", element: "grass", secondaryElement: "shadow", role: "mage", rarity: "common",
     emoji: "🌸🌙", image: nightbloomImg,
     description: "Flor noturna. Mago de controle.",
-    base: { hp: 52, atk: 13, def: 10, spd: 10 },
+    base: { hp: 52, atk: 13, def: 10, spd: 10, int: 22 },
   },
   voidspark: {
     id: "voidspark", name: "Voidspark", element: "electric", secondaryElement: "shadow", role: "assassin", rarity: "common",
     emoji: "🌑⚡", image: voidsparkImg,
     description: "Orbe de raios sombrios. Assassino caótico.",
-    base: { hp: 44, atk: 13, def: 7, spd: 17 },
+    base: { hp: 44, atk: 13, def: 7, spd: 17, int: 6 },
   },
 };
 
@@ -301,16 +301,17 @@ export function rankStars(rank: number): string {
   return "✦".repeat(Math.min(Math.max(rank, 1), MAX_RANK));
 }
 
-export function totalStats(species: string, rank = 1, bonus = { hp: 0, atk: 0, def: 0, spd: 0 }) {
+export function totalStats(species: string, rank = 1, bonus = { hp: 0, atk: 0, def: 0, spd: 0, int: 0 }) {
   const s = SPECIES[species];
-  if (!s) return { hp: 0, atk: 0, def: 0, spd: 0 };
+  if (!s) return { hp: 0, atk: 0, def: 0, spd: 0, int: 0 };
   const r = RANK_MULT[Math.min(Math.max(rank, 1), MAX_RANK)] ?? 1;
   const mult = RARITY_INFO[s.rarity].statMult * r;
   return {
-    hp: Math.round(s.base.hp * mult) + bonus.hp,
-    atk: Math.round(s.base.atk * mult) + bonus.atk,
-    def: Math.round(s.base.def * mult) + bonus.def,
-    spd: Math.round(s.base.spd * mult) + bonus.spd,
+    hp: Math.round(s.base.hp * mult) + (bonus.hp ?? 0),
+    atk: Math.round(s.base.atk * mult) + (bonus.atk ?? 0),
+    def: Math.round(s.base.def * mult) + (bonus.def ?? 0),
+    spd: Math.round(s.base.spd * mult) + (bonus.spd ?? 0),
+    int: Math.round(s.base.int * mult) + (bonus.int ?? 0),
   };
 }
 

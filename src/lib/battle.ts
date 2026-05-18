@@ -10,6 +10,7 @@ export type BattleMonster = {
   atk: number;
   def: number;
   spd: number;
+  int: number;
   role: Role;
   rarity: Rarity;
 };
@@ -57,6 +58,7 @@ export function toBattleMonster(m: DBMonster): BattleMonster {
     atk: stats.atk,
     def: stats.def,
     spd: stats.spd,
+    int: stats.int,
     role: sp?.role ?? "dps",
     rarity: sp?.rarity ?? "common",
   };
@@ -155,7 +157,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
         attacker.skillCd = skill.cooldown;
 
         if (skill.kind === "team_heal") {
-          const heal = Math.round((attacker.atk * 1.5 + attacker.maxHp * 0.10) * skillMult);
+          const heal = Math.round((attacker.int * 1.8 + attacker.maxHp * 0.10) * skillMult);
           const targets = allies.filter((m) => m.current > 0);
           for (const t of targets) {
             t.current = Math.min(t.maxHp, t.current + heal);
@@ -187,7 +189,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           const targets = enemies.filter((e) => e.current > 0);
           for (const t of targets) {
             const eff = defensiveMultiplier(getElement(attacker.species), t.species);
-            const base = Math.max(1, attacker.atk * 2 - t.def * 0.3);
+            const base = Math.max(1, attacker.int * 2.2 - t.def * 0.3);
             const dmg = Math.max(1, Math.round(base * eff * 1.2 * skillMult));
             applyDamage(t, dmg);
             log.push({
@@ -249,7 +251,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           .filter((m) => m.current > 0 && m.current < m.maxHp)
           .sort((x, y) => x.current / x.maxHp - y.current / y.maxHp)[0];
         if (hurt) {
-          const heal = Math.round((attacker.atk * 2.2 + attacker.maxHp * 0.08) * RARITY_INFO[attacker.rarity].skillMult);
+          const heal = Math.round((attacker.int * 2.2 + attacker.maxHp * 0.08) * RARITY_INFO[attacker.rarity].skillMult);
           hurt.current = Math.min(hurt.maxHp, hurt.current + heal);
           attacker.healCd = 2;
           log.push({
@@ -270,7 +272,8 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
       const critChance = attacker.role === "assassin" ? 0.35 : 0.12;
       const crit = rand() < critChance;
       const defUsed = attacker.role === "mage" ? target.def * 0.4 : target.def;
-      let base = Math.max(1, attacker.atk * 2 - defUsed);
+      const atkStat = attacker.role === "mage" ? attacker.int : attacker.atk;
+      let base = Math.max(1, atkStat * 2 - defUsed);
       if (attacker.role === "dps") base *= 1.15;
       const variance = 0.85 + rand() * 0.3;
       const damage = Math.max(1, Math.round(base * eff * variance * (crit ? 1.7 : 1)));

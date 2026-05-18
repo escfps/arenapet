@@ -138,11 +138,12 @@ function MonsterPage() {
                       <Bar label="⚡ Energia" value={monster.energy} max={100} color="bg-yellow-400" />
                       <Bar label="😊 Felicidade" value={monster.happiness} max={100} color="bg-pink-500" />
                     </div>
-                    <div className="mt-2 grid grid-cols-4 gap-1 text-xs font-bold bg-black/30 rounded-lg p-2">
+                    <div className="mt-2 grid grid-cols-5 gap-1 text-xs font-bold bg-black/30 rounded-lg p-2">
+                      <span>❤️ {stats.hp}</span>
                       <span>⚔️ {stats.atk}</span>
                       <span>🛡️ {stats.def}</span>
                       <span>💨 {stats.spd}</span>
-                      <span>❤️ {stats.hp}</span>
+                      <span>🧠 {stats.int}</span>
                     </div>
                   </>
                 );

@@ -68,11 +68,12 @@ export function MonsterCard({ monster, onClick, compact, selected }: Props) {
           {sp.emoji} {sp.name} • {ELEMENT_NAMES[sp.element]}{sp.secondaryElement ? ` / ${ELEMENT_NAMES[sp.secondaryElement]}` : ""}
         </div>
         {!compact && (
-          <div className="mt-1.5 grid grid-cols-4 gap-1 text-[10px] font-bold">
+          <div className="mt-1.5 grid grid-cols-5 gap-1 text-[10px] font-bold">
             <span className="text-rose-600">❤️{stats.hp}</span>
             <span className="text-orange-600">⚔️{stats.atk}</span>
             <span className="text-blue-600">🛡️{stats.def}</span>
             <span className="text-purple-600">💨{stats.spd}</span>
+            <span className="text-fuchsia-600">🧠{stats.int}</span>
           </div>
         )}
       </div>

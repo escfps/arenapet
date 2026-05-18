@@ -265,7 +265,7 @@ function TeamPanel({ title, team, side }: { title: string; team: FullMonster[]; 
                   </span>
                 </div>
                 {(() => { const st = totalStats(m.species, m.rank ?? 1); return (
-                  <div className="text-[10px] opacity-90">{rankStars(m.rank ?? 1)} • ❤️{st.hp} ⚔️{st.atk} 🛡️{st.def} 💨{st.spd}</div>
+                  <div className="text-[10px] opacity-90">{rankStars(m.rank ?? 1)} • ❤️{st.hp} ⚔️{st.atk} 🛡️{st.def} 💨{st.spd} 🧠{st.int}</div>
                 ); })()}
               </div>
             </div>
