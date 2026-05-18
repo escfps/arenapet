@@ -7,6 +7,7 @@ import {
   EXPEDITION_SLOT_PRICES,
   MAX_EXPEDITION_SLOTS,
   computeExpeditionReward,
+  computeBattleEnergy,
   xpForNextLevel,
 } from "@/lib/game-data";
 
@@ -23,12 +24,11 @@ export const startExpedition = createServerFn({ method: "POST" })
     const duration = EXPEDITION_DURATIONS.find((d) => d.id === data.durationId);
     if (!duration) throw new Error("Duração inválida");
 
-    // load profile + monster + active expeditions count + ration inventory
-    const [{ data: profile }, { data: monster }, { count: activeCount }, { data: foodRow }] = await Promise.all([
+    // load profile + monster + active expeditions count
+    const [{ data: profile }, { data: monster }, { count: activeCount }] = await Promise.all([
       supabaseAdmin.from("profiles").select("id,expedition_slots").eq("id", userId).maybeSingle(),
-      supabaseAdmin.from("monsters").select("id,owner_id,rank,in_team").eq("id", data.monsterId).maybeSingle(),
+      supabaseAdmin.from("monsters").select("id,owner_id,rank,in_team,battle_energy,battle_energy_at").eq("id", data.monsterId).maybeSingle(),
       supabaseAdmin.from("expeditions").select("id", { count: "exact", head: true }).eq("user_id", userId).eq("claimed", false),
-      supabaseAdmin.from("inventory").select("quantity").eq("user_id", userId).eq("item_type", "ration").maybeSingle(),
     ]);
     if (!profile) throw new Error("Perfil não encontrado");
     if (!monster || monster.owner_id !== userId) throw new Error("Bichinho inválido");
@@ -46,24 +46,26 @@ export const startExpedition = createServerFn({ method: "POST" })
       .maybeSingle();
     if (monActive) throw new Error("Esse bichinho já está em expedição");
 
-    const haveFood = foodRow?.quantity ?? 0;
-    if (haveFood < duration.foodCost) {
-      throw new Error(`Precisa de ${duration.foodCost} 🍖 ração (você tem ${haveFood})`);
+    // Check pet battle energy (regenerated)
+    const en = computeBattleEnergy(monster.battle_energy, monster.battle_energy_at);
+    if (en.energy < duration.foodCost) {
+      throw new Error(`Esse bichinho precisa de ${duration.foodCost} ⚡ (tem ${en.energy})`);
     }
 
-    // Pre-roll rewards so the player sees them when claiming (gems/rations are RNG)
+    // Pre-roll rewards so the player sees them when claiming
     const reward = computeExpeditionReward(duration, monster.rank ?? 1);
 
     const now = Date.now();
     const endsAt = new Date(now + duration.minutes * 60_000).toISOString();
 
-    // Deduct food (upsert with new quantity)
+    // Deduct energy from the pet
     await supabaseAdmin
-      .from("inventory")
-      .upsert(
-        { user_id: userId, item_type: "ration", quantity: haveFood - duration.foodCost },
-        { onConflict: "user_id,item_type" }
-      );
+      .from("monsters")
+      .update({
+        battle_energy: en.energy - duration.foodCost,
+        battle_energy_at: en.nextStoredAt,
+      })
+      .eq("id", data.monsterId);
 
     const { error } = await supabaseAdmin.from("expeditions").insert({
       user_id: userId,

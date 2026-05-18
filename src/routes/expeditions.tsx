@@ -10,7 +10,9 @@ import {
   EXPEDITION_DURATIONS,
   EXPEDITION_SLOT_PRICES,
   MAX_EXPEDITION_SLOTS,
+  MAX_BATTLE_ENERGY,
   computeExpeditionReward,
+  computeBattleEnergy,
   rankStars,
   skinFilter,
   type ExpeditionDuration,
@@ -105,7 +107,7 @@ function ExpeditionsPage() {
   }
 
   async function handleCancel(exp: ExpRow) {
-    if (!confirm("Cancelar a expedição? A ração gasta NÃO volta.")) return;
+    if (!confirm("Cancelar a expedição? A energia gasta NÃO volta.")) return;
     setBusy(true);
     try {
       await cancel({ data: { expeditionId: exp.id } });
@@ -245,23 +247,21 @@ function ExpeditionsPage() {
           ) : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
               {EXPEDITION_DURATIONS.map((d) => {
-                const canAfford = foodQty >= d.foodCost;
                 return (
                   <button
                     key={d.id}
                     onClick={() => setPickMonsterFor(d)}
-                    disabled={!canAfford || busy}
+                    disabled={busy}
                     className="rounded-xl bg-white/10 border-2 border-white/20 p-3 text-white text-left hover:bg-white/20 hover:scale-105 transition disabled:opacity-40 disabled:hover:scale-100"
                   >
                     <div className="font-extrabold text-lg">{d.label}</div>
                     <div className="text-xs opacity-90 mt-1">
                       💪 +{d.baseXp} XP base<br/>
                       🪙 +{d.baseCoins}<br/>
-                      {d.gemChance > 0 && <>💎 {Math.round(d.gemChance * 100)}% ({d.gemAmount[0]}-{d.gemAmount[1]})<br/></>}
                       {d.rationChance > 0 && <>🍖 {Math.round(d.rationChance * 100)}% ({d.rationAmount[0]}-{d.rationAmount[1]})<br/></>}
                     </div>
-                    <div className={`text-xs mt-2 font-bold ${canAfford ? "text-amber-300" : "text-red-300"}`}>
-                      Custo: 🍖 {d.foodCost}
+                    <div className="text-xs mt-2 font-bold text-amber-300">
+                      Custo: ⚡ {d.foodCost}
                     </div>
                   </button>
                 );
@@ -288,12 +288,14 @@ function ExpeditionsPage() {
                     const sp = SPECIES[m.species];
                     if (!sp) return null;
                     const preview = computeExpeditionReward(pickMonsterFor, m.rank ?? 1);
+                    const en = computeBattleEnergy(m.battle_energy, m.battle_energy_at);
+                    const enough = en.energy >= pickMonsterFor.foodCost;
                     return (
                       <button
                         key={m.id}
-                        onClick={() => handleStart(m.id, pickMonsterFor)}
-                        disabled={busy}
-                        className={`rounded-xl bg-gradient-to-r ${ELEMENT_COLORS[sp.element]} p-3 text-white text-left hover:scale-105 transition disabled:opacity-50`}
+                        onClick={() => enough && handleStart(m.id, pickMonsterFor)}
+                        disabled={busy || !enough}
+                        className={`rounded-xl bg-gradient-to-r ${ELEMENT_COLORS[sp.element]} p-3 text-white text-left hover:scale-105 transition disabled:opacity-50 disabled:hover:scale-100`}
                       >
                         <div className="flex items-center gap-2">
                           <img src={sp.image} alt="" className="h-12 w-12 object-contain drop-shadow-lg" style={{ filter: skinFilter(m.skin) }} />
@@ -301,7 +303,7 @@ function ExpeditionsPage() {
                             <div className="font-bold text-sm truncate">{m.name}</div>
                             <div className="text-[10px] opacity-90">{rankStars(m.rank ?? 1)}</div>
                             <div className="text-[10px] mt-1">
-                              ✨{preview.xp} 🪙{preview.coins}
+                              ✨{preview.xp} 🪙{preview.coins} • <span className={enough ? "" : "text-red-200 font-bold"}>⚡{en.energy}/{MAX_BATTLE_ENERGY}</span>
                             </div>
                           </div>
                         </div>
