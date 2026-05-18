@@ -83,6 +83,25 @@ function ArenaPage() {
   }, [battleLog]);
 
   const [searchCountdown, setSearchCountdown] = useState(0);
+  const [battleTimer, setBattleTimer] = useState(120);
+
+  // Timer regressivo de 2min durante a batalha
+  useEffect(() => {
+    if (!battleLog) { setBattleTimer(120); return; }
+    setBattleTimer(120);
+    const done = shownLog.length >= battleLog.length;
+    if (done) return;
+    const id = setInterval(() => {
+      setBattleTimer((t) => (t > 0 ? t - 1 : 0));
+    }, 1000);
+    return () => clearInterval(id);
+  }, [battleLog]);
+
+  useEffect(() => {
+    if (battleLog && shownLog.length >= battleLog.length) {
+      // congela o timer ao terminar
+    }
+  }, [battleLog, shownLog.length]);
 
   async function findOpponent() {
     if (!userId || !profile || myTeam.length === 0) return;
@@ -474,17 +493,21 @@ function ArenaPage() {
             )}
 
             {battleLog && opponent && (
-              <BattleScene
-                teamA={myTeam}
-                teamB={opponent.team}
-                log={battleLog}
-                step={shownLog.length}
-                playerAName={profile.username}
-                playerATier={getTier(profile.arena_points ?? 0).name}
-                playerBName={opponent.ownerName}
-                playerBTier={getTier(opponent.arenaPoints).name}
-              />
-
+              <div className="relative">
+                <div className="absolute top-2 left-1/2 -translate-x-1/2 z-20 px-4 py-1.5 rounded-full bg-black/70 backdrop-blur border border-white/30 text-white font-mono font-bold text-lg shadow-lg">
+                  ⏱️ {Math.floor(battleTimer / 60)}:{String(battleTimer % 60).padStart(2, "0")}
+                </div>
+                <BattleScene
+                  teamA={myTeam}
+                  teamB={opponent.team}
+                  log={battleLog}
+                  step={shownLog.length}
+                  playerAName={profile.username}
+                  playerATier={getTier(profile.arena_points ?? 0).name}
+                  playerBName={opponent.ownerName}
+                  playerBTier={getTier(opponent.arenaPoints).name}
+                />
+              </div>
             )}
 
             {battleLog && (
