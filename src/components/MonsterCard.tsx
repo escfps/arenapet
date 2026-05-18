@@ -4,8 +4,6 @@ export type MonsterRow = {
   id: string;
   species: string;
   name: string;
-  level: number;
-  xp: number;
   hp: number;
   atk: number;
   def: number;
@@ -15,7 +13,7 @@ export type MonsterRow = {
   happiness: number;
   skin: string;
   in_team: boolean;
-  rank?: number;
+  rank: number;
 };
 
 type Props = {
@@ -29,7 +27,7 @@ export function MonsterCard({ monster, onClick, compact, selected }: Props) {
   const sp = SPECIES[monster.species];
   if (!sp) return null;
   const rank = monster.rank ?? 1;
-  const stats = totalStats(monster.species, monster.level, rank);
+  const stats = totalStats(monster.species, rank);
   const gradient = ELEMENT_COLORS[sp.element];
 
   return (
@@ -44,14 +42,9 @@ export function MonsterCard({ monster, onClick, compact, selected }: Props) {
           ⚔️ TIME
         </span>
       )}
-      <span className="absolute top-2 right-2 z-10 px-2 py-0.5 rounded-full bg-black/70 text-white text-[10px] font-extrabold">
-        Nv {monster.level}
+      <span className="absolute top-2 right-2 z-10 px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-400 to-yellow-300 text-amber-950 text-[10px] font-extrabold shadow-lg">
+        {rankStars(rank)}
       </span>
-      {rank > 1 && (
-        <span className="absolute top-8 right-2 z-10 px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-400 to-yellow-300 text-amber-950 text-[10px] font-extrabold shadow-lg max-w-[80%] truncate">
-          {rankStars(rank)}
-        </span>
-      )}
       <span className={`absolute bottom-[3.5rem] right-2 z-10 px-2 py-0.5 rounded-full ${ROLE_INFO[sp.role].color} text-white text-[10px] font-extrabold shadow-lg`}>
         {ROLE_INFO[sp.role].emoji} {ROLE_INFO[sp.role].name}
       </span>
