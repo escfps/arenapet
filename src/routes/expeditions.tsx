@@ -197,7 +197,7 @@ function ExpeditionsPage() {
                     <div className="flex-1 min-w-0">
                       <div className="font-bold flex items-center gap-2 flex-wrap">
                         {monster?.name ?? "?"}
-                        {monster && <span className="text-xs opacity-80">Nv {monster.level} {rankStars(monster.rank ?? 1)}</span>}
+                        {monster && <span className="text-xs opacity-80">{rankStars(monster.rank ?? 1)}</span>}
                       </div>
                       <div className="text-xs opacity-90">
                         🎯 +{exp.xp_reward} XP • +🪙 {exp.coins_reward}
@@ -287,7 +287,7 @@ function ExpeditionsPage() {
                   {availableMonsters.map((m) => {
                     const sp = SPECIES[m.species];
                     if (!sp) return null;
-                    const preview = computeExpeditionReward(pickMonsterFor, m.level, m.rank ?? 1);
+                    const preview = computeExpeditionReward(pickMonsterFor, m.rank ?? 1);
                     return (
                       <button
                         key={m.id}
@@ -299,7 +299,7 @@ function ExpeditionsPage() {
                           <img src={sp.image} alt="" className="h-12 w-12 object-contain drop-shadow-lg" style={{ filter: skinFilter(m.skin) }} />
                           <div className="flex-1 min-w-0">
                             <div className="font-bold text-sm truncate">{m.name}</div>
-                            <div className="text-[10px] opacity-90">Nv {m.level} {rankStars(m.rank ?? 1)}</div>
+                            <div className="text-[10px] opacity-90">{rankStars(m.rank ?? 1)}</div>
                             <div className="text-[10px] mt-1">
                               ✨{preview.xp} 🪙{preview.coins}
                             </div>

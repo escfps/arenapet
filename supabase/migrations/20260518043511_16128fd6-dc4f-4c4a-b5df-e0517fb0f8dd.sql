@@ -1,0 +1,2 @@
+ALTER TABLE public.monsters DROP COLUMN IF EXISTS level;
+ALTER TABLE public.monsters DROP COLUMN IF EXISTS xp;

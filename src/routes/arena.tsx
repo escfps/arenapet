@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { SPECIES, ELEMENT_COLORS, ROLE_INFO, skinFilter, isVip, xpForNextLevel } from "@/lib/game-data";
+import { SPECIES, ELEMENT_COLORS, ROLE_INFO, skinFilter, isVip, xpForNextLevel, rankStars } from "@/lib/game-data";
 import type { MonsterRow } from "@/components/MonsterCard";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
@@ -56,16 +56,14 @@ function ArenaPage() {
     setWinner(null);
     setRewards(null);
 
-    // pick a random opponent profile (not self, has at least 1 monster in team)
-    const minLvl = Math.max(1, profile.level - 3);
-    const maxLvl = profile.level + 3;
+    // pick a random opponent (any team — matchmaking via account level on profile)
     const { data: candidates } = await supabase
       .from("monsters")
       .select("*, profiles!inner(username, level, vip_until)")
       .neq("owner_id", userId)
       .eq("in_team", true)
-      .gte("level", minLvl)
-      .lte("level", maxLvl)
+      .gte("profiles.level", Math.max(1, profile.level - 3))
+      .lte("profiles.level", profile.level + 3)
       .limit(50);
 
     setSearching(false);
@@ -266,7 +264,7 @@ function TeamPanel({ title, team, side }: { title: string; team: FullMonster[]; 
                     {ROLE_INFO[sp.role].emoji} {ROLE_INFO[sp.role].name}
                   </span>
                 </div>
-                <div className="text-[10px] opacity-90">Nv {m.level} • ❤️{m.hp} ⚔️{m.atk} 🛡️{m.def} 💨{m.spd}</div>
+                <div className="text-[10px] opacity-90">{rankStars(m.rank ?? 1)} • ❤️{m.hp} ⚔️{m.atk} 🛡️{m.def} 💨{m.spd}</div>
               </div>
             </div>
           );

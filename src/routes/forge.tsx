@@ -17,8 +17,6 @@ type ForgeMonster = {
   owner_id: string;
   species: string;
   name: string;
-  level: number;
-  xp: number;
   rank: number;
   in_team: boolean;
 };
@@ -33,7 +31,7 @@ function ForgePage() {
     if (!userId) return;
     const { data } = await supabase
       .from("monsters")
-      .select("id,owner_id,species,name,level,xp,rank,in_team")
+      .select("id,owner_id,species,name,rank,in_team")
       .eq("owner_id", userId)
       .order("rank", { ascending: false });
     if (data) setMonsters(data as ForgeMonster[]);
@@ -69,9 +67,8 @@ function ForgePage() {
       toast.error("Tire os bichinhos do time antes de fundir!");
       return;
     }
-    const sorted = [...available].sort((a, b) => b.level - a.level || b.xp - a.xp);
-    const keep = sorted[0];
-    const consume = sorted[1];
+    const keep = available[0];
+    const consume = available[1];
     const sp = SPECIES[group.species];
     const newRank = group.rank + 1;
     const ok = confirm(
@@ -87,10 +84,9 @@ function ForgePage() {
       toast.error("Erro ao fundir: " + delErr.message);
       return;
     }
-    const newXp = keep.xp + Math.round(consume.xp * 0.3);
     const { error: updErr } = await supabase
       .from("monsters")
-      .update({ rank: newRank, xp: newXp })
+      .update({ rank: newRank })
       .eq("id", keep.id);
     setFusing(false);
     if (updErr) {

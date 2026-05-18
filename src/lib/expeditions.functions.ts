@@ -26,7 +26,7 @@ export const startExpedition = createServerFn({ method: "POST" })
     // load profile + monster + active expeditions count + ration inventory
     const [{ data: profile }, { data: monster }, { count: activeCount }, { data: foodRow }] = await Promise.all([
       supabaseAdmin.from("profiles").select("id,expedition_slots").eq("id", userId).maybeSingle(),
-      supabaseAdmin.from("monsters").select("id,owner_id,level,rank,in_team").eq("id", data.monsterId).maybeSingle(),
+      supabaseAdmin.from("monsters").select("id,owner_id,rank,in_team").eq("id", data.monsterId).maybeSingle(),
       supabaseAdmin.from("expeditions").select("id", { count: "exact", head: true }).eq("user_id", userId).eq("claimed", false),
       supabaseAdmin.from("inventory").select("quantity").eq("user_id", userId).eq("item_type", "ration").maybeSingle(),
     ]);
@@ -52,7 +52,7 @@ export const startExpedition = createServerFn({ method: "POST" })
     }
 
     // Pre-roll rewards so the player sees them when claiming (gems/rations are RNG)
-    const reward = computeExpeditionReward(duration, monster.level ?? 1, monster.rank ?? 1);
+    const reward = computeExpeditionReward(duration, monster.rank ?? 1);
 
     const now = Date.now();
     const endsAt = new Date(now + duration.minutes * 60_000).toISOString();
@@ -96,10 +96,9 @@ export const claimExpedition = createServerFn({ method: "POST" })
     if (exp.claimed) throw new Error("Já reclamada");
     if (new Date(exp.ends_at).getTime() > Date.now()) throw new Error("Expedição ainda não acabou");
 
-    // load monster + profile to apply rewards
-    const [{ data: monster }, { data: profile }, { data: foodRow }] = await Promise.all([
-      supabaseAdmin.from("monsters").select("id,owner_id,level,xp").eq("id", exp.monster_id).maybeSingle(),
-      supabaseAdmin.from("profiles").select("id,coins,gems").eq("id", userId).maybeSingle(),
+    // load profile to apply rewards
+    const [{ data: profile }, { data: foodRow }] = await Promise.all([
+      supabaseAdmin.from("profiles").select("id,coins,gems,xp,level").eq("id", userId).maybeSingle(),
       supabaseAdmin.from("inventory").select("quantity").eq("user_id", userId).eq("item_type", "ration").maybeSingle(),
     ]);
     if (!profile) throw new Error("Perfil não encontrado");
@@ -112,12 +111,21 @@ export const claimExpedition = createServerFn({ method: "POST" })
       .eq("claimed", false);
     if (cErr) throw new Error(cErr.message);
 
-    // grant coins+gems to profile
+    // XP da expedição agora vai pra CONTA (não pro pet)
+    let newXp = (profile.xp ?? 0) + (exp.xp_reward ?? 0);
+    let newLevel = profile.level ?? 1;
+    while (newXp >= xpForNextLevel(newLevel)) {
+      newXp -= xpForNextLevel(newLevel);
+      newLevel += 1;
+    }
+
     await supabaseAdmin
       .from("profiles")
       .update({
         coins: (profile.coins ?? 0) + (exp.coins_reward ?? 0),
         gems: (profile.gems ?? 0) + (exp.gems_reward ?? 0),
+        xp: newXp,
+        level: newLevel,
       })
       .eq("id", userId);
 
@@ -129,17 +137,6 @@ export const claimExpedition = createServerFn({ method: "POST" })
           { user_id: userId, item_type: "ration", quantity: (foodRow?.quantity ?? 0) + exp.ration_drop },
           { onConflict: "user_id,item_type" }
         );
-    }
-
-    // grant XP to monster (handle level ups)
-    if (monster && monster.owner_id === userId) {
-      let xp = (monster.xp ?? 0) + (exp.xp_reward ?? 0);
-      let lvl = monster.level ?? 1;
-      while (xp >= xpForNextLevel(lvl)) {
-        xp -= xpForNextLevel(lvl);
-        lvl += 1;
-      }
-      await supabaseAdmin.from("monsters").update({ xp, level: lvl }).eq("id", monster.id);
     }
 
     return {

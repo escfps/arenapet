@@ -215,7 +215,7 @@ export const ITEMS: Record<string, Item> = {
   ration: { id: "ration", name: "Ração", emoji: "🍖", description: "+30 fome", priceCoins: 15, effect: { hunger: 30 } },
   candy: { id: "candy", name: "Doce", emoji: "🍬", description: "+25 felicidade", priceCoins: 12, effect: { happiness: 25 } },
   energy_drink: { id: "energy_drink", name: "Energético", emoji: "⚡", description: "+40 energia", priceCoins: 25, effect: { energy: 40 } },
-  premium_meal: { id: "premium_meal", name: "Banquete Real", emoji: "🍱", description: "+100 fome, +50 felicidade, +20 XP", priceGems: 3, effect: { hunger: 100, happiness: 50, xp: 20 } },
+  premium_meal: { id: "premium_meal", name: "Banquete Real", emoji: "🍱", description: "+100 fome, +50 felicidade", priceGems: 3, effect: { hunger: 100, happiness: 50 } },
   revive: { id: "revive", name: "Revive", emoji: "💖", description: "Cura 100% do HP instantâneo", priceGems: 5, effect: { hp: 9999 } },
 };
 
@@ -285,6 +285,7 @@ export const GEM_PACKS = [
 ];
 
 // ===== Helpers =====
+// XP da CONTA (profile) — pets não têm mais XP/level próprio.
 export function xpForNextLevel(level: number): number {
   return Math.floor(50 * Math.pow(1.4, level - 1));
 }
@@ -300,11 +301,11 @@ export function rankStars(rank: number): string {
   return "✦".repeat(Math.min(Math.max(rank, 1), MAX_RANK));
 }
 
-export function totalStats(species: string, level: number, rank = 1, bonus = { hp: 0, atk: 0, def: 0, spd: 0 }) {
+export function totalStats(species: string, rank = 1, bonus = { hp: 0, atk: 0, def: 0, spd: 0 }) {
   const s = SPECIES[species];
   if (!s) return { hp: 0, atk: 0, def: 0, spd: 0 };
   const r = RANK_MULT[Math.min(Math.max(rank, 1), MAX_RANK)] ?? 1;
-  const mult = (1 + (level - 1) * 0.12) * RARITY_INFO[s.rarity].statMult * r;
+  const mult = RARITY_INFO[s.rarity].statMult * r;
   return {
     hp: Math.round(s.base.hp * mult) + bonus.hp,
     atk: Math.round(s.base.atk * mult) + bonus.atk,
@@ -349,14 +350,11 @@ export const EXPEDITION_SLOT_PRICES: Record<number, number> = {
 
 export function computeExpeditionReward(
   duration: ExpeditionDuration,
-  monsterLevel: number,
   monsterRank: number
 ): { xp: number; coins: number; gems: number; rations: number } {
-  const lvlMult = 1 + (Math.max(1, monsterLevel) - 1) * 0.10;
   const rankMult = RANK_MULT[Math.min(Math.max(monsterRank, 1), MAX_RANK)] ?? 1;
-  const mult = lvlMult * rankMult;
-  const xp = Math.round(duration.baseXp * mult);
-  const coins = Math.round(duration.baseCoins * mult);
+  const xp = Math.round(duration.baseXp * rankMult);
+  const coins = Math.round(duration.baseCoins * rankMult);
   const rollRange = (range: [number, number]) =>
     Math.floor(Math.random() * (range[1] - range[0] + 1)) + range[0];
   const gems = Math.random() < duration.gemChance ? rollRange(duration.gemAmount) : 0;

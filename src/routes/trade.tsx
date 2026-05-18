@@ -19,7 +19,6 @@ type Mon = {
   owner_id: string;
   species: string;
   name: string;
-  level: number;
   rank: number;
   in_team: boolean;
 };
@@ -62,7 +61,7 @@ function TradePage() {
     if (!userId) return;
     const [tRes, mRes] = await Promise.all([
       supabase.from("trades").select("*").order("created_at", { ascending: false }).limit(50),
-      supabase.from("monsters").select("id,owner_id,species,name,level,rank,in_team").eq("owner_id", userId),
+      supabase.from("monsters").select("id,owner_id,species,name,rank,in_team").eq("owner_id", userId),
     ]);
     const tradesData = (tRes.data ?? []) as Trade[];
     setTrades(tradesData);
@@ -80,7 +79,7 @@ function TradePage() {
     if (monIds.size > 0) {
       const { data: mons } = await supabase
         .from("monsters")
-        .select("id,owner_id,species,name,level,rank,in_team")
+        .select("id,owner_id,species,name,rank,in_team")
         .in("id", Array.from(monIds));
       const map = new Map<string, Mon>();
       for (const m of (mons ?? []) as Mon[]) map.set(m.id, m);
@@ -311,7 +310,7 @@ function MonsterPick({ mon, selected, onClick }: { mon: Mon; selected: boolean; 
     >
       <img src={sp.image} alt={sp.name} className="h-12 w-full object-contain" />
       <div className="text-white text-[11px] font-extrabold truncate">{mon.name}</div>
-      <div className="text-white/70 text-[10px]">Nv {mon.level} {rankStars(mon.rank ?? 1)}</div>
+      <div className="text-white/70 text-[10px]">{rankStars(mon.rank ?? 1)}</div>
     </button>
   );
 }
@@ -326,7 +325,7 @@ function MiniMon({ id, monstersById, fallback }: { id: string | null; monstersBy
       {sp && <img src={sp.image} alt={sp.name} className="h-12 w-12 object-contain" />}
       <div className="min-w-0">
         <div className="text-white text-xs font-extrabold truncate">{m.name}</div>
-        <div className="text-white/70 text-[10px]">{sp?.name} • Nv {m.level} {rankStars(m.rank ?? 1)}</div>
+        <div className="text-white/70 text-[10px]">{sp?.name} • {rankStars(m.rank ?? 1)}</div>
         {sp && <div className={`inline-block mt-0.5 px-1.5 py-0.5 rounded text-[9px] font-bold ${RARITY_INFO[sp.rarity].color}`}>{RARITY_INFO[sp.rarity].name}</div>}
       </div>
     </div>

@@ -125,14 +125,12 @@ export type Database = {
           id: string
           in_team: boolean
           last_tick: string
-          level: number
           name: string
           owner_id: string
           rank: number
           skin: string
           spd: number
           species: string
-          xp: number
         }
         Insert: {
           atk?: number
@@ -145,14 +143,12 @@ export type Database = {
           id?: string
           in_team?: boolean
           last_tick?: string
-          level?: number
           name: string
           owner_id: string
           rank?: number
           skin?: string
           spd?: number
           species: string
-          xp?: number
         }
         Update: {
           atk?: number
@@ -165,14 +161,12 @@ export type Database = {
           id?: string
           in_team?: boolean
           last_tick?: string
-          level?: number
           name?: string
           owner_id?: string
           rank?: number
           skin?: string
           spd?: number
           species?: string
-          xp?: number
         }
         Relationships: []
       }

@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { SPECIES, ITEMS, SKINS, ELEMENT_COLORS, ROLE_INFO, ROLE_SKILLS, RARITY_INFO, skinFilter, xpForNextLevel } from "@/lib/game-data";
+import { SPECIES, ITEMS, SKINS, ELEMENT_COLORS, ROLE_INFO, ROLE_SKILLS, RARITY_INFO, skinFilter, rankStars } from "@/lib/game-data";
 import type { MonsterRow } from "@/components/MonsterCard";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
@@ -37,7 +37,6 @@ function MonsterPage() {
   }
 
   const sp = SPECIES[monster.species];
-  const xpNeeded = xpForNextLevel(monster.level);
   const teamMax = profile.vip_until && new Date(profile.vip_until) > new Date() ? 4 : 3;
 
   async function patchMonster(updates: Partial<MonsterRow>) {
@@ -60,24 +59,13 @@ function MonsterPage() {
     if (item.effect.hunger) updates.hunger = Math.min(100, monster.hunger + item.effect.hunger);
     if (item.effect.energy) updates.energy = Math.min(100, monster.energy + item.effect.energy);
     if (item.effect.happiness) updates.happiness = Math.min(100, monster.happiness + item.effect.happiness);
-    if (item.effect.xp) updates.xp = monster.xp + item.effect.xp;
-    if (updates.xp !== undefined) {
-      let newXp = updates.xp;
-      let newLevel = monster.level;
-      while (newXp >= xpForNextLevel(newLevel)) {
-        newXp -= xpForNextLevel(newLevel);
-        newLevel += 1;
-      }
-      updates.xp = newXp;
-      updates.level = newLevel;
-    }
     await patchMonster(updates);
     toast.success(`Usou ${item.emoji} ${item.name}`);
   }
 
   async function train(stat: "atk" | "def" | "spd") {
     if (!profile || !monster) return;
-    const cost = 20 + monster.level * 5;
+    const cost = 20 + (monster.rank ?? 1) * 10;
     const energyCost = 15;
     if (profile.coins < cost) { toast.error("Moedas insuficientes!"); return; }
     if (monster.energy < energyCost) { toast.error("Sem energia! Dê um energético."); return; }
@@ -87,19 +75,10 @@ function MonsterPage() {
     const updates: Partial<MonsterRow> = {
       energy: monster.energy - energyCost,
       hunger: monster.hunger - 5,
-      xp: monster.xp + 10,
     };
     updates[stat] = monster[stat] + gain;
-    let newXp = updates.xp!;
-    let newLevel = monster.level;
-    while (newXp >= xpForNextLevel(newLevel)) {
-      newXp -= xpForNextLevel(newLevel);
-      newLevel += 1;
-    }
-    updates.xp = newXp;
-    updates.level = newLevel;
     await patchMonster(updates);
-    toast.success(`+${gain} ${stat.toUpperCase()}! +10 XP`);
+    toast.success(`+${gain} ${stat.toUpperCase()}!`);
   }
 
   async function play() {
@@ -108,9 +87,8 @@ function MonsterPage() {
     await patchMonster({
       happiness: Math.min(100, monster.happiness + 20),
       energy: monster.energy - 10,
-      xp: monster.xp + 5,
     });
-    toast.success("Que divertido! 🎉 +20 felicidade, +5 XP");
+    toast.success("Que divertido! 🎉 +20 felicidade");
   }
 
   async function equipSkin(skinId: string) {
