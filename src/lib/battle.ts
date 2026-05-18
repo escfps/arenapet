@@ -203,7 +203,10 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
       .sort((x, y) => y.mon.spd - x.mon.spd);
 
     for (const { mon: attacker, side } of order) {
-      if (attacker.current <= 0) continue;
+      // Wrap em IIFE pra garantir que sweepDeathExplosions rode mesmo
+      // quando alguma skill usa `continue` no meio (substituído por `return`).
+      ((): void => {
+      if (attacker.current <= 0) return;
       // tick taunt
       if (attacker.tauntTurns > 0) {
         attacker.tauntTurns -= 1;
