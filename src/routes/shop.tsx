@@ -237,7 +237,7 @@ function ShopPage() {
           <>
             <div className="grid sm:grid-cols-2 gap-4">
               {Object.values(CHESTS).map((c) => {
-                const rarityEntries = Object.entries(c.petRarityWeights) as [import("@/lib/game-data").Rarity, number][];
+                const rarityEntries = Object.entries(c.petRarityWeights) as [Rarity, number][];
                 const totalW = rarityEntries.reduce((a, [, w]) => a + w, 0);
                 return (
                   <div key={c.id} className="rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 p-4 text-white">
