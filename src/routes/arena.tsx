@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { SPECIES, ELEMENT_COLORS, skinFilter, isVip, xpForNextLevel } from "@/lib/game-data";
+import { SPECIES, ELEMENT_COLORS, ROLE_INFO, skinFilter, isVip, xpForNextLevel } from "@/lib/game-data";
 import type { MonsterRow } from "@/components/MonsterCard";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
@@ -240,7 +240,12 @@ function TeamPanel({ title, team, side }: { title: string; team: FullMonster[]; 
             <div key={m.id} className={`flex items-center gap-2 p-2 rounded-lg bg-gradient-to-r ${ELEMENT_COLORS[sp.element]}`}>
               <img src={sp.image} alt="" className="h-14 w-14 object-contain drop-shadow-lg" style={{ filter: skinFilter(m.skin) }} />
               <div className="flex-1 min-w-0">
-                <div className="font-bold text-sm truncate">{m.name}</div>
+                <div className="font-bold text-sm truncate flex items-center gap-1">
+                  {m.name}
+                  <span className={`px-1.5 py-0.5 rounded ${ROLE_INFO[sp.role].color} text-[9px]`}>
+                    {ROLE_INFO[sp.role].emoji} {ROLE_INFO[sp.role].name}
+                  </span>
+                </div>
                 <div className="text-[10px] opacity-90">Nv {m.level} • ❤️{m.hp} ⚔️{m.atk} 🛡️{m.def} 💨{m.spd}</div>
               </div>
             </div>
