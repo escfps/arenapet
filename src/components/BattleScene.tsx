@@ -144,7 +144,53 @@ export function BattleScene({
       });
     }
 
-    setFx({ actor: actorKey, target: targetKey, dmg: entry.damage, crit: entry.crit });
+    // ===== Determinar tipo de animação de skill =====
+    const actorMon = (actorSide === "a" ? teamA : teamB).find((m) => m.name === entry.actorName);
+    const skillKind = actorMon ? getSkill(actorMon.species).kind : null;
+    const msg = entry.message;
+    let skillFx: SkillFxKind | null = null;
+    let targets: string[] = targetKey ? [targetKey] : [];
+    // Cura (dano negativo) sempre mostra cruzes verdes
+    if (entry.damage < 0 || msg.includes("Curou todos") || msg.includes("curou")) {
+      skillFx = "heal";
+      if (entry.targetName === "todos os aliados") {
+        const allies = actorSide === "a" ? teamA : teamB;
+        targets = allies.filter((m) => (hp.get(`${actorSide}:${m.name}`)?.cur ?? 0) >= 0).map((m) => `${actorSide}:${m.name}`);
+      }
+    } else if (msg.includes("ressuscitado")) {
+      skillFx = "revive";
+    } else if (msg.includes("VERDADEIRO") || msg.includes("reduzido a pó")) {
+      skillFx = "true";
+    } else if (msg.includes("EXECUÇÃO") || msg.includes("executado") || skillKind === "execute") {
+      skillFx = "skull";
+    } else if (msg.includes("salto") || skillKind === "chain_lightning") {
+      skillFx = "lightning";
+      // tenta marcar todos do lado oposto como salto
+      const enemies = (actorSide === "a" ? teamB : teamA);
+      targets = enemies.map((m) => `${actorSide === "a" ? "b" : "a"}:${m.name}`);
+    } else if (msg.includes("queimando") || msg.includes("queimadura") || skillKind === "burn_dot") {
+      skillFx = "fire";
+    } else if (msg.includes("silenciou") || msg.includes("silencia") || skillKind === "silence_disable") {
+      skillFx = "silence";
+    } else if (msg.includes("roubou") || skillKind === "lifesteal_strike") {
+      skillFx = "bite";
+    } else if (msg.includes("escudo") || msg.includes("Provocou") || skillKind === "shield_taunt" || skillKind === "shield_ally") {
+      skillFx = "shield";
+    } else if (msg.includes("fúria") || msg.includes("ATK e -") || skillKind === "berserker_rage") {
+      skillFx = "fury";
+    } else if (msg.includes("golpe ") && msg.includes("/2") || skillKind === "double_strike") {
+      skillFx = "slash";
+    } else if (msg.includes("dano arcano") || msg.includes("dano em CADA") || skillKind === "aoe_magic") {
+      skillFx = "explosion";
+      const enemies = (actorSide === "a" ? teamB : teamA);
+      targets = enemies.map((m) => `${actorSide === "a" ? "b" : "a"}:${m.name}`);
+    } else if (skillKind === "heavy_strike" || skillKind === "guaranteed_crit" || entry.crit) {
+      skillFx = "bite";
+    } else if (skillKind === "true_damage_nuke") {
+      skillFx = "magic";
+    }
+
+    setFx({ actor: actorKey, target: targetKey, dmg: entry.damage, crit: entry.crit, skillFx, targets });
 
     // ===== Banner de efeito especial =====
     const eff = detectEffect(entry);
