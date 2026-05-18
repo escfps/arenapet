@@ -128,12 +128,51 @@ function ArenaPage() {
     const won = result.winner === "team_a";
     const rew = computeRewards(profile.level, won, isVip(profile.vip_until));
 
-    // Arena points: +25 on win, -15 on loss (floor at 0)
+    // Arena points + promo series logic
     const oldPoints = profile.arena_points ?? 0;
-    const delta = won ? ARENA_WIN_POINTS : -ARENA_LOSS_POINTS;
-    const newPoints = Math.max(0, oldPoints + delta);
+    const promoBefore = promo;
+    let newPoints = oldPoints;
+    let delta = 0;
+    let promoMsg: string | undefined;
+    let nextPromo: PromoSeries | null = promo;
 
-    setRewards({ ...rew, points: delta, oldPoints, newPoints });
+    if (promo) {
+      // We're in a promotion series — wins/losses don't change points until resolved
+      const updated: PromoSeries = { ...promo, wins: promo.wins + (won ? 1 : 0), losses: promo.losses + (won ? 0 : 1) };
+      const need = promoNeeded(promo.type);
+      if (updated.wins >= need) {
+        // Promoted! Advance into the next division (1 pt past cap)
+        const b = divisionBounds(oldPoints);
+        newPoints = b ? b.end : oldPoints + 1;
+        delta = newPoints - oldPoints;
+        nextPromo = null;
+        promoMsg = promo.type === "bo5" ? "👑 SUBIU DE TIER!" : "🎉 Promovido!";
+      } else if (updated.losses >= need) {
+        // Failed: drop a bit back into the division
+        newPoints = Math.max(0, oldPoints - 30);
+        delta = newPoints - oldPoints;
+        nextPromo = null;
+        promoMsg = "😢 Série de promoção fracassou";
+      } else {
+        nextPromo = updated;
+        promoMsg = `Série ${promo.type.toUpperCase()}: ${updated.wins}V ${updated.losses}D`;
+      }
+    } else {
+      delta = won ? ARENA_WIN_POINTS : -ARENA_LOSS_POINTS;
+      newPoints = Math.max(0, oldPoints + delta);
+      // Cap at division end and start a promotion series
+      const b = divisionBounds(oldPoints);
+      if (b && newPoints >= b.end) {
+        newPoints = b.end - 1; // sit at 99/100 visually; promo starts
+        delta = newPoints - oldPoints;
+        nextPromo = { wins: 0, losses: 0, type: b.nextIsTierUp ? "bo5" : "bo3", targetFrom: oldPoints };
+        promoMsg = b.nextIsTierUp ? "🔥 Série de tier MD5 iniciada!" : "⚡ Série de promoção MD3 iniciada!";
+      }
+    }
+
+    savePromo(userId, nextPromo);
+
+    setRewards({ ...rew, points: delta, oldPoints, newPoints, promoMsg, promoBefore, promoAfter: nextPromo });
 
     // persist
     const updates: Partial<typeof profile> = {
