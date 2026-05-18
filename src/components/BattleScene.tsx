@@ -77,6 +77,14 @@ export function BattleScene({
       return next;
     });
 
+    if (entry.targetShield !== undefined && targetKey) {
+      setShields((prev) => {
+        const next = new Map(prev);
+        next.set(targetKey, entry.targetShield!);
+        return next;
+      });
+    }
+
     setFx({ actor: actorKey, target: targetKey, dmg: entry.damage, crit: entry.crit });
     const t = setTimeout(
       () => setFx({ actor: null, target: null, dmg: null, crit: false }),
