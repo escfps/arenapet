@@ -301,11 +301,11 @@ export function rankStars(rank: number): string {
   return "✦".repeat(Math.min(Math.max(rank, 1), MAX_RANK));
 }
 
-export function totalStats(species: string, level: number, rank = 1, bonus = { hp: 0, atk: 0, def: 0, spd: 0 }) {
+export function totalStats(species: string, rank = 1, bonus = { hp: 0, atk: 0, def: 0, spd: 0 }) {
   const s = SPECIES[species];
   if (!s) return { hp: 0, atk: 0, def: 0, spd: 0 };
   const r = RANK_MULT[Math.min(Math.max(rank, 1), MAX_RANK)] ?? 1;
-  const mult = (1 + (level - 1) * 0.12) * RARITY_INFO[s.rarity].statMult * r;
+  const mult = RARITY_INFO[s.rarity].statMult * r;
   return {
     hp: Math.round(s.base.hp * mult) + bonus.hp,
     atk: Math.round(s.base.atk * mult) + bonus.atk,
