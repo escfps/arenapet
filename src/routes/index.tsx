@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { SPECIES, ELEMENT_COLORS, ELEMENT_NAMES, RARITY_INFO, rollWelcomeChest, type Rarity, type Element } from "@/lib/game-data";
 import { MonsterCard, type MonsterRow } from "@/components/MonsterCard";
 import { HUD } from "@/components/HUD";
+import { TutorialOverlay } from "@/components/TutorialOverlay";
 import { useProfile } from "@/lib/use-profile";
 import { toast, Toaster } from "sonner";
 import arenaBg from "@/assets/arena-bg.jpg";
