@@ -299,6 +299,7 @@ export type Egg = {
   description: string;
   weights: Record<string, number>;
   pack?: number; // quantos pets vêm
+  event?: boolean; // ovo de evento — visível mas não comprável fora do evento
 };
 
 // Helpers to build weight tables
