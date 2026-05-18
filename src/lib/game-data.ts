@@ -467,7 +467,7 @@ export const CHESTS: Record<ChestTier, Chest> = {
   wood: {
     id: "wood", name: "Baú de Madeira", emoji: "📦",
     description: "Recompensa básica pra começar a aventura.",
-    priceCoins: 500,
+    priceCoins: 1000,
     coins: [200, 500],
     rations: [1, 3],
     gemChance: 0.10, gems: [1, 3],
