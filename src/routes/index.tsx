@@ -19,7 +19,6 @@ export const Route = createFileRoute("/")({
 });
 
 const TEAM_MAX = 3;
-const TEAM_MAX_VIP = 4;
 
 function PatioPage() {
   const navigate = useNavigate();
