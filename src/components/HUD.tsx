@@ -32,7 +32,7 @@ export function HUD({ profile }: { profile: ProfileRow }) {
       <div className="max-w-6xl mx-auto px-3 py-2 flex items-center gap-2 flex-wrap">
         <Link to="/" className="font-extrabold text-white flex items-center gap-1.5 hover:scale-105 transition">
           <span className="text-xl">🐲</span>
-          <span className="hidden sm:inline text-sm">MonstroBattle</span>
+          <span className="hidden sm:inline text-sm">ARENA PET</span>
         </Link>
         <nav className="flex items-center gap-1 ml-2">
           <NavLink to="/" label="Pátio" emoji="🏠" />
