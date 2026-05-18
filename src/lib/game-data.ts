@@ -542,8 +542,23 @@ export function rollChest(tier: ChestTier): ChestReward {
   return { coins, gems, rations, petSpecies };
 }
 
+// Baú de boas-vindas: 2 comuns aleatórios + 1 raro aleatório
+export function rollWelcomeChest(): string[] {
+  const all = Object.values(SPECIES);
+  const commons = all.filter((s) => s.rarity === "common");
+  const rares = all.filter((s) => s.rarity === "rare");
+  const pickN = <T,>(arr: T[], n: number): T[] => {
+    const pool = [...arr];
+    const out: T[] = [];
+    for (let i = 0; i < n && pool.length; i++) {
+      const idx = Math.floor(Math.random() * pool.length);
+      out.push(pool.splice(idx, 1)[0]);
+    }
+    return out;
+  };
+  return [...pickN(commons, 2), ...pickN(rares, 1)].map((s) => s.id);
+}
 
-// ===== Helpers =====
 // XP da CONTA (profile) — pets não têm mais XP/level próprio.
 export function xpForNextLevel(level: number): number {
   return Math.floor(50 * Math.pow(1.4, level - 1));
