@@ -17,6 +17,11 @@ import rockpupImg from "@/assets/monsters/rockpup.png";
 import magmaboulderImg from "@/assets/monsters/magmaboulder.png";
 import mudpawImg from "@/assets/monsters/mudpaw.png";
 import crystalspriteImg from "@/assets/monsters/crystalsprite.png";
+import oncaSombriaImg from "@/assets/monsters/onca_sombria.png";
+import leaoDouradoImg from "@/assets/monsters/leao_dourado.png";
+import tigreInfernalImg from "@/assets/monsters/tigre_infernal.png";
+import panteraNegraImg from "@/assets/monsters/pantera_negra.png";
+import panteraAureaImg from "@/assets/monsters/pantera_aurea.png";
 
 export type Element = "fire" | "water" | "grass" | "electric" | "shadow" | "earth";
 export type Role = "tank" | "dps" | "assassin" | "mage" | "healer";
