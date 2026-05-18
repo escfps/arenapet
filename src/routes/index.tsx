@@ -564,6 +564,10 @@ function PatioPage() {
           </div>
         </div>
       )}
+
+      {showTutorial && userId && (
+        <TutorialOverlay userId={userId} onClose={() => setShowTutorial(false)} />
+      )}
     </main>
   );
 }
