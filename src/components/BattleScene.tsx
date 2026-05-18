@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import type { BattleLogEntry } from "@/lib/battle";
-import { SPECIES, ELEMENT_COLORS, skinFilter, totalStats } from "@/lib/game-data";
+import { SPECIES, ELEMENT_COLORS, RARITY_INFO, MAX_RANK, skinFilter, totalStats } from "@/lib/game-data";
 import type { MonsterRow } from "./MonsterCard";
 
 type Team = (MonsterRow & { owner_id: string })[];
@@ -148,6 +148,8 @@ function SideColumn({
             <div
               className={`flex items-center gap-2 p-2 rounded-lg bg-gradient-to-r ${
                 ELEMENT_COLORS[sp.element]
+              } ring-2 ${RARITY_INFO[sp.rarity].ringColor} ${
+                (m.rank ?? 1) >= MAX_RANK ? "rank-max-glow" : ""
               } ${isTarget ? "ring-4 ring-red-400" : ""} ${
                 isActor ? "ring-4 ring-yellow-300" : ""
               } transition-all`}
