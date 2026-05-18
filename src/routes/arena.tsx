@@ -118,8 +118,34 @@ function ArenaPage() {
     setOpponent({ ownerId: chosen, ownerName: byOwner[chosen].username, team: byOwner[chosen].team.slice(0, 4) });
   }
 
+  // Compute current energy for each team pet (with regen applied)
+  const teamEnergies = myTeam.map((m) => computeBattleEnergy(m.battle_energy, m.battle_energy_at));
+  const minEnergy = teamEnergies.length ? Math.min(...teamEnergies.map((e) => e.energy)) : 0;
+  const canFight = myTeam.length > 0 && minEnergy >= 1;
+
   async function fight() {
     if (!profile || !userId || !opponent) return;
+    if (!canFight) {
+      toast.error("Algum pet do seu time está sem energia de batalha! ⚡");
+      return;
+    }
+
+    // Consume 1 battle energy from each team pet
+    await Promise.all(myTeam.map(async (m, i) => {
+      const e = teamEnergies[i];
+      const newEnergy = Math.max(0, e.energy - 1);
+      await supabase
+        .from("monsters")
+        .update({ battle_energy: newEnergy, battle_energy_at: e.nextStoredAt })
+        .eq("id", m.id);
+    }));
+    // Reflect locally so the UI updates instantly
+    setMyTeam((prev) => prev.map((m, i) => ({
+      ...m,
+      battle_energy: Math.max(0, teamEnergies[i].energy - 1),
+      battle_energy_at: teamEnergies[i].nextStoredAt,
+    })));
+
     const a = myTeam.map(toBattleMonster);
     const b = opponent.team.map(toBattleMonster);
     const result = simulateBattle(a, b);
