@@ -77,6 +77,21 @@ function getElement(species: string): Element {
   return SPECIES[species]?.element ?? "shadow";
 }
 
+// ===== PASSIVAS DAS FÊNIX MÍTICAS =====
+// Fênix Vermelha: cada 10% HP perdido = +12% ATK (cap +120% com 1 HP)
+function phoenixAtkBonus(attacker: Live): number {
+  if (attacker.species !== "fenix_vermelha") return 1;
+  const hpLostPct = 1 - attacker.current / Math.max(1, attacker.maxHp);
+  return 1 + hpLostPct * 1.2;
+}
+// Fênix Negra: 20% do dano causado vira HP máx adicional + cura
+function phoenixOnDamageDealt(attacker: Live, dmg: number) {
+  if (attacker.species !== "fenix_negra" || dmg <= 0) return;
+  const grow = Math.max(1, Math.round(dmg * 0.20));
+  attacker.maxHp += grow;
+  attacker.current = Math.min(attacker.maxHp, attacker.current + grow);
+}
+
 function rng(seed: number) {
   return () => {
     seed = (seed * 9301 + 49297) % 233280;
