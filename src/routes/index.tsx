@@ -6,6 +6,7 @@ import { Plot } from "@/components/Plot";
 import { AnimalCard } from "@/components/AnimalCard";
 import { CoinBadge } from "@/components/CoinBadge";
 import { toast, Toaster } from "sonner";
+import farmBg from "@/assets/farm-bg.jpg";
 
 export const Route = createFileRoute("/")({
   component: GamePage,
