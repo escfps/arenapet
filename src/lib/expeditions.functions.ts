@@ -11,6 +11,7 @@ import {
   xpForNextLevel,
   rollLevelUpRewards,
   SPECIES,
+  starterMonsterStats,
 } from "@/lib/game-data";
 
 const StartSchema = z.object({
@@ -152,7 +153,7 @@ export const claimExpedition = createServerFn({ method: "POST" })
     if (lvRew && lvRew.petSpecies.length > 0) {
       const rows = lvRew.petSpecies.map((sid) => {
         const sp = SPECIES[sid];
-        return { owner_id: userId, species: sid, name: sp.name, hp: sp.base.hp, atk: sp.base.atk, def: sp.base.def, spd: sp.base.spd };
+        return { owner_id: userId, species: sid, name: sp.name, ...starterMonsterStats(sid) };
       });
       await supabaseAdmin.from("monsters").insert(rows);
     }
