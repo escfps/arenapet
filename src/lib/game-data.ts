@@ -285,6 +285,7 @@ export const GEM_PACKS = [
 ];
 
 // ===== Helpers =====
+// XP da CONTA (profile) — pets não têm mais XP/level próprio.
 export function xpForNextLevel(level: number): number {
   return Math.floor(50 * Math.pow(1.4, level - 1));
 }
