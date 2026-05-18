@@ -312,7 +312,7 @@ export const SPECIES: Record<string, Species> = {
     emoji: "🦈", image: tubaraoAbissalImg,
     description: "Predador das profundezas azuis. Mordida feroz que rasga qualquer presa.",
     base: { hp: 60, atk: 17, def: 11, spd: 13, int: 8 },
-    skill: { name: "Mordida Abissal", emoji: "🦈", kind: "execute", cooldown: 3, description: "Sente o sangue: alvos abaixo de 30% HP recebem dano TRIPLO. Senão, 1.7× dano." },
+    skill: { name: "Mordida Sanguinária", emoji: "🦈", kind: "lifesteal_strike", cooldown: 3, description: "Crava os dentes (2× dano) e cura o tubarão em 55% do dano causado." },
   },
 
   // ===== ÉPICOS =====
