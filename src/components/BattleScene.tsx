@@ -96,7 +96,7 @@ export function BattleScene({
   useEffect(() => {
     setHp(new Map(initialHp));
     setShields(new Map());
-    setFx({ actor: null, target: null, dmg: null, crit: false });
+    setFx({ actor: null, target: null, dmg: null, crit: false, skillFx: null, targets: [] });
     setBanner(null);
     setStatuses(new Map());
   }, [initialHp]);
