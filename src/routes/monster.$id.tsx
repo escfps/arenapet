@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { SPECIES, ITEMS, SKINS, ELEMENT_COLORS, ROLE_INFO, ROLE_SKILLS, RARITY_INFO, skinFilter, rankStars, totalStats } from "@/lib/game-data";
+import { SPECIES, ITEMS, SKINS, ELEMENT_COLORS, ROLE_INFO, getSkill, RARITY_INFO, skinFilter, rankStars, totalStats } from "@/lib/game-data";
 import type { MonsterRow } from "@/components/MonsterCard";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
