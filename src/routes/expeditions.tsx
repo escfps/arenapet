@@ -197,7 +197,7 @@ function ExpeditionsPage() {
                     <div className="flex-1 min-w-0">
                       <div className="font-bold flex items-center gap-2 flex-wrap">
                         {monster?.name ?? "?"}
-                        {monster && <span className="text-xs opacity-80">Nv {monster.level} {rankStars(monster.rank ?? 1)}</span>}
+                        {monster && <span className="text-xs opacity-80">{rankStars(monster.rank ?? 1)}</span>}
                       </div>
                       <div className="text-xs opacity-90">
                         🎯 +{exp.xp_reward} XP • +🪙 {exp.coins_reward}
