@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { SPECIES, ELEMENT_COLORS, ELEMENT_NAMES, RARITY_INFO, rollWelcomeChest, type Rarity, type Element } from "@/lib/game-data";
 import { MonsterCard, type MonsterRow } from "@/components/MonsterCard";
 import { HUD } from "@/components/HUD";
+import { TutorialOverlay } from "@/components/TutorialOverlay";
 import { useProfile } from "@/lib/use-profile";
 import { toast, Toaster } from "sonner";
 import arenaBg from "@/assets/arena-bg.jpg";
@@ -33,6 +34,16 @@ function PatioPage() {
   const [elementFilter, setElementFilter] = useState<Element | "all">("all");
   const [groupModal, setGroupModal] = useState<string | null>(null);
   const [slotPicker, setSlotPicker] = useState<number | null>(null);
+  const [showTutorial, setShowTutorial] = useState(false);
+
+  // Mostra tutorial após o baú ser aberto (uma vez por conta)
+  useEffect(() => {
+    if (!userId || !profile) return;
+    if (!profile.welcome_chest_claimed) return;
+    if (welcomeReveal) return; // ainda mostrando os pets do baú
+    const done = localStorage.getItem(`tutorial_done_${userId}`);
+    if (!done) setShowTutorial(true);
+  }, [userId, profile, welcomeReveal]);
 
   const loadMonsters = useCallback(async () => {
     if (!userId) return;
@@ -552,6 +563,10 @@ function PatioPage() {
             )}
           </div>
         </div>
+      )}
+
+      {showTutorial && userId && (
+        <TutorialOverlay userId={userId} onClose={() => setShowTutorial(false)} />
       )}
     </main>
   );
