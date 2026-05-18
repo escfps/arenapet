@@ -47,7 +47,7 @@ function ArenaPage() {
   useEffect(() => {
     async function loadTeam() {
       if (!userId) return;
-      const { data } = await supabase.from("monsters").select("*").eq("owner_id", userId).eq("in_team", true);
+      const { data } = await supabase.from("monsters").select("*").eq("owner_id", userId).eq("in_team", true).order("team_position", { ascending: true });
       if (data) setMyTeam(data as FullMonster[]);
     }
     if (userId) loadTeam();
