@@ -3,15 +3,28 @@ import aquakittyImg from "@/assets/monsters/aquakitty.png";
 import leafoxImg from "@/assets/monsters/leafox.png";
 import voltbunImg from "@/assets/monsters/voltbun.png";
 import shadepupImg from "@/assets/monsters/shadepup.png";
+import steamcubImg from "@/assets/monsters/steamcub.png";
+import emberleafImg from "@/assets/monsters/emberleaf.png";
+import sparkpupImg from "@/assets/monsters/sparkpup.png";
+import cinderwispImg from "@/assets/monsters/cinderwisp.png";
+import mossfinImg from "@/assets/monsters/mossfin.png";
+import stormtadImg from "@/assets/monsters/stormtad.png";
+import tidewraithImg from "@/assets/monsters/tidewraith.png";
+import voltsproutImg from "@/assets/monsters/voltsprout.png";
+import nightbloomImg from "@/assets/monsters/nightbloom.png";
+import voidsparkImg from "@/assets/monsters/voidspark.png";
 
 export type Element = "fire" | "water" | "grass" | "electric" | "shadow";
 export type Role = "tank" | "dps" | "assassin" | "mage" | "healer";
+export type Rarity = "common" | "rare" | "legendary";
 
 export type Species = {
   id: string;
   name: string;
   element: Element;
+  secondaryElement?: Element; // hybrids have two
   role: Role;
+  rarity: Rarity;
   emoji: string;
   image: string;
   description: string;
@@ -26,36 +39,105 @@ export const ROLE_INFO: Record<Role, { name: string; emoji: string; description:
   healer: { name: "Healer", emoji: "✨", description: "A cada 2 turnos cura o aliado mais ferido.", color: "bg-emerald-500" },
 };
 
+export const RARITY_INFO: Record<Rarity, { name: string; emoji: string; color: string; ringColor: string; statMult: number }> = {
+  common: { name: "Mestiço", emoji: "✦", color: "bg-slate-400 text-white", ringColor: "ring-slate-300", statMult: 0.85 },
+  rare: { name: "Puro", emoji: "✦✦", color: "bg-amber-500 text-amber-950", ringColor: "ring-amber-400", statMult: 1.0 },
+  legendary: { name: "Lendário", emoji: "✦✦✦", color: "bg-gradient-to-r from-fuchsia-500 to-pink-500 text-white", ringColor: "ring-fuchsia-400", statMult: 1.2 },
+};
+
 export const SPECIES: Record<string, Species> = {
+  // ===== PUROS (raros) =====
   flarepup: {
-    id: "flarepup", name: "Flarepup", element: "fire", role: "dps",
+    id: "flarepup", name: "Flarepup", element: "fire", role: "dps", rarity: "rare",
     emoji: "🔥", image: flarepupImg,
-    description: "Raposinha de fogo. DPS clássico: dano alto e estável.",
+    description: "Raposinha de fogo puro. DPS clássico de dano alto.",
     base: { hp: 55, atk: 15, def: 8, spd: 12 },
   },
   aquakitty: {
-    id: "aquakitty", name: "Aquakitty", element: "water", role: "healer",
+    id: "aquakitty", name: "Aquakitty", element: "water", role: "healer", rarity: "rare",
     emoji: "💧", image: aquakittyImg,
-    description: "Gatinho aquático. Cura o time a cada 2 turnos.",
+    description: "Gatinho aquático puro. Cura o time a cada 2 turnos.",
     base: { hp: 60, atk: 9, def: 11, spd: 13 },
   },
   leafox: {
-    id: "leafox", name: "Leafox", element: "grass", role: "tank",
+    id: "leafox", name: "Leafox", element: "grass", role: "tank", rarity: "rare",
     emoji: "🌿", image: leafoxImg,
-    description: "Raposa-folha. Tank: provoca e absorve dano.",
+    description: "Raposa-folha pura. Tank: provoca e absorve dano.",
     base: { hp: 80, atk: 8, def: 18, spd: 8 },
   },
   voltbun: {
-    id: "voltbun", name: "Voltbun", element: "electric", role: "assassin",
+    id: "voltbun", name: "Voltbun", element: "electric", role: "assassin", rarity: "rare",
     emoji: "⚡", image: voltbunImg,
-    description: "Coelhinho elétrico. Assassino: muito crítico e veloz.",
+    description: "Coelhinho elétrico puro. Assassino veloz com muito crit.",
     base: { hp: 48, atk: 13, def: 8, spd: 18 },
   },
   shadepup: {
-    id: "shadepup", name: "Shadepup", element: "shadow", role: "mage",
+    id: "shadepup", name: "Shadepup", element: "shadow", role: "mage", rarity: "rare",
     emoji: "🌙", image: shadepupImg,
-    description: "Lobinho das sombras. Mago: dano ignora defesa.",
+    description: "Lobinho das sombras puro. Mago: dano ignora defesa.",
     base: { hp: 55, atk: 16, def: 9, spd: 12 },
+  },
+
+  // ===== MESTIÇOS (comuns) — combinações 2 a 2 dos 5 elementos =====
+  steamcub: {
+    id: "steamcub", name: "Steamcub", element: "fire", secondaryElement: "water", role: "tank", rarity: "common",
+    emoji: "♨️", image: steamcubImg,
+    description: "Ursinho de vapor. Tank meio fogo, meio água.",
+    base: { hp: 70, atk: 9, def: 14, spd: 9 },
+  },
+  emberleaf: {
+    id: "emberleaf", name: "Emberleaf", element: "fire", secondaryElement: "grass", role: "dps", rarity: "common",
+    emoji: "🍂", image: emberleafImg,
+    description: "Raposa de folhas em brasa. DPS de outono.",
+    base: { hp: 52, atk: 13, def: 9, spd: 12 },
+  },
+  sparkpup: {
+    id: "sparkpup", name: "Sparkpup", element: "fire", secondaryElement: "electric", role: "assassin", rarity: "common",
+    emoji: "⚡🔥", image: sparkpupImg,
+    description: "Filhote chamuscado e elétrico. Assassino rápido.",
+    base: { hp: 46, atk: 12, def: 8, spd: 16 },
+  },
+  cinderwisp: {
+    id: "cinderwisp", name: "Cinderwisp", element: "fire", secondaryElement: "shadow", role: "mage", rarity: "common",
+    emoji: "👻🔥", image: cinderwispImg,
+    description: "Fantasminha de brasa. Mago ofensivo.",
+    base: { hp: 50, atk: 14, def: 9, spd: 11 },
+  },
+  mossfin: {
+    id: "mossfin", name: "Mossfin", element: "water", secondaryElement: "grass", role: "healer", rarity: "common",
+    emoji: "🐸", image: mossfinImg,
+    description: "Sapinho do brejo. Healer rústico.",
+    base: { hp: 58, atk: 8, def: 12, spd: 10 },
+  },
+  stormtad: {
+    id: "stormtad", name: "Stormtad", element: "water", secondaryElement: "electric", role: "mage", rarity: "common",
+    emoji: "⚡💧", image: stormtadImg,
+    description: "Girino-relâmpago. Mago elétrico.",
+    base: { hp: 48, atk: 13, def: 8, spd: 14 },
+  },
+  tidewraith: {
+    id: "tidewraith", name: "Tidewraith", element: "water", secondaryElement: "shadow", role: "assassin", rarity: "common",
+    emoji: "🌊👻", image: tidewraithImg,
+    description: "Fantasma das marés. Assassino furtivo.",
+    base: { hp: 44, atk: 12, def: 8, spd: 16 },
+  },
+  voltsprout: {
+    id: "voltsprout", name: "Voltsprout", element: "grass", secondaryElement: "electric", role: "healer", rarity: "common",
+    emoji: "🌱⚡", image: voltsproutImg,
+    description: "Broto voltaico. Healer com punch.",
+    base: { hp: 54, atk: 9, def: 11, spd: 12 },
+  },
+  nightbloom: {
+    id: "nightbloom", name: "Nightbloom", element: "grass", secondaryElement: "shadow", role: "mage", rarity: "common",
+    emoji: "🌸🌙", image: nightbloomImg,
+    description: "Flor noturna. Mago de controle.",
+    base: { hp: 52, atk: 13, def: 10, spd: 10 },
+  },
+  voidspark: {
+    id: "voidspark", name: "Voidspark", element: "electric", secondaryElement: "shadow", role: "assassin", rarity: "common",
+    emoji: "🌑⚡", image: voidsparkImg,
+    description: "Orbe de raios sombrios. Assassino caótico.",
+    base: { hp: 44, atk: 13, def: 7, spd: 17 },
   },
 };
 
@@ -96,31 +178,11 @@ export type Item = {
 };
 
 export const ITEMS: Record<string, Item> = {
-  ration: {
-    id: "ration", name: "Ração", emoji: "🍖",
-    description: "+30 fome", priceCoins: 15,
-    effect: { hunger: 30 },
-  },
-  candy: {
-    id: "candy", name: "Doce", emoji: "🍬",
-    description: "+25 felicidade", priceCoins: 12,
-    effect: { happiness: 25 },
-  },
-  energy_drink: {
-    id: "energy_drink", name: "Energético", emoji: "⚡",
-    description: "+40 energia", priceCoins: 25,
-    effect: { energy: 40 },
-  },
-  premium_meal: {
-    id: "premium_meal", name: "Banquete Real", emoji: "🍱",
-    description: "+100 fome, +50 felicidade, +20 XP", priceGems: 3,
-    effect: { hunger: 100, happiness: 50, xp: 20 },
-  },
-  revive: {
-    id: "revive", name: "Revive", emoji: "💖",
-    description: "Cura 100% do HP instantâneo", priceGems: 5,
-    effect: { hp: 9999 },
-  },
+  ration: { id: "ration", name: "Ração", emoji: "🍖", description: "+30 fome", priceCoins: 15, effect: { hunger: 30 } },
+  candy: { id: "candy", name: "Doce", emoji: "🍬", description: "+25 felicidade", priceCoins: 12, effect: { happiness: 25 } },
+  energy_drink: { id: "energy_drink", name: "Energético", emoji: "⚡", description: "+40 energia", priceCoins: 25, effect: { energy: 40 } },
+  premium_meal: { id: "premium_meal", name: "Banquete Real", emoji: "🍱", description: "+100 fome, +50 felicidade, +20 XP", priceGems: 3, effect: { hunger: 100, happiness: 50, xp: 20 } },
+  revive: { id: "revive", name: "Revive", emoji: "💖", description: "Cura 100% do HP instantâneo", priceGems: 5, effect: { hp: 9999 } },
 };
 
 // ===== Eggs (gacha) =====
@@ -131,19 +193,30 @@ export type Egg = {
   priceCoins?: number;
   priceGems?: number;
   description: string;
-  weights: Record<string, number>; // species_id -> weight
+  weights: Record<string, number>;
 };
+
+// Helpers to build weight tables
+const ALL_COMMON = Object.values(SPECIES).filter((s) => s.rarity === "common").map((s) => s.id);
+const ALL_RARE = Object.values(SPECIES).filter((s) => s.rarity === "rare").map((s) => s.id);
+
+function makeWeights(commonW: number, rareW: number): Record<string, number> {
+  const w: Record<string, number> = {};
+  ALL_COMMON.forEach((id) => (w[id] = commonW));
+  ALL_RARE.forEach((id) => (w[id] = rareW));
+  return w;
+}
 
 export const EGGS: Record<string, Egg> = {
   basic: {
     id: "basic", name: "Ovo Comum", emoji: "🥚", priceCoins: 100,
-    description: "Espécies básicas com chances iguais",
-    weights: { flarepup: 20, aquakitty: 20, leafox: 20, voltbun: 20, shadepup: 20 },
+    description: "Maior chance de mestiços. Pequena chance de puro.",
+    weights: makeWeights(7, 2), // 10 commons × 7 = 70%, 5 rares × 2 = 10... ratio 70:10 = 87% common
   },
   rare: {
     id: "rare", name: "Ovo Raro", emoji: "🪺", priceGems: 25,
-    description: "Maior chance de Shadepup + stats melhores",
-    weights: { flarepup: 15, aquakitty: 15, leafox: 15, voltbun: 15, shadepup: 40 },
+    description: "Alta chance de puro (raro) com stats melhores.",
+    weights: makeWeights(2, 14), // 10×2=20, 5×14=70 → ~78% rare
   },
 };
 
@@ -153,7 +226,7 @@ export type Skin = {
   name: string;
   description: string;
   priceGems: number;
-  hueRotate: number; // degrees
+  hueRotate: number;
   saturate?: number;
   vipOnly?: boolean;
 };
@@ -167,7 +240,7 @@ export const SKINS: Record<string, Skin> = {
 };
 
 // ===== VIP / Gem packs =====
-export const VIP_PRICE_GEMS = 50; // 30 dias
+export const VIP_PRICE_GEMS = 50;
 export const VIP_DURATION_DAYS = 30;
 
 export const GEM_PACKS = [
@@ -185,7 +258,7 @@ export function xpForNextLevel(level: number): number {
 export function totalStats(species: string, level: number, bonus = { hp: 0, atk: 0, def: 0, spd: 0 }) {
   const s = SPECIES[species];
   if (!s) return { hp: 0, atk: 0, def: 0, spd: 0 };
-  const mult = 1 + (level - 1) * 0.12;
+  const mult = (1 + (level - 1) * 0.12) * RARITY_INFO[s.rarity].statMult;
   return {
     hp: Math.round(s.base.hp * mult) + bonus.hp,
     atk: Math.round(s.base.atk * mult) + bonus.atk,
@@ -215,4 +288,15 @@ export function skinFilter(skinId: string): string {
   const s = SKINS[skinId];
   if (!s || skinId === "default") return "none";
   return `hue-rotate(${s.hueRotate}deg) saturate(${s.saturate ?? 1})`;
+}
+
+// Defensive multiplier when an attack of `atkElement` hits a monster of `defSpecies`.
+// Hybrids take the BEST (lowest) of both elements' multipliers.
+export function defensiveMultiplier(atkElement: Element, defSpecies: string): number {
+  const sp = SPECIES[defSpecies];
+  if (!sp) return 1;
+  const m1 = TYPE_CHART[atkElement]?.[sp.element] ?? 1;
+  if (!sp.secondaryElement) return m1;
+  const m2 = TYPE_CHART[atkElement]?.[sp.secondaryElement] ?? 1;
+  return Math.min(m1, m2);
 }
