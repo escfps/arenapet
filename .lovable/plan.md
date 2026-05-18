@@ -1,130 +1,42 @@
-# Sistema de Fusão (Rank ✦1-10) + Trocas entre Jogadores
+# Skills exclusivas por pet
 
-Combinando com o sistema de raridade/skills planejado anteriormente.
+## Hoje (problema)
+Skill é definida por **role** (`ROLE_SKILLS`), então todo Tank tem "Provocação Brutal", todo Assassino tem "Lâmina Sombria", etc. As 30 espécies se resumem em 5 habilidades.
 
----
+## Proposta
+Cada espécie ganha sua **própria skill nomeada e ilustrada**, com mecânica única ou variação significativa de uma mecânica base. Vou inspirar em LoL (Garen/Yasuo/Ahri/Soraka/Zed/Thresh/Veigar/Master Yi/Lulu/Lucian etc).
 
-## Parte 1 — Rank por Fusão (✦1 a ✦10)
+### Novas mecânicas a adicionar em `battle.ts`
+Hoje existem 5 (`shield_taunt`, `heavy_strike`, `guaranteed_crit`, `aoe_magic`, `team_heal`). Adiciono **10 novas**:
 
-### Conceito
-Separado do `level` (XP de batalha). Cada bichinho tem um **rank ✦** que só sobe **fundindo 2 da mesma espécie no mesmo rank**.
+1. **lifesteal_strike** — bate forte e cura X% do dano (DPS sustain — Tigre Infernal)
+2. **execute** — dano massivo em alvo abaixo de 30% HP (Pantera Negra)
+3. **burn_dot** — aplica queimadura (X de dano/turno por 3 turnos) (Flarepup, Cinderwisp)
+4. **double_strike** — ataca 2x o alvo mais forte (Voltbun, Sparkpup)
+5. **shield_ally** — escudo num aliado + buff de DEF (Aquakitty estilo Lulu)
+6. **chain_lightning** — pula entre 3 inimigos, dano decrescente (Stormtad, Voltsprout)
+7. **silence_disable** — anula skill do alvo no próximo turno (Voidspark, Tidewraith)
+8. **berserker_rage** — buff de ATK +50% por 3 turnos, perde DEF (Gorila Titã)
+9. **revive_ally** — ressuscita 1 aliado com 30% HP (Dragão Branco, mítico)
+10. **true_damage_nuke** — dano que ignora 100% DEF e elemento (Dragão Negro)
 
-```
-2x Flarepup ✦1  →  1x Flarepup ✦2
-2x Flarepup ✦2  →  1x Flarepup ✦3
-...
-2x Flarepup ✦9  →  1x Flarepup ✦10   (precisa de 512 ✦1 no total!)
-```
+As 5 atuais ficam mas viram **variações nomeadas** (ex.: Leafox tem "shield_taunt" como "Casca de Carvalho"; Rockpup tem "shield_taunt" como "Muralha de Pedra" com cd menor).
 
-Curva de raridade exponencial (2^9 = 512 bichinhos base pra um ✦10).
+### Per-species skill
+Adiciono campo opcional `skill?: Skill` em `Species`. `battle.ts` usa `sp.skill ?? ROLE_SKILLS[role]` como fallback. Cada uma das 30 espécies recebe nome/emoji/descrição únicos. Quando duas compartilham mecânica, os números (cd, mult) diferem pra dar sabor distinto.
 
-### Multiplicador de stats por rank
-```
-✦1=1.00  ✦2=1.10  ✦3=1.22  ✦4=1.36  ✦5=1.52
-✦6=1.70  ✦7=1.90  ✦8=2.13  ✦9=2.40  ✦10=2.70
-```
-Combina com rarity × level: `base × rarityMult × rankMult × levelMult`.
+### Tela do monstro
+`monster.$id.tsx` já lê `ROLE_SKILLS[sp.role]` — passo a usar o helper `getSkill(sp)`.
 
-### Regras de fusão
-- Mesma **espécie exata** (Flarepup só funde com Flarepup)
-- Mesmo **rank exato**
-- O monstro resultante **preserva o de maior level XP** dos dois, soma 30% do XP do outro
-- Bloqueia fusão se algum dos 2 estiver no time (precisa tirar do time antes)
-- Sem custo de moedas (a raridade já é o custo)
+## Mudanças de balanceamento
+- Execute, true_damage e revive ficam só em raridades altas (epic+).
+- Burn/silence/lifesteal aparecem em raros pra dar identidade sem quebrar PvP.
+- Comuns ganham nomes próprios mas usam variações das 5 mecânicas atuais com cd/mult ajustados (pra não inflacionar).
 
-### UI
-- Nova aba/rota `/forge` (Forja) — lista bichinhos agrupados por espécie+rank, mostra pares fundíveis com botão "Fundir ✦N → ✦N+1"
-- Badge ✦N no MonsterCard (acima do nome)
-- Coleção (`/collection`) mostra o ✦ máximo já alcançado por espécie
+## Arquivos afetados
+- `src/lib/game-data.ts` — novo tipo `SkillKind` expandido, campo `skill` por species, helper `getSkill`.
+- `src/lib/battle.ts` — implementação das 10 novas mecânicas + leitura via `getSkill`.
+- `src/routes/monster.$id.tsx` — usar `getSkill(sp)`.
 
-### DB
-```sql
-ALTER TABLE monsters ADD COLUMN rank int NOT NULL DEFAULT 1;
--- CHECK via trigger: 1 ≤ rank ≤ 10
-```
-
----
-
-## Parte 2 — Trocas Diretas entre Jogadores
-
-### Fluxo (1↔1 com taxa)
-1. Player A vai em `/trade` e cria oferta: escolhe 1 monstro próprio + ID/username do destinatário + monstro alvo (opcional sugestão)
-2. Player B recebe notificação na home, abre a oferta, escolhe 1 monstro próprio para dar em troca
-3. Ambos confirmam → **taxa de 50 moedas + 5 gemas de cada lado** → troca atômica via server function
-
-### Restrições
-- Monstro não pode estar no time
-- Não pode trocar lendários (mas pode trocar puros/mestiços)
-- Não pode trocar ✦8+ (a raridade é alta demais)
-- Cooldown de 24h entre trocas com o mesmo parceiro (anti-farm)
-- Ambos jogadores precisam confirmar — auto-cancela em 24h
-
-### DB
-```sql
-CREATE TABLE trades (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  from_user_id uuid NOT NULL,
-  to_user_id uuid NOT NULL,
-  from_monster_id uuid NOT NULL REFERENCES monsters(id) ON DELETE CASCADE,
-  to_monster_id uuid REFERENCES monsters(id) ON DELETE CASCADE, -- null até B aceitar
-  status text NOT NULL DEFAULT 'pending', -- pending | accepted | completed | cancelled
-  from_confirmed boolean NOT NULL DEFAULT false,
-  to_confirmed boolean NOT NULL DEFAULT false,
-  expires_at timestamptz NOT NULL DEFAULT now() + interval '24 hours',
-  created_at timestamptz NOT NULL DEFAULT now(),
-  completed_at timestamptz
-);
--- RLS: ver apenas trades onde sou from ou to
-```
-
-### Server functions (em `src/lib/trades.functions.ts`)
-- `createTrade({ toUsername, fromMonsterId })`
-- `respondToTrade({ tradeId, withMonsterId })` — B escolhe seu monstro
-- `confirmTrade({ tradeId })` — quando ambos confirmam, executa swap atômico (atualiza `owner_id`, debita taxa de ambos)
-- `cancelTrade({ tradeId })`
-- `listMyTrades()` — pendentes + histórico
-
-### UI
-- Nova rota `/trade` com tabs: **Receber** (ofertas pendentes pra mim) / **Enviar** (minhas ofertas) / **Histórico**
-- Botão "Propor troca" → modal que pega username e seleciona monstro
-- Badge de notificação no HUD quando tem trade pendente
-
----
-
-## Parte 3 — Arquivos / tarefas
-
-```text
-src/lib/game-data.ts
-  - RANK_INFO (mult por rank) + helpers
-  - canFuse(m1, m2): regras de validação
-  - totalStats() agora aceita rank
-
-src/lib/forge.functions.ts (novo)
-  - fuseMonsters({ keepId, consumeId })
-
-src/lib/trades.functions.ts (novo)
-  - createTrade / respondToTrade / confirmTrade / cancelTrade / listMyTrades
-
-src/routes/forge.tsx (nova)
-src/routes/trade.tsx (nova)
-
-src/components/MonsterCard.tsx
-  - Badge ✦ rank
-
-src/components/HUD.tsx
-  - Link 🔨 Forja + 🔄 Trocas + badge de pending
-
-DB migration:
-  - ALTER TABLE monsters ADD COLUMN rank int DEFAULT 1
-  - CREATE TABLE trades + RLS + índices
-```
-
----
-
-## Ordem sugerida de implementação
-
-1. **DB** — adiciona `rank` em monsters + cria tabela `trades`
-2. **Fusão (Forja)** — sistema mais simples, fica funcional sozinho
-3. **Trocas** — depois, com server functions atômicas
-
-Posso seguir nessa ordem. Quer que eu também implemente o **sistema de raridade/skills/lendários** que ficou pendente antes disso, ou deixa pra depois e foca em Forja + Trocas primeiro?
+## Confirma?
+Se topar, mando tudo de uma vez. Se quiser ajustar (ex.: só pets nomeados ganham skill única e os comuns continuam role-based; ou quer mais/menos mecânicas novas), me fala antes que eu codo.
