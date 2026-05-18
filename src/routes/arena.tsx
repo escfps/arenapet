@@ -53,17 +53,33 @@ function ArenaPage() {
     if (userId) loadTeam();
   }, [userId]);
 
-  // animate log
+  // animate log com ritmo dramático (pausas maiores em momentos especiais)
   useEffect(() => {
     if (!battleLog) return;
     setShownLog([]);
     let i = 0;
-    const interval = setInterval(() => {
+    let cancelled = false;
+    function delayFor(entry: BattleLogEntry | undefined): number {
+      if (!entry) return 1400;
+      const m = entry.message;
+      // Momentos épicos: pausa longa
+      if (m.includes("EXECUÇÃO") || m.includes("VERDADEIRO") || m.includes("ressuscitado")) return 2200;
+      if (entry.crit) return 1800;
+      if (m.includes("escudo") || m.includes("queimando") || m.includes("silenciou") || m.includes("fúria")) return 1700;
+      if (m.includes("salto") || m.includes("Curou todos") || m.includes("golpe ")) return 1600;
+      // Dano por DoT é rápido pra não cansar
+      if (m.includes("sofreu") && m.includes("queimadura")) return 900;
+      return 1400; // ritmo base mais tenso
+    }
+    function tick() {
+      if (cancelled) return;
       i += 1;
-      setShownLog(battleLog.slice(0, i));
-      if (i >= battleLog.length) clearInterval(interval);
-    }, 800);
-    return () => clearInterval(interval);
+      setShownLog(battleLog!.slice(0, i));
+      if (i >= battleLog!.length) return;
+      setTimeout(tick, delayFor(battleLog![i]));
+    }
+    const initial = setTimeout(tick, delayFor(battleLog[0]));
+    return () => { cancelled = true; clearTimeout(initial); };
   }, [battleLog]);
 
   async function findOpponent() {
