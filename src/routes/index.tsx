@@ -31,6 +31,7 @@ function PatioPage() {
   const [search, setSearch] = useState("");
   const [rarityFilter, setRarityFilter] = useState<Rarity | "all">("all");
   const [elementFilter, setElementFilter] = useState<Element | "all">("all");
+  const [groupModal, setGroupModal] = useState<string | null>(null);
 
   const loadMonsters = useCallback(async () => {
     if (!userId) return;
@@ -58,6 +59,23 @@ function PatioPage() {
       return true;
     });
   }, [monsters, search, rarityFilter, elementFilter]);
+
+  const groupedSpecies = useMemo(() => {
+    const map = new Map<string, MonsterRow[]>();
+    for (const m of filteredMonsters) {
+      if (!map.has(m.species)) map.set(m.species, []);
+      map.get(m.species)!.push(m);
+    }
+    return Array.from(map.entries()).map(([species, list]) => {
+      const sorted = [...list].sort((a, b) => {
+        if (a.in_team !== b.in_team) return a.in_team ? -1 : 1;
+        return (b.rank ?? 1) - (a.rank ?? 1);
+      });
+      return { species, list: sorted, rep: sorted[0], teamCount: list.filter((x) => x.in_team).length };
+    });
+  }, [filteredMonsters]);
+
+  const groupModalList = groupModal ? (groupedSpecies.find((g) => g.species === groupModal)?.list ?? []) : [];
 
   async function openWelcomeChest() {
     if (!userId || !profile || hatching) return;
@@ -211,28 +229,82 @@ function PatioPage() {
                 <div className="text-center text-white/70 text-sm py-8">Nenhum monstro com esses filtros.</div>
               ) : (
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-                  {filteredMonsters.map((m) => (
-                    <div key={m.id} className="space-y-2">
-                      <MonsterCard
-                        monster={m}
-                        onClick={() => navigate({ to: "/monster/$id", params: { id: m.id } })}
-                      />
-                      <button
-                        onClick={() => toggleTeam(m)}
-                        className={`w-full text-[11px] font-bold rounded-lg py-1.5 transition ${
-                          m.in_team
-                            ? "bg-yellow-400 text-yellow-950 hover:bg-yellow-300"
-                            : "bg-white/15 text-white hover:bg-white/25"
-                        }`}
-                      >
-                        {m.in_team ? "✓ No time" : "+ Time"}
-                      </button>
-                    </div>
-                  ))}
+                  {groupedSpecies.map((g) => {
+                    const count = g.list.length;
+                    const handleCardClick = () => {
+                      if (count === 1) navigate({ to: "/monster/$id", params: { id: g.rep.id } });
+                      else setGroupModal(g.species);
+                    };
+                    return (
+                      <div key={g.species} className="space-y-2">
+                        <div className="relative">
+                          <MonsterCard monster={g.rep} onClick={handleCardClick} />
+                          {count > 1 && (
+                            <div className="absolute top-2 right-2 z-10 px-2 py-1 rounded-lg bg-black/80 text-yellow-300 text-xs font-extrabold border border-yellow-300/50 shadow-lg pointer-events-none">
+                              x{count}
+                            </div>
+                          )}
+                        </div>
+                        {count === 1 ? (
+                          <button
+                            onClick={() => toggleTeam(g.rep)}
+                            className={`w-full text-[11px] font-bold rounded-lg py-1.5 transition ${
+                              g.rep.in_team
+                                ? "bg-yellow-400 text-yellow-950 hover:bg-yellow-300"
+                                : "bg-white/15 text-white hover:bg-white/25"
+                            }`}
+                          >
+                            {g.rep.in_team ? "✓ No time" : "+ Time"}
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => setGroupModal(g.species)}
+                            className="w-full text-[11px] font-bold rounded-lg py-1.5 transition bg-white/15 text-white hover:bg-white/25"
+                          >
+                            Ver todos ({g.teamCount}/{count} no time)
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </section>
       </div>
+
+      {groupModal && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in" onClick={() => setGroupModal(null)}>
+          <div className="max-w-3xl w-full max-h-[85vh] overflow-y-auto rounded-3xl bg-gradient-to-br from-slate-900 to-slate-800 border-2 border-white/20 shadow-2xl p-5 text-white animate-in zoom-in" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-extrabold">
+                {SPECIES[groupModal]?.emoji} {SPECIES[groupModal]?.name}
+                <span className="ml-2 text-sm font-bold text-white/60">x{groupModalList.length}</span>
+              </h2>
+              <button onClick={() => setGroupModal(null)} className="text-white/70 hover:text-white text-2xl leading-none">×</button>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+              {groupModalList.map((m) => (
+                <div key={m.id} className="space-y-2">
+                  <MonsterCard
+                    monster={m}
+                    onClick={() => { setGroupModal(null); navigate({ to: "/monster/$id", params: { id: m.id } }); }}
+                  />
+                  <button
+                    onClick={() => toggleTeam(m)}
+                    className={`w-full text-[11px] font-bold rounded-lg py-1.5 transition ${
+                      m.in_team
+                        ? "bg-yellow-400 text-yellow-950 hover:bg-yellow-300"
+                        : "bg-white/15 text-white hover:bg-white/25"
+                    }`}
+                  >
+                    {m.in_team ? "✓ No time" : "+ Time"}
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {!profile.welcome_chest_claimed && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
