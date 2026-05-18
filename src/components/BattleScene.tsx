@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import type { BattleLogEntry } from "@/lib/battle";
-import { SPECIES, ELEMENT_COLORS, skinFilter, totalStats } from "@/lib/game-data";
+import { SPECIES, ELEMENT_COLORS, RARITY_INFO, MAX_RANK, skinFilter, totalStats } from "@/lib/game-data";
 import type { MonsterRow } from "./MonsterCard";
 
 type Team = (MonsterRow & { owner_id: string })[];
