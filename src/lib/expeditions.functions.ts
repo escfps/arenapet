@@ -52,7 +52,7 @@ export const startExpedition = createServerFn({ method: "POST" })
     }
 
     // Pre-roll rewards so the player sees them when claiming (gems/rations are RNG)
-    const reward = computeExpeditionReward(duration, monster.level ?? 1, monster.rank ?? 1);
+    const reward = computeExpeditionReward(duration, monster.rank ?? 1);
 
     const now = Date.now();
     const endsAt = new Date(now + duration.minutes * 60_000).toISOString();
