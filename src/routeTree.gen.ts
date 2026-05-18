@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as CollectionRouteImport } from './routes/collection'
 import { Route as ArenaRouteImport } from './routes/arena'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as MonsterIdRouteImport } from './routes/monster.$id'
@@ -23,6 +24,11 @@ const ShopRoute = ShopRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CollectionRoute = CollectionRouteImport.update({
+  id: '/collection',
+  path: '/collection',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ArenaRoute = ArenaRouteImport.update({
@@ -44,6 +50,7 @@ const MonsterIdRoute = MonsterIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/arena': typeof ArenaRoute
+  '/collection': typeof CollectionRoute
   '/login': typeof LoginRoute
   '/shop': typeof ShopRoute
   '/monster/$id': typeof MonsterIdRoute
@@ -51,6 +58,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/arena': typeof ArenaRoute
+  '/collection': typeof CollectionRoute
   '/login': typeof LoginRoute
   '/shop': typeof ShopRoute
   '/monster/$id': typeof MonsterIdRoute
@@ -59,21 +67,36 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/arena': typeof ArenaRoute
+  '/collection': typeof CollectionRoute
   '/login': typeof LoginRoute
   '/shop': typeof ShopRoute
   '/monster/$id': typeof MonsterIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/arena' | '/login' | '/shop' | '/monster/$id'
+  fullPaths:
+    | '/'
+    | '/arena'
+    | '/collection'
+    | '/login'
+    | '/shop'
+    | '/monster/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/arena' | '/login' | '/shop' | '/monster/$id'
-  id: '__root__' | '/' | '/arena' | '/login' | '/shop' | '/monster/$id'
+  to: '/' | '/arena' | '/collection' | '/login' | '/shop' | '/monster/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/arena'
+    | '/collection'
+    | '/login'
+    | '/shop'
+    | '/monster/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ArenaRoute: typeof ArenaRoute
+  CollectionRoute: typeof CollectionRoute
   LoginRoute: typeof LoginRoute
   ShopRoute: typeof ShopRoute
   MonsterIdRoute: typeof MonsterIdRoute
@@ -93,6 +116,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/collection': {
+      id: '/collection'
+      path: '/collection'
+      fullPath: '/collection'
+      preLoaderRoute: typeof CollectionRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/arena': {
@@ -122,6 +152,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ArenaRoute: ArenaRoute,
+  CollectionRoute: CollectionRoute,
   LoginRoute: LoginRoute,
   ShopRoute: ShopRoute,
   MonsterIdRoute: MonsterIdRoute,
