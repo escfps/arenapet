@@ -348,12 +348,23 @@ function ArenaLineup({
         const isActor = fx.actor === key && !dead;
         const isTarget = fx.target === key;
         const hasSkillFx = fx.skillFx && (fx.targets.includes(key) || (isActor && (fx.skillFx === "fury" || fx.skillFx === "shield")));
+        // Algum pet está em foco nesta cena?
+        const sceneHasFocus = fx.actor !== null || fx.target !== null;
+        const isFocused = isActor || isTarget;
         // Avança em direção ao inimigo
         const lunge = isActor ? (mirrored ? "-translate-x-6 -translate-y-2" : "translate-x-6 -translate-y-2") : "";
+        // Modo câmera: ator cresce muito, alvo cresce um pouco, resto encolhe e desfoca
+        const cameraZoom = isActor
+          ? "scale-[1.35] z-30"
+          : isTarget
+          ? "scale-110 z-20"
+          : sceneHasFocus
+          ? "scale-90 opacity-60 blur-[1px] z-0"
+          : "";
         return (
           <div
             key={m.id}
-            className={`relative transition-all duration-300 ease-out ${lunge} ${
+            className={`relative transition-all duration-300 ease-out ${cameraZoom} ${lunge} ${
               dead ? "opacity-20 grayscale rotate-90" : ""
             } ${isTarget ? "animate-battle-shake" : ""}`}
           >
