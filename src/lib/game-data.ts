@@ -32,6 +32,8 @@ import tubaraoAbissalImg from "@/assets/monsters/tubarao_abissal.png";
 import polvoVenenosoImg from "@/assets/monsters/polvo_venenoso.png";
 import cobraSangrentaImg from "@/assets/monsters/cobra_sangrenta.png";
 import aguiaCegaImg from "@/assets/monsters/aguia_cega.png";
+import fenixVermelhaImg from "@/assets/monsters/fenix_vermelha.png";
+import fenixNegraImg from "@/assets/monsters/fenix_negra.png";
 
 export type Element = "fire" | "water" | "grass" | "electric" | "shadow" | "earth";
 export type Role = "tank" | "dps" | "assassin" | "mage" | "healer";
@@ -87,7 +89,9 @@ export type SkillKind =
   | "revive_ally"       // healer — ressuscita um aliado com 30% HP (Zilean)
   | "bleed_dot"         // dps — sangramento físico escala com ATK (Darius)
   | "blind_debuff"      // mago — cega TODOS inimigos: 50% miss em ataques básicos por 3 turnos
-  | "true_damage_nuke"; // mítico — dano puro ignora DEF e elemento (Vayne ult)
+  | "true_damage_nuke"  // mítico — dano puro ignora DEF e elemento (Vayne ult)
+  | "phoenix_rage"      // mítico — PASSIVA: quanto mais HP perde, mais ATK ganha (até +120%)
+  | "phoenix_growth";   // mítico — PASSIVA: cada dano causado vira HP máx + cura permanente
 
 export type Skill = {
   name: string;
@@ -381,6 +385,20 @@ export const SPECIES: Record<string, Species> = {
     description: "Dragão obsidiana de olhos vermelhos. Dano apocalíptico que devasta inimigos.",
     base: { hp: 75, atk: 24, def: 14, spd: 15, int: 14 },
     skill: { name: "Apocalipse Obsidiana", emoji: "🐲", kind: "true_damage_nuke", cooldown: 5, description: "Sopro apocalíptico: dano VERDADEIRO num alvo (~ATK×3, ignora 100% DEF e elemento)." },
+  },
+  fenix_vermelha: {
+    id: "fenix_vermelha", name: "Fênix Vermelha", element: "fire", role: "dps", rarity: "mythic",
+    emoji: "🔥🦅", image: fenixVermelhaImg,
+    description: "Fênix carmesim envolta em chamas eternas. Quanto mais sofre, mais perigosa fica.",
+    base: { hp: 70, atk: 20, def: 12, spd: 15, int: 12 },
+    skill: { name: "Brasa Renascida", emoji: "🔥", kind: "phoenix_rage", cooldown: 4, description: "PASSIVA: cada 10% de HP perdido = +12% ATK (até +120% com 1 HP). ATIVA: golpe de fogo (2× dano)." },
+  },
+  fenix_negra: {
+    id: "fenix_negra", name: "Fênix Negra", element: "shadow", role: "dps", rarity: "mythic",
+    emoji: "🌑🦅", image: fenixNegraImg,
+    description: "Fênix obsidiana de chamas violetas. Devora a essência dos inimigos e cresce sem fim.",
+    base: { hp: 72, atk: 20, def: 13, spd: 14, int: 12 },
+    skill: { name: "Comunhão Sombria", emoji: "🌑", kind: "phoenix_growth", cooldown: 4, description: "PASSIVA: cada dano causado vira +20% HP máx e cura (permanente!). ATIVA: golpe sombrio (2× dano)." },
   },
 };
 

@@ -77,6 +77,21 @@ function getElement(species: string): Element {
   return SPECIES[species]?.element ?? "shadow";
 }
 
+// ===== PASSIVAS DAS FÊNIX MÍTICAS =====
+// Fênix Vermelha: cada 10% HP perdido = +12% ATK (cap +120% com 1 HP)
+function phoenixAtkBonus(attacker: Live): number {
+  if (attacker.species !== "fenix_vermelha") return 1;
+  const hpLostPct = 1 - attacker.current / Math.max(1, attacker.maxHp);
+  return 1 + hpLostPct * 1.2;
+}
+// Fênix Negra: 20% do dano causado vira HP máx adicional + cura
+function phoenixOnDamageDealt(attacker: Live, dmg: number) {
+  if (attacker.species !== "fenix_negra" || dmg <= 0) return;
+  const grow = Math.max(1, Math.round(dmg * 0.20));
+  attacker.maxHp += grow;
+  attacker.current = Math.min(attacker.maxHp, attacker.current + grow);
+}
+
 function rng(seed: number) {
   return () => {
     seed = (seed * 9301 + 49297) % 233280;
@@ -366,7 +381,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
         }
 
         // ===== NOVAS MECÂNICAS =====
-        const effAtk = attacker.atk * (1 + attacker.rageAtkMult);
+        const effAtk = attacker.atk * (1 + attacker.rageAtkMult) * phoenixAtkBonus(attacker);
         const effInt = attacker.int;
         const tgtEffDef = (t: Live) => t.def * (1 + t.defBuffPct);
 
@@ -626,6 +641,53 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           }
           return;
         }
+
+        // ===== FÊNIX VERMELHA — Brasa Renascida =====
+        // Golpe de fogo amplificado pela passiva (effAtk já inclui phoenixAtkBonus)
+        if (skill.kind === "phoenix_rage") {
+          const target = pickTarget(attacker, enemies);
+          if (target) {
+            const eff = defensiveMultiplier(getElement(attacker.species), target.species);
+            const base = Math.max(1, effAtk * 2 - tgtEffDef(target));
+            const dmg = Math.max(1, Math.round(base * eff * 2.0 * skillMult));
+            applyDamage(target, dmg);
+            const bonusPct = Math.round((phoenixAtkBonus(attacker) - 1) * 100);
+            log.push({
+              turn, actor: side, actorName: attacker.name, targetName: target.name,
+              damage: dmg, crit: true, effective: eff, remainingHp: target.current, targetShield: target.shield,
+              message: `${skill.emoji} ${attacker.name} usou ${skill.name}: ${dmg} em ${target.name} (🔥 +${bonusPct}% ATK por HP perdido!)`,
+            });
+            if (target.current <= 0) {
+              target.lastFallenAt = turn;
+              log.push({ turn, actor: side, actorName: attacker.name, targetName: target.name, damage: 0, crit: false, effective: 1, remainingHp: 0, message: `💀 ${target.name} foi incinerado!` });
+            }
+          }
+          return;
+        }
+
+        // ===== FÊNIX NEGRA — Comunhão Sombria =====
+        // Golpe sombrio: dano causado vira HP máx adicional + cura
+        if (skill.kind === "phoenix_growth") {
+          const target = pickTarget(attacker, enemies);
+          if (target) {
+            const eff = defensiveMultiplier(getElement(attacker.species), target.species);
+            const base = Math.max(1, effAtk * 2 - tgtEffDef(target));
+            const dmg = Math.max(1, Math.round(base * eff * 2.0 * skillMult));
+            applyDamage(target, dmg);
+            phoenixOnDamageDealt(attacker, dmg);
+            const grown = Math.max(1, Math.round(dmg * 0.20));
+            log.push({
+              turn, actor: side, actorName: attacker.name, targetName: target.name,
+              damage: dmg, crit: true, effective: eff, remainingHp: target.current, targetShield: target.shield,
+              message: `${skill.emoji} ${attacker.name} usou ${skill.name}: ${dmg} em ${target.name} (🌑 absorveu +${grown} HP máx!)`,
+            });
+            if (target.current <= 0) {
+              target.lastFallenAt = turn;
+              log.push({ turn, actor: side, actorName: attacker.name, targetName: target.name, damage: 0, crit: false, effective: 1, remainingHp: 0, message: `💀 ${target.name} teve a essência devorada!` });
+            }
+          }
+          return;
+        }
       }
       if (attacker.skillCd > 0) attacker.skillCd -= 1;
 
@@ -683,12 +745,15 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
       const critChance = attacker.role === "assassin" ? 0.35 : 0.12;
       const crit = rand() < critChance;
       const defUsed = attacker.role === "mage" ? target.def * 0.4 : target.def;
-      const atkStat = attacker.role === "mage" ? attacker.int : attacker.atk;
+      const atkStat = attacker.role === "mage"
+        ? attacker.int
+        : attacker.atk * phoenixAtkBonus(attacker);
       let base = Math.max(1, atkStat * 2 - defUsed);
       if (attacker.role === "dps") base *= 1.15;
       const variance = 0.85 + rand() * 0.3;
       const damage = Math.max(1, Math.round(base * eff * variance * (crit ? 1.7 : 1)));
       applyDamage(target, damage);
+      phoenixOnDamageDealt(attacker, damage);
 
       let msg = `${attacker.name} atacou ${target.name} causando ${damage} de dano`;
       if (crit) msg += " (CRÍTICO!)";
