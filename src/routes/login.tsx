@@ -83,7 +83,7 @@ function LoginPage() {
             {mode === "signup" && (
               <input
                 value={username} onChange={(e) => setUsername(e.target.value)}
-                placeholder="Nome do fazendeiro"
+                placeholder="Nome do treinador"
                 className="w-full px-4 py-3 rounded-lg bg-muted border-2 border-border focus:border-primary outline-none"
               />
             )}
