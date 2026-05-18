@@ -194,6 +194,7 @@ export type Database = {
           updated_at: string
           username: string
           vip_until: string | null
+          welcome_chest_claimed: boolean
           wins: number
           xp: number
         }
@@ -211,6 +212,7 @@ export type Database = {
           updated_at?: string
           username: string
           vip_until?: string | null
+          welcome_chest_claimed?: boolean
           wins?: number
           xp?: number
         }
@@ -228,6 +230,7 @@ export type Database = {
           updated_at?: string
           username?: string
           vip_until?: string | null
+          welcome_chest_claimed?: boolean
           wins?: number
           xp?: number
         }
