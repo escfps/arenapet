@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TradeRouteImport } from './routes/trade'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as RankingRouteImport } from './routes/ranking'
+import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgeRouteImport } from './routes/forge'
 import { Route as ExpeditionsRouteImport } from './routes/expeditions'
@@ -33,6 +34,11 @@ const ShopRoute = ShopRouteImport.update({
 const RankingRoute = RankingRouteImport.update({
   id: '/ranking',
   path: '/ranking',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -78,6 +84,7 @@ export interface FileRoutesByFullPath {
   '/expeditions': typeof ExpeditionsRoute
   '/forge': typeof ForgeRoute
   '/login': typeof LoginRoute
+  '/profile': typeof ProfileRoute
   '/ranking': typeof RankingRoute
   '/shop': typeof ShopRoute
   '/trade': typeof TradeRoute
@@ -90,6 +97,7 @@ export interface FileRoutesByTo {
   '/expeditions': typeof ExpeditionsRoute
   '/forge': typeof ForgeRoute
   '/login': typeof LoginRoute
+  '/profile': typeof ProfileRoute
   '/ranking': typeof RankingRoute
   '/shop': typeof ShopRoute
   '/trade': typeof TradeRoute
@@ -103,6 +111,7 @@ export interface FileRoutesById {
   '/expeditions': typeof ExpeditionsRoute
   '/forge': typeof ForgeRoute
   '/login': typeof LoginRoute
+  '/profile': typeof ProfileRoute
   '/ranking': typeof RankingRoute
   '/shop': typeof ShopRoute
   '/trade': typeof TradeRoute
@@ -117,6 +126,7 @@ export interface FileRouteTypes {
     | '/expeditions'
     | '/forge'
     | '/login'
+    | '/profile'
     | '/ranking'
     | '/shop'
     | '/trade'
@@ -129,6 +139,7 @@ export interface FileRouteTypes {
     | '/expeditions'
     | '/forge'
     | '/login'
+    | '/profile'
     | '/ranking'
     | '/shop'
     | '/trade'
@@ -141,6 +152,7 @@ export interface FileRouteTypes {
     | '/expeditions'
     | '/forge'
     | '/login'
+    | '/profile'
     | '/ranking'
     | '/shop'
     | '/trade'
@@ -154,6 +166,7 @@ export interface RootRouteChildren {
   ExpeditionsRoute: typeof ExpeditionsRoute
   ForgeRoute: typeof ForgeRoute
   LoginRoute: typeof LoginRoute
+  ProfileRoute: typeof ProfileRoute
   RankingRoute: typeof RankingRoute
   ShopRoute: typeof ShopRoute
   TradeRoute: typeof TradeRoute
@@ -181,6 +194,13 @@ declare module '@tanstack/react-router' {
       path: '/ranking'
       fullPath: '/ranking'
       preLoaderRoute: typeof RankingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -242,6 +262,7 @@ const rootRouteChildren: RootRouteChildren = {
   ExpeditionsRoute: ExpeditionsRoute,
   ForgeRoute: ForgeRoute,
   LoginRoute: LoginRoute,
+  ProfileRoute: ProfileRoute,
   RankingRoute: RankingRoute,
   ShopRoute: ShopRoute,
   TradeRoute: TradeRoute,
@@ -250,13 +271,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
