@@ -57,23 +57,31 @@ function MonsterPage() {
     });
     const updates: Partial<MonsterRow> = {};
     if (item.effect.hunger) updates.hunger = Math.min(100, monster.hunger + item.effect.hunger);
-    if (item.effect.energy) updates.energy = Math.min(100, monster.energy + item.effect.energy);
+    if (item.effect.energy) {
+      const e = computeBattleEnergy(monster.battle_energy, monster.battle_energy_at);
+      updates.battle_energy = Math.min(MAX_BATTLE_ENERGY, e.energy + item.effect.energy);
+      updates.battle_energy_at = e.nextStoredAt;
+    }
     if (item.effect.happiness) updates.happiness = Math.min(100, monster.happiness + item.effect.happiness);
     await patchMonster(updates);
     toast.success(`Usou ${item.emoji} ${item.name}`);
   }
 
+  const TRAIN_ENERGY_COST = 2;
+  const PLAY_ENERGY_COST = 1;
+
   async function train(stat: "atk" | "def" | "spd" | "hp" | "int") {
     if (!profile || !monster) return;
     const cost = 20 + (monster.rank ?? 1) * 10;
-    const energyCost = 15;
     if (profile.coins < cost) { toast.error("Moedas insuficientes!"); return; }
-    if (monster.energy < energyCost) { toast.error("Sem energia! Dê um energético."); return; }
+    const e = computeBattleEnergy(monster.battle_energy, monster.battle_energy_at);
+    if (e.energy < TRAIN_ENERGY_COST) { toast.error("Sem energia! Dê um energético ou espere regenerar."); return; }
     if (monster.hunger < 20) { toast.error("Está com fome! Alimente primeiro."); return; }
     await patch({ coins: profile.coins - cost });
     const gain = stat === "hp" ? 3 + Math.floor(Math.random() * 3) : 1 + Math.floor(Math.random() * 2);
     const updates: Partial<MonsterRow> = {
-      energy: monster.energy - energyCost,
+      battle_energy: e.energy - TRAIN_ENERGY_COST,
+      battle_energy_at: e.nextStoredAt,
       hunger: monster.hunger - 5,
     };
     updates[stat] = (monster[stat] ?? 0) + gain;
@@ -83,10 +91,12 @@ function MonsterPage() {
 
   async function play() {
     if (!monster) return;
-    if (monster.energy < 10) { toast.error("Sem energia!"); return; }
+    const e = computeBattleEnergy(monster.battle_energy, monster.battle_energy_at);
+    if (e.energy < PLAY_ENERGY_COST) { toast.error("Sem energia!"); return; }
     await patchMonster({
       happiness: Math.min(100, monster.happiness + 20),
-      energy: monster.energy - 10,
+      battle_energy: e.energy - PLAY_ENERGY_COST,
+      battle_energy_at: e.nextStoredAt,
     });
     toast.success("Que divertido! 🎉 +20 felicidade");
   }
