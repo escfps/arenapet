@@ -359,11 +359,11 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Fúria Titânica", emoji: "🦍", kind: "berserker_rage", cooldown: 5, description: "Bate no peito: +70% ATK por 3 turnos (perde 30% DEF). Pra trocar dano." },
   },
   aguia_cega: {
-    id: "aguia_cega", name: "Águia Ofuscante", element: "earth", secondaryElement: "electric", role: "mage", rarity: "epic",
+    id: "aguia_cega", name: "Águia Ofuscante", element: "earth", secondaryElement: "electric", role: "assassin", rarity: "epic",
     emoji: "🦅", image: aguiaCegaImg,
-    description: "Águia marrom ancestral das montanhas. Seu olhar dourado cega os inimigos, fazendo-os errar ataques.",
-    base: { hp: 60, atk: 14, def: 11, spd: 17, int: 18 },
-    skill: { name: "Visão Ofuscante", emoji: "😵‍💫", kind: "blind_debuff", cooldown: 4, description: "Solta um clarão dourado: dano agora + cega TODOS os inimigos por 3 turnos (50% de chance de errar ataques básicos)." },
+    description: "Águia marrom ancestral das montanhas. Ágil e implacável: mergulha em alta velocidade e cega os inimigos com um clarão dourado.",
+    base: { hp: 55, atk: 18, def: 9, spd: 22, int: 10 },
+    skill: { name: "Visão Ofuscante", emoji: "😵‍💫", kind: "blind_debuff", cooldown: 4, description: "Mergulha solta um clarão dourado: dano agora + cega TODOS os inimigos por 3 turnos (50% de chance de errar ataques básicos)." },
   },
 
 
