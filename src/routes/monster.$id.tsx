@@ -329,7 +329,7 @@ function MonsterPage() {
               className="p-4 rounded-2xl bg-pink-500/90 hover:bg-pink-400 text-white font-extrabold text-left transition shadow-lg"
             >
               🎮 Brincar
-              <div className="text-xs font-normal opacity-90">Grátis • +20 felicidade • -10 energia</div>
+              <div className="text-xs font-normal opacity-90">Grátis • +20 felicidade • -{PLAY_ENERGY_COST} energia</div>
             </button>
             {Object.values(ITEMS).map((it) => (
               <button
