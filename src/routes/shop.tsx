@@ -82,7 +82,53 @@ function ShopPage() {
     }
   }
 
-  async function buySkin(skinId: string) {
+  async function openChest(tier: ChestTier) {
+    if (!profile || !userId) return;
+    const c = CHESTS[tier];
+    if (c.priceCoins && profile.coins < c.priceCoins) { toast.error("Moedas insuficientes!"); return; }
+    if (c.priceGems && profile.gems < c.priceGems) { toast.error("Gemas insuficientes!"); return; }
+
+    const reward = rollChest(tier);
+
+    // debita preço + credita moedas/gemas
+    await patch({
+      coins: profile.coins - (c.priceCoins ?? 0) + reward.coins,
+      gems: profile.gems - (c.priceGems ?? 0) + reward.gems,
+    });
+
+    // rações no inventário (upsert somando)
+    if (reward.rations > 0) {
+      const { data: row } = await supabase
+        .from("inventory")
+        .select("quantity")
+        .eq("user_id", userId)
+        .eq("item_type", "ration")
+        .maybeSingle();
+      await supabase
+        .from("inventory")
+        .upsert(
+          { user_id: userId, item_type: "ration", quantity: (row?.quantity ?? 0) + reward.rations },
+          { onConflict: "user_id,item_type" }
+        );
+    }
+
+    // pet (se sorteado)
+    if (reward.petSpecies) {
+      const sp = SPECIES[reward.petSpecies];
+      await supabase.from("monsters").insert({
+        owner_id: userId,
+        species: reward.petSpecies,
+        name: sp.name,
+        hp: sp.base.hp,
+        atk: sp.base.atk,
+        def: sp.base.def,
+        spd: sp.base.spd,
+      });
+    }
+
+    setChestResult({ tier, reward });
+  }
+
     if (!profile || !userId) return;
     const sk = SKINS[skinId];
     if (ownedSkins.includes(skinId)) { toast("Você já tem essa skin"); return; }
