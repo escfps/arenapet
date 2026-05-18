@@ -161,6 +161,14 @@ export const SPECIES: Record<string, Species> = {
     base: { hp: 55, atk: 16, def: 9, spd: 12, int: 22 },
     skill: { name: "Uivo Silenciador", emoji: "🌑", kind: "silence_disable", cooldown: 4, description: "Dano mágico no alvo e silencia (anula a próxima skill dele)." },
   },
+  rato_bomba: {
+    id: "rato_bomba", name: "Rato Bomba", element: "fire", role: "dps", rarity: "rare",
+    emoji: "💣", image: ratoBombaImg,
+    description: "Ratinho kamikaze de pavio curto. Frágil, mas quando cai, explode em chamas — e leva o inimigo mais ferido junto.",
+    base: { hp: 40, atk: 16, def: 7, spd: 17, int: 8 },
+    skill: { name: "Pavio Aceso", emoji: "💣", kind: "heavy_strike", cooldown: 3, description: "Investida explosiva: 2.1× dano num alvo. PASSIVA: ao ser derrotado, EXPLODE e mata o inimigo com menos HP." },
+  },
+
 
   // ===== MESTIÇOS (comuns) =====
   steamcub: {
