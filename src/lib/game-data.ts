@@ -336,9 +336,9 @@ export const SPECIES: Record<string, Species> = {
   cobra_sangrenta: {
     id: "cobra_sangrenta", name: "Cobra Sangrenta", element: "shadow", secondaryElement: "grass", role: "dps", rarity: "super_rare",
     emoji: "🐍", image: cobraSangrentaImg,
-    description: "Víbora ancestral de presas afiadas. Sua mordida rasga a carne e provoca hemorragia letal turno após turno.",
-    base: { hp: 54, atk: 19, def: 9, spd: 16, int: 9 },
-    skill: { name: "Presa Dilacerante", emoji: "🩸", kind: "bleed_dot", cooldown: 3, description: "Crava as presas no alvo: dano físico agora + sangramento (ATK×0.55) por 3 turnos." },
+    description: "Víbora ancestral de presas afiadas. Sua mordida provoca hemorragia turno após turno.",
+    base: { hp: 50, atk: 15, def: 9, spd: 13, int: 8 },
+    skill: { name: "Presa Dilacerante", emoji: "🩸", kind: "bleed_dot", cooldown: 3, description: "Crava as presas no alvo: dano físico agora + sangramento (ATK×0.35) por 3 turnos." },
   },
 
   // ===== ÉPICOS =====

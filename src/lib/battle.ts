@@ -440,9 +440,9 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           const target = pickTarget(attacker, enemies);
           if (target) {
             const eff = defensiveMultiplier(getElement(attacker.species), target.species);
-            const baseHit = Math.max(1, Math.round((effAtk * 1.6 - tgtEffDef(target) * 0.4) * eff * skillMult));
+            const baseHit = Math.max(1, Math.round((effAtk * 1.1 - tgtEffDef(target) * 0.6) * eff * skillMult));
             applyDamage(target, baseHit);
-            const dot = Math.max(1, Math.round(effAtk * 0.55 * skillMult));
+            const dot = Math.max(1, Math.round(effAtk * 0.35 * skillMult));
             target.bleedDmg = Math.max(target.bleedDmg, dot);
             target.bleedTurns = Math.max(target.bleedTurns, 3);
             log.push({
