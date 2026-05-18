@@ -134,6 +134,7 @@ export type Database = {
           skin: string
           spd: number
           species: string
+          team_position: number
         }
         Insert: {
           atk?: number
@@ -155,6 +156,7 @@ export type Database = {
           skin?: string
           spd?: number
           species: string
+          team_position?: number
         }
         Update: {
           atk?: number
@@ -176,6 +178,7 @@ export type Database = {
           skin?: string
           spd?: number
           species?: string
+          team_position?: number
         }
         Relationships: []
       }
