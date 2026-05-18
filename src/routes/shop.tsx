@@ -5,7 +5,9 @@ import {
   EGGS, SKINS, GEM_PACKS, SPECIES, ELEMENT_COLORS,
   VIP_PRICE_GEMS, VIP_DURATION_DAYS,
   rollEgg, skinFilter, isVip,
+  MAX_BATTLE_ENERGY, ENERGY_REFILL_GEM_COST, ENERGY_REFILL_ALL_GEM_COST, computeBattleEnergy,
 } from "@/lib/game-data";
+import type { MonsterRow } from "@/components/MonsterCard";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
 import { toast, Toaster } from "sonner";
