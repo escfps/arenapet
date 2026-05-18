@@ -255,8 +255,35 @@ export function BattleScene({
       {/* Vinheta escura nas bordas pra contraste */}
       <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-black/10 via-transparent to-black/40" />
 
+      {/* === Faixa de nicks dos jogadores === */}
+      {(playerAName || playerBName) && (
+        <div className="relative px-4 pt-3 grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+          <div className="flex flex-col items-start">
+            <div className="px-3 py-1 rounded-full bg-black/60 backdrop-blur-sm border border-white/20 text-white font-extrabold text-sm shadow-lg truncate max-w-full">
+              {playerAName ?? "Você"}
+            </div>
+            {playerATier && (
+              <div className="mt-1 px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-black text-[10px] font-extrabold shadow">
+                🏆 {playerATier}
+              </div>
+            )}
+          </div>
+          <div className="text-white font-black text-lg drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">VS</div>
+          <div className="flex flex-col items-end">
+            <div className="px-3 py-1 rounded-full bg-black/60 backdrop-blur-sm border border-white/20 text-white font-extrabold text-sm shadow-lg truncate max-w-full">
+              {playerBName ?? "Oponente"}
+            </div>
+            {playerBTier && (
+              <div className="mt-1 px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-black text-[10px] font-extrabold shadow">
+                🏆 {playerBTier}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* === Cards (status) em cima === */}
-      <div className="relative px-4 pt-4 pb-2 bg-gradient-to-b from-black/50 to-transparent">
+      <div className="relative px-4 pt-3 pb-2 bg-gradient-to-b from-black/50 to-transparent">
         <div className="grid grid-cols-2 gap-3">
           <SideColumn team={teamA} side="a" hp={hp} shields={shields} fx={fx} statuses={statuses} />
           <SideColumn team={teamB} side="b" hp={hp} shields={shields} fx={fx} statuses={statuses} mirrored />
