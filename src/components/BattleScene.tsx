@@ -107,12 +107,14 @@ function SideColumn({
   team,
   side,
   hp,
+  shields,
   fx,
   mirrored,
 }: {
   team: Team;
   side: "a" | "b";
   hp: HpMap;
+  shields: ShieldMap;
   fx: Fx;
   mirrored?: boolean;
 }) {
@@ -124,6 +126,8 @@ function SideColumn({
         const key = `${side}:${m.name}`;
         const h = hp.get(key) ?? { cur: 0, max: 1 };
         const pct = Math.max(0, Math.min(100, (h.cur / h.max) * 100));
+        const shield = shields.get(key) ?? 0;
+        const shieldPct = Math.max(0, Math.min(100, (shield / h.max) * 100));
         const dead = h.cur <= 0;
         const isActor = fx.actor === key && !dead;
         const isTarget = fx.target === key;
@@ -162,8 +166,19 @@ function SideColumn({
                     style={{ width: `${pct}%` }}
                   />
                 </div>
-                <div className="text-[10px] text-white/90 font-bold">
-                  {Math.round(h.cur)}/{h.max}
+                {shield > 0 && (
+                  <div className="h-1.5 rounded-full bg-black/40 overflow-hidden mt-0.5 ring-1 ring-cyan-300/50">
+                    <div
+                      className="h-full bg-gradient-to-r from-sky-400 to-blue-500 transition-all duration-500 shadow-[0_0_6px_rgba(56,189,248,0.8)]"
+                      style={{ width: `${shieldPct}%` }}
+                    />
+                  </div>
+                )}
+                <div className="text-[10px] text-white/90 font-bold flex items-center gap-1">
+                  <span>{Math.round(h.cur)}/{h.max}</span>
+                  {shield > 0 && (
+                    <span className="text-cyan-300">🛡 {Math.round(shield)}</span>
+                  )}
                 </div>
               </div>
             </div>
