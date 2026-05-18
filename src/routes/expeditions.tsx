@@ -102,6 +102,19 @@ function ExpeditionsPage() {
       if (r.gems > 0) parts.push(`+💎 ${r.gems}`);
       if (r.rations > 0) parts.push(`+🍖 ${r.rations}`);
       toast.success(`Recompensa: ${parts.join(" • ")}`);
+      if (r.levelUp) {
+        const lu = r.levelUp;
+        for (let lv = lu.fromLevel + 1; lv <= lu.toLevel; lv++) {
+          const isGold = lv % 10 === 0;
+          toast.success(`🎉 Level ${lv}! ${isGold ? "🥇 Baú de OURO" : "📦 Baú de Madeira"} aberto`, { duration: 4000 });
+        }
+        const lp: string[] = [];
+        if (lu.coins) lp.push(`🪙 ${lu.coins}`);
+        if (lu.gems) lp.push(`💎 ${lu.gems}`);
+        if (lu.rations) lp.push(`🍖 ${lu.rations}`);
+        if (lu.pets) lp.push(`🥚 ${lu.pets} pet${lu.pets > 1 ? "s" : ""}`);
+        if (lp.length) toast(`Recompensas dos baús: ${lp.join(" • ")}`, { duration: 5000 });
+      }
       await Promise.all([refresh(), reload()]);
     } catch (e) {
       toast.error((e as Error).message);
