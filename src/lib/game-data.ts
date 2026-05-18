@@ -13,8 +13,12 @@ import tidewraithImg from "@/assets/monsters/tidewraith.png";
 import voltsproutImg from "@/assets/monsters/voltsprout.png";
 import nightbloomImg from "@/assets/monsters/nightbloom.png";
 import voidsparkImg from "@/assets/monsters/voidspark.png";
+import rockpupImg from "@/assets/monsters/rockpup.png";
+import magmaboulderImg from "@/assets/monsters/magmaboulder.png";
+import mudpawImg from "@/assets/monsters/mudpaw.png";
+import crystalspriteImg from "@/assets/monsters/crystalsprite.png";
 
-export type Element = "fire" | "water" | "grass" | "electric" | "shadow";
+export type Element = "fire" | "water" | "grass" | "electric" | "shadow" | "earth";
 export type Role = "tank" | "dps" | "assassin" | "mage" | "healer";
 export type Rarity = "common" | "rare" | "legendary";
 
@@ -173,6 +177,32 @@ export const SPECIES: Record<string, Species> = {
     description: "Orbe de raios sombrios. Assassino caótico.",
     base: { hp: 44, atk: 13, def: 7, spd: 17, int: 6 },
   },
+
+  // ===== TERRA =====
+  rockpup: {
+    id: "rockpup", name: "Rockpup", element: "earth", role: "tank", rarity: "rare",
+    emoji: "🪨", image: rockpupImg,
+    description: "Cãozinho de pedregulho puro. Tank rochoso com defesa absurda.",
+    base: { hp: 85, atk: 9, def: 20, spd: 7, int: 8 },
+  },
+  magmaboulder: {
+    id: "magmaboulder", name: "Magmaboulder", element: "earth", secondaryElement: "fire", role: "tank", rarity: "common",
+    emoji: "🌋", image: magmaboulderImg,
+    description: "Rocha vulcânica. Tank que queima quem encosta.",
+    base: { hp: 75, atk: 11, def: 16, spd: 7, int: 8 },
+  },
+  mudpaw: {
+    id: "mudpaw", name: "Mudpaw", element: "earth", secondaryElement: "water", role: "dps", rarity: "common",
+    emoji: "🟫", image: mudpawImg,
+    description: "Golem de lama. DPS pesado que afunda os inimigos.",
+    base: { hp: 60, atk: 14, def: 12, spd: 8, int: 7 },
+  },
+  crystalsprite: {
+    id: "crystalsprite", name: "Crystalsprite", element: "earth", secondaryElement: "electric", role: "mage", rarity: "common",
+    emoji: "💎", image: crystalspriteImg,
+    description: "Geodo mágico cristalino. Mago de cristal com raios.",
+    base: { hp: 52, atk: 12, def: 11, spd: 10, int: 21 },
+  },
 };
 
 export const ELEMENT_COLORS: Record<Element, string> = {
@@ -181,6 +211,7 @@ export const ELEMENT_COLORS: Record<Element, string> = {
   grass: "from-emerald-400 to-green-600",
   electric: "from-yellow-300 to-amber-500",
   shadow: "from-purple-500 to-fuchsia-700",
+  earth: "from-amber-700 to-stone-600",
 };
 
 export const ELEMENT_NAMES: Record<Element, string> = {
@@ -189,15 +220,17 @@ export const ELEMENT_NAMES: Record<Element, string> = {
   grass: "Planta",
   electric: "Elétrico",
   shadow: "Sombra",
+  earth: "Terra",
 };
 
 // Type effectiveness (multiplier on damage)
 export const TYPE_CHART: Record<Element, Partial<Record<Element, number>>> = {
-  fire: { grass: 1.5, water: 0.7, fire: 0.8 },
-  water: { fire: 1.5, grass: 0.7, water: 0.8 },
-  grass: { water: 1.5, fire: 0.7, grass: 0.8 },
-  electric: { water: 1.5, grass: 0.7, electric: 0.8 },
+  fire: { grass: 1.5, water: 0.7, fire: 0.8, earth: 0.7 },
+  water: { fire: 1.5, grass: 0.7, water: 0.8, earth: 1.5 },
+  grass: { water: 1.5, fire: 0.7, grass: 0.8, earth: 1.5 },
+  electric: { water: 1.5, grass: 0.7, electric: 0.8, earth: 0.5 },
   shadow: { shadow: 0.8 },
+  earth: { fire: 1.5, electric: 1.5, grass: 0.7, water: 0.7, earth: 0.8 },
 };
 
 // ===== Items =====
