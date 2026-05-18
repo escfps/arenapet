@@ -189,6 +189,7 @@ export type Database = {
           created_at: string
           expedition_slots: number
           gems: number
+          highest_tier_rank: number
           id: string
           is_bot: boolean
           level: number
@@ -207,6 +208,7 @@ export type Database = {
           created_at?: string
           expedition_slots?: number
           gems?: number
+          highest_tier_rank?: number
           id: string
           is_bot?: boolean
           level?: number
@@ -225,6 +227,7 @@ export type Database = {
           created_at?: string
           expedition_slots?: number
           gems?: number
+          highest_tier_rank?: number
           id?: string
           is_bot?: boolean
           level?: number

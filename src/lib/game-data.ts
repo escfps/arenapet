@@ -957,6 +957,13 @@ export function promoNeeded(type: "bo3" | "bo5"): number {
   return type === "bo5" ? 3 : 2;
 }
 
+// Ordem dos tiers (índice = "rank" do tier). Maior = melhor.
+export const TIER_ORDER = ["Ferro", "Bronze", "Prata", "Ouro", "Platina", "Diamante", "Mestre", "Grão-Mestre", "Lendário"] as const;
+export function tierRankIndex(name: string): number {
+  const i = (TIER_ORDER as readonly string[]).indexOf(name);
+  return i < 0 ? 0 : i;
+}
+
 // Baús ganhos ao subir para um novo TIER (não divisão)
 // Recebe o nome do tier alcançado (ex: "Bronze", "Prata", ...)
 export function tierPromotionChests(newTierName: string): { silver: number; gold: number; legendary: number } {

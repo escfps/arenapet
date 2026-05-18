@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { SPECIES, ELEMENT_COLORS, ROLE_INFO, RARITY_INFO, MAX_RANK, skinFilter, isVip, xpForNextLevel, rankStars, totalStats, ARENA_WIN_POINTS, ARENA_LOSS_POINTS, getTier, divisionBounds, promoNeeded, type PromoSeries, computeBattleEnergy, MAX_BATTLE_ENERGY, hungerMultiplier, rollLevelUpRewards, tierPromotionChests, rollChest, CHESTS } from "@/lib/game-data";
+import { SPECIES, ELEMENT_COLORS, ROLE_INFO, RARITY_INFO, MAX_RANK, skinFilter, isVip, xpForNextLevel, rankStars, totalStats, ARENA_WIN_POINTS, ARENA_LOSS_POINTS, getTier, divisionBounds, promoNeeded, type PromoSeries, computeBattleEnergy, MAX_BATTLE_ENERGY, hungerMultiplier, rollLevelUpRewards, tierPromotionChests, rollChest, CHESTS, tierRankIndex } from "@/lib/game-data";
 import type { MonsterRow } from "@/components/MonsterCard";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
@@ -385,10 +385,12 @@ function ArenaPage() {
         rationToast = () => toast(`🍖 +${dropped} ração!`, { icon: "🎁" });
       }
 
-      // Baús de promoção de TIER
+      // Baús de promoção de TIER (apenas na PRIMEIRA vez que o jogador atinge cada tier)
       const oldTierName = getTier(oldPoints).name;
       const newTierName = getTier(newPoints).name;
-      if (oldTierName !== newTierName) {
+      const newTierIdx = tierRankIndex(newTierName);
+      const highest = (profile as { highest_tier_rank?: number }).highest_tier_rank ?? 0;
+      if (oldTierName !== newTierName && newTierIdx > highest) {
         const chestCounts = tierPromotionChests(newTierName);
         const tiersToRoll: Array<"silver" | "gold" | "legendary"> = [];
         for (let i = 0; i < chestCounts.silver; i++) tiersToRoll.push("silver");
@@ -445,6 +447,8 @@ function ArenaPage() {
           if (bonusPets.length) parts.push(`🥚 ${bonusPets.length} pet${bonusPets.length > 1 ? "s" : ""}`);
           if (parts.length) levelUpToasts.push(() => toast(`Recompensas de tier: ${parts.join(" • ")}`, { duration: 6000 }));
         }
+        // marca o tier máximo atingido pra não pagar baú de novo
+        await supabase.from("profiles").update({ highest_tier_rank: newTierIdx }).eq("id", userId);
       }
     }
 
