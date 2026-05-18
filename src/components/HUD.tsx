@@ -20,6 +20,7 @@ export type ProfileRow = {
 export function HUD({ profile }: { profile: ProfileRow }) {
   const navigate = useNavigate();
   const vip = isVip(profile.vip_until);
+  const tier = getTier(profile.arena_points ?? 0);
 
   async function logout() {
     await supabase.auth.signOut();
@@ -36,6 +37,7 @@ export function HUD({ profile }: { profile: ProfileRow }) {
         <nav className="flex items-center gap-1 ml-2">
           <NavLink to="/" label="Pátio" emoji="🏠" />
           <NavLink to="/arena" label="Arena" emoji="⚔️" />
+          <NavLink to="/ranking" label="Ranking" emoji="🏆" />
           <NavLink to="/forge" label="Forja" emoji="🔨" />
           <NavLink to="/trade" label="Trocas" emoji="🔄" />
           <NavLink to="/expeditions" label="Expedições" emoji="🗺️" />
@@ -47,8 +49,9 @@ export function HUD({ profile }: { profile: ProfileRow }) {
             <div className="text-[10px] font-bold opacity-80 flex items-center gap-1 justify-end">
               {profile.username} {vip && <VipBadge />}
             </div>
-            <div className="text-[10px] opacity-80">
-              Nv {profile.level} • {profile.wins}V/{profile.losses}D
+            <div className="text-[10px] opacity-80 flex items-center gap-1 justify-end">
+              <span className={`px-1.5 py-0.5 rounded font-extrabold ${tier.color}`}>{tier.emoji} {tier.short}</span>
+              <span>• {profile.wins}V/{profile.losses}D</span>
             </div>
           </div>
           <CoinBadge amount={profile.coins} />
