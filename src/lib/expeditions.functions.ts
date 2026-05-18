@@ -9,6 +9,8 @@ import {
   computeExpeditionReward,
   computeBattleEnergy,
   xpForNextLevel,
+  rollLevelUpRewards,
+  SPECIES,
 } from "@/lib/game-data";
 
 const StartSchema = z.object({
@@ -114,31 +116,45 @@ export const claimExpedition = createServerFn({ method: "POST" })
     if (cErr) throw new Error(cErr.message);
 
     // XP da expedição agora vai pra CONTA (não pro pet)
+    const prevLevel = profile.level ?? 1;
     let newXp = (profile.xp ?? 0) + (exp.xp_reward ?? 0);
-    let newLevel = profile.level ?? 1;
+    let newLevel = prevLevel;
     while (newXp >= xpForNextLevel(newLevel)) {
       newXp -= xpForNextLevel(newLevel);
       newLevel += 1;
     }
 
+    // Recompensas de level-up (baú madeira / ouro a cada 10)
+    const lvRew = newLevel > prevLevel ? rollLevelUpRewards(prevLevel, newLevel) : null;
+
     await supabaseAdmin
       .from("profiles")
       .update({
-        coins: (profile.coins ?? 0) + (exp.coins_reward ?? 0),
-        gems: (profile.gems ?? 0) + (exp.gems_reward ?? 0),
+        coins: (profile.coins ?? 0) + (exp.coins_reward ?? 0) + (lvRew?.coins ?? 0),
+        gems: (profile.gems ?? 0) + (exp.gems_reward ?? 0) + (lvRew?.gems ?? 0),
         xp: newXp,
         level: newLevel,
       })
       .eq("id", userId);
 
-    // grant rations to inventory
-    if ((exp.ration_drop ?? 0) > 0) {
+    // grant rations to inventory (expedition drops + level-up baús)
+    const totalRations = (exp.ration_drop ?? 0) + (lvRew?.rations ?? 0);
+    if (totalRations > 0) {
       await supabaseAdmin
         .from("inventory")
         .upsert(
-          { user_id: userId, item_type: "ration", quantity: (foodRow?.quantity ?? 0) + exp.ration_drop },
+          { user_id: userId, item_type: "ration", quantity: (foodRow?.quantity ?? 0) + totalRations },
           { onConflict: "user_id,item_type" }
         );
+    }
+
+    // pets sorteados nos baús de level-up
+    if (lvRew && lvRew.petSpecies.length > 0) {
+      const rows = lvRew.petSpecies.map((sid) => {
+        const sp = SPECIES[sid];
+        return { owner_id: userId, species: sid, name: sp.name, hp: sp.base.hp, atk: sp.base.atk, def: sp.base.def, spd: sp.base.spd };
+      });
+      await supabaseAdmin.from("monsters").insert(rows);
     }
 
     return {
@@ -147,6 +163,9 @@ export const claimExpedition = createServerFn({ method: "POST" })
       coins: exp.coins_reward,
       gems: exp.gems_reward,
       rations: exp.ration_drop,
+      levelUp: lvRew
+        ? { fromLevel: prevLevel, toLevel: newLevel, coins: lvRew.coins, gems: lvRew.gems, rations: lvRew.rations, pets: lvRew.petSpecies.length, woodChests: lvRew.woodChests, goldChests: lvRew.goldChests }
+        : null,
     };
   });
 

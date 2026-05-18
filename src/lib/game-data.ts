@@ -622,6 +622,33 @@ export function rollWelcomeChest(): string[] {
   return [...pickN(commons, 2), ...pickN(rares, 1)].map((s) => s.id);
 }
 
+// === Recompensas por level-up da CONTA ===
+// A cada level: 1 Baú de Madeira. A cada múltiplo de 10 (10, 20, 30...): Baú de Ouro (super raro) em vez do de madeira.
+export type LevelUpReward = {
+  coins: number;
+  gems: number;
+  rations: number;
+  petSpecies: string[];
+  woodChests: number;
+  goldChests: number;
+  levels: number[]; // levels alcançados
+};
+
+export function rollLevelUpRewards(prevLevel: number, newLevel: number): LevelUpReward {
+  const out: LevelUpReward = { coins: 0, gems: 0, rations: 0, petSpecies: [], woodChests: 0, goldChests: 0, levels: [] };
+  for (let lv = prevLevel + 1; lv <= newLevel; lv++) {
+    out.levels.push(lv);
+    const tier: ChestTier = lv % 10 === 0 ? "gold" : "wood";
+    if (tier === "gold") out.goldChests += 1; else out.woodChests += 1;
+    const r = rollChest(tier);
+    out.coins += r.coins;
+    out.gems += r.gems;
+    out.rations += r.rations;
+    if (r.petSpecies) out.petSpecies.push(r.petSpecies);
+  }
+  return out;
+}
+
 // XP da CONTA (profile) — pets não têm mais XP/level próprio.
 export function xpForNextLevel(level: number): number {
   return Math.floor(50 * Math.pow(1.4, level - 1));
