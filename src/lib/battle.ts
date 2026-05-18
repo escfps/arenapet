@@ -217,6 +217,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
             log.push({
               turn, actor: side, actorName: attacker.name, targetName: target.name,
               damage: dmg, crit: true, effective: eff, remainingHp: target.current,
+              targetShield: target.shield,
               message: `${skill.emoji} ${attacker.name} usou ${skill.name} em ${target.name}: ${dmg} de dano massivo!`,
             });
             if (target.current <= 0) {
