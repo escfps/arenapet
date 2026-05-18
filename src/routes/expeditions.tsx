@@ -247,23 +247,21 @@ function ExpeditionsPage() {
           ) : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
               {EXPEDITION_DURATIONS.map((d) => {
-                const canAfford = foodQty >= d.foodCost;
                 return (
                   <button
                     key={d.id}
                     onClick={() => setPickMonsterFor(d)}
-                    disabled={!canAfford || busy}
+                    disabled={busy}
                     className="rounded-xl bg-white/10 border-2 border-white/20 p-3 text-white text-left hover:bg-white/20 hover:scale-105 transition disabled:opacity-40 disabled:hover:scale-100"
                   >
                     <div className="font-extrabold text-lg">{d.label}</div>
                     <div className="text-xs opacity-90 mt-1">
                       💪 +{d.baseXp} XP base<br/>
                       🪙 +{d.baseCoins}<br/>
-                      {d.gemChance > 0 && <>💎 {Math.round(d.gemChance * 100)}% ({d.gemAmount[0]}-{d.gemAmount[1]})<br/></>}
                       {d.rationChance > 0 && <>🍖 {Math.round(d.rationChance * 100)}% ({d.rationAmount[0]}-{d.rationAmount[1]})<br/></>}
                     </div>
-                    <div className={`text-xs mt-2 font-bold ${canAfford ? "text-amber-300" : "text-red-300"}`}>
-                      Custo: 🍖 {d.foodCost}
+                    <div className="text-xs mt-2 font-bold text-amber-300">
+                      Custo: ⚡ {d.foodCost}
                     </div>
                   </button>
                 );
