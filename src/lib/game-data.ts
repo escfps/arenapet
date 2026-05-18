@@ -44,6 +44,7 @@ export type Species = {
   image: string;
   description: string;
   base: { hp: number; atk: number; def: number; spd: number; int: number };
+  skill?: Skill; // unique skill per species (overrides ROLE_SKILLS)
 };
 
 export const ROLE_INFO: Record<Role, { name: string; emoji: string; description: string; color: string }> = {
