@@ -17,7 +17,7 @@ import arenaBg from "@/assets/arena-bg.jpg";
 export const Route = createFileRoute("/collection")({
   component: CollectionPage,
   head: () => ({
-    meta: [{ title: "Coleção — MonstroBattle" }],
+    meta: [{ title: "Coleção — ARENA PET" }],
   }),
 });
 

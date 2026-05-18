@@ -12,7 +12,7 @@ export const Route = createFileRoute("/")({
   component: PatioPage,
   head: () => ({
     meta: [
-      { title: "MonstroBattle — Colecione e batalhe" },
+      { title: "ARENA PET — Colecione e batalhe" },
       { name: "description", content: "Treine monstrinhos e batalhe contra jogadores reais." },
     ],
   }),

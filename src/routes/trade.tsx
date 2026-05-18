@@ -11,7 +11,7 @@ import arenaBg from "@/assets/arena-bg.jpg";
 
 export const Route = createFileRoute("/trade")({
   component: TradePage,
-  head: () => ({ meta: [{ title: "Trocas — MonstroBattle" }] }),
+  head: () => ({ meta: [{ title: "Trocas — ARENA PET" }] }),
 });
 
 type Mon = {
