@@ -41,8 +41,34 @@ function PatioPage() {
       .select("*")
       .eq("owner_id", userId)
       .order("created_at");
-    if (data) setMonsters(data as MonsterRow[]);
+    if (!data) return;
+    let list = data as MonsterRow[];
+    // 🛡️ Normalizar time: garantir no máx TEAM_MAX pets in_team, sem posições duplicadas.
+    const inTeam = list.filter((m) => m.in_team);
+    const needsFix = inTeam.length > TEAM_MAX ||
+      new Set(inTeam.map((m) => m.team_position ?? 0)).size !== inTeam.length;
+    if (needsFix) {
+      const sorted = [...inTeam].sort((a, b) => (a.team_position ?? 0) - (b.team_position ?? 0));
+      const keep = sorted.slice(0, TEAM_MAX);
+      const drop = sorted.slice(TEAM_MAX);
+      const updates: { id: string; in_team: boolean; team_position: number }[] = [];
+      keep.forEach((m, idx) => {
+        if ((m.team_position ?? -1) !== idx || !m.in_team) {
+          updates.push({ id: m.id, in_team: true, team_position: idx });
+        }
+      });
+      drop.forEach((m) => updates.push({ id: m.id, in_team: false, team_position: 0 }));
+      for (const u of updates) {
+        await supabase.from("monsters").update({ in_team: u.in_team, team_position: u.team_position }).eq("id", u.id);
+      }
+      list = list.map((m) => {
+        const u = updates.find((x) => x.id === m.id);
+        return u ? { ...m, in_team: u.in_team, team_position: u.team_position } : m;
+      });
+    }
+    setMonsters(list);
   }, [userId]);
+
 
   useEffect(() => { if (userId) loadMonsters(); }, [userId, loadMonsters]);
 
