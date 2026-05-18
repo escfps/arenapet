@@ -243,6 +243,20 @@ export const SPECIES: Record<string, Species> = {
     description: "Olhos dourados — variante ultra-rara da Pantera Negra. Mago sombrio supremo.",
     base: { hp: 65, atk: 14, def: 12, spd: 15, int: 24 },
   },
+
+  // ===== MÍTICOS (classe suprema — só em eventos especiais) =====
+  dragao_branco: {
+    id: "dragao_branco", name: "Dragão Branco", element: "water", role: "healer", rarity: "mythic",
+    emoji: "🐉", image: dragaoBrancoImg,
+    description: "Dragão místico de escamas brancas e olhos de safira. Cura divina que ressoa pelo time.",
+    base: { hp: 80, atk: 16, def: 16, spd: 14, int: 26 },
+  },
+  dragao_negro: {
+    id: "dragao_negro", name: "Dragão Negro", element: "shadow", role: "dps", rarity: "mythic",
+    emoji: "🐲", image: dragaoNegroImg,
+    description: "Dragão obsidiana de olhos vermelhos. Dano apocalíptico que devasta inimigos.",
+    base: { hp: 75, atk: 24, def: 14, spd: 15, int: 14 },
+  },
 };
 
 export const ELEMENT_COLORS: Record<Element, string> = {
