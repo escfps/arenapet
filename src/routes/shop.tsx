@@ -129,6 +129,7 @@ function ShopPage() {
     setChestResult({ tier, reward });
   }
 
+  async function buySkin(skinId: string) {
     if (!profile || !userId) return;
     const sk = SKINS[skinId];
     if (ownedSkins.includes(skinId)) { toast("Você já tem essa skin"); return; }
