@@ -381,7 +381,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
         }
 
         // ===== NOVAS MECÂNICAS =====
-        const effAtk = attacker.atk * (1 + attacker.rageAtkMult);
+        const effAtk = attacker.atk * (1 + attacker.rageAtkMult) * phoenixAtkBonus(attacker);
         const effInt = attacker.int;
         const tgtEffDef = (t: Live) => t.def * (1 + t.defBuffPct);
 
