@@ -189,7 +189,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           const targets = enemies.filter((e) => e.current > 0);
           for (const t of targets) {
             const eff = defensiveMultiplier(getElement(attacker.species), t.species);
-            const base = Math.max(1, attacker.atk * 2 - t.def * 0.3);
+            const base = Math.max(1, attacker.int * 2.2 - t.def * 0.3);
             const dmg = Math.max(1, Math.round(base * eff * 1.2 * skillMult));
             applyDamage(t, dmg);
             log.push({
