@@ -97,6 +97,7 @@ type Live = BattleMonster & {
   burnTurns: number;
   bleedDmg: number;      // dano físico por turno enquanto bleedTurns > 0
   bleedTurns: number;
+  blindTurns: number;    // se >0, ataques básicos têm chance de errar
   silenceTurns: number;  // se >0, próxima skill é anulada
   rageTurns: number;     // berserker: +rageAtkMult e -rageDefDrop
   rageAtkMult: number;
@@ -144,7 +145,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
     ...m, current: m.hp, maxHp: m.hp,
     healCd: 0, skillCd: 1, shield: 0,
     tauntTargetId: null, tauntTurns: 0,
-    burnDmg: 0, burnTurns: 0, bleedDmg: 0, bleedTurns: 0, silenceTurns: 0,
+    burnDmg: 0, burnTurns: 0, bleedDmg: 0, bleedTurns: 0, blindTurns: 0, silenceTurns: 0,
     rageTurns: 0, rageAtkMult: 0, rageDefDrop: 0,
     defBuffTurns: 0, defBuffPct: 0, lastFallenAt: 0,
   });
