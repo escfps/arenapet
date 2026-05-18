@@ -675,7 +675,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
             const dmg = Math.max(1, Math.round(base * eff * 2.0 * skillMult));
             applyDamage(target, dmg);
             phoenixOnDamageDealt(attacker, dmg);
-            const grown = Math.max(1, Math.round(dmg * 0.20));
+            const grown = Math.max(1, Math.round(dmg * 0.10));
             log.push({
               turn, actor: side, actorName: attacker.name, targetName: target.name,
               damage: dmg, crit: true, effective: eff, remainingHp: target.current, targetShield: target.shield,
