@@ -18,16 +18,19 @@ function MonsterPage() {
   const { userId, profile, loading, patch } = useProfile();
   const [monster, setMonster] = useState<MonsterRow | null>(null);
   const [ownedSkins, setOwnedSkins] = useState<string[]>(["default"]);
+  const [rations, setRations] = useState<number>(0);
   const [tab, setTab] = useState<"care" | "train" | "skin">("care");
 
   const load = useCallback(async () => {
     if (!userId) return;
-    const [{ data: m }, { data: skins }] = await Promise.all([
+    const [{ data: m }, { data: skins }, { data: inv }] = await Promise.all([
       supabase.from("monsters").select("*").eq("id", id).eq("owner_id", userId).maybeSingle(),
       supabase.from("skins_owned").select("skin_id").eq("user_id", userId),
+      supabase.from("inventory").select("quantity").eq("user_id", userId).eq("item_type", "ration").maybeSingle(),
     ]);
     if (m) setMonster(m as MonsterRow);
     if (skins) setOwnedSkins(["default", ...skins.map((s) => s.skin_id)]);
+    setRations(inv?.quantity ?? 0);
   }, [id, userId]);
 
   useEffect(() => { if (userId) load(); }, [userId, load]);
