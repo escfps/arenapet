@@ -91,7 +91,7 @@ export type SkillKind =
   | "blind_debuff"      // mago — cega TODOS inimigos: 50% miss em ataques básicos por 3 turnos
   | "true_damage_nuke"  // mítico — dano puro ignora DEF e elemento (Vayne ult)
   | "phoenix_rage"      // mítico — PASSIVA: quanto mais HP perde, mais ATK ganha (até +120%)
-  | "phoenix_growth";   // mítico — PASSIVA: cada dano causado vira HP máx + cura permanente
+  | "phoenix_growth";   // mítico — PASSIVA: cada dano causado vira HP máx + cura temporária na batalha
 
 export type Skill = {
   name: string;
