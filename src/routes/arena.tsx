@@ -401,7 +401,17 @@ function ArenaPage() {
             )}
 
             {battleLog && opponent && (
-              <BattleScene teamA={myTeam} teamB={opponent.team} log={battleLog} step={shownLog.length} />
+              <BattleScene
+                teamA={myTeam}
+                teamB={opponent.team}
+                log={battleLog}
+                step={shownLog.length}
+                playerAName={profile.username}
+                playerATier={getTier(profile.arena_points ?? 0).name}
+                playerBName={opponent.ownerName}
+                playerBTier={getTier(opponent.arenaPoints).name}
+              />
+
             )}
 
             {battleLog && (
