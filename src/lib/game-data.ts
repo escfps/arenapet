@@ -390,14 +390,14 @@ export const SPECIES: Record<string, Species> = {
     id: "fenix_vermelha", name: "Fênix Vermelha", element: "fire", role: "dps", rarity: "mythic",
     emoji: "🔥🦅", image: fenixVermelhaImg,
     description: "Fênix carmesim envolta em chamas eternas. Quanto mais sofre, mais perigosa fica.",
-    base: { hp: 75, atk: 18, def: 14, spd: 15, int: 14 },
+    base: { hp: 75, atk: 42, def: 25, spd: 15, int: 14 },
     skill: { name: "Brasa Renascida", emoji: "🔥", kind: "phoenix_rage", cooldown: 4, description: "PASSIVA: cada 10% de HP perdido = +6% ATK (até +60% com 1 HP). ATIVA: golpe de fogo (2× dano)." },
   },
   fenix_negra: {
     id: "fenix_negra", name: "Fênix Negra", element: "shadow", role: "dps", rarity: "mythic",
     emoji: "🌑🦅", image: fenixNegraImg,
     description: "Fênix obsidiana de chamas violetas. Devora a essência dos inimigos e cresce sem fim.",
-    base: { hp: 78, atk: 18, def: 14, spd: 14, int: 14 },
+    base: { hp: 78, atk: 45, def: 23, spd: 14, int: 14 },
     skill: { name: "Comunhão Sombria", emoji: "🌑", kind: "phoenix_growth", cooldown: 4, description: "PASSIVA: cada dano causado vira +4% HP máx e cura na batalha (cap +50%). ATIVA: golpe sombrio (2× dano)." },
   },
 };
