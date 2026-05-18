@@ -175,6 +175,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          arena_points: number
           coins: number
           created_at: string
           expedition_slots: number
@@ -189,6 +190,7 @@ export type Database = {
           xp: number
         }
         Insert: {
+          arena_points?: number
           coins?: number
           created_at?: string
           expedition_slots?: number
@@ -203,6 +205,7 @@ export type Database = {
           xp?: number
         }
         Update: {
+          arena_points?: number
           coins?: number
           created_at?: string
           expedition_slots?: number
