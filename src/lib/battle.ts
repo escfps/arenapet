@@ -109,14 +109,17 @@ function pickTarget(attacker: Live, enemies: Live[]): Live | null {
     const t = alive.find((e) => e.id === attacker.tauntTargetId);
     if (t) return t;
   }
-  // Taunt: prefer tank if alive
-  const tank = alive.find((e) => e.role === "tank");
-  if (tank && attacker.role !== "assassin") return tank;
-  // Assassin: lowest current HP
+  // Assassin ignores position — dives lowest HP
   if (attacker.role === "assassin") {
     return alive.reduce((a, b) => (a.current < b.current ? a : b));
   }
-  return alive[0];
+  // Taunt: tank still drags aggro even if behind
+  const tank = alive.find((e) => e.role === "tank");
+  if (tank) return tank;
+  // Frontline first: lowest position number alive
+  const minPos = Math.min(...alive.map((e) => e.position));
+  const frontline = alive.filter((e) => e.position === minPos);
+  return frontline[0];
 }
 
 function applyDamage(target: Live, raw: number): number {
