@@ -94,22 +94,40 @@ function ArenaPage() {
     const ownerIds = Array.from(new Set(allMons.map((m) => m.owner_id)));
     const { data: profs } = await supabase
       .from("profiles")
-      .select("id, username, level, vip_until")
+      .select("id, username, level, vip_until, arena_points")
       .in("id", ownerIds);
     const profById = new Map((profs ?? []).map((p) => [p.id as string, p]));
 
-    // group by owner, prefer level ±3 matches
-    const byOwner: Record<string, { team: FullMonster[]; username: string; level: number }> = {};
+    // group by owner
+    const byOwner: Record<string, { team: FullMonster[]; username: string; level: number; arenaPoints: number }> = {};
     for (const m of allMons) {
       const p = profById.get(m.owner_id);
       if (!p) continue;
-      if (!byOwner[m.owner_id]) byOwner[m.owner_id] = { team: [], username: p.username as string, level: p.level as number };
+      if (!byOwner[m.owner_id]) byOwner[m.owner_id] = {
+        team: [],
+        username: p.username as string,
+        level: p.level as number,
+        arenaPoints: (p.arena_points as number) ?? 0,
+      };
       byOwner[m.owner_id].team.push(m);
     }
-    let ownerList = Object.keys(byOwner).filter(
-      (id) => Math.abs(byOwner[id].level - profile.level) <= 3
-    );
-    if (ownerList.length === 0) ownerList = Object.keys(byOwner);
+
+    // Matchmaking by arena_points: try progressively wider windows
+    const myPts = profile.arena_points ?? 0;
+    const allOwners = Object.keys(byOwner);
+    const windows = [100, 200, 400, 800];
+    let ownerList: string[] = [];
+    for (const w of windows) {
+      ownerList = allOwners.filter((id) => Math.abs(byOwner[id].arenaPoints - myPts) <= w);
+      if (ownerList.length > 0) break;
+    }
+    // Fallback: pick the closest 5 by points
+    if (ownerList.length === 0 && allOwners.length > 0) {
+      ownerList = allOwners
+        .slice()
+        .sort((a, b) => Math.abs(byOwner[a].arenaPoints - myPts) - Math.abs(byOwner[b].arenaPoints - myPts))
+        .slice(0, 5);
+    }
     if (ownerList.length === 0) {
       toast("Ninguém disponível ainda. Convide amigos! 🎯", { icon: "👀" });
       return;
