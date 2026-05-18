@@ -25,8 +25,24 @@ function ArenaPage() {
   const [searching, setSearching] = useState(false);
   const [battleLog, setBattleLog] = useState<BattleLogEntry[] | null>(null);
   const [winner, setWinner] = useState<"team_a" | "team_b" | null>(null);
-  const [rewards, setRewards] = useState<{ coins: number; xp: number; points: number; oldPoints: number; newPoints: number } | null>(null);
+  const [rewards, setRewards] = useState<{ coins: number; xp: number; points: number; oldPoints: number; newPoints: number; promoMsg?: string; promoBefore?: PromoSeries | null; promoAfter?: PromoSeries | null } | null>(null);
   const [shownLog, setShownLog] = useState<BattleLogEntry[]>([]);
+  const [promo, setPromo] = useState<PromoSeries | null>(null);
+
+  // load promo from localStorage
+  useEffect(() => {
+    if (!userId) return;
+    try {
+      const raw = localStorage.getItem(`promo_${userId}`);
+      setPromo(raw ? JSON.parse(raw) : null);
+    } catch { setPromo(null); }
+  }, [userId]);
+
+  function savePromo(userId: string, p: PromoSeries | null) {
+    if (p) localStorage.setItem(`promo_${userId}`, JSON.stringify(p));
+    else localStorage.removeItem(`promo_${userId}`);
+    setPromo(p);
+  }
 
   useEffect(() => {
     async function loadTeam() {
