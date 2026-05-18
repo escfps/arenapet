@@ -28,7 +28,7 @@ export type Species = {
   emoji: string;
   image: string;
   description: string;
-  base: { hp: number; atk: number; def: number; spd: number };
+  base: { hp: number; atk: number; def: number; spd: number; int: number };
 };
 
 export const ROLE_INFO: Record<Role, { name: string; emoji: string; description: string; color: string }> = {
