@@ -153,10 +153,18 @@ function RankingPage() {
                               <div
                                 key={m.id}
                                 title={`${m.name}${sp ? ` (${sp.name})` : ""}`}
-                                className={`w-8 h-8 rounded-lg bg-black/40 border ${rar ? rar.ringColor : "ring-white/20"} ring-1 flex items-center justify-center text-lg leading-none`}
-                                style={{ filter: skinFilter(m.skin) }}
+                                className={`w-8 h-8 rounded-full bg-black/40 border ${rar ? rar.ringColor : "ring-white/20"} ring-1 overflow-hidden flex items-center justify-center`}
                               >
-                                {sp?.emoji ?? "❓"}
+                                {sp?.image ? (
+                                  <img
+                                    src={sp.image}
+                                    alt={m.name}
+                                    className="w-full h-full object-cover"
+                                    style={{ filter: skinFilter(m.skin) }}
+                                  />
+                                ) : (
+                                  <span className="text-lg leading-none">❓</span>
+                                )}
                               </div>
                             );
                           })
