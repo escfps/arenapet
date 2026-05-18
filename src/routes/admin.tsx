@@ -1,0 +1,292 @@
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import { toast, Toaster } from "sonner";
+import { useProfile } from "@/lib/use-profile";
+import { SPECIES, RARITY_INFO, rankStars } from "@/lib/game-data";
+import {
+  adminSearchPlayer,
+  adminGetPlayerPets,
+  adminGrantResources,
+  adminRankUpPet,
+  adminAddPet,
+  adminDeletePet,
+} from "@/lib/admin.functions";
+
+const ADMIN_USER_IDS = new Set<string>([
+  "9efcc279-b110-4feb-862e-deea6acf858e",
+]);
+
+export const Route = createFileRoute("/admin")({
+  component: AdminPage,
+});
+
+type ProfileRow = {
+  id: string;
+  username: string;
+  coins: number;
+  gems: number;
+  vip_until: string | null;
+  arena_points: number;
+  level: number;
+  xp: number;
+  wins: number;
+  losses: number;
+  is_bot: boolean;
+};
+
+type PetRow = {
+  id: string;
+  name: string;
+  species: string;
+  rank: number;
+  in_team: boolean;
+};
+
+function AdminPage() {
+  const navigate = useNavigate();
+  const { userId, loading } = useProfile();
+  const searchFn = useServerFn(adminSearchPlayer);
+  const petsFn = useServerFn(adminGetPlayerPets);
+  const grantFn = useServerFn(adminGrantResources);
+  const rankUpFn = useServerFn(adminRankUpPet);
+  const addPetFn = useServerFn(adminAddPet);
+  const delPetFn = useServerFn(adminDeletePet);
+
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState<ProfileRow[]>([]);
+  const [selected, setSelected] = useState<ProfileRow | null>(null);
+  const [pets, setPets] = useState<PetRow[]>([]);
+  const [gems, setGems] = useState(100);
+  const [coins, setCoins] = useState(1000);
+  const [vipDays, setVipDays] = useState(30);
+  const [newSpecies, setNewSpecies] = useState("flarepup");
+  const [newRank, setNewRank] = useState(1);
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    if (loading) return;
+    if (!userId || !ADMIN_USER_IDS.has(userId)) {
+      toast.error("Acesso negado");
+      navigate({ to: "/" });
+    }
+  }, [userId, loading, navigate]);
+
+  async function doSearch() {
+    if (!query.trim()) return;
+    try {
+      const r = await searchFn({ data: { query: query.trim() } });
+      setResults(r.profiles as ProfileRow[]);
+      if (r.profiles.length === 0) toast.info("Nenhum jogador encontrado");
+    } catch (e) {
+      toast.error((e as Error).message);
+    }
+  }
+
+  async function pickPlayer(p: ProfileRow) {
+    setSelected(p);
+    try {
+      const r = await petsFn({ data: { userId: p.id } });
+      setPets(r.pets as PetRow[]);
+    } catch (e) {
+      toast.error((e as Error).message);
+    }
+  }
+
+  async function reloadSelected() {
+    if (!selected) return;
+    const r = await searchFn({ data: { query: selected.username } });
+    const fresh = (r.profiles as ProfileRow[]).find((x) => x.id === selected.id);
+    if (fresh) setSelected(fresh);
+    const pr = await petsFn({ data: { userId: selected.id } });
+    setPets(pr.pets as PetRow[]);
+  }
+
+  async function grant(payload: { gems?: number; coins?: number; vipDays?: number }) {
+    if (!selected) return;
+    setBusy(true);
+    try {
+      await grantFn({ data: { userId: selected.id, ...payload } });
+      toast.success("Aplicado!");
+      await reloadSelected();
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function rankPet(petId: string, delta: number) {
+    setBusy(true);
+    try {
+      await rankUpFn({ data: { petId, delta } });
+      await reloadSelected();
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function addPet() {
+    if (!selected) return;
+    setBusy(true);
+    try {
+      await addPetFn({ data: { userId: selected.id, species: newSpecies, rank: newRank } });
+      toast.success("Pet adicionado!");
+      await reloadSelected();
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function delPet(petId: string) {
+    if (!confirm("Deletar este pet?")) return;
+    setBusy(true);
+    try {
+      await delPetFn({ data: { petId } });
+      toast.success("Pet removido");
+      await reloadSelected();
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  if (loading) return <div className="p-8 text-white">Carregando…</div>;
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-950 to-slate-900 p-4 text-white">
+      <Toaster richColors position="top-center" />
+      <div className="max-w-5xl mx-auto space-y-4">
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-black">🛠️ Painel Admin</h1>
+          <button onClick={() => navigate({ to: "/" })} className="px-3 py-1 rounded bg-white/10 hover:bg-white/20 text-sm">
+            ← Voltar
+          </button>
+        </div>
+
+        <div className="rounded-2xl bg-white/10 backdrop-blur border border-white/20 p-4">
+          <div className="flex gap-2">
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && doSearch()}
+              placeholder="Buscar nick..."
+              className="flex-1 px-3 py-2 rounded bg-black/30 border border-white/20 outline-none"
+            />
+            <button onClick={doSearch} className="px-4 py-2 rounded bg-purple-600 hover:bg-purple-500 font-bold">
+              Buscar
+            </button>
+          </div>
+          {results.length > 0 && (
+            <div className="mt-3 space-y-1 max-h-60 overflow-y-auto">
+              {results.map((p) => (
+                <button
+                  key={p.id}
+                  onClick={() => pickPlayer(p)}
+                  className={`w-full text-left px-3 py-2 rounded text-sm transition ${
+                    selected?.id === p.id ? "bg-purple-600" : "bg-white/5 hover:bg-white/10"
+                  }`}
+                >
+                  <span className="font-bold">{p.username}</span>{p.is_bot && " 🤖"}
+                  <span className="opacity-70 ml-2">💎 {p.gems} · 🪙 {p.coins} · Lv {p.level}</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {selected && (
+          <>
+            <div className="rounded-2xl bg-white/10 backdrop-blur border border-white/20 p-4">
+              <h2 className="text-xl font-bold mb-2">{selected.username}{selected.is_bot && " 🤖"}</h2>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-sm">
+                <div>💎 Gemas: <b>{selected.gems}</b></div>
+                <div>🪙 Moedas: <b>{selected.coins}</b></div>
+                <div>🏆 Arena: <b>{selected.arena_points}</b></div>
+                <div>📈 Lv: <b>{selected.level}</b> ({selected.xp} XP)</div>
+                <div>⚔️ V/D: <b>{selected.wins}/{selected.losses}</b></div>
+                <div className="col-span-2 sm:col-span-3">
+                  👑 VIP: {selected.vip_until && new Date(selected.vip_until) > new Date()
+                    ? `até ${new Date(selected.vip_until).toLocaleDateString("pt-BR")}`
+                    : "inativo"}
+                </div>
+              </div>
+
+              <div className="mt-4 grid sm:grid-cols-3 gap-3">
+                <div className="rounded-lg bg-black/30 p-3 space-y-2">
+                  <label className="text-xs opacity-70">💎 Adicionar gemas</label>
+                  <input type="number" value={gems} onChange={(e) => setGems(Number(e.target.value))} className="w-full px-2 py-1 rounded bg-black/40 border border-white/10" />
+                  <div className="flex gap-2">
+                    <button disabled={busy} onClick={() => grant({ gems })} className="flex-1 py-1 rounded bg-fuchsia-600 hover:bg-fuchsia-500 font-bold text-sm">+ Adicionar</button>
+                    <button disabled={busy} onClick={() => grant({ gems: -gems })} className="px-3 py-1 rounded bg-red-700 hover:bg-red-600 text-sm">−</button>
+                  </div>
+                </div>
+
+                <div className="rounded-lg bg-black/30 p-3 space-y-2">
+                  <label className="text-xs opacity-70">🪙 Adicionar moedas</label>
+                  <input type="number" value={coins} onChange={(e) => setCoins(Number(e.target.value))} className="w-full px-2 py-1 rounded bg-black/40 border border-white/10" />
+                  <div className="flex gap-2">
+                    <button disabled={busy} onClick={() => grant({ coins })} className="flex-1 py-1 rounded bg-amber-600 hover:bg-amber-500 font-bold text-sm">+ Adicionar</button>
+                    <button disabled={busy} onClick={() => grant({ coins: -coins })} className="px-3 py-1 rounded bg-red-700 hover:bg-red-600 text-sm">−</button>
+                  </div>
+                </div>
+
+                <div className="rounded-lg bg-black/30 p-3 space-y-2">
+                  <label className="text-xs opacity-70">👑 Dias de VIP</label>
+                  <input type="number" value={vipDays} onChange={(e) => setVipDays(Number(e.target.value))} className="w-full px-2 py-1 rounded bg-black/40 border border-white/10" />
+                  <button disabled={busy} onClick={() => grant({ vipDays })} className="w-full py-1 rounded bg-yellow-600 hover:bg-yellow-500 font-bold text-sm">+ Aplicar VIP</button>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-2xl bg-white/10 backdrop-blur border border-white/20 p-4">
+              <h3 className="font-bold mb-2">🐾 Pets ({pets.length})</h3>
+              <div className="mb-3 flex flex-wrap items-end gap-2 p-2 bg-black/30 rounded">
+                <div className="flex-1 min-w-[160px]">
+                  <label className="text-xs opacity-70 block">Espécie</label>
+                  <select value={newSpecies} onChange={(e) => setNewSpecies(e.target.value)} className="w-full px-2 py-1 rounded bg-black/40 border border-white/10 text-sm">
+                    {Object.values(SPECIES).map((sp) => (
+                      <option key={sp.id} value={sp.id}>
+                        {sp.name} ({RARITY_INFO[sp.rarity].name})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs opacity-70 block">Estrelas</label>
+                  <input type="number" min={1} max={10} value={newRank} onChange={(e) => setNewRank(Math.max(1, Math.min(10, Number(e.target.value))))} className="w-20 px-2 py-1 rounded bg-black/40 border border-white/10 text-sm" />
+                </div>
+                <button disabled={busy} onClick={addPet} className="px-4 py-1 rounded bg-green-600 hover:bg-green-500 font-bold text-sm">
+                  + Adicionar pet
+                </button>
+              </div>
+
+              <div className="space-y-1 max-h-96 overflow-y-auto">
+                {pets.map((pet) => {
+                  const sp = SPECIES[pet.species];
+                  return (
+                    <div key={pet.id} className="flex items-center gap-2 p-2 bg-black/30 rounded text-sm">
+                      <span className="font-bold flex-1 truncate">
+                        {sp?.name ?? pet.species} {pet.in_team && "⭐"}
+                        <span className="text-yellow-300 ml-2">{rankStars(pet.rank)}</span>
+                      </span>
+                      <button disabled={busy || pet.rank <= 1} onClick={() => rankPet(pet.id, -1)} className="px-2 py-1 rounded bg-white/10 hover:bg-white/20 disabled:opacity-30">−⭐</button>
+                      <button disabled={busy || pet.rank >= 10} onClick={() => rankPet(pet.id, 1)} className="px-2 py-1 rounded bg-yellow-600 hover:bg-yellow-500 font-bold disabled:opacity-30">+⭐</button>
+                      <button disabled={busy} onClick={() => delPet(pet.id)} className="px-2 py-1 rounded bg-red-700 hover:bg-red-600">🗑️</button>
+                    </div>
+                  );
+                })}
+                {pets.length === 0 && <div className="opacity-60 text-sm p-2">Nenhum pet.</div>}
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
