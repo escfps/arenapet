@@ -202,9 +202,9 @@ function ArenaPage() {
         .sort((a, b) => Math.abs(byOwner[a].arenaPoints - myPts) - Math.abs(byOwner[b].arenaPoints - myPts))
         .slice(0, 5);
     }
-    // fallback: se sobrou ninguém após excluir recentes, libera os recentes
-    if (ownerList.length === 0 && allOwnersFull.length > 0) {
-      ownerList = allOwnersFull
+    // fallback: se sobrou ninguém após excluir recentes, libera os recentes (respeitando o cap se possível)
+    if (ownerList.length === 0 && poolBase.length > 0) {
+      ownerList = poolBase
         .slice()
         .sort((a, b) => Math.abs(byOwner[a].arenaPoints - myPts) - Math.abs(byOwner[b].arenaPoints - myPts))
         .slice(0, 5);
