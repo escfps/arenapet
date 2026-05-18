@@ -203,7 +203,7 @@ function ShopPage() {
             </div>
             <ul className="mt-4 space-y-2 text-sm font-bold">
               <li>✨ +50% de recompensas em batalha (🪙 e XP)</li>
-              <li>⚔️ 4 monstros no time (vs 3 normal)</li>
+              
               <li>🎨 Skin exclusiva Arco-íris</li>
               <li>👑 Badge dourado no nome</li>
               <li>🥚 Desconto em ovos raros (em breve)</li>
