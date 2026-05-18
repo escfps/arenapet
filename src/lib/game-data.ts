@@ -442,6 +442,107 @@ export const GEM_PACKS = [
   { id: "legend", gems: 800, priceBRL: 119.90, bonus: 300 },
 ];
 
+// ===== Baús (loja) =====
+export type ChestTier = "wood" | "silver" | "gold" | "legendary";
+
+export type Chest = {
+  id: ChestTier;
+  name: string;
+  emoji: string;
+  description: string;
+  priceCoins?: number;
+  priceGems?: number;
+  // recompensas garantidas: faixa min-max
+  coins: [number, number];
+  rations: [number, number];
+  // gemas (com chance de não vir nada se gemChance < 1)
+  gemChance: number;
+  gems: [number, number];
+  // pet (chance total de cair) e tabela de raridade quando cair
+  petChance: number;
+  petRarityWeights: Partial<Record<Rarity, number>>;
+};
+
+export const CHESTS: Record<ChestTier, Chest> = {
+  wood: {
+    id: "wood", name: "Baú de Madeira", emoji: "📦",
+    description: "Recompensa básica pra começar a aventura.",
+    priceCoins: 500,
+    coins: [200, 500],
+    rations: [1, 3],
+    gemChance: 0.10, gems: [1, 3],
+    petChance: 0.05,
+    petRarityWeights: { common: 100 },
+  },
+  silver: {
+    id: "silver", name: "Baú de Prata", emoji: "🥈",
+    description: "Bom equilíbrio de recursos. Chance de pet raro.",
+    priceGems: 30,
+    coins: [500, 1500],
+    rations: [3, 6],
+    gemChance: 1, gems: [5, 15],
+    petChance: 0.40,
+    petRarityWeights: { common: 70, rare: 30 },
+  },
+  gold: {
+    id: "gold", name: "Baú de Ouro", emoji: "🥇",
+    description: "Recursos fortes e boa chance de pets super raros e épicos.",
+    priceGems: 100,
+    coins: [1500, 4000],
+    rations: [6, 12],
+    gemChance: 1, gems: [25, 50],
+    petChance: 0.70,
+    petRarityWeights: { common: 30, rare: 45, super_rare: 22, epic: 3 },
+  },
+  legendary: {
+    id: "legendary", name: "Baú Lendário", emoji: "👑",
+    description: "Recompensa suprema. Pode cair lendário ou até mítico!",
+    priceGems: 300,
+    coins: [4000, 10000],
+    rations: [12, 24],
+    gemChance: 1, gems: [80, 150],
+    petChance: 1,
+    petRarityWeights: { rare: 15, super_rare: 35, epic: 35, legendary: 14, mythic: 1 },
+  },
+};
+
+export type ChestReward = {
+  coins: number;
+  gems: number;
+  rations: number;
+  petSpecies?: string; // id da espécie sorteada (se caiu pet)
+};
+
+export function rollChest(tier: ChestTier): ChestReward {
+  const c = CHESTS[tier];
+  const rng = (range: [number, number]) =>
+    Math.floor(Math.random() * (range[1] - range[0] + 1)) + range[0];
+
+  const coins = rng(c.coins);
+  const rations = rng(c.rations);
+  const gems = Math.random() < c.gemChance ? rng(c.gems) : 0;
+
+  let petSpecies: string | undefined;
+  if (Math.random() < c.petChance) {
+    // 1) sorteia a raridade
+    const totalW = Object.values(c.petRarityWeights).reduce((a, b) => a + (b ?? 0), 0);
+    let r = Math.random() * totalW;
+    let chosenRarity: Rarity = "common";
+    for (const [rarity, weight] of Object.entries(c.petRarityWeights)) {
+      r -= weight ?? 0;
+      if (r <= 0) { chosenRarity = rarity as Rarity; break; }
+    }
+    // 2) sorteia uma espécie daquela raridade
+    const pool = Object.values(SPECIES).filter((s) => s.rarity === chosenRarity);
+    if (pool.length > 0) {
+      petSpecies = pool[Math.floor(Math.random() * pool.length)].id;
+    }
+  }
+
+  return { coins, gems, rations, petSpecies };
+}
+
+
 // ===== Helpers =====
 // XP da CONTA (profile) — pets não têm mais XP/level próprio.
 export function xpForNextLevel(level: number): number {

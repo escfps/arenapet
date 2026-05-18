@@ -6,6 +6,8 @@ import {
   VIP_PRICE_GEMS, VIP_DURATION_DAYS,
   rollEgg, skinFilter, isVip,
   MAX_BATTLE_ENERGY, ENERGY_REFILL_GEM_COST, ENERGY_REFILL_ALL_GEM_COST, computeBattleEnergy,
+  CHESTS, rollChest, RARITY_INFO,
+  type ChestTier, type ChestReward, type Rarity,
 } from "@/lib/game-data";
 import type { MonsterRow } from "@/components/MonsterCard";
 import { HUD } from "@/components/HUD";
@@ -20,9 +22,10 @@ export const Route = createFileRoute("/shop")({
 function ShopPage() {
   const navigate = useNavigate();
   const { userId, profile, patch, loading } = useProfile();
-  const [tab, setTab] = useState<"eggs" | "skins" | "vip" | "gems" | "energy">("eggs");
+  const [tab, setTab] = useState<"eggs" | "chests" | "skins" | "vip" | "gems" | "energy">("eggs");
   const [ownedSkins, setOwnedSkins] = useState<string[]>(["default"]);
   const [hatchResult, setHatchResult] = useState<string | null>(null);
+  const [chestResult, setChestResult] = useState<{ tier: ChestTier; reward: ChestReward } | null>(null);
   const [pets, setPets] = useState<MonsterRow[]>([]);
 
   const loadSkins = useCallback(async () => {
@@ -77,6 +80,53 @@ function ShopPage() {
     } else {
       toast.success(`Você chocou um ${SPECIES[rolled[0]].name}! 🎉`);
     }
+  }
+
+  async function openChest(tier: ChestTier) {
+    if (!profile || !userId) return;
+    const c = CHESTS[tier];
+    if (c.priceCoins && profile.coins < c.priceCoins) { toast.error("Moedas insuficientes!"); return; }
+    if (c.priceGems && profile.gems < c.priceGems) { toast.error("Gemas insuficientes!"); return; }
+
+    const reward = rollChest(tier);
+
+    // debita preço + credita moedas/gemas
+    await patch({
+      coins: profile.coins - (c.priceCoins ?? 0) + reward.coins,
+      gems: profile.gems - (c.priceGems ?? 0) + reward.gems,
+    });
+
+    // rações no inventário (upsert somando)
+    if (reward.rations > 0) {
+      const { data: row } = await supabase
+        .from("inventory")
+        .select("quantity")
+        .eq("user_id", userId)
+        .eq("item_type", "ration")
+        .maybeSingle();
+      await supabase
+        .from("inventory")
+        .upsert(
+          { user_id: userId, item_type: "ration", quantity: (row?.quantity ?? 0) + reward.rations },
+          { onConflict: "user_id,item_type" }
+        );
+    }
+
+    // pet (se sorteado)
+    if (reward.petSpecies) {
+      const sp = SPECIES[reward.petSpecies];
+      await supabase.from("monsters").insert({
+        owner_id: userId,
+        species: reward.petSpecies,
+        name: sp.name,
+        hp: sp.base.hp,
+        atk: sp.base.atk,
+        def: sp.base.def,
+        spd: sp.base.spd,
+      });
+    }
+
+    setChestResult({ tier, reward });
   }
 
   async function buySkin(skinId: string) {
@@ -143,13 +193,13 @@ function ShopPage() {
         </header>
 
         <div className="flex bg-white/10 backdrop-blur-md rounded-xl overflow-hidden border border-white/20">
-          {(["eggs", "skins", "vip", "gems", "energy"] as const).map((t) => (
+          {(["eggs", "chests", "skins", "vip", "gems", "energy"] as const).map((t) => (
             <button
               key={t}
               onClick={() => setTab(t)}
-              className={`flex-1 py-2.5 text-xs font-bold transition ${tab === t ? "bg-white/30 text-white" : "text-white/70 hover:bg-white/15"}`}
+              className={`flex-1 py-2.5 text-[11px] font-bold transition ${tab === t ? "bg-white/30 text-white" : "text-white/70 hover:bg-white/15"}`}
             >
-              {t === "eggs" ? "🥚 Ovos" : t === "skins" ? "🎨 Skins" : t === "vip" ? "👑 VIP" : t === "gems" ? "💎 Gemas" : "⚡ Energia"}
+              {t === "eggs" ? "🥚 Ovos" : t === "chests" ? "📦 Baús" : t === "skins" ? "🎨 Skins" : t === "vip" ? "👑 VIP" : t === "gems" ? "💎 Gemas" : "⚡ Energia"}
             </button>
           ))}
         </div>
@@ -178,6 +228,79 @@ function ShopPage() {
                 <img src={SPECIES[hatchResult].image} alt="" className="h-40 mx-auto drop-shadow-2xl" />
                 <div className="text-2xl font-extrabold">{SPECIES[hatchResult].emoji} {SPECIES[hatchResult].name}</div>
                 <button onClick={() => setHatchResult(null)} className="mt-3 px-4 py-1.5 rounded-lg bg-white/30 hover:bg-white/40 text-sm font-bold">Fechar</button>
+              </div>
+            )}
+          </>
+        )}
+
+        {tab === "chests" && (
+          <>
+            <div className="grid sm:grid-cols-2 gap-4">
+              {Object.values(CHESTS).map((c) => {
+                const rarityEntries = Object.entries(c.petRarityWeights) as [Rarity, number][];
+                const totalW = rarityEntries.reduce((a, [, w]) => a + w, 0);
+                return (
+                  <div key={c.id} className="rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 p-4 text-white">
+                    <div className="text-center">
+                      <div className="text-6xl mb-1">{c.emoji}</div>
+                      <h3 className="font-extrabold text-lg">{c.name}</h3>
+                      <p className="text-xs opacity-80 mb-3">{c.description}</p>
+                    </div>
+
+                    <div className="bg-black/30 rounded-xl p-3 text-[11px] space-y-1 mb-3">
+                      <div className="font-bold text-yellow-300 mb-1">📊 Drops garantidos:</div>
+                      <div>🪙 {c.coins[0]}–{c.coins[1]} moedas</div>
+                      <div>🍖 {c.rations[0]}–{c.rations[1]} rações</div>
+                      <div>💎 {c.gems[0]}–{c.gems[1]} gemas{c.gemChance < 1 ? ` (${Math.round(c.gemChance * 100)}% chance)` : ""}</div>
+                      <div className="font-bold text-fuchsia-300 mt-2">🐾 Pet: {Math.round(c.petChance * 100)}% de cair</div>
+                      {c.petChance > 0 && (
+                        <div className="pl-2 space-y-0.5">
+                          {rarityEntries.map(([r, w]) => (
+                            <div key={r} className="flex justify-between">
+                              <span>{RARITY_INFO[r].emoji} {RARITY_INFO[r].name}</span>
+                              <span className="opacity-80">{((w / totalW) * c.petChance * 100).toFixed(1)}%</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    <button
+                      onClick={() => openChest(c.id)}
+                      className="w-full py-2 rounded-xl bg-gradient-to-b from-yellow-400 to-amber-500 text-yellow-950 font-extrabold hover:scale-105 transition"
+                    >
+                      Abrir por {c.priceCoins ? `🪙 ${c.priceCoins}` : `💎 ${c.priceGems}`}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+
+            {chestResult && (
+              <div className="rounded-2xl p-6 text-center text-white bg-gradient-to-br from-amber-500 to-yellow-700 animate-in fade-in zoom-in">
+                <div className="text-sm opacity-90">VOCÊ ABRIU {CHESTS[chestResult.tier].name.toUpperCase()}</div>
+                <div className="text-6xl my-2">{CHESTS[chestResult.tier].emoji}</div>
+                <div className="space-y-1 text-sm font-bold">
+                  {chestResult.reward.coins > 0 && <div>+🪙 {chestResult.reward.coins} moedas</div>}
+                  {chestResult.reward.gems > 0 && <div>+💎 {chestResult.reward.gems} gemas</div>}
+                  {chestResult.reward.rations > 0 && <div>+🍖 {chestResult.reward.rations} rações</div>}
+                  {chestResult.reward.petSpecies && (
+                    <div className="mt-3 pt-3 border-t border-white/30">
+                      <div className="text-xs opacity-90">🎉 BICHINHO RARO!</div>
+                      <img src={SPECIES[chestResult.reward.petSpecies].image} alt="" className="h-32 mx-auto drop-shadow-2xl" />
+                      <div className="text-xl font-extrabold">
+                        {SPECIES[chestResult.reward.petSpecies].emoji} {SPECIES[chestResult.reward.petSpecies].name}
+                      </div>
+                      <span className={`inline-block mt-1 px-2 py-0.5 rounded-full ${RARITY_INFO[SPECIES[chestResult.reward.petSpecies].rarity].color} text-[10px] font-extrabold`}>
+                        {RARITY_INFO[SPECIES[chestResult.reward.petSpecies].rarity].emoji} {RARITY_INFO[SPECIES[chestResult.reward.petSpecies].rarity].name}
+                      </span>
+                    </div>
+                  )}
+                  {!chestResult.reward.petSpecies && (
+                    <div className="mt-2 text-xs opacity-80">(sem pet desta vez — boa sorte na próxima!)</div>
+                  )}
+                </div>
+                <button onClick={() => setChestResult(null)} className="mt-3 px-4 py-1.5 rounded-lg bg-white/30 hover:bg-white/40 text-sm font-bold">Fechar</button>
               </div>
             )}
           </>
