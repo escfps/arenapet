@@ -173,6 +173,7 @@ function MonsterPage() {
               >
                 {monster.in_team ? "✓ No time de batalha" : "Adicionar ao time"}
               </button>
+            </div>
           </div>
         </div>
 
