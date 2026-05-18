@@ -43,6 +43,7 @@ export type DBMonster = {
   atk: number;
   def: number;
   spd: number;
+  int?: number;
   rank?: number;
   hunger?: number;
   team_position?: number;
@@ -51,7 +52,9 @@ export type DBMonster = {
 export function toBattleMonster(m: DBMonster): BattleMonster {
   const sp = SPECIES[m.species];
   const rank = m.rank ?? 1;
-  const stats = totalStats(m.species, rank);
+  const stats = totalStats(m.species, rank, {
+    hp: m.hp ?? 0, atk: m.atk ?? 0, def: m.def ?? 0, spd: m.spd ?? 0, int: m.int ?? 0,
+  });
   const mult = hungerMultiplier(m.hunger ?? 100);
   return {
     id: m.id,

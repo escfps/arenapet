@@ -592,7 +592,7 @@ function TeamPanel({ title, team, side, energies }: { title: string; team: FullM
                     {["🛡️ Frente","⚔️ Meio","🏹 Trás"][m.team_position ?? 0]}
                   </span>
                 </div>
-                {(() => { const st = totalStats(m.species, m.rank ?? 1); return (
+                {(() => { const st = totalStats(m.species, m.rank ?? 1, { hp: m.hp ?? 0, atk: m.atk ?? 0, def: m.def ?? 0, spd: m.spd ?? 0, int: m.int ?? 0 }); return (
                   <div className="text-[10px] opacity-90">{rankStars(m.rank ?? 1)} • ❤️{st.hp} ⚔️{st.atk} 🛡️{st.def} 💨{st.spd} 🧠{st.int}</div>
                 ); })()}
                 {en && (
