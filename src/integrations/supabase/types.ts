@@ -316,6 +316,31 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      _bot_apply_levelup: {
+        Args: { bot_id: string; from_lvl: number; to_lvl: number }
+        Returns: undefined
+      }
+      _bot_award_xp: {
+        Args: { bot_id: string; xp_amount: number }
+        Returns: undefined
+      }
+      _bot_random_species: { Args: { rarity: string }; Returns: string }
+      _bot_rarity_weight: { Args: { r: string }; Returns: number }
+      _bot_species_rarity: { Args: { sp: string }; Returns: string }
+      _bot_species_stats: {
+        Args: { sp: string }
+        Returns: {
+          atk: number
+          def: number
+          hp: number
+          spd: number
+        }[]
+      }
+      _bot_try_upgrade_team: {
+        Args: { bot_id: string; new_species: string }
+        Returns: undefined
+      }
+      _bot_xp_for_next: { Args: { lvl: number }; Returns: number }
       simulate_bot_battles: { Args: never; Returns: undefined }
     }
     Enums: {
