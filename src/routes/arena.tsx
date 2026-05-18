@@ -7,6 +7,7 @@ import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
 import { simulateBattle, computeRewards, toBattleMonster, type BattleLogEntry } from "@/lib/battle";
 import { BattleScene } from "@/components/BattleScene";
+import { BattleStats } from "@/components/BattleStats";
 import { toast, Toaster } from "sonner";
 import arenaBg from "@/assets/arena-bg.jpg";
 
@@ -234,15 +235,18 @@ function ArenaPage() {
                     </div>
                   ))}
                 </div>
-                {shownLog.length === battleLog.length && rewards && (
-                  <div className={`mt-4 p-4 rounded-xl text-center font-extrabold ${winner === "team_a" ? "bg-green-500/40" : "bg-red-500/40"}`}>
-                    {winner === "team_a" ? "🏆 VITÓRIA!" : "💀 Derrota..."}
-                    <div className="text-sm font-normal mt-1">+🪙 {rewards.coins} • +✨ {rewards.xp} XP</div>
-                    {!isVip(profile.vip_until) && winner === "team_a" && (
-                      <div className="mt-2 text-xs opacity-90">👑 VIP daria <b>+50% nas recompensas!</b></div>
-                    )}
-                    <button onClick={findOpponent} className="mt-3 px-4 py-2 bg-yellow-400 text-yellow-950 rounded-lg text-sm">Próxima batalha</button>
-                  </div>
+                {shownLog.length === battleLog.length && rewards && opponent && (
+                  <>
+                    <BattleStats teamA={myTeam} teamB={opponent.team} log={battleLog} />
+                    <div className={`mt-4 p-4 rounded-xl text-center font-extrabold ${winner === "team_a" ? "bg-green-500/40" : "bg-red-500/40"}`}>
+                      {winner === "team_a" ? "🏆 VITÓRIA!" : "💀 Derrota..."}
+                      <div className="text-sm font-normal mt-1">+🪙 {rewards.coins} • +✨ {rewards.xp} XP</div>
+                      {!isVip(profile.vip_until) && winner === "team_a" && (
+                        <div className="mt-2 text-xs opacity-90">👑 VIP daria <b>+50% nas recompensas!</b></div>
+                      )}
+                      <button onClick={findOpponent} className="mt-3 px-4 py-2 bg-yellow-400 text-yellow-950 rounded-lg text-sm">Próxima batalha</button>
+                    </div>
+                  </>
                 )}
               </div>
             )}
