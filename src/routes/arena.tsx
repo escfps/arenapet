@@ -415,7 +415,7 @@ function TeamPanel({ title, team, side, energies }: { title: string; team: FullM
           if (!sp) return null;
           const en = energies?.[i];
           return (
-            <div key={m.id} className={`flex items-center gap-2 p-2 rounded-lg bg-gradient-to-r ${ELEMENT_COLORS[sp.element]}`}>
+            <div key={m.id} className={`flex items-center gap-2 p-2 rounded-lg bg-gradient-to-r ${ELEMENT_COLORS[sp.element]} ring-2 ${RARITY_INFO[sp.rarity].ringColor} ${(m.rank ?? 1) >= MAX_RANK ? "rank-max-glow" : ""}`}>
               <img src={sp.image} alt="" className="h-14 w-14 object-contain drop-shadow-lg" style={{ filter: skinFilter(m.skin) }} />
               <div className="flex-1 min-w-0">
                 <div className="font-bold text-sm truncate flex items-center gap-1">
