@@ -665,15 +665,15 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
         }
       }
 
-      // Esquiva por velocidade: alvo mais rápido pode desviar
-      // chance = (spd_alvo - spd_atacante) * 2%, mínimo 0%, máximo 40%
+      // Esquiva por velocidade: 5% base + 3.5% por ponto de SPD a mais que o atacante
+      // mínimo 5% (sempre há chance), máximo 55%
       const spdDiff = target.spd - attacker.spd;
-      const dodgeChance = Math.max(0, Math.min(0.4, spdDiff * 0.02));
-      if (dodgeChance > 0 && rand() < dodgeChance) {
+      const dodgeChance = Math.max(0.05, Math.min(0.55, 0.05 + spdDiff * 0.035));
+      if (rand() < dodgeChance) {
         log.push({
           turn, actor: side, actorName: attacker.name, targetName: target.name,
           damage: 0, crit: false, effective: 1, remainingHp: target.current,
-          message: `💨 ${target.name} esquivou do ataque! (${Math.round(dodgeChance * 100)}% de esquiva por velocidade)`,
+          message: `💨 ${target.name} esquivou do ataque! (${Math.round(dodgeChance * 100)}% de esquiva)`,
         });
         return;
       }
