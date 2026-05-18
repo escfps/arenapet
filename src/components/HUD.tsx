@@ -34,6 +34,7 @@ export function HUD({ profile }: { profile: ProfileRow }) {
         <nav className="flex items-center gap-1 ml-2">
           <NavLink to="/" label="Pátio" emoji="🏠" />
           <NavLink to="/arena" label="Arena" emoji="⚔️" />
+          <NavLink to="/collection" label="Coleção" emoji="📖" />
           <NavLink to="/shop" label="Loja" emoji="🛒" />
         </nav>
         <div className="flex items-center gap-1.5 ml-auto flex-wrap">
