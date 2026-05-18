@@ -153,7 +153,7 @@ function ArenaPage() {
     const ownerIds = Array.from(new Set(allMons.map((m) => m.owner_id)));
     const { data: profs } = await supabase
       .from("profiles")
-      .select("id, username, level, vip_until, arena_points")
+      .select("id, username, level, vip_until, arena_points, is_bot")
       .in("id", ownerIds);
     const profById = new Map((profs ?? []).map((p) => [p.id as string, p]));
 
