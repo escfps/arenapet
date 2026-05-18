@@ -192,8 +192,11 @@ function ArenaPage() {
     const a = myTeam.map(toBattleMonster);
     const b = opponent.team.map(toBattleMonster);
     const result = simulateBattle(a, b);
+    const isDraw = result.winner === "draw";
     const won = result.winner === "team_a";
-    const rew = computeRewards(profile.level, won, isVip(profile.vip_until));
+    const rew = isDraw
+      ? { coins: 0, xp: 0 }
+      : computeRewards(profile.level, won, isVip(profile.vip_until));
 
     // Arena points + promo series logic
     const oldPoints = profile.arena_points ?? 0;
