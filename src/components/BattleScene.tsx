@@ -336,7 +336,8 @@ function ArenaLineup({
 }) {
   return (
     <div className={`flex ${mirrored ? "justify-end flex-row-reverse" : "justify-start"} items-end gap-3 sm:gap-5`}>
-      {team.map((m) => {
+      {[...team].sort((a, b) => (b.position ?? 0) - (a.position ?? 0)).map((m) => {
+
         const sp = SPECIES[m.species];
         if (!sp) return null;
         const key = `${side}:${m.name}`;
