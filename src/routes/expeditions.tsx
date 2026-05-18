@@ -22,6 +22,8 @@ import {
   claimExpedition,
   cancelExpedition,
   buyExpeditionSlot,
+  swapExpeditionMonster,
+  EXPEDITION_SWAP_GEM_COST,
 } from "@/lib/expeditions.functions";
 import { toast, Toaster } from "sonner";
 import type { MonsterRow } from "@/components/MonsterCard";
@@ -50,6 +52,7 @@ function ExpeditionsPage() {
   const [expeditions, setExpeditions] = useState<ExpRow[]>([]);
   const [foodQty, setFoodQty] = useState(0);
   const [pickMonsterFor, setPickMonsterFor] = useState<ExpeditionDuration | null>(null);
+  const [swapForExp, setSwapForExp] = useState<ExpRow | null>(null);
   const [now, setNow] = useState(Date.now());
   const [busy, setBusy] = useState(false);
 
@@ -57,6 +60,7 @@ function ExpeditionsPage() {
   const claim = useServerFn(claimExpedition);
   const cancel = useServerFn(cancelExpedition);
   const buySlot = useServerFn(buyExpeditionSlot);
+  const swap = useServerFn(swapExpeditionMonster);
 
   const refresh = useCallback(async () => {
     if (!userId) return;
@@ -126,6 +130,20 @@ function ExpeditionsPage() {
       const r = await buySlot({});
       toast.success(`Slot ${r.slots} desbloqueado! (-${r.paid} 💎)`);
       await reload();
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function handleSwap(exp: ExpRow, newMonsterId: string) {
+    setBusy(true);
+    try {
+      const r = await swap({ data: { expeditionId: exp.id, newMonsterId } });
+      toast.success(`Bichinho trocado! (-${r.paid} 💎)`);
+      setSwapForExp(null);
+      await Promise.all([refresh(), reload()]);
     } catch (e) {
       toast.error((e as Error).message);
     } finally {
@@ -222,13 +240,22 @@ function ExpeditionsPage() {
                         Reclamar
                       </button>
                     ) : (
-                      <button
-                        onClick={() => handleCancel(exp)}
-                        disabled={busy}
-                        className="px-3 py-2 rounded-lg bg-red-500/80 hover:bg-red-600 text-xs font-bold text-white disabled:opacity-50"
-                      >
-                        Cancelar
-                      </button>
+                      <div className="flex flex-col gap-1">
+                        <button
+                          onClick={() => setSwapForExp(exp)}
+                          disabled={busy}
+                          className="px-3 py-1.5 rounded-lg bg-fuchsia-500/90 hover:bg-fuchsia-600 text-xs font-bold text-white disabled:opacity-50 whitespace-nowrap"
+                        >
+                          🔄 Trocar ({EXPEDITION_SWAP_GEM_COST}💎)
+                        </button>
+                        <button
+                          onClick={() => handleCancel(exp)}
+                          disabled={busy}
+                          className="px-3 py-1.5 rounded-lg bg-red-500/80 hover:bg-red-600 text-xs font-bold text-white disabled:opacity-50"
+                        >
+                          Cancelar
+                        </button>
+                      </div>
                     )}
                   </div>
                 </div>
@@ -305,6 +332,46 @@ function ExpeditionsPage() {
                             <div className="text-[10px] mt-1">
                               ✨{preview.xp} 🪙{preview.coins} • <span className={enough ? "" : "text-red-200 font-bold"}>⚡{en.energy}/{MAX_BATTLE_ENERGY}</span>
                             </div>
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Swap modal */}
+        {swapForExp && (
+          <div className="fixed inset-0 z-30 bg-black/70 flex items-center justify-center p-4" onClick={() => setSwapForExp(null)}>
+            <div className="bg-purple-950 border-2 border-fuchsia-400/50 rounded-2xl p-4 max-w-2xl w-full max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+              <div className="flex items-center justify-between mb-3 text-white">
+                <h3 className="font-extrabold text-lg">🔄 Trocar bichinho ({EXPEDITION_SWAP_GEM_COST} 💎)</h3>
+                <button onClick={() => setSwapForExp(null)} className="text-white/60 hover:text-white">✕</button>
+              </div>
+              <p className="text-white/70 text-xs mb-3">A expedição continua de onde parou; só o bichinho muda.</p>
+              {availableMonsters.length === 0 ? (
+                <p className="text-white/70 text-sm text-center py-6">Nenhum bichinho disponível pra trocar.</p>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {availableMonsters.map((m) => {
+                    const sp = SPECIES[m.species];
+                    if (!sp) return null;
+                    const canPay = (profile.gems ?? 0) >= EXPEDITION_SWAP_GEM_COST;
+                    return (
+                      <button
+                        key={m.id}
+                        onClick={() => canPay && handleSwap(swapForExp, m.id)}
+                        disabled={busy || !canPay}
+                        className={`rounded-xl bg-gradient-to-r ${ELEMENT_COLORS[sp.element]} p-3 text-white text-left hover:scale-105 transition disabled:opacity-50 disabled:hover:scale-100`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <img src={sp.image} alt="" className="h-12 w-12 object-contain drop-shadow-lg" style={{ filter: skinFilter(m.skin) }} />
+                          <div className="flex-1 min-w-0">
+                            <div className="font-bold text-sm truncate">{m.name}</div>
+                            <div className="text-[10px] opacity-90">{rankStars(m.rank ?? 1)}</div>
                           </div>
                         </div>
                       </button>
