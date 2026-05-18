@@ -154,13 +154,15 @@ function ArenaPage() {
       return;
     }
 
-    // Consume 1 battle energy from each team pet
+    // Consume 1 battle energy + 1~3 hunger from each team pet
+    const hungerLoss = myTeam.map(() => 1 + Math.floor(Math.random() * 3));
     await Promise.all(myTeam.map(async (m, i) => {
       const e = teamEnergies[i];
       const newEnergy = Math.max(0, e.energy - 1);
+      const newHunger = Math.max(0, (m.hunger ?? 100) - hungerLoss[i]);
       await supabase
         .from("monsters")
-        .update({ battle_energy: newEnergy, battle_energy_at: e.nextStoredAt })
+        .update({ battle_energy: newEnergy, battle_energy_at: e.nextStoredAt, hunger: newHunger })
         .eq("id", m.id);
     }));
     // Reflect locally so the UI updates instantly
@@ -168,6 +170,7 @@ function ArenaPage() {
       ...m,
       battle_energy: Math.max(0, teamEnergies[i].energy - 1),
       battle_energy_at: teamEnergies[i].nextStoredAt,
+      hunger: Math.max(0, (m.hunger ?? 100) - hungerLoss[i]),
     })));
 
     const a = myTeam.map(toBattleMonster);
