@@ -24,6 +24,7 @@ export type BattleLogEntry = {
   crit: boolean;
   effective: number;
   remainingHp: number;
+  targetShield?: number;
   message: string;
 };
 
