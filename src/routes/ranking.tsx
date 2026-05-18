@@ -3,12 +3,20 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
-import { getTier, nextTierProgress } from "@/lib/game-data";
+import { getTier, nextTierProgress, SPECIES, RARITY_INFO, skinFilter } from "@/lib/game-data";
 import arenaBg from "@/assets/arena-bg.jpg";
 
 export const Route = createFileRoute("/ranking")({
   component: RankingPage,
 });
+
+type TeamMon = {
+  id: string;
+  species: string;
+  name: string;
+  skin: string;
+  rank: number;
+};
 
 type Row = {
   id: string;
@@ -17,6 +25,7 @@ type Row = {
   wins: number;
   losses: number;
   level: number;
+  team: TeamMon[];
 };
 
 function RankingPage() {
@@ -32,7 +41,20 @@ function RankingPage() {
         .select("id, username, arena_points, wins, losses, level")
         .order("arena_points", { ascending: false })
         .limit(100);
-      const list = (data ?? []) as Row[];
+      const baseList = (data ?? []) as Omit<Row, "team">[];
+      const ids = baseList.map((r) => r.id);
+      const teamsByOwner: Record<string, TeamMon[]> = {};
+      if (ids.length > 0) {
+        const { data: mons } = await supabase
+          .from("monsters")
+          .select("id, owner_id, species, name, skin, rank, in_team")
+          .in("owner_id", ids)
+          .eq("in_team", true);
+        for (const m of (mons ?? []) as Array<TeamMon & { owner_id: string }>) {
+          (teamsByOwner[m.owner_id] ||= []).push({ id: m.id, species: m.species, name: m.name, skin: m.skin, rank: m.rank });
+        }
+      }
+      const list: Row[] = baseList.map((r) => ({ ...r, team: (teamsByOwner[r.id] ?? []).slice(0, 3) }));
       setRows(list);
       if (profile) {
         const idx = list.findIndex((r) => r.id === profile.id);
