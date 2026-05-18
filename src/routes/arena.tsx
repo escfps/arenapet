@@ -215,6 +215,10 @@ function ArenaPage() {
               )}
             </div>
 
+            {battleLog && opponent && (
+              <BattleScene teamA={myTeam} teamB={opponent.team} log={battleLog} step={shownLog.length} />
+            )}
+
             {battleLog && (
               <div className="rounded-2xl bg-black/60 backdrop-blur-md border border-white/30 p-4 text-white">
                 <h3 className="font-extrabold mb-2 flex items-center gap-2">📜 Log da batalha</h3>
