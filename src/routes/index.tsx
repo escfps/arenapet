@@ -60,10 +60,10 @@ function PatioPage() {
 
   async function toggleTeam(m: MonsterRow) {
     if (!profile) return;
-    const teamMax = profile.vip_until && new Date(profile.vip_until) > new Date() ? TEAM_MAX_VIP : TEAM_MAX;
+    const teamMax = TEAM_MAX;
     const teamCount = monsters.filter((x) => x.in_team).length;
     if (!m.in_team && teamCount >= teamMax) {
-      toast.error(`Time cheio (${teamMax}). ${teamMax === TEAM_MAX ? "Vire VIP pra 4 slots!" : ""}`);
+      toast.error(`Time cheio (${teamMax}).`);
       return;
     }
     const newVal = !m.in_team;
