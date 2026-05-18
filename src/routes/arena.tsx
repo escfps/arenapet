@@ -485,8 +485,8 @@ function ArenaPage() {
                 {shownLog.length === battleLog.length && rewards && opponent && (
                   <>
                     <BattleStats teamA={myTeam} teamB={opponent.team} log={battleLog} />
-                    <div className={`mt-4 p-4 rounded-xl text-center font-extrabold ${winner === "team_a" ? "bg-green-500/40" : "bg-red-500/40"}`}>
-                      {winner === "team_a" ? "🏆 VITÓRIA!" : "💀 Derrota..."}
+                    <div className={`mt-4 p-4 rounded-xl text-center font-extrabold ${winner === "team_a" ? "bg-green-500/40" : winner === "draw" ? "bg-yellow-500/40" : "bg-red-500/40"}`}>
+                      {winner === "team_a" ? "🏆 VITÓRIA!" : winner === "draw" ? "🤝 EMPATE!" : "💀 Derrota..."}
                       <div className="text-sm font-normal mt-1">+🪙 {rewards.coins} • +✨ {rewards.xp} XP</div>
                       <div className="text-xs font-bold mt-1 flex items-center justify-center gap-2">
                         <span className={`px-2 py-0.5 rounded ${getTier(rewards.oldPoints).color}`}>{getTier(rewards.oldPoints).short}</span>
