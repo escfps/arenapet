@@ -276,14 +276,14 @@ function makeWeights(commonW: number, rareW: number): Record<string, number> {
 
 export const EGGS: Record<string, Egg> = {
   basic: {
-    id: "basic", name: "Ovo Comum", emoji: "🥚", priceCoins: 100,
-    description: "Maior chance de mestiços. Pequena chance de puro.",
-    weights: makeWeights(7, 2), // 10 commons × 7 = 70%, 5 rares × 2 = 10... ratio 70:10 = 87% common
+    id: "basic", name: "Ovo Comum", emoji: "🥚", priceCoins: 1000,
+    description: "Sorteia apenas monstros mestiços (comuns).",
+    weights: makeWeights(1, 0),
   },
   rare: {
     id: "rare", name: "Ovo Raro", emoji: "🪺", priceGems: 25,
     description: "Alta chance de puro (raro) com stats melhores.",
-    weights: makeWeights(2, 14), // 10×2=20, 5×14=70 → ~78% rare
+    weights: makeWeights(2, 14),
   },
 };
 
