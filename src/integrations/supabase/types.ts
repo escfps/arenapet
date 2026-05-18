@@ -316,6 +316,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      _bot_species_stats: {
+        Args: { sp: string }
+        Returns: {
+          atk: number
+          def: number
+          hp: number
+          spd: number
+        }[]
+      }
       simulate_bot_battles: { Args: never; Returns: undefined }
     }
     Enums: {
