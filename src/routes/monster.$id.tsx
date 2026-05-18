@@ -57,23 +57,31 @@ function MonsterPage() {
     });
     const updates: Partial<MonsterRow> = {};
     if (item.effect.hunger) updates.hunger = Math.min(100, monster.hunger + item.effect.hunger);
-    if (item.effect.energy) updates.energy = Math.min(100, monster.energy + item.effect.energy);
+    if (item.effect.energy) {
+      const e = computeBattleEnergy(monster.battle_energy, monster.battle_energy_at);
+      updates.battle_energy = Math.min(MAX_BATTLE_ENERGY, e.energy + item.effect.energy);
+      updates.battle_energy_at = e.nextStoredAt;
+    }
     if (item.effect.happiness) updates.happiness = Math.min(100, monster.happiness + item.effect.happiness);
     await patchMonster(updates);
     toast.success(`Usou ${item.emoji} ${item.name}`);
   }
 
+  const TRAIN_ENERGY_COST = 2;
+  const PLAY_ENERGY_COST = 1;
+
   async function train(stat: "atk" | "def" | "spd" | "hp" | "int") {
     if (!profile || !monster) return;
     const cost = 20 + (monster.rank ?? 1) * 10;
-    const energyCost = 15;
     if (profile.coins < cost) { toast.error("Moedas insuficientes!"); return; }
-    if (monster.energy < energyCost) { toast.error("Sem energia! Dê um energético."); return; }
+    const e = computeBattleEnergy(monster.battle_energy, monster.battle_energy_at);
+    if (e.energy < TRAIN_ENERGY_COST) { toast.error("Sem energia! Dê um energético ou espere regenerar."); return; }
     if (monster.hunger < 20) { toast.error("Está com fome! Alimente primeiro."); return; }
     await patch({ coins: profile.coins - cost });
     const gain = stat === "hp" ? 3 + Math.floor(Math.random() * 3) : 1 + Math.floor(Math.random() * 2);
     const updates: Partial<MonsterRow> = {
-      energy: monster.energy - energyCost,
+      battle_energy: e.energy - TRAIN_ENERGY_COST,
+      battle_energy_at: e.nextStoredAt,
       hunger: monster.hunger - 5,
     };
     updates[stat] = (monster[stat] ?? 0) + gain;
@@ -83,10 +91,12 @@ function MonsterPage() {
 
   async function play() {
     if (!monster) return;
-    if (monster.energy < 10) { toast.error("Sem energia!"); return; }
+    const e = computeBattleEnergy(monster.battle_energy, monster.battle_energy_at);
+    if (e.energy < PLAY_ENERGY_COST) { toast.error("Sem energia!"); return; }
     await patchMonster({
       happiness: Math.min(100, monster.happiness + 20),
-      energy: monster.energy - 10,
+      battle_energy: e.energy - PLAY_ENERGY_COST,
+      battle_energy_at: e.nextStoredAt,
     });
     toast.success("Que divertido! 🎉 +20 felicidade");
   }
@@ -135,8 +145,7 @@ function MonsterPage() {
                     <div className="mt-2 space-y-1 text-xs">
                       <Bar label="❤️ HP" value={stats.hp} max={stats.hp} color="bg-rose-500" />
                       <Bar label="🍖 Fome" value={monster.hunger} max={100} color="bg-amber-500" />
-                      <Bar label="💪 Vigor" value={monster.energy} max={100} color="bg-yellow-400" />
-                      <Bar label="⚡ Energia de Batalha" value={computeBattleEnergy(monster.battle_energy, monster.battle_energy_at).energy} max={MAX_BATTLE_ENERGY} color="bg-cyan-400" />
+                      <Bar label="⚡ Energia" value={computeBattleEnergy(monster.battle_energy, monster.battle_energy_at).energy} max={MAX_BATTLE_ENERGY} color="bg-yellow-400" />
                       <Bar label="😊 Felicidade" value={monster.happiness} max={100} color="bg-pink-500" />
                     </div>
                     <div className="mt-2 grid grid-cols-5 gap-1 text-xs font-bold bg-black/30 rounded-lg p-2">
@@ -320,7 +329,7 @@ function MonsterPage() {
               className="p-4 rounded-2xl bg-pink-500/90 hover:bg-pink-400 text-white font-extrabold text-left transition shadow-lg"
             >
               🎮 Brincar
-              <div className="text-xs font-normal opacity-90">Grátis • +20 felicidade • -10 energia</div>
+              <div className="text-xs font-normal opacity-90">Grátis • +20 felicidade • -{PLAY_ENERGY_COST} energia</div>
             </button>
             {Object.values(ITEMS).map((it) => (
               <button
@@ -355,7 +364,7 @@ function MonsterPage() {
                 <div className="text-3xl mb-1">{emoji}</div>
                 <div>Treinar {s.toUpperCase()}</div>
                 <div className="text-xs font-normal opacity-90 mt-1">
-                  🪙 {20 + monster.rank * 10} • -15 energia • {gain} {s.toUpperCase()}
+                  🪙 {20 + monster.rank * 10} • -{TRAIN_ENERGY_COST} energia • {gain} {s.toUpperCase()}
                 </div>
               </button>
             ))}
