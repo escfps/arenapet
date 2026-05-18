@@ -124,6 +124,7 @@ export type Database = {
           hunger: number
           id: string
           in_team: boolean
+          int: number
           last_tick: string
           name: string
           owner_id: string
@@ -142,6 +143,7 @@ export type Database = {
           hunger?: number
           id?: string
           in_team?: boolean
+          int?: number
           last_tick?: string
           name: string
           owner_id: string
@@ -160,6 +162,7 @@ export type Database = {
           hunger?: number
           id?: string
           in_team?: boolean
+          int?: number
           last_tick?: string
           name?: string
           owner_id?: string

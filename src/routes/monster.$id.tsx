@@ -63,7 +63,7 @@ function MonsterPage() {
     toast.success(`Usou ${item.emoji} ${item.name}`);
   }
 
-  async function train(stat: "atk" | "def" | "spd") {
+  async function train(stat: "atk" | "def" | "spd" | "hp" | "int") {
     if (!profile || !monster) return;
     const cost = 20 + (monster.rank ?? 1) * 10;
     const energyCost = 15;
@@ -71,12 +71,12 @@ function MonsterPage() {
     if (monster.energy < energyCost) { toast.error("Sem energia! Dê um energético."); return; }
     if (monster.hunger < 20) { toast.error("Está com fome! Alimente primeiro."); return; }
     await patch({ coins: profile.coins - cost });
-    const gain = 1 + Math.floor(Math.random() * 2);
+    const gain = stat === "hp" ? 3 + Math.floor(Math.random() * 3) : 1 + Math.floor(Math.random() * 2);
     const updates: Partial<MonsterRow> = {
       energy: monster.energy - energyCost,
       hunger: monster.hunger - 5,
     };
-    updates[stat] = monster[stat] + gain;
+    updates[stat] = (monster[stat] ?? 0) + gain;
     await patchMonster(updates);
     toast.success(`+${gain} ${stat.toUpperCase()}!`);
   }
@@ -231,17 +231,23 @@ function MonsterPage() {
         )}
 
         {tab === "train" && (
-          <div className="grid sm:grid-cols-3 gap-3">
-            {(["atk", "def", "spd"] as const).map((s) => (
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            {([
+              { s: "atk", emoji: "⚔️", grad: "from-orange-500 to-red-600", gain: "+1~2" },
+              { s: "def", emoji: "🛡️", grad: "from-blue-500 to-indigo-600", gain: "+1~2" },
+              { s: "spd", emoji: "💨", grad: "from-purple-500 to-fuchsia-600", gain: "+1~2" },
+              { s: "hp",  emoji: "❤️", grad: "from-rose-500 to-pink-600", gain: "+3~5" },
+              { s: "int", emoji: "🧠", grad: "from-fuchsia-500 to-violet-600", gain: "+1~2" },
+            ] as const).map(({ s, emoji, grad, gain }) => (
               <button
                 key={s}
                 onClick={() => train(s)}
-                className="p-4 rounded-2xl bg-gradient-to-br from-orange-500 to-red-600 text-white font-extrabold transition shadow-lg hover:scale-105"
+                className={`p-4 rounded-2xl bg-gradient-to-br ${grad} text-white font-extrabold transition shadow-lg hover:scale-105`}
               >
-                <div className="text-3xl mb-1">{s === "atk" ? "⚔️" : s === "def" ? "🛡️" : "💨"}</div>
+                <div className="text-3xl mb-1">{emoji}</div>
                 <div>Treinar {s.toUpperCase()}</div>
                 <div className="text-xs font-normal opacity-90 mt-1">
-                  🪙 {20 + monster.rank * 10} • -15 energia • +1~2 {s.toUpperCase()}
+                  🪙 {20 + monster.rank * 10} • -15 energia • {gain} {s.toUpperCase()}
                 </div>
               </button>
             ))}
