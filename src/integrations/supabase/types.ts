@@ -47,6 +47,54 @@ export type Database = {
         }
         Relationships: []
       }
+      expeditions: {
+        Row: {
+          claimed: boolean
+          coins_reward: number
+          created_at: string
+          duration_minutes: number
+          ends_at: string
+          food_cost: number
+          gems_reward: number
+          id: string
+          monster_id: string
+          ration_drop: number
+          started_at: string
+          user_id: string
+          xp_reward: number
+        }
+        Insert: {
+          claimed?: boolean
+          coins_reward?: number
+          created_at?: string
+          duration_minutes: number
+          ends_at: string
+          food_cost?: number
+          gems_reward?: number
+          id?: string
+          monster_id: string
+          ration_drop?: number
+          started_at?: string
+          user_id: string
+          xp_reward?: number
+        }
+        Update: {
+          claimed?: boolean
+          coins_reward?: number
+          created_at?: string
+          duration_minutes?: number
+          ends_at?: string
+          food_cost?: number
+          gems_reward?: number
+          id?: string
+          monster_id?: string
+          ration_drop?: number
+          started_at?: string
+          user_id?: string
+          xp_reward?: number
+        }
+        Relationships: []
+      }
       inventory: {
         Row: {
           item_type: string
@@ -132,6 +180,7 @@ export type Database = {
         Row: {
           coins: number
           created_at: string
+          expedition_slots: number
           gems: number
           id: string
           level: number
@@ -145,6 +194,7 @@ export type Database = {
         Insert: {
           coins?: number
           created_at?: string
+          expedition_slots?: number
           gems?: number
           id: string
           level?: number
@@ -158,6 +208,7 @@ export type Database = {
         Update: {
           coins?: number
           created_at?: string
+          expedition_slots?: number
           gems?: number
           id?: string
           level?: number

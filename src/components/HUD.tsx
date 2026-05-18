@@ -13,6 +13,7 @@ export type ProfileRow = {
   vip_until: string | null;
   wins: number;
   losses: number;
+  expedition_slots: number;
 };
 
 export function HUD({ profile }: { profile: ProfileRow }) {
@@ -36,6 +37,7 @@ export function HUD({ profile }: { profile: ProfileRow }) {
           <NavLink to="/arena" label="Arena" emoji="⚔️" />
           <NavLink to="/forge" label="Forja" emoji="🔨" />
           <NavLink to="/trade" label="Trocas" emoji="🔄" />
+          <NavLink to="/expeditions" label="Expedições" emoji="🗺️" />
           <NavLink to="/collection" label="Coleção" emoji="📖" />
           <NavLink to="/shop" label="Loja" emoji="🛒" />
         </nav>
