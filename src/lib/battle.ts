@@ -251,7 +251,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           .filter((m) => m.current > 0 && m.current < m.maxHp)
           .sort((x, y) => x.current / x.maxHp - y.current / y.maxHp)[0];
         if (hurt) {
-          const heal = Math.round((attacker.atk * 2.2 + attacker.maxHp * 0.08) * RARITY_INFO[attacker.rarity].skillMult);
+          const heal = Math.round((attacker.int * 2.2 + attacker.maxHp * 0.08) * RARITY_INFO[attacker.rarity].skillMult);
           hurt.current = Math.min(hurt.maxHp, hurt.current + heal);
           attacker.healCd = 2;
           log.push({
