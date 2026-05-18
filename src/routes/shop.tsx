@@ -22,9 +22,10 @@ export const Route = createFileRoute("/shop")({
 function ShopPage() {
   const navigate = useNavigate();
   const { userId, profile, patch, loading } = useProfile();
-  const [tab, setTab] = useState<"eggs" | "skins" | "vip" | "gems" | "energy">("eggs");
+  const [tab, setTab] = useState<"eggs" | "chests" | "skins" | "vip" | "gems" | "energy">("eggs");
   const [ownedSkins, setOwnedSkins] = useState<string[]>(["default"]);
   const [hatchResult, setHatchResult] = useState<string | null>(null);
+  const [chestResult, setChestResult] = useState<{ tier: ChestTier; reward: ChestReward } | null>(null);
   const [pets, setPets] = useState<MonsterRow[]>([]);
 
   const loadSkins = useCallback(async () => {
