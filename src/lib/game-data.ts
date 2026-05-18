@@ -26,6 +26,7 @@ import dragaoBrancoImg from "@/assets/monsters/dragao_branco.png";
 import dragaoNegroImg from "@/assets/monsters/dragao_negro.png";
 import jacareAncestralImg from "@/assets/monsters/jacare_ancestral.png";
 import gorilaTitanImg from "@/assets/monsters/gorila_titan.png";
+import ratoBombaImg from "@/assets/monsters/rato_bomba.png";
 import macacoPregoImg from "@/assets/monsters/macaco_prego.png";
 import tubaraoAbissalImg from "@/assets/monsters/tubarao_abissal.png";
 import polvoVenenosoImg from "@/assets/monsters/polvo_venenoso.png";
