@@ -269,13 +269,13 @@ export const SPECIES: Record<string, Species> = {
     id: "jacare_ancestral", name: "Jacaré Ancestral", element: "water", secondaryElement: "earth", role: "dps", rarity: "epic",
     emoji: "🐊", image: jacareAncestralImg,
     description: "Predador ancestral dos rios esmeralda. Mordida devastadora que ignora defesa leve.",
-    base: { hp: 62, atk: 17, def: 12, spd: 11, int: 8 },
+    base: { hp: 56, atk: 15, def: 10, spd: 11, int: 8 },
   },
   gorila_titan: {
     id: "gorila_titan", name: "Gorila Titã", element: "earth", role: "tank", rarity: "epic",
     emoji: "🦍", image: gorilaTitanImg,
     description: "Titã das montanhas com cristais místicos. Tank brutal que provoca e contra-ataca.",
-    base: { hp: 78, atk: 15, def: 17, spd: 8, int: 9 },
+    base: { hp: 70, atk: 13, def: 14, spd: 8, int: 9 },
   },
 
   // ===== MÍTICOS (classe suprema — só em eventos especiais) =====
