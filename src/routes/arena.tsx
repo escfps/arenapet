@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { SPECIES, ELEMENT_COLORS, ROLE_INFO, RARITY_INFO, MAX_RANK, skinFilter, isVip, xpForNextLevel, rankStars, totalStats, ARENA_WIN_POINTS, ARENA_LOSS_POINTS, getTier, divisionBounds, promoNeeded, type PromoSeries, computeBattleEnergy, MAX_BATTLE_ENERGY } from "@/lib/game-data";
+import { SPECIES, ELEMENT_COLORS, ROLE_INFO, RARITY_INFO, MAX_RANK, skinFilter, isVip, xpForNextLevel, rankStars, totalStats, ARENA_WIN_POINTS, ARENA_LOSS_POINTS, getTier, divisionBounds, promoNeeded, type PromoSeries, computeBattleEnergy, MAX_BATTLE_ENERGY, hungerMultiplier } from "@/lib/game-data";
 import type { MonsterRow } from "@/components/MonsterCard";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
@@ -139,10 +139,16 @@ function ArenaPage() {
   // Compute current energy for each team pet (with regen applied)
   const teamEnergies = myTeam.map((m) => computeBattleEnergy(m.battle_energy, m.battle_energy_at));
   const minEnergy = teamEnergies.length ? Math.min(...teamEnergies.map((e) => e.energy)) : 0;
-  const canFight = myTeam.length > 0 && minEnergy >= 1;
+  const starvingPets = myTeam.filter((m) => (m.hunger ?? 100) <= 0);
+  const hungryPets = myTeam.filter((m) => (m.hunger ?? 100) > 0 && (m.hunger ?? 100) < 50);
+  const canFight = myTeam.length > 0 && minEnergy >= 1 && starvingPets.length === 0;
 
   async function fight() {
     if (!profile || !userId || !opponent) return;
+    if (starvingPets.length > 0) {
+      toast.error(`${starvingPets[0].name} está faminto! Alimente antes de batalhar. 🍖`);
+      return;
+    }
     if (!canFight) {
       toast.error("Algum pet do seu time está sem energia de batalha! ⚡");
       return;
@@ -318,7 +324,17 @@ function ArenaPage() {
               )}
             </div>
 
-            {!canFight && myTeam.length > 0 && (
+            {starvingPets.length > 0 && (
+              <div className="rounded-xl bg-red-600/40 border border-red-300 p-3 text-white text-sm text-center">
+                🍖 {starvingPets.map((p) => p.name).join(", ")} {starvingPets.length === 1 ? "está faminto" : "estão famintos"} e não pode{starvingPets.length === 1 ? "" : "m"} batalhar. Dê ração primeiro!
+              </div>
+            )}
+            {starvingPets.length === 0 && hungryPets.length > 0 && (
+              <div className="rounded-xl bg-amber-500/30 border border-amber-300 p-3 text-white text-sm text-center">
+                🍖 {hungryPets.map((p) => `${p.name} (${Math.round((1 - hungerMultiplier(p.hunger ?? 100)) * 100)}%)`).join(", ")} com fome — vão lutar com stats reduzidos.
+              </div>
+            )}
+            {!canFight && starvingPets.length === 0 && myTeam.length > 0 && (
               <div className="rounded-xl bg-red-500/30 border border-red-300 p-3 text-white text-sm text-center">
                 ⚡ Algum pet do seu time está sem energia de batalha. Espere a regen (1/hora) ou compre energia na <button onClick={() => navigate({ to: "/shop" })} className="underline font-bold">loja</button>.
               </div>

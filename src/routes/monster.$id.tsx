@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { SPECIES, ITEMS, SKINS, ELEMENT_COLORS, ROLE_INFO, getSkill, RARITY_INFO, skinFilter, rankStars, totalStats, computeBattleEnergy, MAX_BATTLE_ENERGY } from "@/lib/game-data";
+import { SPECIES, ITEMS, SKINS, ELEMENT_COLORS, ROLE_INFO, getSkill, RARITY_INFO, skinFilter, rankStars, totalStats, computeBattleEnergy, MAX_BATTLE_ENERGY, hungerStatusLabel } from "@/lib/game-data";
 import type { MonsterRow } from "@/components/MonsterCard";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
@@ -145,6 +145,7 @@ function MonsterPage() {
                     <div className="mt-2 space-y-1 text-xs">
                       <Bar label="❤️ HP" value={stats.hp} max={stats.hp} color="bg-rose-500" />
                       <Bar label="🍖 Fome" value={monster.hunger} max={100} color="bg-amber-500" />
+                      <div className={`text-[10px] font-bold ${hungerStatusLabel(monster.hunger).color}`}>↳ {hungerStatusLabel(monster.hunger).label}</div>
                       <Bar label="⚡ Energia" value={computeBattleEnergy(monster.battle_energy, monster.battle_energy_at).energy} max={MAX_BATTLE_ENERGY} color="bg-yellow-400" />
                       <Bar label="😊 Felicidade" value={monster.happiness} max={100} color="bg-pink-500" />
                     </div>

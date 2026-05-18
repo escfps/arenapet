@@ -1,4 +1,4 @@
-import { SPECIES, ROLE_SKILLS, RARITY_INFO, defensiveMultiplier, totalStats, getSkill, type Element, type Role, type Rarity } from "./game-data";
+import { SPECIES, ROLE_SKILLS, RARITY_INFO, defensiveMultiplier, totalStats, getSkill, hungerMultiplier, type Element, type Role, type Rarity } from "./game-data";
 
 export type BattleMonster = {
   id: string;
@@ -43,23 +43,25 @@ export type DBMonster = {
   def: number;
   spd: number;
   rank?: number;
+  hunger?: number;
 };
 
 export function toBattleMonster(m: DBMonster): BattleMonster {
   const sp = SPECIES[m.species];
   const rank = m.rank ?? 1;
   const stats = totalStats(m.species, rank);
+  const mult = hungerMultiplier(m.hunger ?? 100);
   return {
     id: m.id,
     owner_id: m.owner_id,
     name: m.name,
     species: m.species,
     rank,
-    hp: stats.hp,
-    atk: stats.atk,
-    def: stats.def,
-    spd: stats.spd,
-    int: stats.int,
+    hp: Math.max(1, Math.round(stats.hp * mult)),
+    atk: Math.max(1, Math.round(stats.atk * mult)),
+    def: Math.max(1, Math.round(stats.def * mult)),
+    spd: Math.max(1, Math.round(stats.spd * mult)),
+    int: Math.max(1, Math.round(stats.int * mult)),
     role: sp?.role ?? "dps",
     rarity: sp?.rarity ?? "common",
   };

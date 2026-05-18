@@ -662,6 +662,24 @@ export const BATTLE_ENERGY_REGEN_MS = 60 * 60 * 1000; // 1 energia por hora
 export const ENERGY_REFILL_GEM_COST = 3; // custo pra encher 1 pet
 export const ENERGY_REFILL_ALL_GEM_COST = 15; // encher o time inteiro
 
+// ===== Fome → penalidade de combate =====
+// hunger 0  → não pode batalhar
+// hunger 1-24  → 65% (faminto)
+// hunger 25-49 → 85% (com fome)
+// hunger 50+   → 100% (saudável)
+export function hungerMultiplier(hunger: number): number {
+  if (hunger <= 0) return 0;
+  if (hunger < 25) return 0.65;
+  if (hunger < 50) return 0.85;
+  return 1;
+}
+export function hungerStatusLabel(hunger: number): { label: string; color: string } {
+  if (hunger <= 0) return { label: "Faminto (não pode batalhar)", color: "text-red-300" };
+  if (hunger < 25) return { label: "Faminto (-35% stats)", color: "text-red-300" };
+  if (hunger < 50) return { label: "Com fome (-15% stats)", color: "text-amber-300" };
+  return { label: "Saudável", color: "text-emerald-300" };
+}
+
 export function computeBattleEnergy(stored: number | undefined | null, at: string | undefined | null): {
   energy: number;
   nextRegenAt: Date | null; // null se cheio
