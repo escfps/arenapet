@@ -164,7 +164,7 @@ function MonsterPage() {
 
         {/* Skill card */}
         {(() => {
-          const skill = ROLE_SKILLS[sp.role];
+          const skill = getSkill(sp.id);
           const rarity = RARITY_INFO[sp.rarity];
           const role = ROLE_INFO[sp.role];
           const skillMult = rarity.skillMult;
