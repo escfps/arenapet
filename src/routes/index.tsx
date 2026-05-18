@@ -19,12 +19,17 @@ export const Route = createFileRoute("/")({
 });
 
 const TEAM_MAX = 3;
+const ALL_RARITIES: Rarity[] = ["common", "rare", "super_rare", "epic", "legendary", "mythic"];
+const ALL_ELEMENTS: Element[] = ["fire", "water", "grass", "electric", "shadow", "earth"];
 
 function PatioPage() {
   const navigate = useNavigate();
   const { userId, profile, loading, reload } = useProfile();
   const [monsters, setMonsters] = useState<MonsterRow[]>([]);
   const [hatching, setHatching] = useState(false);
+  const [search, setSearch] = useState("");
+  const [rarityFilter, setRarityFilter] = useState<Rarity | "all">("all");
+  const [elementFilter, setElementFilter] = useState<Element | "all">("all");
 
   const loadMonsters = useCallback(async () => {
     if (!userId) return;
