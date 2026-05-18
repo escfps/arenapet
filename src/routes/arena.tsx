@@ -405,14 +405,15 @@ function ArenaPage() {
   );
 }
 
-function TeamPanel({ title, team, side }: { title: string; team: FullMonster[]; side: "left" | "right" }) {
+function TeamPanel({ title, team, side, energies }: { title: string; team: FullMonster[]; side: "left" | "right"; energies?: { energy: number; nextRegenAt: Date | null }[] }) {
   return (
     <div className={`rounded-2xl bg-white/10 backdrop-blur-md border-2 ${side === "left" ? "border-blue-300/50" : "border-red-300/50"} p-3 text-white`}>
       <h3 className="font-extrabold mb-2">{title}</h3>
       <div className="space-y-2">
-        {team.map((m) => {
+        {team.map((m, i) => {
           const sp = SPECIES[m.species];
           if (!sp) return null;
+          const en = energies?.[i];
           return (
             <div key={m.id} className={`flex items-center gap-2 p-2 rounded-lg bg-gradient-to-r ${ELEMENT_COLORS[sp.element]}`}>
               <img src={sp.image} alt="" className="h-14 w-14 object-contain drop-shadow-lg" style={{ filter: skinFilter(m.skin) }} />
@@ -426,6 +427,16 @@ function TeamPanel({ title, team, side }: { title: string; team: FullMonster[]; 
                 {(() => { const st = totalStats(m.species, m.rank ?? 1); return (
                   <div className="text-[10px] opacity-90">{rankStars(m.rank ?? 1)} • ❤️{st.hp} ⚔️{st.atk} 🛡️{st.def} 💨{st.spd} 🧠{st.int}</div>
                 ); })()}
+                {en && (
+                  <div className={`text-[10px] font-bold mt-0.5 flex items-center gap-1 ${en.energy === 0 ? "text-red-200" : "text-yellow-100"}`}>
+                    ⚡ {en.energy}/{MAX_BATTLE_ENERGY}
+                    {en.nextRegenAt && (
+                      <span className="opacity-70 font-normal">
+                        (+1 em {Math.max(0, Math.ceil((en.nextRegenAt.getTime() - Date.now()) / 60000))}min)
+                      </span>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           );
