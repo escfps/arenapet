@@ -6,6 +6,7 @@ import type { MonsterRow } from "@/components/MonsterCard";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
 import { simulateBattle, computeRewards, toBattleMonster, type BattleLogEntry } from "@/lib/battle";
+import { BattleScene } from "@/components/BattleScene";
 import { toast, Toaster } from "sonner";
 import arenaBg from "@/assets/arena-bg.jpg";
 
@@ -213,6 +214,10 @@ function ArenaPage() {
                 </button>
               )}
             </div>
+
+            {battleLog && opponent && (
+              <BattleScene teamA={myTeam} teamB={opponent.team} log={battleLog} step={shownLog.length} />
+            )}
 
             {battleLog && (
               <div className="rounded-2xl bg-black/60 backdrop-blur-md border border-white/30 p-4 text-white">
