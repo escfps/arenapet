@@ -56,16 +56,14 @@ function ArenaPage() {
     setWinner(null);
     setRewards(null);
 
-    // pick a random opponent profile (not self, has at least 1 monster in team)
-    const minLvl = Math.max(1, profile.level - 3);
-    const maxLvl = profile.level + 3;
+    // pick a random opponent (any team — matchmaking via account level on profile)
     const { data: candidates } = await supabase
       .from("monsters")
       .select("*, profiles!inner(username, level, vip_until)")
       .neq("owner_id", userId)
       .eq("in_team", true)
-      .gte("level", minLvl)
-      .lte("level", maxLvl)
+      .gte("profiles.level", Math.max(1, profile.level - 3))
+      .lte("profiles.level", profile.level + 3)
       .limit(50);
 
     setSearching(false);
