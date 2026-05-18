@@ -9,6 +9,8 @@ import {
   computeExpeditionReward,
   computeBattleEnergy,
   xpForNextLevel,
+  rollLevelUpRewards,
+  SPECIES,
 } from "@/lib/game-data";
 
 const StartSchema = z.object({
