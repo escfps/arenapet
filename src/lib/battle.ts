@@ -181,6 +181,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           log.push({
             turn, actor: side, actorName: attacker.name, targetName: attacker.name,
             damage: 0, crit: false, effective: 1, remainingHp: attacker.current,
+            targetShield: attacker.shield,
             message: `${skill.emoji} ${attacker.name} usou ${skill.name}! Provocou todos e ganhou ${shield} de escudo`,
           });
           continue;
