@@ -80,6 +80,7 @@ export type Database = {
           level: number
           name: string
           owner_id: string
+          rank: number
           skin: string
           spd: number
           species: string
@@ -99,6 +100,7 @@ export type Database = {
           level?: number
           name: string
           owner_id: string
+          rank?: number
           skin?: string
           spd?: number
           species: string
@@ -118,6 +120,7 @@ export type Database = {
           level?: number
           name?: string
           owner_id?: string
+          rank?: number
           skin?: string
           spd?: number
           species?: string
@@ -184,6 +187,63 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      trades: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          expires_at: string
+          from_confirmed: boolean
+          from_monster_id: string
+          from_user_id: string
+          id: string
+          status: string
+          to_confirmed: boolean
+          to_monster_id: string | null
+          to_user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          expires_at?: string
+          from_confirmed?: boolean
+          from_monster_id: string
+          from_user_id: string
+          id?: string
+          status?: string
+          to_confirmed?: boolean
+          to_monster_id?: string | null
+          to_user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          expires_at?: string
+          from_confirmed?: boolean
+          from_monster_id?: string
+          from_user_id?: string
+          id?: string
+          status?: string
+          to_confirmed?: boolean
+          to_monster_id?: string | null
+          to_user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trades_from_monster_id_fkey"
+            columns: ["from_monster_id"]
+            isOneToOne: false
+            referencedRelation: "monsters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trades_to_monster_id_fkey"
+            columns: ["to_monster_id"]
+            isOneToOne: false
+            referencedRelation: "monsters"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
