@@ -9,7 +9,7 @@ type HpMap = Map<string, { cur: number; max: number }>;
 type ShieldMap = Map<string, number>;
 type SkillFxKind = "heal" | "bite" | "explosion" | "lightning" | "fire" | "shield" | "slash" | "skull" | "fury" | "silence" | "magic" | "revive" | "true";
 type Fx = { actor: string | null; target: string | null; dmg: number | null; crit: boolean; skillFx: SkillFxKind | null; targets: string[] };
-type StatusKind = "burn" | "poison" | "bleed" | "silence" | "rage" | "shield";
+type StatusKind = "burn" | "poison" | "bleed" | "blind" | "silence" | "rage" | "shield";
 type StatusMap = Map<string, Set<StatusKind>>;
 type EffectBanner = {
   id: number;
