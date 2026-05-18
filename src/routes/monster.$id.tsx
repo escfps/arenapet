@@ -207,6 +207,63 @@ function MonsterPage() {
             const perPoint = (0.30 * skillMult).toFixed(2);
             currentLabel = `🛡️ ~${shield} de escudo`;
             perPointLabel = `+1 ❤️ HP máx ≈ +${perPoint} de escudo`;
+          } else if (skill.kind === "lifesteal_strike") {
+            scaleStat = "ATK";
+            const dmg = Math.round(atk * 2 * 2.0 * skillMult);
+            const heal = Math.round(dmg * 0.55);
+            currentLabel = `🩸 ~${dmg} de dano + ~${heal} de vida roubada`;
+            perPointLabel = `+1 ⚔️ ATK ≈ +${(2 * 2.0 * skillMult).toFixed(2)} dano (e ~55% vira cura)`;
+          } else if (skill.kind === "execute") {
+            scaleStat = "ATK";
+            const normal = Math.round(atk * 2 * 1.75 * skillMult);
+            const exec = Math.round(atk * 2 * 3.0 * skillMult);
+            currentLabel = `☠️ ~${normal} normal / ~${exec} se alvo <30% HP`;
+            perPointLabel = `+1 ⚔️ ATK ≈ +${(2 * 3.0 * skillMult).toFixed(2)} dano na execução`;
+          } else if (skill.kind === "burn_dot") {
+            scaleStat = "INT";
+            const hit = Math.round((int * 1.4 + atk * 0.8) * skillMult);
+            const dot = Math.round((int * 0.6 + atk * 0.3) * skillMult);
+            currentLabel = `🔥 ~${hit} de dano + ~${dot}/turno por 3 turnos (~${dot * 3} total)`;
+            perPointLabel = `+1 🧠 INT ≈ +${(1.4 * skillMult).toFixed(2)} no impacto e +${(0.6 * 3 * skillMult).toFixed(2)} total no DoT`;
+          } else if (skill.kind === "double_strike") {
+            scaleStat = "ATK";
+            const each = Math.round(atk * 2 * 1.25 * skillMult);
+            currentLabel = `⚡⚡ 2× ~${each} (~${each * 2} total) no alvo mais forte`;
+            perPointLabel = `+1 ⚔️ ATK ≈ +${(2 * 1.25 * 2 * skillMult).toFixed(2)} dano total`;
+          } else if (skill.kind === "shield_ally") {
+            scaleStat = "INT";
+            const shield = Math.round(int * 1.4 * skillMult);
+            currentLabel = `🛡️ ~${shield} de escudo + 30% DEF (2 turnos) em aliado ferido`;
+            perPointLabel = `+1 🧠 INT ≈ +${(1.4 * skillMult).toFixed(2)} de escudo`;
+          } else if (skill.kind === "chain_lightning") {
+            scaleStat = "INT";
+            const d1 = Math.round(int * 1.8 * 1.0 * skillMult);
+            const d2 = Math.round(int * 1.8 * 0.6 * skillMult);
+            const d3 = Math.round(int * 1.8 * 0.35 * skillMult);
+            currentLabel = `⚡ ~${d1} → ~${d2} → ~${d3} (3 alvos)`;
+            perPointLabel = `+1 🧠 INT ≈ +${(1.8 * 1.95 * skillMult).toFixed(2)} dano total`;
+          } else if (skill.kind === "silence_disable") {
+            scaleStat = "INT";
+            const dmg = Math.round(int * 1.6 * 1.1 * skillMult);
+            currentLabel = `🤐 ~${dmg} de dano + silencia próxima skill (2 turnos)`;
+            perPointLabel = `+1 🧠 INT ≈ +${(1.6 * 1.1 * skillMult).toFixed(2)} dano`;
+          } else if (skill.kind === "berserker_rage") {
+            scaleStat = "ATK";
+            const bonus = Math.round(0.65 * skillMult * 100);
+            currentLabel = `😡 +${bonus}% ATK e -25% DEF por 3 turnos`;
+            perPointLabel = `Buff próprio — escala ataques básicos durante a fúria`;
+          } else if (skill.kind === "revive_ally") {
+            scaleStat = "INT";
+            const heal = Math.round((int * 1.6 + maxHp * 0.10) * skillMult);
+            currentLabel = `✨ Ressuscita aliado caído com 40% HP (ou cura time em ~${heal})`;
+            perPointLabel = `+1 🧠 INT ≈ +${(1.6 * skillMult).toFixed(2)} de cura no fallback`;
+          } else if (skill.kind === "true_damage_nuke") {
+            scaleStat = sp.role === "mage" ? "INT" : "ATK";
+            const scale = sp.role === "mage" ? int * 2.5 : atk * 2.8;
+            const dmg = Math.round(scale * skillMult);
+            const per = sp.role === "mage" ? (2.5 * skillMult).toFixed(2) : (2.8 * skillMult).toFixed(2);
+            currentLabel = `💥 ~${dmg} de DANO VERDADEIRO (ignora DEF e elemento)`;
+            perPointLabel = `+1 ${scaleStat === "INT" ? "🧠 INT" : "⚔️ ATK"} ≈ +${per} dano verdadeiro`;
           }
 
           return (
