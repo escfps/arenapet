@@ -429,3 +429,87 @@ export function defensiveMultiplier(atkElement: Element, defSpecies: string): nu
   const m2 = TYPE_CHART[atkElement]?.[sp.secondaryElement] ?? 1;
   return Math.min(m1, m2);
 }
+
+// ===== Ranked ladder =====
+export type Tier = {
+  name: string;
+  division: string; // "I"-"V" or "" for Mestre/Grão-Mestre/Lendário
+  short: string;
+  color: string;   // tailwind classes (bg + text)
+  iconColor: string;
+  emoji: string;
+};
+
+// Cumulative thresholds. Each named tier has 5 divisions (V→I) spaced evenly.
+const LADDER: { name: string; emoji: string; color: string; iconColor: string; start: number; divSize: number }[] = [
+  { name: "Ferro",    emoji: "⛓️", color: "bg-zinc-600 text-white",       iconColor: "text-zinc-300",   start: 0,    divSize: 50  },
+  { name: "Bronze",   emoji: "🥉", color: "bg-amber-700 text-amber-50",   iconColor: "text-amber-300",  start: 300,  divSize: 100 },
+  { name: "Prata",    emoji: "🥈", color: "bg-slate-400 text-slate-900",  iconColor: "text-slate-200",  start: 900,  divSize: 150 },
+  { name: "Ouro",     emoji: "🥇", color: "bg-yellow-500 text-yellow-950",iconColor: "text-yellow-200", start: 1700, divSize: 200 },
+  { name: "Platina",  emoji: "💠", color: "bg-cyan-500 text-cyan-950",    iconColor: "text-cyan-200",   start: 2750, divSize: 250 },
+  { name: "Diamante", emoji: "💎", color: "bg-sky-400 text-sky-950",      iconColor: "text-sky-100",    start: 4050, divSize: 300 },
+];
+const MASTER_THRESHOLD = 5700;
+const GRAND_MASTER_THRESHOLD = 7000;
+const DIVISION_NAMES = ["V", "IV", "III", "II", "I"];
+
+export function getTier(points: number, leaderboardRank?: number): Tier {
+  // Lendário: top 10 globally, but only if they reached at least Grão-Mestre points
+  if (leaderboardRank !== undefined && leaderboardRank <= 10 && points >= GRAND_MASTER_THRESHOLD) {
+    return {
+      name: "Lendário", division: "", short: "Lendário",
+      color: "bg-gradient-to-r from-fuchsia-500 via-pink-500 to-orange-400 text-white",
+      iconColor: "text-yellow-200", emoji: "👑",
+    };
+  }
+  if (points >= GRAND_MASTER_THRESHOLD) {
+    return {
+      name: "Grão-Mestre", division: "", short: "Grão-Mestre",
+      color: "bg-gradient-to-r from-red-500 to-pink-600 text-white",
+      iconColor: "text-red-100", emoji: "🔥",
+    };
+  }
+  if (points >= MASTER_THRESHOLD) {
+    return {
+      name: "Mestre", division: "", short: "Mestre",
+      color: "bg-gradient-to-r from-purple-500 to-fuchsia-600 text-white",
+      iconColor: "text-fuchsia-100", emoji: "🏆",
+    };
+  }
+  // Walk down LADDER to find current tier
+  for (let i = LADDER.length - 1; i >= 0; i--) {
+    const t = LADDER[i];
+    if (points >= t.start) {
+      const over = points - t.start;
+      const div = Math.min(4, Math.floor(over / t.divSize));
+      const division = DIVISION_NAMES[div];
+      return {
+        name: t.name, division, short: `${t.name} ${division}`,
+        color: t.color, iconColor: t.iconColor, emoji: t.emoji,
+      };
+    }
+  }
+  return { name: "Ferro", division: "V", short: "Ferro V", color: LADDER[0].color, iconColor: LADDER[0].iconColor, emoji: LADDER[0].emoji };
+}
+
+// Points needed to reach the NEXT division (or null at peak)
+export function nextTierProgress(points: number): { next: number; current: number; pct: number } | null {
+  if (points >= GRAND_MASTER_THRESHOLD) return null;
+  if (points >= MASTER_THRESHOLD) return { next: GRAND_MASTER_THRESHOLD, current: MASTER_THRESHOLD, pct: ((points - MASTER_THRESHOLD) / (GRAND_MASTER_THRESHOLD - MASTER_THRESHOLD)) * 100 };
+  for (let i = LADDER.length - 1; i >= 0; i--) {
+    const t = LADDER[i];
+    if (points >= t.start) {
+      const over = points - t.start;
+      const div = Math.min(4, Math.floor(over / t.divSize));
+      const divStart = t.start + div * t.divSize;
+      const divEnd = div === 4
+        ? (i === LADDER.length - 1 ? MASTER_THRESHOLD : LADDER[i + 1].start)
+        : divStart + t.divSize;
+      return { current: divStart, next: divEnd, pct: ((points - divStart) / (divEnd - divStart)) * 100 };
+    }
+  }
+  return { current: 0, next: LADDER[0].divSize, pct: 0 };
+}
+
+export const ARENA_WIN_POINTS = 25;
+export const ARENA_LOSS_POINTS = 15;
