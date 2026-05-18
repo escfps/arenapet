@@ -205,143 +205,135 @@ function ArenaPage() {
     let delta = 0;
     let promoMsg: string | undefined;
     let nextPromo: PromoSeries | null = promo;
-
-    if (promo) {
-      // We're in a promotion series — wins/losses don't change points until resolved
-      const updated: PromoSeries = { ...promo, wins: promo.wins + (won ? 1 : 0), losses: promo.losses + (won ? 0 : 1) };
-      const need = promoNeeded(promo.type);
-      if (updated.wins >= need) {
-        // Promoted! Advance into the next division (1 pt past cap)
-        const b = divisionBounds(oldPoints);
-        newPoints = b ? b.end : oldPoints + 1;
-        delta = newPoints - oldPoints;
-        nextPromo = null;
-        promoMsg = promo.type === "bo5" ? "👑 SUBIU DE TIER!" : "🎉 Promovido!";
-      } else if (updated.losses >= need) {
-        // Failed: drop a bit back into the division
-        newPoints = Math.max(0, oldPoints - 30);
-        delta = newPoints - oldPoints;
-        nextPromo = null;
-        promoMsg = "😢 Série de promoção fracassou";
-      } else {
-        nextPromo = updated;
-        promoMsg = `Série ${promo.type.toUpperCase()}: ${updated.wins}V ${updated.losses}D`;
-      }
-    } else {
-      delta = won ? ARENA_WIN_POINTS : -ARENA_LOSS_POINTS;
-      newPoints = Math.max(0, oldPoints + delta);
-      // Cap at division end and start a promotion series
-      const b = divisionBounds(oldPoints);
-      if (b && newPoints >= b.end) {
-        newPoints = b.end - 1; // sit at 99/100 visually; promo starts
-        delta = newPoints - oldPoints;
-        nextPromo = { wins: 0, losses: 0, type: b.nextIsTierUp ? "bo5" : "bo3", targetFrom: oldPoints };
-        promoMsg = b.nextIsTierUp ? "🔥 Série de tier MD5 iniciada!" : "⚡ Série de promoção MD3 iniciada!";
-      }
-    }
-
-    savePromo(userId, nextPromo);
-
-    // persist
-    const updates: Partial<typeof profile> = {
-      coins: profile.coins + rew.coins,
-      xp: profile.xp + rew.xp,
-      wins: profile.wins + (won ? 1 : 0),
-      losses: profile.losses + (won ? 0 : 1),
-      arena_points: newPoints,
-    };
-    let newXp = updates.xp!;
-    let newLevel = profile.level;
-    while (newXp >= xpForNextLevel(newLevel)) {
-      newXp -= xpForNextLevel(newLevel);
-      newLevel += 1;
-    }
-    updates.xp = newXp;
-    updates.level = newLevel;
-
-    // Recompensas de level-up (baú de madeira; ouro a cada 10)
     let levelUpToasts: Array<() => void> = [];
-    if (newLevel > profile.level) {
-      const lvRew = rollLevelUpRewards(profile.level, newLevel);
-      updates.coins = (updates.coins ?? profile.coins) + lvRew.coins;
-      updates.gems = (profile.gems ?? 0) + lvRew.gems;
-      await patch(updates);
-      // rações
-      if (lvRew.rations > 0) {
-        const { data: rRow } = await supabase.from("inventory").select("quantity").eq("user_id", userId).eq("item_type", "ration").maybeSingle();
-        await supabase.from("inventory").upsert(
-          { user_id: userId, item_type: "ration", quantity: (rRow?.quantity ?? 0) + lvRew.rations },
-          { onConflict: "user_id,item_type" }
-        );
-      }
-      // pets sorteados
-      if (lvRew.petSpecies.length > 0) {
-        const rows = lvRew.petSpecies.map((sid) => {
-          const sp = SPECIES[sid];
-          return { owner_id: userId, species: sid, name: sp.name, hp: sp.base.hp, atk: sp.base.atk, def: sp.base.def, spd: sp.base.spd };
-        });
-        await supabase.from("monsters").insert(rows);
-      }
-      // toasts (defer to after animation start)
-      for (const lv of lvRew.levels) {
-        const tier = lv === 100 ? "👑 Baú LENDÁRIO" : lv === 50 ? "🥇 Baú de OURO" : lv % 10 === 0 ? "🥈 Baú de PRATA" : "📦 Baú de Madeira";
-        levelUpToasts.push(() => toast.success(`🎉 Level ${lv}! ${tier} aberto`, { duration: 4000 }));
-      }
-      const parts: string[] = [];
-      if (lvRew.coins) parts.push(`🪙 ${lvRew.coins}`);
-      if (lvRew.gems) parts.push(`💎 ${lvRew.gems}`);
-      if (lvRew.rations) parts.push(`🍖 ${lvRew.rations}`);
-      if (lvRew.petSpecies.length) parts.push(`🥚 ${lvRew.petSpecies.length} pet${lvRew.petSpecies.length > 1 ? "s" : ""}`);
-      if (parts.length) levelUpToasts.push(() => toast(`Recompensas: ${parts.join(" • ")}`, { duration: 5000 }));
-    } else {
-      await patch(updates);
-    }
-
-    // Bot/opponent profile also gains/loses points (opposite outcome)
-    const opponentDelta = won ? -ARENA_LOSS_POINTS : ARENA_WIN_POINTS;
-    const { data: oppProfile } = await supabase
-      .from("profiles")
-      .select("arena_points")
-      .eq("id", opponent.ownerId)
-      .maybeSingle();
-    if (oppProfile) {
-      await supabase
-        .from("profiles")
-        .update({ arena_points: Math.max(0, (oppProfile.arena_points ?? 0) + opponentDelta) })
-        .eq("id", opponent.ownerId);
-    }
-
-    await supabase.from("battles").insert({
-      attacker_id: userId,
-      defender_id: opponent.ownerId,
-      winner_id: won ? userId : opponent.ownerId,
-      log: JSON.parse(JSON.stringify(result.log)),
-      coins_reward: rew.coins,
-      xp_reward: rew.xp,
-    });
-
-    // Ração drop on win (70% chance, 1-2 rações) — feeds expedition system
     let rationToast: (() => void) | null = null;
-    if (won && Math.random() < 0.70) {
-      const dropped = 1 + Math.floor(Math.random() * 2);
-      const { data: foodRow } = await supabase
-        .from("inventory")
-        .select("quantity")
-        .eq("user_id", userId)
-        .eq("item_type", "ration")
+
+    if (isDraw) {
+      // Empate: sem mudança de pontos, vitórias, derrotas ou recompensas.
+      promoMsg = "🤝 Empate — pontos preservados";
+    } else {
+      if (promo) {
+        const updated: PromoSeries = { ...promo, wins: promo.wins + (won ? 1 : 0), losses: promo.losses + (won ? 0 : 1) };
+        const need = promoNeeded(promo.type);
+        if (updated.wins >= need) {
+          const b = divisionBounds(oldPoints);
+          newPoints = b ? b.end : oldPoints + 1;
+          delta = newPoints - oldPoints;
+          nextPromo = null;
+          promoMsg = promo.type === "bo5" ? "👑 SUBIU DE TIER!" : "🎉 Promovido!";
+        } else if (updated.losses >= need) {
+          newPoints = Math.max(0, oldPoints - 30);
+          delta = newPoints - oldPoints;
+          nextPromo = null;
+          promoMsg = "😢 Série de promoção fracassou";
+        } else {
+          nextPromo = updated;
+          promoMsg = `Série ${promo.type.toUpperCase()}: ${updated.wins}V ${updated.losses}D`;
+        }
+      } else {
+        delta = won ? ARENA_WIN_POINTS : -ARENA_LOSS_POINTS;
+        newPoints = Math.max(0, oldPoints + delta);
+        const b = divisionBounds(oldPoints);
+        if (b && newPoints >= b.end) {
+          newPoints = b.end - 1;
+          delta = newPoints - oldPoints;
+          nextPromo = { wins: 0, losses: 0, type: b.nextIsTierUp ? "bo5" : "bo3", targetFrom: oldPoints };
+          promoMsg = b.nextIsTierUp ? "🔥 Série de tier MD5 iniciada!" : "⚡ Série de promoção MD3 iniciada!";
+        }
+      }
+
+      savePromo(userId, nextPromo);
+
+      const updates: Partial<typeof profile> = {
+        coins: profile.coins + rew.coins,
+        xp: profile.xp + rew.xp,
+        wins: profile.wins + (won ? 1 : 0),
+        losses: profile.losses + (won ? 0 : 1),
+        arena_points: newPoints,
+      };
+      let newXp = updates.xp!;
+      let newLevel = profile.level;
+      while (newXp >= xpForNextLevel(newLevel)) {
+        newXp -= xpForNextLevel(newLevel);
+        newLevel += 1;
+      }
+      updates.xp = newXp;
+      updates.level = newLevel;
+
+      if (newLevel > profile.level) {
+        const lvRew = rollLevelUpRewards(profile.level, newLevel);
+        updates.coins = (updates.coins ?? profile.coins) + lvRew.coins;
+        updates.gems = (profile.gems ?? 0) + lvRew.gems;
+        await patch(updates);
+        if (lvRew.rations > 0) {
+          const { data: rRow } = await supabase.from("inventory").select("quantity").eq("user_id", userId).eq("item_type", "ration").maybeSingle();
+          await supabase.from("inventory").upsert(
+            { user_id: userId, item_type: "ration", quantity: (rRow?.quantity ?? 0) + lvRew.rations },
+            { onConflict: "user_id,item_type" }
+          );
+        }
+        if (lvRew.petSpecies.length > 0) {
+          const rows = lvRew.petSpecies.map((sid) => {
+            const sp = SPECIES[sid];
+            return { owner_id: userId, species: sid, name: sp.name, hp: sp.base.hp, atk: sp.base.atk, def: sp.base.def, spd: sp.base.spd };
+          });
+          await supabase.from("monsters").insert(rows);
+        }
+        for (const lv of lvRew.levels) {
+          const tier = lv === 100 ? "👑 Baú LENDÁRIO" : lv === 50 ? "🥇 Baú de OURO" : lv % 10 === 0 ? "🥈 Baú de PRATA" : "📦 Baú de Madeira";
+          levelUpToasts.push(() => toast.success(`🎉 Level ${lv}! ${tier} aberto`, { duration: 4000 }));
+        }
+        const parts: string[] = [];
+        if (lvRew.coins) parts.push(`🪙 ${lvRew.coins}`);
+        if (lvRew.gems) parts.push(`💎 ${lvRew.gems}`);
+        if (lvRew.rations) parts.push(`🍖 ${lvRew.rations}`);
+        if (lvRew.petSpecies.length) parts.push(`🥚 ${lvRew.petSpecies.length} pet${lvRew.petSpecies.length > 1 ? "s" : ""}`);
+        if (parts.length) levelUpToasts.push(() => toast(`Recompensas: ${parts.join(" • ")}`, { duration: 5000 }));
+      } else {
+        await patch(updates);
+      }
+
+      const opponentDelta = won ? -ARENA_LOSS_POINTS : ARENA_WIN_POINTS;
+      const { data: oppProfile } = await supabase
+        .from("profiles")
+        .select("arena_points")
+        .eq("id", opponent.ownerId)
         .maybeSingle();
-      const current = foodRow?.quantity ?? 0;
-      await supabase
-        .from("inventory")
-        .upsert(
-          { user_id: userId, item_type: "ration", quantity: current + dropped },
-          { onConflict: "user_id,item_type" }
-        );
-      rationToast = () => toast(`🍖 +${dropped} ração!`, { icon: "🎁" });
+      if (oppProfile) {
+        await supabase
+          .from("profiles")
+          .update({ arena_points: Math.max(0, (oppProfile.arena_points ?? 0) + opponentDelta) })
+          .eq("id", opponent.ownerId);
+      }
+
+      await supabase.from("battles").insert({
+        attacker_id: userId,
+        defender_id: opponent.ownerId,
+        winner_id: won ? userId : opponent.ownerId,
+        log: JSON.parse(JSON.stringify(result.log)),
+        coins_reward: rew.coins,
+        xp_reward: rew.xp,
+      });
+
+      if (won && Math.random() < 0.70) {
+        const dropped = 1 + Math.floor(Math.random() * 2);
+        const { data: foodRow } = await supabase
+          .from("inventory")
+          .select("quantity")
+          .eq("user_id", userId)
+          .eq("item_type", "ration")
+          .maybeSingle();
+        const current = foodRow?.quantity ?? 0;
+        await supabase
+          .from("inventory")
+          .upsert(
+            { user_id: userId, item_type: "ration", quantity: current + dropped },
+            { onConflict: "user_id,item_type" }
+          );
+        rationToast = () => toast(`🍖 +${dropped} ração!`, { icon: "🎁" });
+      }
     }
 
-    // ✅ Tudo persistido no banco. Só agora começamos a animação — assim F5/queda
-    // de internet/fechar aba não muda nada: o resultado já está gravado.
     setRewards({ ...rew, points: delta, oldPoints, newPoints, promoMsg, promoBefore, promoAfter: nextPromo });
     setBattleLog(result.log);
     setWinner(result.winner);
