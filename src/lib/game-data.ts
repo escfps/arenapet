@@ -91,7 +91,7 @@ export type SkillKind =
   | "blind_debuff"      // mago — cega TODOS inimigos: 50% miss em ataques básicos por 3 turnos
   | "true_damage_nuke"  // mítico — dano puro ignora DEF e elemento (Vayne ult)
   | "phoenix_rage"      // mítico — PASSIVA: quanto mais HP perde, mais ATK ganha (até +120%)
-  | "phoenix_growth";   // mítico — PASSIVA: cada dano causado vira HP máx + cura permanente
+  | "phoenix_growth";   // mítico — PASSIVA: cada dano causado vira HP máx + cura temporária na batalha
 
 export type Skill = {
   name: string;
@@ -746,6 +746,16 @@ export function totalStats(species: string, rank = 1, bonus = { hp: 0, atk: 0, d
     def: Math.round(s.base.def * mult) + (bonus.def ?? 0),
     spd: Math.round(s.base.spd * mult) + (bonus.spd ?? 0),
     int: Math.round(s.base.int * mult) + (bonus.int ?? 0),
+  };
+}
+
+export function starterMonsterStats(speciesId: string) {
+  const sp = SPECIES[speciesId];
+  return {
+    hp: sp?.id === "fenix_vermelha" || sp?.id === "fenix_negra" ? 0 : sp?.base.hp ?? 0,
+    atk: sp?.base.atk ?? 0,
+    def: sp?.base.def ?? 0,
+    spd: sp?.base.spd ?? 0,
   };
 }
 

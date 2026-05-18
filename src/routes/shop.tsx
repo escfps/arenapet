@@ -6,7 +6,7 @@ import {
   VIP_PRICE_GEMS, VIP_DURATION_DAYS,
   rollEgg, skinFilter, isVip,
   MAX_BATTLE_ENERGY, ENERGY_REFILL_GEM_COST, ENERGY_REFILL_ALL_GEM_COST, computeBattleEnergy,
-  CHESTS, rollChest, RARITY_INFO,
+  CHESTS, rollChest, RARITY_INFO, starterMonsterStats,
   type ChestTier, type ChestReward, type Rarity,
 } from "@/lib/game-data";
 import type { MonsterRow } from "@/components/MonsterCard";
@@ -66,10 +66,10 @@ function ShopPage() {
         owner_id: userId,
         species,
         name: sp.name,
-        hp: sp.base.hp + bonus,
-        atk: sp.base.atk + Math.floor(bonus / 2),
-        def: sp.base.def + Math.floor(bonus / 2),
-        spd: sp.base.spd + Math.floor(bonus / 2),
+        hp: starterMonsterStats(species).hp + bonus,
+        atk: starterMonsterStats(species).atk + Math.floor(bonus / 2),
+        def: starterMonsterStats(species).def + Math.floor(bonus / 2),
+        spd: starterMonsterStats(species).spd + Math.floor(bonus / 2),
       });
     }
     await supabase.from("monsters").insert(rows);
@@ -119,10 +119,7 @@ function ShopPage() {
         owner_id: userId,
         species: reward.petSpecies,
         name: sp.name,
-        hp: sp.base.hp,
-        atk: sp.base.atk,
-        def: sp.base.def,
-        spd: sp.base.spd,
+        ...starterMonsterStats(reward.petSpecies),
       });
     }
 
