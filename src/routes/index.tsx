@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { SPECIES, ELEMENT_COLORS, ELEMENT_NAMES, RARITY_INFO, rollWelcomeChest, type Rarity, type Element } from "@/lib/game-data";
+import { SPECIES, ELEMENT_COLORS, ELEMENT_NAMES, RARITY_INFO, rollWelcomeChest, starterMonsterStats, type Rarity, type Element } from "@/lib/game-data";
 import { MonsterCard, type MonsterRow } from "@/components/MonsterCard";
 import { HUD } from "@/components/HUD";
 import { TutorialOverlay } from "@/components/TutorialOverlay";
@@ -129,10 +129,7 @@ function PatioPage() {
         owner_id: userId,
         species: id,
         name: sp.name,
-        hp: sp.base.hp,
-        atk: sp.base.atk,
-        def: sp.base.def,
-        spd: sp.base.spd,
+        ...starterMonsterStats(id),
         in_team: idx < TEAM_MAX,
         team_position: idx < TEAM_MAX ? idx : 0,
       };
