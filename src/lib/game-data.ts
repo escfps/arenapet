@@ -215,7 +215,7 @@ export const SPECIES: Record<string, Species> = {
     emoji: "🌱⚡", image: voltsproutImg,
     description: "Broto voltaico. Healer com punch.",
     base: { hp: 54, atk: 9, def: 11, spd: 12, int: 20 },
-    skill: { name: "Broto Energizante", emoji: "🌱", kind: "shield_ally", cooldown: 3, description: "Energiza o aliado mais ferido: escudo (INT×1.3) e +25% DEF por 2 turnos." },
+    skill: { name: "Seiva Restauradora", emoji: "🌱", kind: "team_heal", cooldown: 4, description: "Espalha seiva pelo time, curando todos os aliados (~INT×1.7 + 10% HP máx)." },
   },
   nightbloom: {
     id: "nightbloom", name: "Nightbloom", element: "grass", secondaryElement: "shadow", role: "mage", rarity: "common",
