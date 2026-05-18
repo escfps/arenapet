@@ -243,7 +243,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
       }
       const allies = side === "team_a" ? a : b;
       const enemies = side === "team_a" ? b : a;
-      if (!enemies.some((e) => e.current > 0)) break;
+      if (!enemies.some((e) => e.current > 0)) return;
 
       const skill = getSkill(attacker.species);
       const skillMult = RARITY_INFO[attacker.rarity].skillMult;
