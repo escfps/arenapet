@@ -169,6 +169,42 @@ export const cancelExpedition = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+const SwapSchema = z.object({
+  expeditionId: z.string().uuid(),
+  newMonsterId: z.string().uuid(),
+});
+
+export const EXPEDITION_SWAP_GEM_COST = 50;
+
+export const swapExpeditionMonster = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i) => SwapSchema.parse(i))
+  .handler(async ({ data, context }) => {
+    const { userId } = context;
+    const [{ data: exp }, { data: profile }, { data: newMon }, { data: dupe }] = await Promise.all([
+      supabaseAdmin.from("expeditions").select("id,user_id,claimed,monster_id").eq("id", data.expeditionId).maybeSingle(),
+      supabaseAdmin.from("profiles").select("id,gems").eq("id", userId).maybeSingle(),
+      supabaseAdmin.from("monsters").select("id,owner_id,in_team").eq("id", data.newMonsterId).maybeSingle(),
+      supabaseAdmin.from("expeditions").select("id").eq("monster_id", data.newMonsterId).eq("claimed", false).maybeSingle(),
+    ]);
+    if (!exp || exp.user_id !== userId) throw new Error("Expedição inválida");
+    if (exp.claimed) throw new Error("Expedição já encerrada");
+    if (!newMon || newMon.owner_id !== userId) throw new Error("Bichinho inválido");
+    if (newMon.in_team) throw new Error("Tire o novo bichinho do time antes");
+    if (dupe) throw new Error("Esse bichinho já está em expedição");
+    if (newMon.id === exp.monster_id) throw new Error("Escolha um bichinho diferente");
+    if (!profile) throw new Error("Perfil não encontrado");
+    if ((profile.gems ?? 0) < EXPEDITION_SWAP_GEM_COST) {
+      throw new Error(`Precisa de ${EXPEDITION_SWAP_GEM_COST} 💎`);
+    }
+
+    await Promise.all([
+      supabaseAdmin.from("profiles").update({ gems: profile.gems - EXPEDITION_SWAP_GEM_COST }).eq("id", userId),
+      supabaseAdmin.from("expeditions").update({ monster_id: data.newMonsterId }).eq("id", exp.id),
+    ]);
+    return { ok: true, paid: EXPEDITION_SWAP_GEM_COST };
+  });
+
 export const buyExpeditionSlot = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
