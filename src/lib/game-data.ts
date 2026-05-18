@@ -187,7 +187,7 @@ export const SPECIES: Record<string, Species> = {
     emoji: "👻🔥", image: cinderwispImg,
     description: "Fantasminha de brasa. Mago ofensivo.",
     base: { hp: 50, atk: 14, def: 9, spd: 11, int: 22 },
-    skill: { name: "Sussurro de Cinzas", emoji: "🔥", kind: "burn_dot", cooldown: 3, description: "Aplica queimadura mágica no alvo: dano inicial + 3 turnos de dano por fogo." },
+    skill: { name: "Chuva de Cinzas", emoji: "🔥", kind: "aoe_magic", cooldown: 4, description: "Cobre o campo com cinzas mágicas: dano em todos inimigos (1.15× cada)." },
   },
   mossfin: {
     id: "mossfin", name: "Mossfin", element: "water", secondaryElement: "grass", role: "healer", rarity: "common",
@@ -201,21 +201,21 @@ export const SPECIES: Record<string, Species> = {
     emoji: "⚡💧", image: stormtadImg,
     description: "Girino-relâmpago. Mago elétrico.",
     base: { hp: 48, atk: 13, def: 8, spd: 14, int: 22 },
-    skill: { name: "Trovão Saltador", emoji: "⚡", kind: "chain_lightning", cooldown: 4, description: "Raio salta entre até 3 inimigos (100% → 60% → 35% do dano)." },
+    skill: { name: "Tempestade Elétrica", emoji: "⚡", kind: "aoe_magic", cooldown: 4, description: "Solta raios em todos os inimigos (1.15× cada, ignora defesa)." },
   },
   tidewraith: {
     id: "tidewraith", name: "Tidewraith", element: "water", secondaryElement: "shadow", role: "assassin", rarity: "common",
     emoji: "🌊👻", image: tidewraithImg,
     description: "Fantasma das marés. Assassino furtivo.",
     base: { hp: 44, atk: 12, def: 8, spd: 16, int: 6 },
-    skill: { name: "Mordaça da Maré", emoji: "🌊", kind: "silence_disable", cooldown: 4, description: "Ataque furtivo que cala o inimigo (anula a próxima skill dele)." },
+    skill: { name: "Bote da Maré", emoji: "🌊", kind: "guaranteed_crit", cooldown: 3, description: "Crítico garantido no inimigo mais fraco, ignora 60% da DEF." },
   },
   voltsprout: {
     id: "voltsprout", name: "Voltsprout", element: "grass", secondaryElement: "electric", role: "healer", rarity: "common",
     emoji: "🌱⚡", image: voltsproutImg,
     description: "Broto voltaico. Healer com punch.",
     base: { hp: 54, atk: 9, def: 11, spd: 12, int: 20 },
-    skill: { name: "Broto Energizante", emoji: "🌱", kind: "shield_ally", cooldown: 3, description: "Energiza o aliado mais ferido: escudo (INT×1.3) e +25% DEF por 2 turnos." },
+    skill: { name: "Seiva Restauradora", emoji: "🌱", kind: "team_heal", cooldown: 4, description: "Espalha seiva pelo time, curando todos os aliados (~INT×1.7 + 10% HP máx)." },
   },
   nightbloom: {
     id: "nightbloom", name: "Nightbloom", element: "grass", secondaryElement: "shadow", role: "mage", rarity: "common",
@@ -229,7 +229,7 @@ export const SPECIES: Record<string, Species> = {
     emoji: "🌑⚡", image: voidsparkImg,
     description: "Orbe de raios sombrios. Assassino caótico.",
     base: { hp: 44, atk: 13, def: 7, spd: 17, int: 6 },
-    skill: { name: "Apagão", emoji: "🌑", kind: "silence_disable", cooldown: 4, description: "Apaga a mente do alvo: dano + silencia próxima skill." },
+    skill: { name: "Choque Sombrio", emoji: "🌑", kind: "guaranteed_crit", cooldown: 3, description: "Salta nas sombras: crítico garantido no mais fraco, ignora 60% da DEF." },
   },
 
   // ===== TERRA =====
@@ -245,7 +245,7 @@ export const SPECIES: Record<string, Species> = {
     emoji: "🌋", image: magmaboulderImg,
     description: "Rocha vulcânica. Tank que queima quem encosta.",
     base: { hp: 75, atk: 11, def: 16, spd: 7, int: 8 },
-    skill: { name: "Erupção Lenta", emoji: "🌋", kind: "burn_dot", cooldown: 4, description: "Lava escorre pelo alvo: dano + queimadura por 3 turnos." },
+    skill: { name: "Crosta Vulcânica", emoji: "🌋", kind: "shield_taunt", cooldown: 3, description: "Endurece a casca de magma: provoca todos por 2 turnos e ganha 30% HP de escudo." },
   },
   mudpaw: {
     id: "mudpaw", name: "Mudpaw", element: "earth", secondaryElement: "water", role: "dps", rarity: "common",
@@ -259,7 +259,7 @@ export const SPECIES: Record<string, Species> = {
     emoji: "💎", image: crystalspriteImg,
     description: "Geodo mágico cristalino. Mago de cristal com raios.",
     base: { hp: 52, atk: 12, def: 11, spd: 10, int: 21 },
-    skill: { name: "Raio Cristalino", emoji: "💎", kind: "chain_lightning", cooldown: 4, description: "Raio prismático salta entre até 3 inimigos (100% → 60% → 35%)." },
+    skill: { name: "Estilhaços Mágicos", emoji: "💎", kind: "aoe_magic", cooldown: 4, description: "Explode cristais em todos os inimigos (1.15× cada, ignora defesa)." },
   },
 
   // ===== EVENTO (lendários) =====
@@ -296,7 +296,7 @@ export const SPECIES: Record<string, Species> = {
     emoji: "✨", image: panteraAureaImg,
     description: "Olhos dourados — variante ultra-rara da Pantera Negra. Mago sombrio supremo.",
     base: { hp: 65, atk: 14, def: 12, spd: 15, int: 24 },
-    skill: { name: "Olhar Dourado", emoji: "👁️", kind: "true_damage_nuke", cooldown: 5, description: "Olhar puro: dano VERDADEIRO no alvo (ignora 100% DEF e elemento). ~INT×2.5." },
+    skill: { name: "Raio Áureo", emoji: "👁️", kind: "chain_lightning", cooldown: 4, description: "Feixe dourado salta entre até 3 inimigos (100% → 60% → 35% do dano mágico)." },
   },
 
   // ===== SUPER RAROS =====
@@ -312,7 +312,7 @@ export const SPECIES: Record<string, Species> = {
     emoji: "🦈", image: tubaraoAbissalImg,
     description: "Predador das profundezas azuis. Mordida feroz que rasga qualquer presa.",
     base: { hp: 60, atk: 17, def: 11, spd: 13, int: 8 },
-    skill: { name: "Mordida Abissal", emoji: "🦈", kind: "execute", cooldown: 3, description: "Sente o sangue: alvos abaixo de 30% HP recebem dano TRIPLO. Senão, 1.7× dano." },
+    skill: { name: "Mordida Sanguinária", emoji: "🦈", kind: "lifesteal_strike", cooldown: 3, description: "Crava os dentes (2× dano) e cura o tubarão em 55% do dano causado." },
   },
 
   // ===== ÉPICOS =====
