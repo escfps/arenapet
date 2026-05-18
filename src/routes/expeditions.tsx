@@ -137,6 +137,20 @@ function ExpeditionsPage() {
     }
   }
 
+  async function handleSwap(exp: ExpRow, newMonsterId: string) {
+    setBusy(true);
+    try {
+      const r = await swap({ data: { expeditionId: exp.id, newMonsterId } });
+      toast.success(`Bichinho trocado! (-${r.paid} 💎)`);
+      setSwapForExp(null);
+      await Promise.all([refresh(), reload()]);
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
   if (loading || !profile) {
     return <div className="min-h-screen flex items-center justify-center text-white">Carregando...</div>;
   }
