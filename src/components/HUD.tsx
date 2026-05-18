@@ -13,6 +13,7 @@ export type ProfileRow = {
   vip_until: string | null;
   wins: number;
   losses: number;
+  expedition_slots: number;
 };
 
 export function HUD({ profile }: { profile: ProfileRow }) {
