@@ -385,7 +385,7 @@ function PatioPage() {
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in" onClick={() => setSlotPicker(null)}>
           <div className="max-w-3xl w-full max-h-[85vh] overflow-y-auto rounded-3xl bg-gradient-to-br from-slate-900 to-slate-800 border-2 border-white/20 shadow-2xl p-5 text-white animate-in zoom-in" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-extrabold">⚔️ Escolher pet pro time</h2>
+              <h2 className="text-xl font-extrabold">⚔️ Pet pra {PILLS[slotPicker]}</h2>
               <button onClick={() => setSlotPicker(null)} className="text-white/70 hover:text-white text-2xl leading-none">×</button>
             </div>
             {monsters.filter((m) => !m.in_team).length === 0 ? (
@@ -396,7 +396,7 @@ function PatioPage() {
                   <MonsterCard
                     key={m.id}
                     monster={m}
-                    onClick={async () => { await toggleTeam(m); setSlotPicker(null); }}
+                    onClick={async () => { await setSlot(m, slotPicker); setSlotPicker(null); }}
                   />
                 ))}
               </div>
