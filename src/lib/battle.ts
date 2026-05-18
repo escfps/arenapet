@@ -5,7 +5,7 @@ export type BattleMonster = {
   owner_id: string;
   name: string;
   species: string;
-  level: number;
+  rank: number;
   hp: number;
   atk: number;
   def: number;
@@ -36,7 +36,6 @@ export type DBMonster = {
   owner_id: string;
   species: string;
   name: string;
-  level: number;
   hp: number;
   atk: number;
   def: number;
@@ -46,13 +45,14 @@ export type DBMonster = {
 
 export function toBattleMonster(m: DBMonster): BattleMonster {
   const sp = SPECIES[m.species];
-  const stats = totalStats(m.species, m.level, m.rank ?? 1);
+  const rank = m.rank ?? 1;
+  const stats = totalStats(m.species, rank);
   return {
     id: m.id,
     owner_id: m.owner_id,
     name: m.name,
     species: m.species,
-    level: m.level,
+    rank,
     hp: stats.hp,
     atk: stats.atk,
     def: stats.def,
