@@ -5,7 +5,9 @@ import {
   EGGS, SKINS, GEM_PACKS, SPECIES, ELEMENT_COLORS,
   VIP_PRICE_GEMS, VIP_DURATION_DAYS,
   rollEgg, skinFilter, isVip,
+  MAX_BATTLE_ENERGY, ENERGY_REFILL_GEM_COST, ENERGY_REFILL_ALL_GEM_COST, computeBattleEnergy,
 } from "@/lib/game-data";
+import type { MonsterRow } from "@/components/MonsterCard";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
 import { toast, Toaster } from "sonner";
@@ -18,16 +20,22 @@ export const Route = createFileRoute("/shop")({
 function ShopPage() {
   const navigate = useNavigate();
   const { userId, profile, patch, loading } = useProfile();
-  const [tab, setTab] = useState<"eggs" | "skins" | "vip" | "gems">("eggs");
+  const [tab, setTab] = useState<"eggs" | "skins" | "vip" | "gems" | "energy">("eggs");
   const [ownedSkins, setOwnedSkins] = useState<string[]>(["default"]);
   const [hatchResult, setHatchResult] = useState<string | null>(null);
+  const [pets, setPets] = useState<MonsterRow[]>([]);
 
   const loadSkins = useCallback(async () => {
     if (!userId) return;
     const { data } = await supabase.from("skins_owned").select("skin_id").eq("user_id", userId);
     if (data) setOwnedSkins(["default", ...data.map((s) => s.skin_id)]);
   }, [userId]);
-  useEffect(() => { if (userId) loadSkins(); }, [userId, loadSkins]);
+  const loadPets = useCallback(async () => {
+    if (!userId) return;
+    const { data } = await supabase.from("monsters").select("*").eq("owner_id", userId);
+    if (data) setPets(data as MonsterRow[]);
+  }, [userId]);
+  useEffect(() => { if (userId) { loadSkins(); loadPets(); } }, [userId, loadSkins, loadPets]);
 
   if (loading || !profile) return <div className="min-h-screen flex items-center justify-center text-white">Carregando...</div>;
 
@@ -88,6 +96,24 @@ function ShopPage() {
     toast.success(`+${pack.gems + pack.bonus} 💎 (modo demo)`);
   }
 
+  async function refillEnergy(petId: string) {
+    if (!profile) return;
+    if (profile.gems < ENERGY_REFILL_GEM_COST) { toast.error("Gemas insuficientes!"); return; }
+    await patch({ gems: profile.gems - ENERGY_REFILL_GEM_COST });
+    await supabase.from("monsters").update({ battle_energy: MAX_BATTLE_ENERGY, battle_energy_at: new Date().toISOString() }).eq("id", petId);
+    await loadPets();
+    toast.success("⚡ Energia recarregada!");
+  }
+
+  async function refillAll() {
+    if (!profile || !userId) return;
+    if (profile.gems < ENERGY_REFILL_ALL_GEM_COST) { toast.error("Gemas insuficientes!"); return; }
+    await patch({ gems: profile.gems - ENERGY_REFILL_ALL_GEM_COST });
+    await supabase.from("monsters").update({ battle_energy: MAX_BATTLE_ENERGY, battle_energy_at: new Date().toISOString() }).eq("owner_id", userId);
+    await loadPets();
+    toast.success("⚡ Todo o time recarregado!");
+  }
+
   return (
     <main
       className="min-h-screen pb-12 bg-cover bg-fixed bg-center"
@@ -104,13 +130,13 @@ function ShopPage() {
         </header>
 
         <div className="flex bg-white/10 backdrop-blur-md rounded-xl overflow-hidden border border-white/20">
-          {(["eggs", "skins", "vip", "gems"] as const).map((t) => (
+          {(["eggs", "skins", "vip", "gems", "energy"] as const).map((t) => (
             <button
               key={t}
               onClick={() => setTab(t)}
               className={`flex-1 py-2.5 text-xs font-bold transition ${tab === t ? "bg-white/30 text-white" : "text-white/70 hover:bg-white/15"}`}
             >
-              {t === "eggs" ? "🥚 Ovos" : t === "skins" ? "🎨 Skins" : t === "vip" ? "👑 VIP" : "💎 Gemas"}
+              {t === "eggs" ? "🥚 Ovos" : t === "skins" ? "🎨 Skins" : t === "vip" ? "👑 VIP" : t === "gems" ? "💎 Gemas" : "⚡ Energia"}
             </button>
           ))}
         </div>
@@ -210,6 +236,49 @@ function ShopPage() {
                   </button>
                 </div>
               ))}
+            </div>
+          </div>
+        )}
+
+        {tab === "energy" && (
+          <div className="space-y-3">
+            <div className="rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 p-4 text-white">
+              <div className="flex items-center justify-between gap-2 flex-wrap">
+                <div>
+                  <h3 className="font-extrabold text-lg">⚡ Energia de batalha</h3>
+                  <p className="text-xs opacity-80">Cada pet gasta 1 ⚡ por batalha. Regen automática: <b>+1/h</b> (máx {MAX_BATTLE_ENERGY}).</p>
+                </div>
+                <button
+                  onClick={refillAll}
+                  className="px-4 py-2 rounded-lg bg-gradient-to-r from-yellow-400 to-amber-500 text-yellow-950 font-extrabold hover:scale-105 transition"
+                >
+                  Recarregar TIME 💎 {ENERGY_REFILL_ALL_GEM_COST}
+                </button>
+              </div>
+            </div>
+            <div className="grid sm:grid-cols-2 gap-2">
+              {pets.map((m) => {
+                const sp = SPECIES[m.species];
+                if (!sp) return null;
+                const en = computeBattleEnergy(m.battle_energy, m.battle_energy_at);
+                const full = en.energy >= MAX_BATTLE_ENERGY;
+                return (
+                  <div key={m.id} className={`flex items-center gap-2 p-2 rounded-lg bg-gradient-to-r ${ELEMENT_COLORS[sp.element]} text-white`}>
+                    <img src={sp.image} alt="" className="h-12 w-12 object-contain drop-shadow" style={{ filter: skinFilter(m.skin) }} />
+                    <div className="flex-1 min-w-0">
+                      <div className="font-bold text-sm truncate">{m.name} {m.in_team && <span className="text-[9px] bg-yellow-400 text-yellow-950 px-1 rounded">TIME</span>}</div>
+                      <div className="text-[11px] font-bold">⚡ {en.energy}/{MAX_BATTLE_ENERGY}</div>
+                    </div>
+                    <button
+                      onClick={() => refillEnergy(m.id)}
+                      disabled={full}
+                      className="px-2 py-1 rounded bg-black/40 hover:bg-black/60 text-xs font-extrabold disabled:opacity-40"
+                    >
+                      {full ? "Cheio" : `💎 ${ENERGY_REFILL_GEM_COST}`}
+                    </button>
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}

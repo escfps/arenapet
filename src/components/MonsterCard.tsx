@@ -15,6 +15,8 @@ export type MonsterRow = {
   skin: string;
   in_team: boolean;
   rank: number;
+  battle_energy?: number;
+  battle_energy_at?: string;
 };
 
 type Props = {

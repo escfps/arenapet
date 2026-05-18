@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { SPECIES, ELEMENT_COLORS, ROLE_INFO, skinFilter, isVip, xpForNextLevel, rankStars, totalStats, ARENA_WIN_POINTS, ARENA_LOSS_POINTS, getTier, divisionBounds, promoNeeded, type PromoSeries } from "@/lib/game-data";
+import { SPECIES, ELEMENT_COLORS, ROLE_INFO, skinFilter, isVip, xpForNextLevel, rankStars, totalStats, ARENA_WIN_POINTS, ARENA_LOSS_POINTS, getTier, divisionBounds, promoNeeded, type PromoSeries, computeBattleEnergy, MAX_BATTLE_ENERGY } from "@/lib/game-data";
 import type { MonsterRow } from "@/components/MonsterCard";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
@@ -118,8 +118,34 @@ function ArenaPage() {
     setOpponent({ ownerId: chosen, ownerName: byOwner[chosen].username, team: byOwner[chosen].team.slice(0, 4) });
   }
 
+  // Compute current energy for each team pet (with regen applied)
+  const teamEnergies = myTeam.map((m) => computeBattleEnergy(m.battle_energy, m.battle_energy_at));
+  const minEnergy = teamEnergies.length ? Math.min(...teamEnergies.map((e) => e.energy)) : 0;
+  const canFight = myTeam.length > 0 && minEnergy >= 1;
+
   async function fight() {
     if (!profile || !userId || !opponent) return;
+    if (!canFight) {
+      toast.error("Algum pet do seu time está sem energia de batalha! ⚡");
+      return;
+    }
+
+    // Consume 1 battle energy from each team pet
+    await Promise.all(myTeam.map(async (m, i) => {
+      const e = teamEnergies[i];
+      const newEnergy = Math.max(0, e.energy - 1);
+      await supabase
+        .from("monsters")
+        .update({ battle_energy: newEnergy, battle_energy_at: e.nextStoredAt })
+        .eq("id", m.id);
+    }));
+    // Reflect locally so the UI updates instantly
+    setMyTeam((prev) => prev.map((m, i) => ({
+      ...m,
+      battle_energy: Math.max(0, teamEnergies[i].energy - 1),
+      battle_energy_at: teamEnergies[i].nextStoredAt,
+    })));
+
     const a = myTeam.map(toBattleMonster);
     const b = opponent.team.map(toBattleMonster);
     const result = simulateBattle(a, b);
@@ -264,7 +290,7 @@ function ArenaPage() {
         ) : (
           <>
             <div className="grid md:grid-cols-2 gap-4">
-              <TeamPanel title="Seu time" team={myTeam} side="left" />
+              <TeamPanel title="Seu time" team={myTeam} side="left" energies={teamEnergies} />
               {opponent ? (
                 <TeamPanel title={`vs ${opponent.ownerName}`} team={opponent.team} side="right" />
               ) : (
@@ -273,6 +299,12 @@ function ArenaPage() {
                 </div>
               )}
             </div>
+
+            {!canFight && myTeam.length > 0 && (
+              <div className="rounded-xl bg-red-500/30 border border-red-300 p-3 text-white text-sm text-center">
+                ⚡ Algum pet do seu time está sem energia de batalha. Espere a regen (1/hora) ou compre energia na <button onClick={() => navigate({ to: "/shop" })} className="underline font-bold">loja</button>.
+              </div>
+            )}
 
             <div className="flex gap-3 justify-center">
               <button
@@ -285,7 +317,8 @@ function ArenaPage() {
               {opponent && !battleLog && (
                 <button
                   onClick={fight}
-                  className="px-8 py-3 rounded-xl bg-gradient-to-b from-red-500 to-red-700 text-white font-extrabold shadow-xl hover:scale-105 transition"
+                  disabled={!canFight}
+                  className="px-8 py-3 rounded-xl bg-gradient-to-b from-red-500 to-red-700 text-white font-extrabold shadow-xl hover:scale-105 transition disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   ⚔️ BATALHAR!
                 </button>
@@ -372,14 +405,15 @@ function ArenaPage() {
   );
 }
 
-function TeamPanel({ title, team, side }: { title: string; team: FullMonster[]; side: "left" | "right" }) {
+function TeamPanel({ title, team, side, energies }: { title: string; team: FullMonster[]; side: "left" | "right"; energies?: { energy: number; nextRegenAt: Date | null }[] }) {
   return (
     <div className={`rounded-2xl bg-white/10 backdrop-blur-md border-2 ${side === "left" ? "border-blue-300/50" : "border-red-300/50"} p-3 text-white`}>
       <h3 className="font-extrabold mb-2">{title}</h3>
       <div className="space-y-2">
-        {team.map((m) => {
+        {team.map((m, i) => {
           const sp = SPECIES[m.species];
           if (!sp) return null;
+          const en = energies?.[i];
           return (
             <div key={m.id} className={`flex items-center gap-2 p-2 rounded-lg bg-gradient-to-r ${ELEMENT_COLORS[sp.element]}`}>
               <img src={sp.image} alt="" className="h-14 w-14 object-contain drop-shadow-lg" style={{ filter: skinFilter(m.skin) }} />
@@ -393,6 +427,16 @@ function TeamPanel({ title, team, side }: { title: string; team: FullMonster[]; 
                 {(() => { const st = totalStats(m.species, m.rank ?? 1); return (
                   <div className="text-[10px] opacity-90">{rankStars(m.rank ?? 1)} • ❤️{st.hp} ⚔️{st.atk} 🛡️{st.def} 💨{st.spd} 🧠{st.int}</div>
                 ); })()}
+                {en && (
+                  <div className={`text-[10px] font-bold mt-0.5 flex items-center gap-1 ${en.energy === 0 ? "text-red-200" : "text-yellow-100"}`}>
+                    ⚡ {en.energy}/{MAX_BATTLE_ENERGY}
+                    {en.nextRegenAt && (
+                      <span className="opacity-70 font-normal">
+                        (+1 em {Math.max(0, Math.ceil((en.nextRegenAt.getTime() - Date.now()) / 60000))}min)
+                      </span>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           );
