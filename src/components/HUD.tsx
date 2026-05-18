@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { CoinBadge, GemBadge, VipBadge } from "./CoinBadge";
-import { isVip } from "@/lib/game-data";
+import { isVip, getTier } from "@/lib/game-data";
 import { supabase } from "@/integrations/supabase/client";
 
 export type ProfileRow = {
@@ -14,6 +14,7 @@ export type ProfileRow = {
   wins: number;
   losses: number;
   expedition_slots: number;
+  arena_points: number;
 };
 
 export function HUD({ profile }: { profile: ProfileRow }) {
