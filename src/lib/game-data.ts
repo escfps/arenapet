@@ -177,6 +177,32 @@ export const SPECIES: Record<string, Species> = {
     description: "Orbe de raios sombrios. Assassino caótico.",
     base: { hp: 44, atk: 13, def: 7, spd: 17, int: 6 },
   },
+
+  // ===== TERRA =====
+  rockpup: {
+    id: "rockpup", name: "Rockpup", element: "earth", role: "tank", rarity: "rare",
+    emoji: "🪨", image: rockpupImg,
+    description: "Cãozinho de pedregulho puro. Tank rochoso com defesa absurda.",
+    base: { hp: 85, atk: 9, def: 20, spd: 7, int: 8 },
+  },
+  magmaboulder: {
+    id: "magmaboulder", name: "Magmaboulder", element: "earth", secondaryElement: "fire", role: "tank", rarity: "common",
+    emoji: "🌋", image: magmaboulderImg,
+    description: "Rocha vulcânica. Tank que queima quem encosta.",
+    base: { hp: 75, atk: 11, def: 16, spd: 7, int: 8 },
+  },
+  mudpaw: {
+    id: "mudpaw", name: "Mudpaw", element: "earth", secondaryElement: "water", role: "dps", rarity: "common",
+    emoji: "🟫", image: mudpawImg,
+    description: "Golem de lama. DPS pesado que afunda os inimigos.",
+    base: { hp: 60, atk: 14, def: 12, spd: 8, int: 7 },
+  },
+  crystalsprite: {
+    id: "crystalsprite", name: "Crystalsprite", element: "earth", secondaryElement: "electric", role: "mage", rarity: "common",
+    emoji: "💎", image: crystalspriteImg,
+    description: "Geodo mágico cristalino. Mago de cristal com raios.",
+    base: { hp: 52, atk: 12, def: 11, spd: 10, int: 21 },
+  },
 };
 
 export const ELEMENT_COLORS: Record<Element, string> = {
