@@ -1,13 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import type { BattleLogEntry } from "@/lib/battle";
-import { SPECIES, ELEMENT_COLORS, RARITY_INFO, MAX_RANK, skinFilter, totalStats } from "@/lib/game-data";
+import { SPECIES, ELEMENT_COLORS, RARITY_INFO, MAX_RANK, skinFilter, totalStats, getSkill } from "@/lib/game-data";
 import type { MonsterRow } from "./MonsterCard";
 import grassBg from "@/assets/battle-grass-bg.jpg";
 
 type Team = (MonsterRow & { owner_id: string })[];
 type HpMap = Map<string, { cur: number; max: number }>;
 type ShieldMap = Map<string, number>;
-type Fx = { actor: string | null; target: string | null; dmg: number | null; crit: boolean };
+type SkillFxKind = "heal" | "bite" | "explosion" | "lightning" | "fire" | "shield" | "slash" | "skull" | "fury" | "silence" | "magic" | "revive" | "true";
+type Fx = { actor: string | null; target: string | null; dmg: number | null; crit: boolean; skillFx: SkillFxKind | null; targets: string[] };
 type StatusKind = "burn" | "silence" | "rage" | "shield";
 type StatusMap = Map<string, Set<StatusKind>>;
 type EffectBanner = {
