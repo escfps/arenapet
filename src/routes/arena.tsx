@@ -259,7 +259,43 @@ function ArenaPage() {
     }
     updates.xp = newXp;
     updates.level = newLevel;
-    await patch(updates);
+
+    // Recompensas de level-up (baú de madeira; ouro a cada 10)
+    if (newLevel > profile.level) {
+      const lvRew = rollLevelUpRewards(profile.level, newLevel);
+      updates.coins = (updates.coins ?? profile.coins) + lvRew.coins;
+      updates.gems = (profile.gems ?? 0) + lvRew.gems;
+      await patch(updates);
+      // rações
+      if (lvRew.rations > 0) {
+        const { data: rRow } = await supabase.from("inventory").select("quantity").eq("user_id", userId).eq("item_type", "ration").maybeSingle();
+        await supabase.from("inventory").upsert(
+          { user_id: userId, item_type: "ration", quantity: (rRow?.quantity ?? 0) + lvRew.rations },
+          { onConflict: "user_id,item_type" }
+        );
+      }
+      // pets sorteados
+      if (lvRew.petSpecies.length > 0) {
+        const rows = lvRew.petSpecies.map((sid) => {
+          const sp = SPECIES[sid];
+          return { owner_id: userId, species: sid, name: sp.name, hp: sp.base.hp, atk: sp.base.atk, def: sp.base.def, spd: sp.base.spd };
+        });
+        await supabase.from("monsters").insert(rows);
+      }
+      // toasts
+      for (const lv of lvRew.levels) {
+        const isGold = lv % 10 === 0;
+        toast.success(`🎉 Level ${lv}! ${isGold ? "🥇 Baú de OURO" : "📦 Baú de Madeira"} aberto`, { duration: 4000 });
+      }
+      const parts: string[] = [];
+      if (lvRew.coins) parts.push(`🪙 ${lvRew.coins}`);
+      if (lvRew.gems) parts.push(`💎 ${lvRew.gems}`);
+      if (lvRew.rations) parts.push(`🍖 ${lvRew.rations}`);
+      if (lvRew.petSpecies.length) parts.push(`🥚 ${lvRew.petSpecies.length} pet${lvRew.petSpecies.length > 1 ? "s" : ""}`);
+      if (parts.length) toast(`Recompensas: ${parts.join(" • ")}`, { duration: 5000 });
+    } else {
+      await patch(updates);
+    }
 
     // Bot/opponent profile also gains/loses points (opposite outcome)
     const opponentDelta = won ? -ARENA_LOSS_POINTS : ARENA_WIN_POINTS;
