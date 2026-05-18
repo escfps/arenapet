@@ -306,7 +306,7 @@ function ShopPage() {
           </>
         )}
 
-
+        {tab === "skins" && (
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {Object.values(SKINS).filter((s) => s.id !== "default").map((sk) => {
               const owned = ownedSkins.includes(sk.id);
