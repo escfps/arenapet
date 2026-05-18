@@ -149,7 +149,7 @@ function ArenaPage() {
       return;
     }
     const chosen = ownerList[Math.floor(Math.random() * ownerList.length)];
-    setOpponent({ ownerId: chosen, ownerName: byOwner[chosen].username, team: byOwner[chosen].team.slice(0, 4) });
+    setOpponent({ ownerId: chosen, ownerName: byOwner[chosen].username, arenaPoints: byOwner[chosen].arenaPoints, team: byOwner[chosen].team.slice(0, 4) });
   }
 
   // Compute current energy for each team pet (with regen applied)
