@@ -107,7 +107,7 @@ function ExpeditionsPage() {
   }
 
   async function handleCancel(exp: ExpRow) {
-    if (!confirm("Cancelar a expedição? A ração gasta NÃO volta.")) return;
+    if (!confirm("Cancelar a expedição? A energia gasta NÃO volta.")) return;
     setBusy(true);
     try {
       await cancel({ data: { expeditionId: exp.id } });
