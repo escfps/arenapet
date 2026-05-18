@@ -392,29 +392,279 @@ function ArenaLineup({
 
 // === Animação visual da skill sobre o pet ===
 function SkillFxOverlay({ kind, keyId }: { kind: SkillFxKind; keyId: string }) {
-  const config: Record<SkillFxKind, { emoji: string; anim: string; size: string; color: string }> = {
-    heal:      { emoji: "✚",  anim: "animate-skill-heal",    size: "text-5xl", color: "text-emerald-300" },
-    bite:      { emoji: "🦷",  anim: "animate-skill-pop",     size: "text-5xl", color: "" },
-    explosion: { emoji: "💥",  anim: "animate-skill-explode", size: "text-6xl", color: "" },
-    lightning: { emoji: "⚡",  anim: "animate-skill-pop",     size: "text-6xl", color: "" },
-    fire:      { emoji: "🔥",  anim: "animate-skill-explode", size: "text-5xl", color: "" },
-    shield:    { emoji: "🛡️",  anim: "animate-skill-shield",  size: "text-5xl", color: "" },
-    slash:     { emoji: "⚔️",  anim: "animate-skill-slash",   size: "text-6xl", color: "" },
-    skull:     { emoji: "💀",  anim: "animate-skill-pop",     size: "text-6xl", color: "" },
-    fury:      { emoji: "😡",  anim: "animate-skill-pop",     size: "text-5xl", color: "" },
-    silence:   { emoji: "🤐",  anim: "animate-skill-pop",     size: "text-5xl", color: "" },
-    magic:     { emoji: "🔮",  anim: "animate-skill-explode", size: "text-5xl", color: "" },
-    revive:    { emoji: "✨",  anim: "animate-skill-heal",    size: "text-5xl", color: "text-yellow-200" },
-    true:      { emoji: "💢",  anim: "animate-skill-explode", size: "text-6xl", color: "text-fuchsia-300" },
-  };
-  const c = config[kind];
   return (
     <div
       key={keyId}
-      className={`pointer-events-none absolute top-1/2 left-1/2 z-20 font-extrabold ${c.size} ${c.color} ${c.anim}`}
-      style={{ textShadow: "0 2px 6px rgba(0,0,0,0.8)" }}
+      className="pointer-events-none absolute inset-0 z-20 overflow-visible"
     >
-      {c.emoji}
+      {kind === "heal" && (
+        <>
+          <div className="absolute inset-0 rounded-full bg-emerald-400/30 animate-skill-aura-green" />
+          {[0, 1, 2].map((i) => (
+            <div
+              key={i}
+              className="absolute left-1/2 top-1/2 text-3xl font-black text-emerald-300 animate-skill-heal-cross"
+              style={{
+                textShadow: "0 0 12px rgba(34,197,94,0.9)",
+                animationDelay: `${i * 0.18}s`,
+                transform: `translate(calc(-50% + ${(i - 1) * 18}px), -50%)`,
+              }}
+            >
+              ✚
+            </div>
+          ))}
+          {[...Array(6)].map((_, i) => (
+            <span
+              key={`s${i}`}
+              className="absolute left-1/2 top-1/2 text-xs animate-skill-sparkle"
+              style={{
+                animationDelay: `${i * 0.08}s`,
+                transform: `translate(-50%, -50%) rotate(${i * 60}deg) translateY(-30px)`,
+              }}
+            >
+              ✨
+            </span>
+          ))}
+        </>
+      )}
+
+      {kind === "magic" && (
+        <>
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 rounded-full border-4 border-fuchsia-400 animate-skill-rune" />
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full border-2 border-violet-300 animate-skill-rune-reverse" />
+          <div
+            className="absolute left-1/2 text-4xl animate-skill-meteor"
+            style={{ transform: "translateX(-50%)" }}
+          >
+            🔮
+          </div>
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-6xl animate-skill-explode">
+            💜
+          </div>
+        </>
+      )}
+
+      {kind === "explosion" && (
+        <>
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full bg-orange-400/70 animate-skill-shockwave" />
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-6xl animate-skill-explode">
+            💥
+          </div>
+          {[...Array(8)].map((_, i) => (
+            <span
+              key={i}
+              className="absolute left-1/2 top-1/2 text-xl animate-skill-shard"
+              style={{
+                transform: `translate(-50%, -50%) rotate(${i * 45}deg)`,
+                animationDelay: `${i * 0.02}s`,
+              }}
+            >
+              ✦
+            </span>
+          ))}
+        </>
+      )}
+
+      {kind === "lightning" && (
+        <>
+          <div className="absolute inset-0 bg-yellow-200/40 animate-skill-flash" />
+          <div
+            className="absolute left-1/2 -top-16 text-7xl animate-skill-bolt"
+            style={{ transform: "translateX(-50%)", textShadow: "0 0 20px rgba(250,204,21,1)" }}
+          >
+            ⚡
+          </div>
+          {[...Array(5)].map((_, i) => (
+            <span
+              key={i}
+              className="absolute left-1/2 top-1/2 text-sm text-yellow-200 animate-skill-shard"
+              style={{
+                transform: `translate(-50%, -50%) rotate(${i * 72}deg)`,
+                animationDelay: `${0.2 + i * 0.04}s`,
+              }}
+            >
+              ⚡
+            </span>
+          ))}
+        </>
+      )}
+
+      {kind === "fire" && (
+        <>
+          <div
+            className="absolute left-1/2 -top-14 text-5xl animate-skill-meteor"
+            style={{ transform: "translateX(-50%)" }}
+          >
+            🔥
+          </div>
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-6xl animate-skill-explode">
+            🔥
+          </div>
+          {[...Array(5)].map((_, i) => (
+            <span
+              key={i}
+              className="absolute left-1/2 top-1/2 text-base animate-skill-ember"
+              style={{
+                animationDelay: `${0.3 + i * 0.1}s`,
+                transform: `translate(calc(-50% + ${(i - 2) * 14}px), 0)`,
+              }}
+            >
+              🔥
+            </span>
+          ))}
+        </>
+      )}
+
+      {kind === "shield" && (
+        <>
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 rounded-full border-4 border-cyan-300 animate-skill-shield-ring" />
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-cyan-400/30 animate-skill-aura-cyan" />
+          <div
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-5xl animate-skill-shield"
+            style={{ textShadow: "0 0 14px rgba(56,189,248,0.9)" }}
+          >
+            🛡️
+          </div>
+        </>
+      )}
+
+      {kind === "slash" && (
+        <>
+          {[-30, 0, 30].map((deg, i) => (
+            <div
+              key={i}
+              className="absolute left-1/2 top-1/2 w-24 h-1 bg-gradient-to-r from-transparent via-white to-transparent animate-skill-slash-line"
+              style={{
+                transform: `translate(-50%, -50%) rotate(${deg}deg)`,
+                animationDelay: `${i * 0.08}s`,
+                boxShadow: "0 0 8px rgba(255,255,255,0.9)",
+              }}
+            />
+          ))}
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-5xl animate-skill-slash">
+            ⚔️
+          </div>
+        </>
+      )}
+
+      {kind === "bite" && (
+        <>
+          <div
+            className="absolute left-1/2 -top-2 text-4xl animate-skill-bite-top"
+            style={{ transform: "translateX(-50%)" }}
+          >
+            🦷
+          </div>
+          <div
+            className="absolute left-1/2 -bottom-2 text-4xl animate-skill-bite-bottom"
+            style={{ transform: "translateX(-50%) rotate(180deg)" }}
+          >
+            🦷
+          </div>
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-5xl animate-skill-explode">
+            💢
+          </div>
+        </>
+      )}
+
+      {kind === "skull" && (
+        <>
+          <div className="absolute inset-0 bg-black/40 animate-skill-flash" />
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-6xl animate-skill-pop">
+            💀
+          </div>
+          {[...Array(4)].map((_, i) => (
+            <span
+              key={i}
+              className="absolute left-1/2 top-1/2 text-2xl text-purple-300 animate-skill-ember"
+              style={{
+                animationDelay: `${i * 0.12}s`,
+                transform: `translate(calc(-50% + ${(i - 1.5) * 16}px), 0)`,
+              }}
+            >
+              ☠️
+            </span>
+          ))}
+        </>
+      )}
+
+      {kind === "fury" && (
+        <>
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 rounded-full bg-red-500/40 animate-skill-aura-red" />
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-5xl animate-skill-pop">
+            😡
+          </div>
+          {[...Array(4)].map((_, i) => (
+            <span
+              key={i}
+              className="absolute left-1/2 top-1/2 text-xl animate-skill-shard"
+              style={{
+                transform: `translate(-50%, -50%) rotate(${i * 90 + 45}deg)`,
+                animationDelay: `${i * 0.05}s`,
+              }}
+            >
+              💢
+            </span>
+          ))}
+        </>
+      )}
+
+      {kind === "silence" && (
+        <>
+          <div className="absolute inset-0 bg-slate-900/40 animate-skill-flash" />
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-5xl animate-skill-pop">
+            🤐
+          </div>
+        </>
+      )}
+
+      {kind === "revive" && (
+        <>
+          <div
+            className="absolute left-1/2 -top-20 w-3 h-32 bg-gradient-to-b from-yellow-200 via-yellow-300/80 to-transparent animate-skill-beam"
+            style={{ transform: "translateX(-50%)", boxShadow: "0 0 24px rgba(253,224,71,0.9)" }}
+          />
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-5xl animate-skill-heal" style={{ color: "#fde68a" }}>
+            ✨
+          </div>
+          {[...Array(8)].map((_, i) => (
+            <span
+              key={i}
+              className="absolute left-1/2 top-1/2 text-sm text-yellow-200 animate-skill-sparkle"
+              style={{
+                animationDelay: `${i * 0.05}s`,
+                transform: `translate(-50%, -50%) rotate(${i * 45}deg) translateY(-36px)`,
+              }}
+            >
+              ✦
+            </span>
+          ))}
+        </>
+      )}
+
+      {kind === "true" && (
+        <>
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 rounded-full border-4 border-fuchsia-400 animate-skill-shockwave" />
+          <div
+            className="absolute left-1/2 top-1/2 text-6xl animate-skill-pierce"
+            style={{ transform: "translate(-50%, -50%)", color: "#f0abfc", textShadow: "0 0 16px rgba(217,70,239,0.9)" }}
+          >
+            💢
+          </div>
+          {[...Array(6)].map((_, i) => (
+            <span
+              key={i}
+              className="absolute left-1/2 top-1/2 text-base text-fuchsia-300 animate-skill-shard"
+              style={{
+                transform: `translate(-50%, -50%) rotate(${i * 60}deg)`,
+                animationDelay: `${i * 0.04}s`,
+              }}
+            >
+              ✦
+            </span>
+          ))}
+        </>
+      )}
     </div>
   );
 }
