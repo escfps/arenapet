@@ -5,6 +5,7 @@ import type { MonsterRow } from "./MonsterCard";
 
 type Team = (MonsterRow & { owner_id: string })[];
 type HpMap = Map<string, { cur: number; max: number }>;
+type ShieldMap = Map<string, number>;
 type Fx = { actor: string | null; target: string | null; dmg: number | null; crit: boolean };
 
 export function BattleScene({
@@ -32,10 +33,12 @@ export function BattleScene({
   }, [teamA, teamB]);
 
   const [hp, setHp] = useState<HpMap>(initialHp);
+  const [shields, setShields] = useState<ShieldMap>(new Map());
   const [fx, setFx] = useState<Fx>({ actor: null, target: null, dmg: null, crit: false });
 
   useEffect(() => {
     setHp(new Map(initialHp));
+    setShields(new Map());
     setFx({ actor: null, target: null, dmg: null, crit: false });
   }, [initialHp]);
 
@@ -74,6 +77,14 @@ export function BattleScene({
       return next;
     });
 
+    if (entry.targetShield !== undefined && targetKey) {
+      setShields((prev) => {
+        const next = new Map(prev);
+        next.set(targetKey, entry.targetShield!);
+        return next;
+      });
+    }
+
     setFx({ actor: actorKey, target: targetKey, dmg: entry.damage, crit: entry.crit });
     const t = setTimeout(
       () => setFx({ actor: null, target: null, dmg: null, crit: false }),
@@ -85,8 +96,8 @@ export function BattleScene({
   return (
     <div className="rounded-2xl bg-gradient-to-b from-slate-900/70 to-indigo-950/70 backdrop-blur-md border border-white/20 p-4">
       <div className="grid grid-cols-2 gap-3">
-        <SideColumn team={teamA} side="a" hp={hp} fx={fx} />
-        <SideColumn team={teamB} side="b" hp={hp} fx={fx} mirrored />
+        <SideColumn team={teamA} side="a" hp={hp} shields={shields} fx={fx} />
+        <SideColumn team={teamB} side="b" hp={hp} shields={shields} fx={fx} mirrored />
       </div>
     </div>
   );
@@ -96,12 +107,14 @@ function SideColumn({
   team,
   side,
   hp,
+  shields,
   fx,
   mirrored,
 }: {
   team: Team;
   side: "a" | "b";
   hp: HpMap;
+  shields: ShieldMap;
   fx: Fx;
   mirrored?: boolean;
 }) {
@@ -113,6 +126,8 @@ function SideColumn({
         const key = `${side}:${m.name}`;
         const h = hp.get(key) ?? { cur: 0, max: 1 };
         const pct = Math.max(0, Math.min(100, (h.cur / h.max) * 100));
+        const shield = shields.get(key) ?? 0;
+        const shieldPct = Math.max(0, Math.min(100, (shield / h.max) * 100));
         const dead = h.cur <= 0;
         const isActor = fx.actor === key && !dead;
         const isTarget = fx.target === key;
@@ -151,8 +166,19 @@ function SideColumn({
                     style={{ width: `${pct}%` }}
                   />
                 </div>
-                <div className="text-[10px] text-white/90 font-bold">
-                  {Math.round(h.cur)}/{h.max}
+                {shield > 0 && (
+                  <div className="h-1.5 rounded-full bg-black/40 overflow-hidden mt-0.5 ring-1 ring-cyan-300/50">
+                    <div
+                      className="h-full bg-gradient-to-r from-sky-400 to-blue-500 transition-all duration-500 shadow-[0_0_6px_rgba(56,189,248,0.8)]"
+                      style={{ width: `${shieldPct}%` }}
+                    />
+                  </div>
+                )}
+                <div className="text-[10px] text-white/90 font-bold flex items-center gap-1">
+                  <span>{Math.round(h.cur)}/{h.max}</span>
+                  {shield > 0 && (
+                    <span className="text-cyan-300">🛡 {Math.round(shield)}</span>
+                  )}
                 </div>
               </div>
             </div>

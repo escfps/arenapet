@@ -24,6 +24,7 @@ export type BattleLogEntry = {
   crit: boolean;
   effective: number;
   remainingHp: number;
+  targetShield?: number;
   message: string;
 };
 
@@ -180,6 +181,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           log.push({
             turn, actor: side, actorName: attacker.name, targetName: attacker.name,
             damage: 0, crit: false, effective: 1, remainingHp: attacker.current,
+            targetShield: attacker.shield,
             message: `${skill.emoji} ${attacker.name} usou ${skill.name}! Provocou todos e ganhou ${shield} de escudo`,
           });
           continue;
@@ -195,6 +197,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
             log.push({
               turn, actor: side, actorName: attacker.name, targetName: t.name,
               damage: dmg, crit: false, effective: eff, remainingHp: t.current,
+              targetShield: t.shield,
               message: `${skill.emoji} ${attacker.name} → ${t.name}: ${dmg} de dano arcano`,
             });
             if (t.current <= 0) {
@@ -214,6 +217,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
             log.push({
               turn, actor: side, actorName: attacker.name, targetName: target.name,
               damage: dmg, crit: true, effective: eff, remainingHp: target.current,
+              targetShield: target.shield,
               message: `${skill.emoji} ${attacker.name} usou ${skill.name} em ${target.name}: ${dmg} de dano massivo!`,
             });
             if (target.current <= 0) {
@@ -234,6 +238,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
             log.push({
               turn, actor: side, actorName: attacker.name, targetName: target.name,
               damage: dmg, crit: true, effective: eff, remainingHp: target.current,
+              targetShield: target.shield,
               message: `${skill.emoji} ${attacker.name} usou ${skill.name}: ${dmg} CRÍTICO em ${target.name}!`,
             });
             if (target.current <= 0) {
@@ -287,7 +292,8 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
 
       log.push({
         turn, actor: side, actorName: attacker.name, targetName: target.name,
-        damage, crit, effective: eff, remainingHp: target.current, message: msg,
+        damage, crit, effective: eff, remainingHp: target.current,
+        targetShield: target.shield, message: msg,
       });
 
       if (target.current <= 0) {
