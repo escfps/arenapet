@@ -153,7 +153,7 @@ export const confirmTrade = createServerFn({ method: "POST" })
     // 2. swap ownership + debit fees + mark completed
     await Promise.all([
       supabaseAdmin.from("monsters").update({ owner_id: trade.to_user_id }).eq("id", trade.from_monster_id),
-      supabaseAdmin.from("monsters").update({ owner_id: trade.from_user_id }).eq("id", trade.to_monster_id),
+      supabaseAdmin.from("monsters").update({ owner_id: trade.from_user_id }).eq("id", toMonsterId),
       supabaseAdmin.from("profiles").update({
         coins: fromProfile.coins - TRADE_FEE_COINS,
         gems: fromProfile.gems - TRADE_FEE_GEMS,
