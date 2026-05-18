@@ -13,6 +13,7 @@ import { Route as TradeRouteImport } from './routes/trade'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgeRouteImport } from './routes/forge'
+import { Route as ExpeditionsRouteImport } from './routes/expeditions'
 import { Route as CollectionRouteImport } from './routes/collection'
 import { Route as ArenaRouteImport } from './routes/arena'
 import { Route as IndexRouteImport } from './routes/index'
@@ -36,6 +37,11 @@ const LoginRoute = LoginRouteImport.update({
 const ForgeRoute = ForgeRouteImport.update({
   id: '/forge',
   path: '/forge',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExpeditionsRoute = ExpeditionsRouteImport.update({
+  id: '/expeditions',
+  path: '/expeditions',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CollectionRoute = CollectionRouteImport.update({
@@ -63,6 +69,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/arena': typeof ArenaRoute
   '/collection': typeof CollectionRoute
+  '/expeditions': typeof ExpeditionsRoute
   '/forge': typeof ForgeRoute
   '/login': typeof LoginRoute
   '/shop': typeof ShopRoute
@@ -73,6 +80,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/arena': typeof ArenaRoute
   '/collection': typeof CollectionRoute
+  '/expeditions': typeof ExpeditionsRoute
   '/forge': typeof ForgeRoute
   '/login': typeof LoginRoute
   '/shop': typeof ShopRoute
@@ -84,6 +92,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/arena': typeof ArenaRoute
   '/collection': typeof CollectionRoute
+  '/expeditions': typeof ExpeditionsRoute
   '/forge': typeof ForgeRoute
   '/login': typeof LoginRoute
   '/shop': typeof ShopRoute
@@ -96,6 +105,7 @@ export interface FileRouteTypes {
     | '/'
     | '/arena'
     | '/collection'
+    | '/expeditions'
     | '/forge'
     | '/login'
     | '/shop'
@@ -106,6 +116,7 @@ export interface FileRouteTypes {
     | '/'
     | '/arena'
     | '/collection'
+    | '/expeditions'
     | '/forge'
     | '/login'
     | '/shop'
@@ -116,6 +127,7 @@ export interface FileRouteTypes {
     | '/'
     | '/arena'
     | '/collection'
+    | '/expeditions'
     | '/forge'
     | '/login'
     | '/shop'
@@ -127,6 +139,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ArenaRoute: typeof ArenaRoute
   CollectionRoute: typeof CollectionRoute
+  ExpeditionsRoute: typeof ExpeditionsRoute
   ForgeRoute: typeof ForgeRoute
   LoginRoute: typeof LoginRoute
   ShopRoute: typeof ShopRoute
@@ -164,6 +177,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ForgeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/expeditions': {
+      id: '/expeditions'
+      path: '/expeditions'
+      fullPath: '/expeditions'
+      preLoaderRoute: typeof ExpeditionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/collection': {
       id: '/collection'
       path: '/collection'
@@ -199,6 +219,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ArenaRoute: ArenaRoute,
   CollectionRoute: CollectionRoute,
+  ExpeditionsRoute: ExpeditionsRoute,
   ForgeRoute: ForgeRoute,
   LoginRoute: LoginRoute,
   ShopRoute: ShopRoute,
@@ -208,3 +229,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
