@@ -296,7 +296,7 @@ export const SPECIES: Record<string, Species> = {
     emoji: "✨", image: panteraAureaImg,
     description: "Olhos dourados — variante ultra-rara da Pantera Negra. Mago sombrio supremo.",
     base: { hp: 65, atk: 14, def: 12, spd: 15, int: 24 },
-    skill: { name: "Olhar Dourado", emoji: "👁️", kind: "true_damage_nuke", cooldown: 5, description: "Olhar puro: dano VERDADEIRO no alvo (ignora 100% DEF e elemento). ~INT×2.5." },
+    skill: { name: "Raio Áureo", emoji: "👁️", kind: "chain_lightning", cooldown: 4, description: "Feixe dourado salta entre até 3 inimigos (100% → 60% → 35% do dano mágico)." },
   },
 
   // ===== SUPER RAROS =====
