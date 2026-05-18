@@ -105,8 +105,8 @@ function ExpeditionsPage() {
       if (r.levelUp) {
         const lu = r.levelUp;
         for (let lv = lu.fromLevel + 1; lv <= lu.toLevel; lv++) {
-          const isGold = lv % 10 === 0;
-          toast.success(`🎉 Level ${lv}! ${isGold ? "🥇 Baú de OURO" : "📦 Baú de Madeira"} aberto`, { duration: 4000 });
+          const tier = lv === 100 ? "👑 Baú LENDÁRIO" : lv === 50 ? "🥇 Baú de OURO" : lv % 10 === 0 ? "🥈 Baú de PRATA" : "📦 Baú de Madeira";
+          toast.success(`🎉 Level ${lv}! ${tier} aberto`, { duration: 4000 });
         }
         const lp: string[] = [];
         if (lu.coins) lp.push(`🪙 ${lu.coins}`);

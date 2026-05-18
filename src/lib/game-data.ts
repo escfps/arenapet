@@ -623,23 +623,36 @@ export function rollWelcomeChest(): string[] {
 }
 
 // === Recompensas por level-up da CONTA ===
-// A cada level: 1 Baú de Madeira. A cada múltiplo de 10 (10, 20, 30...): Baú de Ouro (super raro) em vez do de madeira.
+// A cada level: 1 Baú de Madeira. A cada múltiplo de 10: Baú de Prata.
+// No level 50: Baú de Ouro. No level 100: Baú Lendário.
 export type LevelUpReward = {
   coins: number;
   gems: number;
   rations: number;
   petSpecies: string[];
   woodChests: number;
+  silverChests: number;
   goldChests: number;
+  legendaryChests: number;
   levels: number[]; // levels alcançados
 };
 
+export function chestTierForLevel(lv: number): ChestTier {
+  if (lv === 100) return "legendary";
+  if (lv === 50) return "gold";
+  if (lv % 10 === 0) return "silver";
+  return "wood";
+}
+
 export function rollLevelUpRewards(prevLevel: number, newLevel: number): LevelUpReward {
-  const out: LevelUpReward = { coins: 0, gems: 0, rations: 0, petSpecies: [], woodChests: 0, goldChests: 0, levels: [] };
+  const out: LevelUpReward = { coins: 0, gems: 0, rations: 0, petSpecies: [], woodChests: 0, silverChests: 0, goldChests: 0, legendaryChests: 0, levels: [] };
   for (let lv = prevLevel + 1; lv <= newLevel; lv++) {
     out.levels.push(lv);
-    const tier: ChestTier = lv % 10 === 0 ? "gold" : "wood";
-    if (tier === "gold") out.goldChests += 1; else out.woodChests += 1;
+    const tier = chestTierForLevel(lv);
+    if (tier === "legendary") out.legendaryChests += 1;
+    else if (tier === "gold") out.goldChests += 1;
+    else if (tier === "silver") out.silverChests += 1;
+    else out.woodChests += 1;
     const r = rollChest(tier);
     out.coins += r.coins;
     out.gems += r.gems;
