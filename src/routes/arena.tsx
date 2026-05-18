@@ -123,10 +123,10 @@ function ArenaPage() {
     // Temporizador aleatório 1–13s pra simular a busca (evita ficar dando scout)
     const waitMs = (1 + Math.floor(Math.random() * 13)) * 1000;
     const startedAt = Date.now();
-    setSearchCountdown(Math.ceil(waitMs / 1000));
+    setSearchCountdown(1);
     const tickId = window.setInterval(() => {
-      const remaining = Math.max(0, waitMs - (Date.now() - startedAt));
-      setSearchCountdown(Math.ceil(remaining / 1000));
+      const elapsed = Date.now() - startedAt;
+      setSearchCountdown(Math.min(Math.ceil(waitMs / 1000), Math.max(1, Math.ceil(elapsed / 1000))));
     }, 250);
 
     // Busca os candidatos em paralelo com a espera
