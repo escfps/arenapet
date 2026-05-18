@@ -130,13 +130,13 @@ function ShopPage() {
         </header>
 
         <div className="flex bg-white/10 backdrop-blur-md rounded-xl overflow-hidden border border-white/20">
-          {(["eggs", "skins", "vip", "gems"] as const).map((t) => (
+          {(["eggs", "skins", "vip", "gems", "energy"] as const).map((t) => (
             <button
               key={t}
               onClick={() => setTab(t)}
               className={`flex-1 py-2.5 text-xs font-bold transition ${tab === t ? "bg-white/30 text-white" : "text-white/70 hover:bg-white/15"}`}
             >
-              {t === "eggs" ? "🥚 Ovos" : t === "skins" ? "🎨 Skins" : t === "vip" ? "👑 VIP" : "💎 Gemas"}
+              {t === "eggs" ? "🥚 Ovos" : t === "skins" ? "🎨 Skins" : t === "vip" ? "👑 VIP" : t === "gems" ? "💎 Gemas" : "⚡ Energia"}
             </button>
           ))}
         </div>
