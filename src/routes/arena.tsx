@@ -171,7 +171,8 @@ function ArenaPage() {
     }
 
     const myPts = profile.arena_points ?? 0;
-    const allOwners = Object.keys(byOwner);
+    // Só considera oponentes com time COMPLETO (3 pets), pra evitar luta 3v2
+    const allOwners = Object.keys(byOwner).filter((id) => byOwner[id].team.length >= 3);
     const windows = [100, 200, 400, 800];
     let ownerList: string[] = [];
     for (const w of windows) {
@@ -186,11 +187,11 @@ function ArenaPage() {
     }
     if (ownerList.length === 0) {
       setSearching(false);
-      toast("Ninguém disponível ainda. Convide amigos! 🎯", { icon: "👀" });
+      toast("Ninguém com time completo agora. Tente em instantes! 🎯", { icon: "👀" });
       return;
     }
     const chosen = ownerList[Math.floor(Math.random() * ownerList.length)];
-    const chosenOpp = { ownerId: chosen, ownerName: byOwner[chosen].username, arenaPoints: byOwner[chosen].arenaPoints, team: byOwner[chosen].team.slice(0, 4) };
+    const chosenOpp = { ownerId: chosen, ownerName: byOwner[chosen].username, arenaPoints: byOwner[chosen].arenaPoints, team: byOwner[chosen].team.slice(0, 3) };
     setOpponent(chosenOpp);
     setSearching(false);
     // Já começa a partida imediatamente — não dá pra rebuscar oponente
