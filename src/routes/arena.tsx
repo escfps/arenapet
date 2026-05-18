@@ -59,7 +59,7 @@ function ArenaPage() {
     setShownLog([]);
     let i = 0;
     let cancelled = false;
-    function delayFor(entry: typeof battleLog[number] | undefined): number {
+    function delayFor(entry: BattleLogEntry | undefined): number {
       if (!entry) return 1400;
       const m = entry.message;
       // Momentos épicos: pausa longa
