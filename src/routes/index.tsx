@@ -34,6 +34,16 @@ function PatioPage() {
   const [elementFilter, setElementFilter] = useState<Element | "all">("all");
   const [groupModal, setGroupModal] = useState<string | null>(null);
   const [slotPicker, setSlotPicker] = useState<number | null>(null);
+  const [showTutorial, setShowTutorial] = useState(false);
+
+  // Mostra tutorial após o baú ser aberto (uma vez por conta)
+  useEffect(() => {
+    if (!userId || !profile) return;
+    if (!profile.welcome_chest_claimed) return;
+    if (welcomeReveal) return; // ainda mostrando os pets do baú
+    const done = localStorage.getItem(`tutorial_done_${userId}`);
+    if (!done) setShowTutorial(true);
+  }, [userId, profile, welcomeReveal]);
 
   const loadMonsters = useCallback(async () => {
     if (!userId) return;
