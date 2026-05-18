@@ -1,13 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import type { BattleLogEntry } from "@/lib/battle";
-import { SPECIES, ELEMENT_COLORS, RARITY_INFO, MAX_RANK, skinFilter, totalStats } from "@/lib/game-data";
+import { SPECIES, ELEMENT_COLORS, RARITY_INFO, MAX_RANK, skinFilter, totalStats, getSkill } from "@/lib/game-data";
 import type { MonsterRow } from "./MonsterCard";
 import grassBg from "@/assets/battle-grass-bg.jpg";
 
 type Team = (MonsterRow & { owner_id: string })[];
 type HpMap = Map<string, { cur: number; max: number }>;
 type ShieldMap = Map<string, number>;
-type Fx = { actor: string | null; target: string | null; dmg: number | null; crit: boolean };
+type SkillFxKind = "heal" | "bite" | "explosion" | "lightning" | "fire" | "shield" | "slash" | "skull" | "fury" | "silence" | "magic" | "revive" | "true";
+type Fx = { actor: string | null; target: string | null; dmg: number | null; crit: boolean; skillFx: SkillFxKind | null; targets: string[] };
 type StatusKind = "burn" | "silence" | "rage" | "shield";
 type StatusMap = Map<string, Set<StatusKind>>;
 type EffectBanner = {
@@ -88,14 +89,14 @@ export function BattleScene({
 
   const [hp, setHp] = useState<HpMap>(initialHp);
   const [shields, setShields] = useState<ShieldMap>(new Map());
-  const [fx, setFx] = useState<Fx>({ actor: null, target: null, dmg: null, crit: false });
+  const [fx, setFx] = useState<Fx>({ actor: null, target: null, dmg: null, crit: false, skillFx: null, targets: [] });
   const [banner, setBanner] = useState<EffectBanner>(null);
   const [statuses, setStatuses] = useState<StatusMap>(new Map());
 
   useEffect(() => {
     setHp(new Map(initialHp));
     setShields(new Map());
-    setFx({ actor: null, target: null, dmg: null, crit: false });
+    setFx({ actor: null, target: null, dmg: null, crit: false, skillFx: null, targets: [] });
     setBanner(null);
     setStatuses(new Map());
   }, [initialHp]);
@@ -143,7 +144,53 @@ export function BattleScene({
       });
     }
 
-    setFx({ actor: actorKey, target: targetKey, dmg: entry.damage, crit: entry.crit });
+    // ===== Determinar tipo de animação de skill =====
+    const actorMon = (actorSide === "a" ? teamA : teamB).find((m) => m.name === entry.actorName);
+    const skillKind = actorMon ? getSkill(actorMon.species).kind : null;
+    const msg = entry.message;
+    let skillFx: SkillFxKind | null = null;
+    let targets: string[] = targetKey ? [targetKey] : [];
+    // Cura (dano negativo) sempre mostra cruzes verdes
+    if (entry.damage < 0 || msg.includes("Curou todos") || msg.includes("curou")) {
+      skillFx = "heal";
+      if (entry.targetName === "todos os aliados") {
+        const allies = actorSide === "a" ? teamA : teamB;
+        targets = allies.filter((m) => (hp.get(`${actorSide}:${m.name}`)?.cur ?? 0) >= 0).map((m) => `${actorSide}:${m.name}`);
+      }
+    } else if (msg.includes("ressuscitado")) {
+      skillFx = "revive";
+    } else if (msg.includes("VERDADEIRO") || msg.includes("reduzido a pó")) {
+      skillFx = "true";
+    } else if (msg.includes("EXECUÇÃO") || msg.includes("executado") || skillKind === "execute") {
+      skillFx = "skull";
+    } else if (msg.includes("salto") || skillKind === "chain_lightning") {
+      skillFx = "lightning";
+      // tenta marcar todos do lado oposto como salto
+      const enemies = (actorSide === "a" ? teamB : teamA);
+      targets = enemies.map((m) => `${actorSide === "a" ? "b" : "a"}:${m.name}`);
+    } else if (msg.includes("queimando") || msg.includes("queimadura") || skillKind === "burn_dot") {
+      skillFx = "fire";
+    } else if (msg.includes("silenciou") || msg.includes("silencia") || skillKind === "silence_disable") {
+      skillFx = "silence";
+    } else if (msg.includes("roubou") || skillKind === "lifesteal_strike") {
+      skillFx = "bite";
+    } else if (msg.includes("escudo") || msg.includes("Provocou") || skillKind === "shield_taunt" || skillKind === "shield_ally") {
+      skillFx = "shield";
+    } else if (msg.includes("fúria") || msg.includes("ATK e -") || skillKind === "berserker_rage") {
+      skillFx = "fury";
+    } else if (msg.includes("golpe ") && msg.includes("/2") || skillKind === "double_strike") {
+      skillFx = "slash";
+    } else if (msg.includes("dano arcano") || msg.includes("dano em CADA") || skillKind === "aoe_magic") {
+      skillFx = "explosion";
+      const enemies = (actorSide === "a" ? teamB : teamA);
+      targets = enemies.map((m) => `${actorSide === "a" ? "b" : "a"}:${m.name}`);
+    } else if (skillKind === "heavy_strike" || skillKind === "guaranteed_crit" || entry.crit) {
+      skillFx = "bite";
+    } else if (skillKind === "true_damage_nuke") {
+      skillFx = "magic";
+    }
+
+    setFx({ actor: actorKey, target: targetKey, dmg: entry.damage, crit: entry.crit, skillFx, targets });
 
     // ===== Banner de efeito especial =====
     const eff = detectEffect(entry);
@@ -177,8 +224,8 @@ export function BattleScene({
     }
 
     const t = setTimeout(
-      () => setFx({ actor: null, target: null, dmg: null, crit: false }),
-      650
+      () => setFx({ actor: null, target: null, dmg: null, crit: false, skillFx: null, targets: [] }),
+      900
     );
     const tb = setTimeout(() => setBanner(null), 1100);
     return () => {
@@ -262,6 +309,7 @@ function ArenaLineup({
         const dead = h.cur <= 0;
         const isActor = fx.actor === key && !dead;
         const isTarget = fx.target === key;
+        const hasSkillFx = fx.skillFx && (fx.targets.includes(key) || (isActor && (fx.skillFx === "fury" || fx.skillFx === "shield")));
         // Avança em direção ao inimigo
         const lunge = isActor ? (mirrored ? "-translate-x-6 -translate-y-2" : "translate-x-6 -translate-y-2") : "";
         return (
@@ -285,6 +333,9 @@ function ArenaLineup({
                 transform: mirrored ? "scaleX(-1)" : undefined,
               }}
             />
+            {hasSkillFx && fx.skillFx && (
+              <SkillFxOverlay kind={fx.skillFx} keyId={`${fx.actor}-${key}-${fx.dmg}`} />
+            )}
             {isTarget && fx.dmg !== null && fx.dmg !== 0 && (
               <div
                 key={`arena-${fx.actor}-${fx.target}-${fx.dmg}`}
@@ -300,6 +351,35 @@ function ArenaLineup({
           </div>
         );
       })}
+    </div>
+  );
+}
+
+// === Animação visual da skill sobre o pet ===
+function SkillFxOverlay({ kind, keyId }: { kind: SkillFxKind; keyId: string }) {
+  const config: Record<SkillFxKind, { emoji: string; anim: string; size: string; color: string }> = {
+    heal:      { emoji: "✚",  anim: "animate-skill-heal",    size: "text-5xl", color: "text-emerald-300" },
+    bite:      { emoji: "🦷",  anim: "animate-skill-pop",     size: "text-5xl", color: "" },
+    explosion: { emoji: "💥",  anim: "animate-skill-explode", size: "text-6xl", color: "" },
+    lightning: { emoji: "⚡",  anim: "animate-skill-pop",     size: "text-6xl", color: "" },
+    fire:      { emoji: "🔥",  anim: "animate-skill-explode", size: "text-5xl", color: "" },
+    shield:    { emoji: "🛡️",  anim: "animate-skill-shield",  size: "text-5xl", color: "" },
+    slash:     { emoji: "⚔️",  anim: "animate-skill-slash",   size: "text-6xl", color: "" },
+    skull:     { emoji: "💀",  anim: "animate-skill-pop",     size: "text-6xl", color: "" },
+    fury:      { emoji: "😡",  anim: "animate-skill-pop",     size: "text-5xl", color: "" },
+    silence:   { emoji: "🤐",  anim: "animate-skill-pop",     size: "text-5xl", color: "" },
+    magic:     { emoji: "🔮",  anim: "animate-skill-explode", size: "text-5xl", color: "" },
+    revive:    { emoji: "✨",  anim: "animate-skill-heal",    size: "text-5xl", color: "text-yellow-200" },
+    true:      { emoji: "💢",  anim: "animate-skill-explode", size: "text-6xl", color: "text-fuchsia-300" },
+  };
+  const c = config[kind];
+  return (
+    <div
+      key={keyId}
+      className={`pointer-events-none absolute top-1/2 left-1/2 z-20 font-extrabold ${c.size} ${c.color} ${c.anim}`}
+      style={{ textShadow: "0 2px 6px rgba(0,0,0,0.8)" }}
+    >
+      {c.emoji}
     </div>
   );
 }
