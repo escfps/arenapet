@@ -60,16 +60,16 @@ function ArenaPage() {
     let i = 0;
     let cancelled = false;
     function delayFor(entry: BattleLogEntry | undefined): number {
-      if (!entry) return 1400;
+      if (!entry) return 2400;
       const m = entry.message;
-      // Momentos épicos: pausa longa
-      if (m.includes("EXECUÇÃO") || m.includes("VERDADEIRO") || m.includes("ressuscitado")) return 2200;
-      if (entry.crit) return 1800;
-      if (m.includes("escudo") || m.includes("queimando") || m.includes("silenciou") || m.includes("fúria")) return 1700;
-      if (m.includes("salto") || m.includes("Curou todos") || m.includes("golpe ")) return 1600;
-      // Dano por DoT é rápido pra não cansar
-      if (m.includes("sofreu") && m.includes("queimadura")) return 900;
-      return 1400; // ritmo base mais tenso
+      // Momentos épicos: pausa bem longa
+      if (m.includes("EXECUÇÃO") || m.includes("VERDADEIRO") || m.includes("ressuscitado")) return 3400;
+      if (entry.crit) return 2800;
+      if (m.includes("escudo") || m.includes("queimando") || m.includes("silenciou") || m.includes("fúria")) return 2700;
+      if (m.includes("salto") || m.includes("Curou todos") || m.includes("golpe ")) return 2600;
+      // Dano por DoT um pouco mais rápido pra não cansar
+      if (m.includes("sofreu") && m.includes("queimadura")) return 1500;
+      return 2400; // ritmo base bem mais lento, golpe por golpe
     }
     function tick() {
       if (cancelled) return;
