@@ -63,7 +63,7 @@ function MonsterPage() {
     toast.success(`Usou ${item.emoji} ${item.name}`);
   }
 
-  async function train(stat: "atk" | "def" | "spd") {
+  async function train(stat: "atk" | "def" | "spd" | "hp" | "int") {
     if (!profile || !monster) return;
     const cost = 20 + (monster.rank ?? 1) * 10;
     const energyCost = 15;
@@ -71,12 +71,12 @@ function MonsterPage() {
     if (monster.energy < energyCost) { toast.error("Sem energia! Dê um energético."); return; }
     if (monster.hunger < 20) { toast.error("Está com fome! Alimente primeiro."); return; }
     await patch({ coins: profile.coins - cost });
-    const gain = 1 + Math.floor(Math.random() * 2);
+    const gain = stat === "hp" ? 3 + Math.floor(Math.random() * 3) : 1 + Math.floor(Math.random() * 2);
     const updates: Partial<MonsterRow> = {
       energy: monster.energy - energyCost,
       hunger: monster.hunger - 5,
     };
-    updates[stat] = monster[stat] + gain;
+    updates[stat] = (monster[stat] ?? 0) + gain;
     await patchMonster(updates);
     toast.success(`+${gain} ${stat.toUpperCase()}!`);
   }
