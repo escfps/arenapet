@@ -385,10 +385,12 @@ function ArenaPage() {
         rationToast = () => toast(`🍖 +${dropped} ração!`, { icon: "🎁" });
       }
 
-      // Baús de promoção de TIER
+      // Baús de promoção de TIER (apenas na PRIMEIRA vez que o jogador atinge cada tier)
       const oldTierName = getTier(oldPoints).name;
       const newTierName = getTier(newPoints).name;
-      if (oldTierName !== newTierName) {
+      const newTierIdx = tierRankIndex(newTierName);
+      const highest = (profile as { highest_tier_rank?: number }).highest_tier_rank ?? 0;
+      if (oldTierName !== newTierName && newTierIdx > highest) {
         const chestCounts = tierPromotionChests(newTierName);
         const tiersToRoll: Array<"silver" | "gold" | "legendary"> = [];
         for (let i = 0; i < chestCounts.silver; i++) tiersToRoll.push("silver");
