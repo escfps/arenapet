@@ -391,9 +391,9 @@ export type ExpeditionDuration = {
 
 export const EXPEDITION_DURATIONS: ExpeditionDuration[] = [
   { id: "short", label: "1 hora", minutes: 60, foodCost: 1, baseXp: 50, baseCoins: 25, gemChance: 0, gemAmount: [0, 0], rationChance: 0.10, rationAmount: [1, 1] },
-  { id: "medium", label: "4 horas", minutes: 240, foodCost: 2, baseXp: 220, baseCoins: 110, gemChance: 0.10, gemAmount: [1, 1], rationChance: 0.30, rationAmount: [1, 2] },
-  { id: "long", label: "8 horas", minutes: 480, foodCost: 3, baseXp: 480, baseCoins: 240, gemChance: 0.25, gemAmount: [1, 2], rationChance: 0.60, rationAmount: [1, 3] },
-  { id: "epic", label: "24 horas", minutes: 1440, foodCost: 5, baseXp: 1500, baseCoins: 700, gemChance: 0.70, gemAmount: [1, 3], rationChance: 1.0, rationAmount: [2, 5] },
+  { id: "medium", label: "4 horas", minutes: 240, foodCost: 2, baseXp: 220, baseCoins: 110, gemChance: 0, gemAmount: [0, 0], rationChance: 0.30, rationAmount: [1, 2] },
+  { id: "long", label: "8 horas", minutes: 480, foodCost: 3, baseXp: 480, baseCoins: 240, gemChance: 0, gemAmount: [0, 0], rationChance: 0.60, rationAmount: [1, 3] },
+  { id: "epic", label: "24 horas", minutes: 1440, foodCost: 5, baseXp: 1500, baseCoins: 700, gemChance: 0, gemAmount: [0, 0], rationChance: 1.0, rationAmount: [2, 5] },
 ];
 
 export const MAX_EXPEDITION_SLOTS = 5;
