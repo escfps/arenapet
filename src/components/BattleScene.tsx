@@ -200,19 +200,19 @@ export function BattleScene({
       {/* Vinheta escura nas bordas pra contraste */}
       <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-black/10 via-transparent to-black/40" />
 
-      {/* === ARENA: linha dos 3 pets de cada lado === */}
-      <div className="relative px-4 pt-4 pb-2">
-        <div className="grid grid-cols-2 gap-3 items-end min-h-[140px]">
-          <ArenaLineup team={teamA} side="a" hp={hp} fx={fx} />
-          <ArenaLineup team={teamB} side="b" hp={hp} fx={fx} mirrored />
-        </div>
-      </div>
-
-      {/* === Cards detalhados embaixo === */}
-      <div className="relative px-4 pb-4 pt-2 bg-gradient-to-t from-black/50 to-transparent">
+      {/* === Cards (status) em cima === */}
+      <div className="relative px-4 pt-4 pb-2 bg-gradient-to-b from-black/50 to-transparent">
         <div className="grid grid-cols-2 gap-3">
           <SideColumn team={teamA} side="a" hp={hp} shields={shields} fx={fx} statuses={statuses} />
           <SideColumn team={teamB} side="b" hp={hp} shields={shields} fx={fx} statuses={statuses} mirrored />
+        </div>
+      </div>
+
+      {/* === ARENA: pets na grama embaixo === */}
+      <div className="relative px-4 pt-6 pb-6">
+        <div className="grid grid-cols-2 gap-3 items-end min-h-[140px]">
+          <ArenaLineup team={teamA} side="a" hp={hp} fx={fx} />
+          <ArenaLineup team={teamB} side="b" hp={hp} fx={fx} mirrored />
         </div>
       </div>
 
