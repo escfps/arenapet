@@ -396,7 +396,7 @@ export type Item = {
 };
 
 export const ITEMS: Record<string, Item> = {
-  ration: { id: "ration", name: "Ração", emoji: "🍖", description: "+30 fome", priceCoins: 15, effect: { hunger: 30 } },
+  ration: { id: "ration", name: "Ração", emoji: "🍖", description: "+20 fome", priceCoins: 15, effect: { hunger: 20 } },
   candy: { id: "candy", name: "Doce", emoji: "🍬", description: "+25 felicidade", priceCoins: 12, effect: { happiness: 25 } },
   energy_drink: { id: "energy_drink", name: "Energético", emoji: "⚡", description: "+8 energia (regen grátis 1/h)", priceGems: 2, effect: { energy: 8 } },
   premium_meal: { id: "premium_meal", name: "Banquete Real", emoji: "🍱", description: "+100 fome, +50 felicidade", priceGems: 3, effect: { hunger: 100, happiness: 50 } },

@@ -18,16 +18,19 @@ function MonsterPage() {
   const { userId, profile, loading, patch } = useProfile();
   const [monster, setMonster] = useState<MonsterRow | null>(null);
   const [ownedSkins, setOwnedSkins] = useState<string[]>(["default"]);
+  const [rations, setRations] = useState<number>(0);
   const [tab, setTab] = useState<"care" | "train" | "skin">("care");
 
   const load = useCallback(async () => {
     if (!userId) return;
-    const [{ data: m }, { data: skins }] = await Promise.all([
+    const [{ data: m }, { data: skins }, { data: inv }] = await Promise.all([
       supabase.from("monsters").select("*").eq("id", id).eq("owner_id", userId).maybeSingle(),
       supabase.from("skins_owned").select("skin_id").eq("user_id", userId),
+      supabase.from("inventory").select("quantity").eq("user_id", userId).eq("item_type", "ration").maybeSingle(),
     ]);
     if (m) setMonster(m as MonsterRow);
     if (skins) setOwnedSkins(["default", ...skins.map((s) => s.skin_id)]);
+    setRations(inv?.quantity ?? 0);
   }, [id, userId]);
 
   useEffect(() => { if (userId) load(); }, [userId, load]);
@@ -49,12 +52,19 @@ function MonsterPage() {
   async function useItem(itemId: string) {
     if (!profile || !monster) return;
     const item = ITEMS[itemId];
-    if (item.priceCoins && profile.coins < item.priceCoins) { toast.error("Moedas insuficientes!"); return; }
-    if (item.priceGems && profile.gems < item.priceGems) { toast.error("Gemas insuficientes!"); return; }
-    await patch({
-      coins: profile.coins - (item.priceCoins ?? 0),
-      gems: profile.gems - (item.priceGems ?? 0),
-    });
+    const useFromInventory = itemId === "ration" && rations > 0;
+    if (!useFromInventory) {
+      if (item.priceCoins && profile.coins < item.priceCoins) { toast.error("Moedas insuficientes!"); return; }
+      if (item.priceGems && profile.gems < item.priceGems) { toast.error("Gemas insuficientes!"); return; }
+      await patch({
+        coins: profile.coins - (item.priceCoins ?? 0),
+        gems: profile.gems - (item.priceGems ?? 0),
+      });
+    } else {
+      const newQty = rations - 1;
+      setRations(newQty);
+      await supabase.from("inventory").update({ quantity: newQty }).eq("user_id", userId!).eq("item_type", "ration");
+    }
     const updates: Partial<MonsterRow> = {};
     if (item.effect.hunger) updates.hunger = Math.min(100, monster.hunger + item.effect.hunger);
     if (item.effect.energy) {
@@ -332,19 +342,28 @@ function MonsterPage() {
               🎮 Brincar
               <div className="text-xs font-normal opacity-90">Grátis • +20 felicidade • -{PLAY_ENERGY_COST} energia</div>
             </button>
-            {Object.values(ITEMS).map((it) => (
-              <button
-                key={it.id}
-                onClick={() => useItem(it.id)}
-                className="p-4 rounded-2xl bg-white/15 hover:bg-white/25 backdrop-blur-sm text-white text-left transition border border-white/20"
-              >
-                <div className="font-extrabold text-sm">{it.emoji} {it.name}</div>
-                <div className="text-xs opacity-90 mb-1">{it.description}</div>
-                <div className="text-xs font-bold">
-                  {it.priceCoins ? `🪙 ${it.priceCoins}` : `💎 ${it.priceGems}`}
-                </div>
-              </button>
-            ))}
+            {Object.values(ITEMS).map((it) => {
+              const qty = it.id === "ration" ? rations : 0;
+              const freeFromInv = it.id === "ration" && qty > 0;
+              return (
+                <button
+                  key={it.id}
+                  onClick={() => useItem(it.id)}
+                  className="p-4 rounded-2xl bg-white/15 hover:bg-white/25 backdrop-blur-sm text-white text-left transition border border-white/20 relative"
+                >
+                  {it.id === "ration" && (
+                    <span className="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-amber-500 text-black text-[10px] font-extrabold">
+                      x{qty}
+                    </span>
+                  )}
+                  <div className="font-extrabold text-sm">{it.emoji} {it.name}</div>
+                  <div className="text-xs opacity-90 mb-1">{it.description}</div>
+                  <div className="text-xs font-bold">
+                    {freeFromInv ? "🎒 Do inventário" : it.priceCoins ? `🪙 ${it.priceCoins}` : `💎 ${it.priceGems}`}
+                  </div>
+                </button>
+              );
+            })}
           </div>
         )}
 
