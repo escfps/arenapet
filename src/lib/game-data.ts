@@ -185,6 +185,7 @@ export const ELEMENT_COLORS: Record<Element, string> = {
   grass: "from-emerald-400 to-green-600",
   electric: "from-yellow-300 to-amber-500",
   shadow: "from-purple-500 to-fuchsia-700",
+  earth: "from-amber-700 to-stone-600",
 };
 
 export const ELEMENT_NAMES: Record<Element, string> = {
@@ -193,15 +194,17 @@ export const ELEMENT_NAMES: Record<Element, string> = {
   grass: "Planta",
   electric: "Elétrico",
   shadow: "Sombra",
+  earth: "Terra",
 };
 
 // Type effectiveness (multiplier on damage)
 export const TYPE_CHART: Record<Element, Partial<Record<Element, number>>> = {
-  fire: { grass: 1.5, water: 0.7, fire: 0.8 },
-  water: { fire: 1.5, grass: 0.7, water: 0.8 },
-  grass: { water: 1.5, fire: 0.7, grass: 0.8 },
-  electric: { water: 1.5, grass: 0.7, electric: 0.8 },
+  fire: { grass: 1.5, water: 0.7, fire: 0.8, earth: 0.7 },
+  water: { fire: 1.5, grass: 0.7, water: 0.8, earth: 1.5 },
+  grass: { water: 1.5, fire: 0.7, grass: 0.8, earth: 1.5 },
+  electric: { water: 1.5, grass: 0.7, electric: 0.8, earth: 0.5 },
   shadow: { shadow: 0.8 },
+  earth: { fire: 1.5, electric: 1.5, grass: 0.7, water: 0.7, earth: 0.8 },
 };
 
 // ===== Items =====
