@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { SPECIES, ELEMENT_COLORS, ROLE_INFO, skinFilter, isVip, xpForNextLevel, rankStars, totalStats, ARENA_WIN_POINTS, ARENA_LOSS_POINTS, getTier } from "@/lib/game-data";
+import { SPECIES, ELEMENT_COLORS, ROLE_INFO, skinFilter, isVip, xpForNextLevel, rankStars, totalStats, ARENA_WIN_POINTS, ARENA_LOSS_POINTS, getTier, divisionBounds, promoNeeded, type PromoSeries } from "@/lib/game-data";
 import type { MonsterRow } from "@/components/MonsterCard";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
@@ -25,8 +25,24 @@ function ArenaPage() {
   const [searching, setSearching] = useState(false);
   const [battleLog, setBattleLog] = useState<BattleLogEntry[] | null>(null);
   const [winner, setWinner] = useState<"team_a" | "team_b" | null>(null);
-  const [rewards, setRewards] = useState<{ coins: number; xp: number; points: number; oldPoints: number; newPoints: number } | null>(null);
+  const [rewards, setRewards] = useState<{ coins: number; xp: number; points: number; oldPoints: number; newPoints: number; promoMsg?: string; promoBefore?: PromoSeries | null; promoAfter?: PromoSeries | null } | null>(null);
   const [shownLog, setShownLog] = useState<BattleLogEntry[]>([]);
+  const [promo, setPromo] = useState<PromoSeries | null>(null);
+
+  // load promo from localStorage
+  useEffect(() => {
+    if (!userId) return;
+    try {
+      const raw = localStorage.getItem(`promo_${userId}`);
+      setPromo(raw ? JSON.parse(raw) : null);
+    } catch { setPromo(null); }
+  }, [userId]);
+
+  function savePromo(userId: string, p: PromoSeries | null) {
+    if (p) localStorage.setItem(`promo_${userId}`, JSON.stringify(p));
+    else localStorage.removeItem(`promo_${userId}`);
+    setPromo(p);
+  }
 
   useEffect(() => {
     async function loadTeam() {
@@ -112,12 +128,51 @@ function ArenaPage() {
     const won = result.winner === "team_a";
     const rew = computeRewards(profile.level, won, isVip(profile.vip_until));
 
-    // Arena points: +25 on win, -15 on loss (floor at 0)
+    // Arena points + promo series logic
     const oldPoints = profile.arena_points ?? 0;
-    const delta = won ? ARENA_WIN_POINTS : -ARENA_LOSS_POINTS;
-    const newPoints = Math.max(0, oldPoints + delta);
+    const promoBefore = promo;
+    let newPoints = oldPoints;
+    let delta = 0;
+    let promoMsg: string | undefined;
+    let nextPromo: PromoSeries | null = promo;
 
-    setRewards({ ...rew, points: delta, oldPoints, newPoints });
+    if (promo) {
+      // We're in a promotion series — wins/losses don't change points until resolved
+      const updated: PromoSeries = { ...promo, wins: promo.wins + (won ? 1 : 0), losses: promo.losses + (won ? 0 : 1) };
+      const need = promoNeeded(promo.type);
+      if (updated.wins >= need) {
+        // Promoted! Advance into the next division (1 pt past cap)
+        const b = divisionBounds(oldPoints);
+        newPoints = b ? b.end : oldPoints + 1;
+        delta = newPoints - oldPoints;
+        nextPromo = null;
+        promoMsg = promo.type === "bo5" ? "👑 SUBIU DE TIER!" : "🎉 Promovido!";
+      } else if (updated.losses >= need) {
+        // Failed: drop a bit back into the division
+        newPoints = Math.max(0, oldPoints - 30);
+        delta = newPoints - oldPoints;
+        nextPromo = null;
+        promoMsg = "😢 Série de promoção fracassou";
+      } else {
+        nextPromo = updated;
+        promoMsg = `Série ${promo.type.toUpperCase()}: ${updated.wins}V ${updated.losses}D`;
+      }
+    } else {
+      delta = won ? ARENA_WIN_POINTS : -ARENA_LOSS_POINTS;
+      newPoints = Math.max(0, oldPoints + delta);
+      // Cap at division end and start a promotion series
+      const b = divisionBounds(oldPoints);
+      if (b && newPoints >= b.end) {
+        newPoints = b.end - 1; // sit at 99/100 visually; promo starts
+        delta = newPoints - oldPoints;
+        nextPromo = { wins: 0, losses: 0, type: b.nextIsTierUp ? "bo5" : "bo3", targetFrom: oldPoints };
+        promoMsg = b.nextIsTierUp ? "🔥 Série de tier MD5 iniciada!" : "⚡ Série de promoção MD3 iniciada!";
+      }
+    }
+
+    savePromo(userId, nextPromo);
+
+    setRewards({ ...rew, points: delta, oldPoints, newPoints, promoMsg, promoBefore, promoAfter: nextPromo });
 
     // persist
     const updates: Partial<typeof profile> = {
@@ -237,6 +292,28 @@ function ArenaPage() {
               )}
             </div>
 
+            {promo && !battleLog && (
+              <div className="rounded-xl bg-gradient-to-r from-yellow-500/30 to-orange-500/30 border-2 border-yellow-300 p-3 text-white text-center">
+                <div className="font-extrabold text-lg">⚡ SÉRIE DE PROMOÇÃO ({promo.type.toUpperCase()})</div>
+                <div className="text-sm opacity-90">
+                  Vença {promoNeeded(promo.type)} pra subir • {promo.wins}V / {promo.losses}D
+                </div>
+                <div className="flex gap-1 justify-center mt-2">
+                  {Array.from({ length: promoNeeded(promo.type) * 2 - 1 }).map((_, i) => {
+                    const isWin = i < promo.wins;
+                    const isLoss = i >= promo.wins && i < promo.wins + promo.losses;
+                    return (
+                      <div key={i} className={`w-6 h-6 rounded-full border-2 ${
+                        isWin ? "bg-green-400 border-green-200" :
+                        isLoss ? "bg-red-500 border-red-200" :
+                        "bg-white/10 border-white/40"
+                      }`} />
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             {battleLog && opponent && (
               <BattleScene teamA={myTeam} teamB={opponent.team} log={battleLog} step={shownLog.length} />
             )}
@@ -269,6 +346,16 @@ function ArenaPage() {
                         </span>
                         <span className={`px-2 py-0.5 rounded ${getTier(rewards.newPoints).color}`}>{getTier(rewards.newPoints).short}</span>
                       </div>
+                      {rewards.promoMsg && (
+                        <div className="mt-2 text-sm font-extrabold bg-black/30 rounded-lg px-3 py-2">
+                          {rewards.promoMsg}
+                          {rewards.promoAfter && (
+                            <div className="text-xs font-normal opacity-90 mt-1">
+                              Faltam {promoNeeded(rewards.promoAfter.type) - rewards.promoAfter.wins} vitória(s)
+                            </div>
+                          )}
+                        </div>
+                      )}
                       {!isVip(profile.vip_until) && winner === "team_a" && (
                         <div className="mt-2 text-xs opacity-90">👑 VIP daria <b>+50% nas recompensas!</b></div>
                       )}

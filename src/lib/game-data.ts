@@ -440,17 +440,18 @@ export type Tier = {
   emoji: string;
 };
 
-// Cumulative thresholds. Each named tier has 5 divisions (V→I) spaced evenly.
-const LADDER: { name: string; emoji: string; color: string; iconColor: string; start: number; divSize: number }[] = [
-  { name: "Ferro",    emoji: "⛓️", color: "bg-zinc-600 text-white",       iconColor: "text-zinc-300",   start: 0,    divSize: 50  },
-  { name: "Bronze",   emoji: "🥉", color: "bg-amber-700 text-amber-50",   iconColor: "text-amber-300",  start: 300,  divSize: 100 },
-  { name: "Prata",    emoji: "🥈", color: "bg-slate-400 text-slate-900",  iconColor: "text-slate-200",  start: 900,  divSize: 150 },
-  { name: "Ouro",     emoji: "🥇", color: "bg-yellow-500 text-yellow-950",iconColor: "text-yellow-200", start: 1700, divSize: 200 },
-  { name: "Platina",  emoji: "💠", color: "bg-cyan-500 text-cyan-950",    iconColor: "text-cyan-200",   start: 2750, divSize: 250 },
-  { name: "Diamante", emoji: "💎", color: "bg-sky-400 text-sky-950",      iconColor: "text-sky-100",    start: 4050, divSize: 300 },
+// Each division = 100 pts. 5 divisions per tier (V→I) = 500 pts per tier.
+export const DIVISION_SIZE = 100;
+const LADDER: { name: string; emoji: string; color: string; iconColor: string; start: number }[] = [
+  { name: "Ferro",    emoji: "⛓️", color: "bg-zinc-600 text-white",       iconColor: "text-zinc-300",   start: 0    },
+  { name: "Bronze",   emoji: "🥉", color: "bg-amber-700 text-amber-50",   iconColor: "text-amber-300",  start: 500  },
+  { name: "Prata",    emoji: "🥈", color: "bg-slate-400 text-slate-900",  iconColor: "text-slate-200",  start: 1000 },
+  { name: "Ouro",     emoji: "🥇", color: "bg-yellow-500 text-yellow-950",iconColor: "text-yellow-200", start: 1500 },
+  { name: "Platina",  emoji: "💠", color: "bg-cyan-500 text-cyan-950",    iconColor: "text-cyan-200",   start: 2000 },
+  { name: "Diamante", emoji: "💎", color: "bg-sky-400 text-sky-950",      iconColor: "text-sky-100",    start: 2500 },
 ];
-const MASTER_THRESHOLD = 5700;
-const GRAND_MASTER_THRESHOLD = 7000;
+const MASTER_THRESHOLD = 3000;
+const GRAND_MASTER_THRESHOLD = 4000;
 const DIVISION_NAMES = ["V", "IV", "III", "II", "I"];
 
 export function getTier(points: number, leaderboardRank?: number): Tier {
@@ -481,7 +482,7 @@ export function getTier(points: number, leaderboardRank?: number): Tier {
     const t = LADDER[i];
     if (points >= t.start) {
       const over = points - t.start;
-      const div = Math.min(4, Math.floor(over / t.divSize));
+      const div = Math.min(4, Math.floor(over / DIVISION_SIZE));
       const division = DIVISION_NAMES[div];
       return {
         name: t.name, division, short: `${t.name} ${division}`,
@@ -500,16 +501,38 @@ export function nextTierProgress(points: number): { next: number; current: numbe
     const t = LADDER[i];
     if (points >= t.start) {
       const over = points - t.start;
-      const div = Math.min(4, Math.floor(over / t.divSize));
-      const divStart = t.start + div * t.divSize;
-      const divEnd = div === 4
-        ? (i === LADDER.length - 1 ? MASTER_THRESHOLD : LADDER[i + 1].start)
-        : divStart + t.divSize;
-      return { current: divStart, next: divEnd, pct: ((points - divStart) / (divEnd - divStart)) * 100 };
+      const div = Math.min(4, Math.floor(over / DIVISION_SIZE));
+      const divStart = t.start + div * DIVISION_SIZE;
+      const divEnd = divStart + DIVISION_SIZE;
+      return { current: divStart, next: divEnd, pct: ((points - divStart) / DIVISION_SIZE) * 100 };
     }
   }
-  return { current: 0, next: LADDER[0].divSize, pct: 0 };
+  return { current: 0, next: DIVISION_SIZE, pct: 0 };
+}
+
+// Current division bounds + whether the next division is a new tier (promo would be md5)
+export function divisionBounds(points: number): {
+  start: number; end: number; tierIndex: number; divIndex: number; nextIsTierUp: boolean;
+} | null {
+  if (points >= MASTER_THRESHOLD) return null;
+  for (let i = LADDER.length - 1; i >= 0; i--) {
+    const t = LADDER[i];
+    if (points >= t.start) {
+      const over = points - t.start;
+      const div = Math.min(4, Math.floor(over / DIVISION_SIZE));
+      const start = t.start + div * DIVISION_SIZE;
+      return { start, end: start + DIVISION_SIZE, tierIndex: i, divIndex: div, nextIsTierUp: div === 4 };
+    }
+  }
+  return null;
+}
+
+export type PromoSeries = { wins: number; losses: number; type: "bo3" | "bo5"; targetFrom: number };
+
+export function promoNeeded(type: "bo3" | "bo5"): number {
+  return type === "bo5" ? 3 : 2;
 }
 
 export const ARENA_WIN_POINTS = 25;
 export const ARENA_LOSS_POINTS = 15;
+
