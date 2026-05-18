@@ -15,6 +15,11 @@ import { useProfile } from "@/lib/use-profile";
 import { toast, Toaster } from "sonner";
 import arenaBg from "@/assets/arena-bg.jpg";
 
+const WHATSAPP_NUMBER = "5554999999872";
+function whatsappUrl(message: string) {
+  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+}
+
 export const Route = createFileRoute("/shop")({
   component: ShopPage,
 });
