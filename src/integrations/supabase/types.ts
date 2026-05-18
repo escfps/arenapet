@@ -187,6 +187,7 @@ export type Database = {
           expedition_slots: number
           gems: number
           id: string
+          is_bot: boolean
           level: number
           losses: number
           updated_at: string
@@ -202,6 +203,7 @@ export type Database = {
           expedition_slots?: number
           gems?: number
           id: string
+          is_bot?: boolean
           level?: number
           losses?: number
           updated_at?: string
@@ -217,6 +219,7 @@ export type Database = {
           expedition_slots?: number
           gems?: number
           id?: string
+          is_bot?: boolean
           level?: number
           losses?: number
           updated_at?: string
@@ -307,7 +310,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      simulate_bot_battles: { Args: never; Returns: undefined }
     }
     Enums: {
       [_ in never]: never

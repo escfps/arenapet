@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.simulate_bot_battles() FROM PUBLIC, anon, authenticated;
