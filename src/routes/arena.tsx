@@ -7,6 +7,7 @@ import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
 import { simulateBattle, computeRewards, toBattleMonster, type BattleLogEntry } from "@/lib/battle";
 import { BattleScene } from "@/components/BattleScene";
+import { BattleStats } from "@/components/BattleStats";
 import { toast, Toaster } from "sonner";
 import arenaBg from "@/assets/arena-bg.jpg";
 
