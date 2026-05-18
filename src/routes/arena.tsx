@@ -667,6 +667,9 @@ function TeamPanel({ title, team, side, energies }: { title: string; team: FullM
                   <span className={`px-1.5 py-0.5 rounded ${ROLE_INFO[sp.role].color} text-[9px]`}>
                     {ROLE_INFO[sp.role].emoji} {ROLE_INFO[sp.role].name}
                   </span>
+                  <span className={`px-1.5 py-0.5 rounded ${RARITY_INFO[sp.rarity].color} text-[9px] font-extrabold`}>
+                    {RARITY_INFO[sp.rarity].emoji} {RARITY_INFO[sp.rarity].name}
+                  </span>
                   <span className="px-1.5 py-0.5 rounded bg-black/50 text-[9px] font-extrabold">
                     {["🛡️ Frente","⚔️ Meio","🏹 Trás"][m.team_position ?? 0]}
                   </span>
