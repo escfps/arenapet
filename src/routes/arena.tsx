@@ -384,6 +384,68 @@ function ArenaPage() {
           );
         rationToast = () => toast(`🍖 +${dropped} ração!`, { icon: "🎁" });
       }
+
+      // Baús de promoção de TIER
+      const oldTierName = getTier(oldPoints).name;
+      const newTierName = getTier(newPoints).name;
+      if (oldTierName !== newTierName) {
+        const chestCounts = tierPromotionChests(newTierName);
+        const tiersToRoll: Array<"silver" | "gold" | "legendary"> = [];
+        for (let i = 0; i < chestCounts.silver; i++) tiersToRoll.push("silver");
+        for (let i = 0; i < chestCounts.gold; i++) tiersToRoll.push("gold");
+        for (let i = 0; i < chestCounts.legendary; i++) tiersToRoll.push("legendary");
+
+        if (tiersToRoll.length > 0) {
+          let bonusCoins = 0, bonusGems = 0, bonusRations = 0;
+          const bonusPets: string[] = [];
+          for (const tk of tiersToRoll) {
+            const r = rollChest(tk);
+            bonusCoins += r.coins;
+            bonusGems += r.gems;
+            bonusRations += r.rations;
+            if (r.petSpecies) bonusPets.push(r.petSpecies);
+          }
+
+          // Aplica no DB
+          const { data: freshProfile } = await supabase
+            .from("profiles")
+            .select("coins,gems")
+            .eq("id", userId)
+            .maybeSingle();
+          await supabase
+            .from("profiles")
+            .update({
+              coins: (freshProfile?.coins ?? 0) + bonusCoins,
+              gems: (freshProfile?.gems ?? 0) + bonusGems,
+            })
+            .eq("id", userId);
+
+          if (bonusRations > 0) {
+            const { data: rRow } = await supabase.from("inventory").select("quantity").eq("user_id", userId).eq("item_type", "ration").maybeSingle();
+            await supabase.from("inventory").upsert(
+              { user_id: userId, item_type: "ration", quantity: (rRow?.quantity ?? 0) + bonusRations },
+              { onConflict: "user_id,item_type" }
+            );
+          }
+
+          if (bonusPets.length > 0) {
+            const rows = bonusPets.map((sid) => {
+              const sp = SPECIES[sid];
+              return { owner_id: userId, species: sid, name: sp.name, hp: sp.base.hp, atk: sp.base.atk, def: sp.base.def, spd: sp.base.spd };
+            });
+            await supabase.from("monsters").insert(rows);
+          }
+
+          const chestLabel = tiersToRoll.map((tk) => CHESTS[tk].emoji).join(" ");
+          levelUpToasts.push(() => toast.success(`👑 Promoção pra ${newTierName}! Baús: ${chestLabel}`, { duration: 5000 }));
+          const parts: string[] = [];
+          if (bonusCoins) parts.push(`🪙 ${bonusCoins}`);
+          if (bonusGems) parts.push(`💎 ${bonusGems}`);
+          if (bonusRations) parts.push(`🍖 ${bonusRations}`);
+          if (bonusPets.length) parts.push(`🥚 ${bonusPets.length} pet${bonusPets.length > 1 ? "s" : ""}`);
+          if (parts.length) levelUpToasts.push(() => toast(`Recompensas de tier: ${parts.join(" • ")}`, { duration: 6000 }));
+        }
+      }
     }
 
     setRewards({ ...rew, points: delta, oldPoints, newPoints, promoMsg, promoBefore, promoAfter: nextPromo });
