@@ -272,7 +272,8 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
       const critChance = attacker.role === "assassin" ? 0.35 : 0.12;
       const crit = rand() < critChance;
       const defUsed = attacker.role === "mage" ? target.def * 0.4 : target.def;
-      let base = Math.max(1, attacker.atk * 2 - defUsed);
+      const atkStat = attacker.role === "mage" ? attacker.int : attacker.atk;
+      let base = Math.max(1, atkStat * 2 - defUsed);
       if (attacker.role === "dps") base *= 1.15;
       const variance = 0.85 + rand() * 0.3;
       const damage = Math.max(1, Math.round(base * eff * variance * (crit ? 1.7 : 1)));
