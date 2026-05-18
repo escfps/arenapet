@@ -190,6 +190,7 @@ export type Database = {
           is_bot: boolean
           level: number
           losses: number
+          nick_changes: number
           updated_at: string
           username: string
           vip_until: string | null
@@ -206,6 +207,7 @@ export type Database = {
           is_bot?: boolean
           level?: number
           losses?: number
+          nick_changes?: number
           updated_at?: string
           username: string
           vip_until?: string | null
@@ -222,6 +224,7 @@ export type Database = {
           is_bot?: boolean
           level?: number
           losses?: number
+          nick_changes?: number
           updated_at?: string
           username?: string
           vip_until?: string | null
