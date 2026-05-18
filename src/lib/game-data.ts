@@ -346,6 +346,17 @@ export const EGGS: Record<string, Egg> = {
     weights: RARE_EGG_WEIGHTS,
     pack: 10,
   },
+  event_felinos: {
+    id: "event_felinos", name: "Ovo de Evento — Felinos Lendários", emoji: "🥚✨", priceGems: 80,
+    description: "Evento limitado: Onça Sombria, Leão Dourado, Tigre Infernal, Pantera Negra (rara) e Pantera Áurea (ULTRA rara).",
+    weights: {
+      onca_sombria: 30,
+      leao_dourado: 30,
+      tigre_infernal: 30,
+      pantera_negra: 9,
+      pantera_aurea: 1,
+    },
+  },
 };
 
 // ===== Skins =====
