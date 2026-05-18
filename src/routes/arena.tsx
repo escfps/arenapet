@@ -83,6 +83,25 @@ function ArenaPage() {
   }, [battleLog]);
 
   const [searchCountdown, setSearchCountdown] = useState(0);
+  const [battleTimer, setBattleTimer] = useState(120);
+
+  // Timer regressivo de 2min durante a batalha
+  useEffect(() => {
+    if (!battleLog) { setBattleTimer(120); return; }
+    setBattleTimer(120);
+    const done = shownLog.length >= battleLog.length;
+    if (done) return;
+    const id = setInterval(() => {
+      setBattleTimer((t) => (t > 0 ? t - 1 : 0));
+    }, 1000);
+    return () => clearInterval(id);
+  }, [battleLog]);
+
+  useEffect(() => {
+    if (battleLog && shownLog.length >= battleLog.length) {
+      // congela o timer ao terminar
+    }
+  }, [battleLog, shownLog.length]);
 
   async function findOpponent() {
     if (!userId || !profile || myTeam.length === 0) return;
