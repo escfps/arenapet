@@ -127,13 +127,12 @@ function MonsterPage() {
             </div>
             <div className="flex-1 text-white">
               <h1 className="text-3xl font-extrabold drop-shadow-md">{monster.name}</h1>
-              <p className="text-sm opacity-90">{sp.emoji} {sp.name} • Nv {monster.level}</p>
+              <p className="text-sm opacity-90">{sp.emoji} {sp.name} • {"✦".repeat(monster.rank)}</p>
               <div className="mt-2 space-y-1 text-xs">
                 <Bar label="❤️ HP" value={monster.hp} max={monster.hp} color="bg-rose-500" />
                 <Bar label="🍖 Fome" value={monster.hunger} max={100} color="bg-amber-500" />
                 <Bar label="⚡ Energia" value={monster.energy} max={100} color="bg-yellow-400" />
                 <Bar label="😊 Felicidade" value={monster.happiness} max={100} color="bg-pink-500" />
-                <Bar label={`✨ XP ${monster.xp}/${xpNeeded}`} value={monster.xp} max={xpNeeded} color="bg-purple-500" />
               </div>
               <div className="mt-2 grid grid-cols-4 gap-1 text-xs font-bold bg-black/30 rounded-lg p-2">
                 <span>⚔️ {monster.atk}</span>
