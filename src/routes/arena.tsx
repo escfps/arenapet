@@ -517,10 +517,13 @@ function TeamPanel({ title, team, side, energies }: { title: string; team: FullM
             <div key={m.id} className={`flex items-center gap-2 p-2 rounded-lg bg-gradient-to-r ${ELEMENT_COLORS[sp.element]} ring-2 ${RARITY_INFO[sp.rarity].ringColor} ${(m.rank ?? 1) >= MAX_RANK ? "rank-max-glow" : ""}`}>
               <img src={sp.image} alt="" className="h-14 w-14 object-contain drop-shadow-lg" style={{ filter: skinFilter(m.skin) }} />
               <div className="flex-1 min-w-0">
-                <div className="font-bold text-sm truncate flex items-center gap-1">
+                <div className="font-bold text-sm truncate flex items-center gap-1 flex-wrap">
                   {m.name}
                   <span className={`px-1.5 py-0.5 rounded ${ROLE_INFO[sp.role].color} text-[9px]`}>
                     {ROLE_INFO[sp.role].emoji} {ROLE_INFO[sp.role].name}
+                  </span>
+                  <span className="px-1.5 py-0.5 rounded bg-black/50 text-[9px] font-extrabold">
+                    {["🛡️ Frente","⚔️ Meio","🏹 Trás"][m.team_position ?? 0]}
                   </span>
                 </div>
                 {(() => { const st = totalStats(m.species, m.rank ?? 1); return (
