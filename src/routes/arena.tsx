@@ -264,7 +264,7 @@ function TeamPanel({ title, team, side }: { title: string; team: FullMonster[]; 
                     {ROLE_INFO[sp.role].emoji} {ROLE_INFO[sp.role].name}
                   </span>
                 </div>
-                <div className="text-[10px] opacity-90">Nv {m.level} • ❤️{m.hp} ⚔️{m.atk} 🛡️{m.def} 💨{m.spd}</div>
+                <div className="text-[10px] opacity-90">{rankStars(m.rank ?? 1)} • ❤️{m.hp} ⚔️{m.atk} 🛡️{m.def} 💨{m.spd}</div>
               </div>
             </div>
           );
