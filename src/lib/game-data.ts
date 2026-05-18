@@ -31,6 +31,7 @@ import macacoPregoImg from "@/assets/monsters/macaco_prego.png";
 import tubaraoAbissalImg from "@/assets/monsters/tubarao_abissal.png";
 import polvoVenenosoImg from "@/assets/monsters/polvo_venenoso.png";
 import cobraSangrentaImg from "@/assets/monsters/cobra_sangrenta.png";
+import aguiaCegaImg from "@/assets/monsters/aguia_cega.png";
 
 export type Element = "fire" | "water" | "grass" | "electric" | "shadow" | "earth";
 export type Role = "tank" | "dps" | "assassin" | "mage" | "healer";
@@ -85,6 +86,7 @@ export type SkillKind =
   | "berserker_rage"    // dps/tank — buff ATK +50% por 3 turnos (Tryndamere)
   | "revive_ally"       // healer — ressuscita um aliado com 30% HP (Zilean)
   | "bleed_dot"         // dps — sangramento físico escala com ATK (Darius)
+  | "blind_debuff"      // mago — cega TODOS inimigos: 50% miss em ataques básicos por 3 turnos
   | "true_damage_nuke"; // mítico — dano puro ignora DEF e elemento (Vayne ult)
 
 export type Skill = {
@@ -356,6 +358,14 @@ export const SPECIES: Record<string, Species> = {
     base: { hp: 70, atk: 13, def: 14, spd: 8, int: 9 },
     skill: { name: "Fúria Titânica", emoji: "🦍", kind: "berserker_rage", cooldown: 5, description: "Bate no peito: +70% ATK por 3 turnos (perde 30% DEF). Pra trocar dano." },
   },
+  aguia_cega: {
+    id: "aguia_cega", name: "Águia Ofuscante", element: "earth", secondaryElement: "electric", role: "mage", rarity: "epic",
+    emoji: "🦅", image: aguiaCegaImg,
+    description: "Águia marrom ancestral das montanhas. Seu olhar dourado cega os inimigos, fazendo-os errar ataques.",
+    base: { hp: 60, atk: 14, def: 11, spd: 17, int: 18 },
+    skill: { name: "Visão Ofuscante", emoji: "😵‍💫", kind: "blind_debuff", cooldown: 4, description: "Solta um clarão dourado: dano agora + cega TODOS os inimigos por 3 turnos (50% de chance de errar ataques básicos)." },
+  },
+
 
   // ===== MÍTICOS =====
   dragao_branco: {

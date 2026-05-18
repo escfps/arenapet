@@ -97,6 +97,7 @@ type Live = BattleMonster & {
   burnTurns: number;
   bleedDmg: number;      // dano físico por turno enquanto bleedTurns > 0
   bleedTurns: number;
+  blindTurns: number;    // se >0, ataques básicos têm chance de errar
   silenceTurns: number;  // se >0, próxima skill é anulada
   rageTurns: number;     // berserker: +rageAtkMult e -rageDefDrop
   rageAtkMult: number;
@@ -144,7 +145,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
     ...m, current: m.hp, maxHp: m.hp,
     healCd: 0, skillCd: 1, shield: 0,
     tauntTargetId: null, tauntTurns: 0,
-    burnDmg: 0, burnTurns: 0, bleedDmg: 0, bleedTurns: 0, silenceTurns: 0,
+    burnDmg: 0, burnTurns: 0, bleedDmg: 0, bleedTurns: 0, blindTurns: 0, silenceTurns: 0,
     rageTurns: 0, rageAtkMult: 0, rageDefDrop: 0,
     defBuffTurns: 0, defBuffPct: 0, lastFallenAt: 0,
   });
@@ -458,6 +459,32 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           return;
         }
 
+        if (skill.kind === "blind_debuff") {
+          // Aplica cegueira em TODOS os inimigos vivos + dano leve no alvo principal
+          const target = pickTarget(attacker, enemies);
+          if (target) {
+            const eff = defensiveMultiplier(getElement(attacker.species), target.species);
+            const dmg = Math.max(1, Math.round((effAtk * 1.2 - tgtEffDef(target) * 0.5) * eff * skillMult));
+            applyDamage(target, dmg);
+            const alive = enemies.filter((e) => e.current > 0);
+            for (const e of alive) {
+              e.blindTurns = Math.max(e.blindTurns, 3);
+            }
+            log.push({
+              turn, actor: side, actorName: attacker.name, targetName: target.name,
+              damage: dmg, crit: false, effective: eff, remainingHp: target.current, targetShield: target.shield,
+              message: `${skill.emoji} ${attacker.name} usou ${skill.name}: ${dmg} de dano + 😵‍💫 cegou TODOS inimigos (50% chance de errar por 3 turnos)`,
+            });
+            if (target.current <= 0) {
+              target.lastFallenAt = turn;
+              log.push({ turn, actor: side, actorName: attacker.name, targetName: target.name, damage: 0, crit: false, effective: 1, remainingHp: 0, message: `💀 ${target.name} foi derrotado!` });
+            }
+          }
+          return;
+        }
+
+
+
 
         if (skill.kind === "double_strike") {
           const alive = enemies.filter((e) => e.current > 0);
@@ -560,7 +587,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           if (fallen) {
             fallen.current = Math.round(fallen.maxHp * 0.40);
             fallen.shield = 0;
-            fallen.burnTurns = 0; fallen.bleedTurns = 0; fallen.silenceTurns = 0;
+            fallen.burnTurns = 0; fallen.bleedTurns = 0; fallen.blindTurns = 0; fallen.silenceTurns = 0;
             log.push({
               turn, actor: side, actorName: attacker.name, targetName: fallen.name,
               damage: -fallen.current, crit: false, effective: 1, remainingHp: fallen.current,
@@ -624,6 +651,19 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
       // ===== BASIC ATTACK =====
       const target = pickTarget(attacker, enemies);
       if (!target) return;
+
+      // Cegueira: 50% de chance de errar o ataque básico
+      if (attacker.blindTurns > 0) {
+        attacker.blindTurns -= 1;
+        if (rand() < 0.5) {
+          log.push({
+            turn, actor: side, actorName: attacker.name, targetName: target.name,
+            damage: 0, crit: false, effective: 1, remainingHp: target.current,
+            message: `😵‍💫 ${attacker.name} errou o ataque (cegueira)!`,
+          });
+          return;
+        }
+      }
 
       const eff = defensiveMultiplier(getElement(attacker.species), target.species);
       const critChance = attacker.role === "assassin" ? 0.35 : 0.12;
