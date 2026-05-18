@@ -363,7 +363,7 @@ function ArenaLineup({
               src={sp.image}
               alt={m.name}
               loading="lazy"
-              className={`relative h-20 w-20 sm:h-24 sm:w-24 object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.6)] ${
+              className={`relative h-28 w-28 sm:h-32 sm:w-32 object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.6)] ${
                 isActor ? "ring-4 ring-yellow-300/80 rounded-full" : ""
               } ${isTarget ? "ring-4 ring-red-400/80 rounded-full" : ""}`}
               style={{
