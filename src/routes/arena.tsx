@@ -56,46 +56,48 @@ function ArenaPage() {
     setWinner(null);
     setRewards(null);
 
-    // pick a random opponent (any team — matchmaking via account level on profile)
-    const { data: candidates } = await supabase
+    // fetch candidate monsters (no embed — no FK between monsters and profiles)
+    const { data: mons } = await supabase
       .from("monsters")
-      .select("*, profiles!inner(username, level, vip_until)")
+      .select("*")
       .neq("owner_id", userId)
       .eq("in_team", true)
-      .gte("profiles.level", Math.max(1, profile.level - 3))
-      .lte("profiles.level", profile.level + 3)
-      .limit(50);
+      .limit(200);
 
     setSearching(false);
 
-    let opponents = candidates ?? [];
-    if (opponents.length === 0) {
-      // fallback: any opponent
-      const { data: anyone } = await supabase
-        .from("monsters")
-        .select("*, profiles!inner(username, level, vip_until)")
-        .neq("owner_id", userId)
-        .eq("in_team", true)
-        .limit(50);
-      opponents = anyone ?? [];
-    }
-
-    if (opponents.length === 0) {
+    const allMons = (mons ?? []) as FullMonster[];
+    if (allMons.length === 0) {
       toast("Ninguém disponível ainda. Convide amigos! 🎯", { icon: "👀" });
       return;
     }
 
-    // group by owner_id
-    const byOwner: Record<string, { team: FullMonster[]; profile: { username: string } }> = {};
-    for (const m of opponents) {
-      const ownerId = m.owner_id as string;
-      const p = (m as unknown as { profiles: { username: string } }).profiles;
-      if (!byOwner[ownerId]) byOwner[ownerId] = { team: [], profile: p };
-      byOwner[ownerId].team.push(m as FullMonster);
+    // fetch profiles for those owners
+    const ownerIds = Array.from(new Set(allMons.map((m) => m.owner_id)));
+    const { data: profs } = await supabase
+      .from("profiles")
+      .select("id, username, level, vip_until")
+      .in("id", ownerIds);
+    const profById = new Map((profs ?? []).map((p) => [p.id as string, p]));
+
+    // group by owner, prefer level ±3 matches
+    const byOwner: Record<string, { team: FullMonster[]; username: string; level: number }> = {};
+    for (const m of allMons) {
+      const p = profById.get(m.owner_id);
+      if (!p) continue;
+      if (!byOwner[m.owner_id]) byOwner[m.owner_id] = { team: [], username: p.username as string, level: p.level as number };
+      byOwner[m.owner_id].team.push(m);
     }
-    const ownerIds = Object.keys(byOwner);
-    const chosen = ownerIds[Math.floor(Math.random() * ownerIds.length)];
-    setOpponent({ ownerId: chosen, ownerName: byOwner[chosen].profile.username, team: byOwner[chosen].team.slice(0, 4) });
+    let ownerList = Object.keys(byOwner).filter(
+      (id) => Math.abs(byOwner[id].level - profile.level) <= 3
+    );
+    if (ownerList.length === 0) ownerList = Object.keys(byOwner);
+    if (ownerList.length === 0) {
+      toast("Ninguém disponível ainda. Convide amigos! 🎯", { icon: "👀" });
+      return;
+    }
+    const chosen = ownerList[Math.floor(Math.random() * ownerList.length)];
+    setOpponent({ ownerId: chosen, ownerName: byOwner[chosen].username, team: byOwner[chosen].team.slice(0, 4) });
   }
 
   async function fight() {
