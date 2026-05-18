@@ -142,6 +142,26 @@ function RankingPage() {
                       <div className="text-[10px] text-white/60">
                         Nv {r.level} • {r.wins}V/{r.losses}D
                       </div>
+                      <div className="flex items-center gap-1 mt-1">
+                        {r.team.length === 0 ? (
+                          <span className="text-[10px] text-white/40 italic">Sem time</span>
+                        ) : (
+                          r.team.map((m) => {
+                            const sp = SPECIES[m.species];
+                            const rar = sp ? RARITY_INFO[sp.rarity] : null;
+                            return (
+                              <div
+                                key={m.id}
+                                title={`${m.name}${sp ? ` (${sp.name})` : ""}`}
+                                className={`w-8 h-8 rounded-lg bg-black/40 border ${rar ? rar.ringColor : "ring-white/20"} ring-1 flex items-center justify-center text-lg leading-none`}
+                                style={{ filter: skinFilter(m.skin) }}
+                              >
+                                {sp?.emoji ?? "❓"}
+                              </div>
+                            );
+                          })
+                        )}
+                      </div>
                     </div>
                     <span className={`px-2 py-1 rounded text-xs font-extrabold ${tier.color}`}>
                       {tier.emoji} {tier.short}
