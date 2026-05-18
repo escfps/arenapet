@@ -22,6 +22,8 @@ import leaoDouradoImg from "@/assets/monsters/leao_dourado.png";
 import tigreInfernalImg from "@/assets/monsters/tigre_infernal.png";
 import panteraNegraImg from "@/assets/monsters/pantera_negra.png";
 import panteraAureaImg from "@/assets/monsters/pantera_aurea.png";
+import dragaoBrancoImg from "@/assets/monsters/dragao_branco.png";
+import dragaoNegroImg from "@/assets/monsters/dragao_negro.png";
 
 export type Element = "fire" | "water" | "grass" | "electric" | "shadow" | "earth";
 export type Role = "tank" | "dps" | "assassin" | "mage" | "healer";
