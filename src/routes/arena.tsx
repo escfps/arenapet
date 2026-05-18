@@ -447,6 +447,8 @@ function ArenaPage() {
           if (bonusPets.length) parts.push(`🥚 ${bonusPets.length} pet${bonusPets.length > 1 ? "s" : ""}`);
           if (parts.length) levelUpToasts.push(() => toast(`Recompensas de tier: ${parts.join(" • ")}`, { duration: 6000 }));
         }
+        // marca o tier máximo atingido pra não pagar baú de novo
+        await supabase.from("profiles").update({ highest_tier_rank: newTierIdx }).eq("id", userId);
       }
     }
 
