@@ -7,7 +7,7 @@ import {
   rollEgg, skinFilter, isVip,
   MAX_BATTLE_ENERGY, ENERGY_REFILL_GEM_COST, ENERGY_REFILL_ALL_GEM_COST, computeBattleEnergy,
   CHESTS, rollChest, RARITY_INFO,
-  type ChestTier, type ChestReward,
+  type ChestTier, type ChestReward, type Rarity,
 } from "@/lib/game-data";
 import type { MonsterRow } from "@/components/MonsterCard";
 import { HUD } from "@/components/HUD";
