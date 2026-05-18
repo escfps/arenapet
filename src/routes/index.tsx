@@ -163,7 +163,48 @@ function PatioPage() {
                 </button>
               </div>
               <p className="text-[11px] opacity-80">Toque num monstro pra cuidar dele. Toque no botão de TIME pra alternar quem batalha.</p>
+
+              <div className="mt-3 grid grid-cols-3 gap-2">
+                {Array.from({ length: TEAM_MAX }).map((_, i) => {
+                  const m = monsters.filter((x) => x.in_team)[i];
+                  if (!m) {
+                    return (
+                      <button
+                        key={`slot-${i}`}
+                        onClick={() => setSlotPicker(i)}
+                        className="aspect-square rounded-2xl border-2 border-dashed border-white/30 bg-white/5 hover:bg-white/15 hover:border-yellow-300 transition flex flex-col items-center justify-center text-white/60"
+                      >
+                        <span className="text-3xl">＋</span>
+                        <span className="text-[10px] font-bold mt-1">Adicionar</span>
+                      </button>
+                    );
+                  }
+                  const sp = SPECIES[m.species];
+                  return (
+                    <div key={m.id} className={`relative aspect-square rounded-2xl border-2 border-yellow-300 bg-gradient-to-br ${ELEMENT_COLORS[sp.element]} shadow-lg overflow-hidden group`}>
+                      <button
+                        onClick={() => navigate({ to: "/monster/$id", params: { id: m.id } })}
+                        className="absolute inset-0 flex items-center justify-center p-2"
+                        title={m.name}
+                      >
+                        <img src={sp.image} alt={sp.name} className="h-full w-auto drop-shadow-2xl" />
+                      </button>
+                      <div className="absolute bottom-0 inset-x-0 bg-black/70 px-1 py-0.5 text-white text-[10px] font-extrabold truncate text-center pointer-events-none">
+                        {m.name}
+                      </div>
+                      <button
+                        onClick={() => toggleTeam(m)}
+                        className="absolute top-1 right-1 w-6 h-6 rounded-full bg-red-500 hover:bg-red-400 text-white text-xs font-black shadow-lg flex items-center justify-center"
+                        title="Remover do time"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
             </section>
+
 
             <section className="bg-black/40 backdrop-blur-md rounded-2xl border border-white/20 p-3 space-y-3">
               <input
