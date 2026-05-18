@@ -1,4 +1,4 @@
-import { SPECIES, skinFilter, ELEMENT_COLORS, ELEMENT_NAMES, ROLE_INFO, totalStats } from "@/lib/game-data";
+import { SPECIES, skinFilter, ELEMENT_COLORS, ELEMENT_NAMES, ROLE_INFO, RARITY_INFO, totalStats } from "@/lib/game-data";
 
 export type MonsterRow = {
   id: string;
@@ -35,7 +35,7 @@ export function MonsterCard({ monster, onClick, compact, selected }: Props) {
       onClick={onClick}
       className={`relative w-full text-left rounded-2xl overflow-hidden border-2 transition-transform hover:scale-[1.02] ${
         selected ? "border-yellow-400 ring-4 ring-yellow-300/50" : "border-white/30"
-      } shadow-xl backdrop-blur-sm`}
+      } shadow-xl backdrop-blur-sm ring-2 ${RARITY_INFO[sp.rarity].ringColor}`}
     >
       {monster.in_team && (
         <span className="absolute top-2 left-2 z-10 px-2 py-0.5 rounded-full bg-yellow-400 text-yellow-950 text-[10px] font-extrabold shadow">
@@ -47,6 +47,9 @@ export function MonsterCard({ monster, onClick, compact, selected }: Props) {
       </span>
       <span className={`absolute bottom-[3.5rem] right-2 z-10 px-2 py-0.5 rounded-full ${ROLE_INFO[sp.role].color} text-white text-[10px] font-extrabold shadow-lg`}>
         {ROLE_INFO[sp.role].emoji} {ROLE_INFO[sp.role].name}
+      </span>
+      <span className={`absolute bottom-[3.5rem] left-2 z-10 px-2 py-0.5 rounded-full ${RARITY_INFO[sp.rarity].color} text-[10px] font-extrabold shadow-lg`}>
+        {RARITY_INFO[sp.rarity].emoji} {RARITY_INFO[sp.rarity].name}
       </span>
       <div className={`bg-gradient-to-br ${gradient} ${compact ? "p-2" : "p-3"}`}>
         <div className={`flex items-center justify-center ${compact ? "h-20" : "h-32"}`}>
@@ -62,7 +65,7 @@ export function MonsterCard({ monster, onClick, compact, selected }: Props) {
       <div className="p-2 bg-card/95 backdrop-blur-sm">
         <div className="font-extrabold text-sm truncate">{monster.name}</div>
         <div className="text-[10px] text-muted-foreground">
-          {sp.emoji} {sp.name} • {ELEMENT_NAMES[sp.element]}
+          {sp.emoji} {sp.name} • {ELEMENT_NAMES[sp.element]}{sp.secondaryElement ? ` / ${ELEMENT_NAMES[sp.secondaryElement]}` : ""}
         </div>
         {!compact && (
           <div className="mt-1.5 grid grid-cols-4 gap-1 text-[10px] font-bold">

@@ -1,4 +1,4 @@
-import { SPECIES, TYPE_CHART, totalStats, type Element, type Role } from "./game-data";
+import { SPECIES, defensiveMultiplier, totalStats, type Element, type Role } from "./game-data";
 
 export type BattleMonster = {
   id: string;
@@ -132,7 +132,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
       const target = pickTarget(attacker, enemies);
       if (!target) continue;
 
-      const eff = TYPE_CHART[getElement(attacker.species)]?.[getElement(target.species)] ?? 1;
+      const eff = defensiveMultiplier(getElement(attacker.species), target.species);
       const critChance = attacker.role === "assassin" ? 0.35 : 0.12;
       const crit = rand() < critChance;
       const defUsed = attacker.role === "mage" ? target.def * 0.4 : target.def;
