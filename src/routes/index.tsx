@@ -6,6 +6,7 @@ import { Plot } from "@/components/Plot";
 import { AnimalCard } from "@/components/AnimalCard";
 import { CoinBadge } from "@/components/CoinBadge";
 import { toast, Toaster } from "sonner";
+import farmBg from "@/assets/farm-bg.jpg";
 
 export const Route = createFileRoute("/")({
   component: GamePage,
@@ -151,7 +152,7 @@ function GamePage() {
   }
 
   return (
-    <main className="min-h-screen pb-8">
+    <main className="farm-bg pb-8" style={{ backgroundImage: `url(${farmBg})` }}>
       <Toaster position="top-center" richColors />
 
       {/* HUD */}
@@ -182,15 +183,16 @@ function GamePage() {
       <div className="max-w-6xl mx-auto px-4 mt-6 grid lg:grid-cols-[1fr_360px] gap-6">
         {/* Farm */}
         <section>
-          <div className="panel-wood rounded-2xl p-1">
-            <div className="bg-grass/30 rounded-xl p-4">
-              <h2 className="font-extrabold text-lg mb-3 flex items-center gap-2">
-                🚜 Sua Fazenda
-                <span className="text-xs font-normal text-muted-foreground">
-                  Plantando: {CROPS[selectedSeed].emoji} {CROPS[selectedSeed].name} (🪙 {CROPS[selectedSeed].seedCost})
-                </span>
-              </h2>
-              <div className="grid grid-cols-4 gap-3">
+          <div className="bg-card/70 backdrop-blur-sm rounded-2xl p-4 border-2 border-amber-900/30 shadow-xl">
+            <h2 className="font-extrabold text-lg mb-3 flex items-center gap-2 text-amber-950">
+              🚜 Sua Plantação
+              <span className="text-xs font-normal text-amber-900/70">
+                Plantando: {CROPS[selectedSeed].emoji} {CROPS[selectedSeed].name} (🪙 {CROPS[selectedSeed].seedCost})
+              </span>
+            </h2>
+            {/* Ploughed field */}
+            <div className="relative p-3 rounded-xl bg-gradient-to-b from-amber-900/40 to-amber-950/50 border-2 border-amber-950/60 shadow-inner">
+              <div className="grid grid-cols-4 gap-2">
                 {plots.map((p) => (
                   <Plot key={p.id} cropType={p.crop_type} plantedAt={p.planted_at} onClick={() => handlePlot(p)} />
                 ))}
@@ -198,22 +200,20 @@ function GamePage() {
             </div>
           </div>
 
-          {/* Animals area */}
-          <div className="panel-wood rounded-2xl p-1 mt-5">
-            <div className="bg-sky/30 rounded-xl p-4">
-              <h2 className="font-extrabold text-lg mb-3">🏡 Animais da Fazenda</h2>
-              {animals.length === 0 ? (
-                <p className="text-sm text-muted-foreground text-center py-4">
-                  Compre animais na loja → eles produzem ovos, leite e mais!
-                </p>
-              ) : (
-                <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
-                  {animals.map((a) => (
-                    <AnimalCard key={a.id} animalType={a.animal_type} lastCollected={a.last_collected_at} onCollect={() => collectAnimal(a)} />
-                  ))}
-                </div>
-              )}
-            </div>
+          {/* Animals pasture */}
+          <div className="pasture rounded-2xl p-4 mt-5">
+            <h2 className="font-extrabold text-lg mb-3 text-amber-950 drop-shadow-sm">🏡 Curral dos Animais</h2>
+            {animals.length === 0 ? (
+              <p className="text-sm text-amber-950/80 text-center py-4 bg-white/40 rounded-lg">
+                Compre animais na loja → eles produzem ovos, leite e mais!
+              </p>
+            ) : (
+              <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+                {animals.map((a) => (
+                  <AnimalCard key={a.id} animalType={a.animal_type} lastCollected={a.last_collected_at} onCollect={() => collectAnimal(a)} />
+                ))}
+              </div>
+            )}
           </div>
         </section>
 
