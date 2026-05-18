@@ -208,11 +208,11 @@ function PatioPage() {
                   ⚔️ Ir pra Arena
                 </button>
               </div>
-              <p className="text-[11px] opacity-80">Toque num monstro pra cuidar dele. Toque no botão de TIME pra alternar quem batalha.</p>
+              <p className="text-[11px] opacity-80">Posicione o tank na <b>Frente</b>, DPS no <b>Meio</b> e mages/healers <b>Trás</b>. Use ◀ ▶ pra reorganizar.</p>
 
               <div className="mt-3 grid grid-cols-3 gap-2">
                 {Array.from({ length: TEAM_MAX }).map((_, i) => {
-                  const m = monsters.filter((x) => x.in_team)[i];
+                  const m = monsters.find((x) => x.in_team && (x.team_position ?? 0) === i);
                   if (!m) {
                     return (
                       <button
@@ -220,14 +220,18 @@ function PatioPage() {
                         onClick={() => setSlotPicker(i)}
                         className="aspect-square rounded-2xl border-2 border-dashed border-white/30 bg-white/5 hover:bg-white/15 hover:border-yellow-300 transition flex flex-col items-center justify-center text-white/60"
                       >
-                        <span className="text-3xl">＋</span>
-                        <span className="text-[10px] font-bold mt-1">Adicionar</span>
+                        <div className="text-[10px] font-extrabold opacity-80">{PILLS[i]}</div>
+                        <span className="text-3xl mt-1">＋</span>
+                        <span className="text-[10px] font-bold">Adicionar</span>
                       </button>
                     );
                   }
                   const sp = SPECIES[m.species];
                   return (
-                    <div key={m.id} className={`relative aspect-square rounded-2xl border-2 border-yellow-300 bg-gradient-to-br ${ELEMENT_COLORS[sp.element]} shadow-lg overflow-hidden group`}>
+                    <div key={m.id} className={`relative aspect-square rounded-2xl border-2 border-yellow-300 bg-gradient-to-br ${ELEMENT_COLORS[sp.element]} shadow-lg overflow-hidden`}>
+                      <div className="absolute top-1 left-1 z-10 px-1.5 py-0.5 rounded-md bg-black/70 text-yellow-300 text-[9px] font-extrabold shadow">
+                        {PILLS[i]}
+                      </div>
                       <button
                         onClick={() => navigate({ to: "/monster/$id", params: { id: m.id } })}
                         className="absolute inset-0 flex items-center justify-center p-2"
@@ -240,16 +244,33 @@ function PatioPage() {
                       </div>
                       <button
                         onClick={() => toggleTeam(m)}
-                        className="absolute top-1 right-1 w-6 h-6 rounded-full bg-red-500 hover:bg-red-400 text-white text-xs font-black shadow-lg flex items-center justify-center"
+                        className="absolute top-1 right-1 z-10 w-6 h-6 rounded-full bg-red-500 hover:bg-red-400 text-white text-xs font-black shadow-lg flex items-center justify-center"
                         title="Remover do time"
                       >
                         ×
                       </button>
+                      <div className="absolute inset-x-0 bottom-6 flex justify-between px-1 z-10">
+                        {i > 0 ? (
+                          <button
+                            onClick={(e) => { e.stopPropagation(); swapPositions(i, i - 1); }}
+                            className="w-6 h-6 rounded-full bg-black/70 hover:bg-yellow-400 hover:text-yellow-950 text-white text-xs font-black flex items-center justify-center shadow"
+                            title="Mover pra frente"
+                          >◀</button>
+                        ) : <span />}
+                        {i < TEAM_MAX - 1 ? (
+                          <button
+                            onClick={(e) => { e.stopPropagation(); swapPositions(i, i + 1); }}
+                            className="w-6 h-6 rounded-full bg-black/70 hover:bg-yellow-400 hover:text-yellow-950 text-white text-xs font-black flex items-center justify-center shadow"
+                            title="Mover pra trás"
+                          >▶</button>
+                        ) : <span />}
+                      </div>
                     </div>
                   );
                 })}
               </div>
             </section>
+
 
 
             <section className="bg-black/40 backdrop-blur-md rounded-2xl border border-white/20 p-3 space-y-3">
