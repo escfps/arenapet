@@ -749,6 +749,16 @@ export function totalStats(species: string, rank = 1, bonus = { hp: 0, atk: 0, d
   };
 }
 
+export function starterMonsterStats(speciesId: string) {
+  const sp = SPECIES[speciesId];
+  return {
+    hp: sp?.id === "fenix_vermelha" || sp?.id === "fenix_negra" ? 0 : sp?.base.hp ?? 0,
+    atk: sp?.base.atk ?? 0,
+    def: sp?.base.def ?? 0,
+    spd: sp?.base.spd ?? 0,
+  };
+}
+
 export const TRADE_FEE_COINS = 50;
 export const TRADE_FEE_GEMS = 5;
 export const MAX_TRADEABLE_RANK = 7; // ✦8+ não pode ser trocado
