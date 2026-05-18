@@ -350,14 +350,11 @@ export const EXPEDITION_SLOT_PRICES: Record<number, number> = {
 
 export function computeExpeditionReward(
   duration: ExpeditionDuration,
-  monsterLevel: number,
   monsterRank: number
 ): { xp: number; coins: number; gems: number; rations: number } {
-  const lvlMult = 1 + (Math.max(1, monsterLevel) - 1) * 0.10;
   const rankMult = RANK_MULT[Math.min(Math.max(monsterRank, 1), MAX_RANK)] ?? 1;
-  const mult = lvlMult * rankMult;
-  const xp = Math.round(duration.baseXp * mult);
-  const coins = Math.round(duration.baseCoins * mult);
+  const xp = Math.round(duration.baseXp * rankMult);
+  const coins = Math.round(duration.baseCoins * rankMult);
   const rollRange = (range: [number, number]) =>
     Math.floor(Math.random() * (range[1] - range[0] + 1)) + range[0];
   const gems = Math.random() < duration.gemChance ? rollRange(duration.gemAmount) : 0;
