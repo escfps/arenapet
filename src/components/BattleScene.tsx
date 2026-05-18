@@ -62,6 +62,7 @@ function statusFromMessage(msg: string): StatusKind | null {
     if (msg.includes("Tinta Venenosa") || msg.includes("☠️") || msg.includes("veneno")) return "poison";
     return "burn";
   }
+  if (msg.includes("cegou") || msg.includes("cegueira")) return "blind";
   if (msg.includes("silenciou") || msg.includes("silencia próxima")) return "silence";
   if (msg.includes("fúria") || msg.includes("ATK por 3 turnos")) return "rage";
   if (msg.includes("DEF por") && msg.includes("escudo")) return "shield";
