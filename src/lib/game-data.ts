@@ -35,8 +35,8 @@ export const ROLE_INFO: Record<Role, { name: string; emoji: string; description:
   tank: { name: "Tank", emoji: "🛡️", description: "Provoca: inimigos atacam ele primeiro. Muito HP/DEF.", color: "bg-blue-500" },
   dps: { name: "DPS", emoji: "⚔️", description: "Dano consistente alto (+15% de dano).", color: "bg-orange-500" },
   assassin: { name: "Assassino", emoji: "🗡️", description: "Crítico em 35% dos golpes e mira no mais fraco.", color: "bg-purple-500" },
-  mage: { name: "Mago", emoji: "🔮", description: "Dano mágico ignora 60% da DEF inimiga.", color: "bg-fuchsia-500" },
-  healer: { name: "Healer", emoji: "✨", description: "A cada 2 turnos cura o aliado mais ferido.", color: "bg-emerald-500" },
+  mage: { name: "Mago", emoji: "🔮", description: "Dano mágico escala com 🧠 INT e ignora 60% da DEF.", color: "bg-fuchsia-500" },
+  healer: { name: "Healer", emoji: "✨", description: "Cura escala com 🧠 INT. A cada 2 turnos cura o aliado mais ferido.", color: "bg-emerald-500" },
 };
 
 export const RARITY_INFO: Record<Rarity, { name: string; emoji: string; color: string; ringColor: string; statMult: number; skillMult: number }> = {
