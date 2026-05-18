@@ -45,6 +45,7 @@ export type DBMonster = {
   spd: number;
   rank?: number;
   hunger?: number;
+  team_position?: number;
 };
 
 export function toBattleMonster(m: DBMonster): BattleMonster {
@@ -65,6 +66,7 @@ export function toBattleMonster(m: DBMonster): BattleMonster {
     int: Math.max(1, Math.round(stats.int * mult)),
     role: sp?.role ?? "dps",
     rarity: sp?.rarity ?? "common",
+    position: Math.max(0, Math.min(2, m.team_position ?? 0)),
   };
 }
 
