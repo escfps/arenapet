@@ -22,7 +22,7 @@ export const Route = createFileRoute("/shop")({
 function ShopPage() {
   const navigate = useNavigate();
   const { userId, profile, patch, loading } = useProfile();
-  const [tab, setTab] = useState<"eggs" | "chests" | "skins" | "vip" | "gems" | "energy">("eggs");
+  const [tab, setTab] = useState<"chests" | "skins" | "vip" | "gems" | "energy">("chests");
   const [ownedSkins, setOwnedSkins] = useState<string[]>(["default"]);
   const [hatchResult, setHatchResult] = useState<string | null>(null);
   const [chestResult, setChestResult] = useState<{ tier: ChestTier; reward: ChestReward } | null>(null);
@@ -193,45 +193,17 @@ function ShopPage() {
         </header>
 
         <div className="flex bg-white/10 backdrop-blur-md rounded-xl overflow-hidden border border-white/20">
-          {(["eggs", "chests", "skins", "vip", "gems", "energy"] as const).map((t) => (
+          {(["chests", "skins", "vip", "gems", "energy"] as const).map((t) => (
             <button
               key={t}
               onClick={() => setTab(t)}
               className={`flex-1 py-2.5 text-[11px] font-bold transition ${tab === t ? "bg-white/30 text-white" : "text-white/70 hover:bg-white/15"}`}
             >
-              {t === "eggs" ? "🥚 Ovos" : t === "chests" ? "📦 Baús" : t === "skins" ? "🎨 Skins" : t === "vip" ? "👑 VIP" : t === "gems" ? "💎 Gemas" : "⚡ Energia"}
+              {t === "chests" ? "📦 Baús" : t === "skins" ? "🎨 Skins" : t === "vip" ? "👑 VIP" : t === "gems" ? "💎 Gemas" : "⚡ Energia"}
             </button>
           ))}
         </div>
 
-        {tab === "eggs" && (
-          <>
-            <div className="grid sm:grid-cols-2 gap-4">
-              {Object.values(EGGS).map((egg) => (
-                <div key={egg.id} className="rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 p-4 text-white text-center">
-                  <div className="text-6xl mb-2">{egg.emoji}</div>
-                  <h3 className="font-extrabold text-lg">{egg.name}</h3>
-                  <p className="text-xs opacity-80 mb-3">{egg.description}</p>
-                  <button
-                    onClick={() => egg.event ? null : hatch(egg.id)}
-                    disabled={egg.event}
-                    className="w-full py-2 rounded-xl bg-gradient-to-b from-yellow-400 to-amber-500 text-yellow-950 font-extrabold hover:scale-105 transition disabled:from-white/20 disabled:to-white/10 disabled:text-white/70 disabled:cursor-not-allowed disabled:hover:scale-100"
-                  >
-                    {egg.event ? "🔒 Em breve — Evento" : `Chocar por ${egg.priceCoins ? `🪙 ${egg.priceCoins}` : `💎 ${egg.priceGems}`}`}
-                  </button>
-                </div>
-              ))}
-            </div>
-            {hatchResult && (
-              <div className={`rounded-2xl p-6 text-center text-white bg-gradient-to-br ${ELEMENT_COLORS[SPECIES[hatchResult].element]} animate-in fade-in zoom-in`}>
-                <div className="text-sm opacity-90">VOCÊ CHOCOU</div>
-                <img src={SPECIES[hatchResult].image} alt="" className="h-40 mx-auto drop-shadow-2xl" />
-                <div className="text-2xl font-extrabold">{SPECIES[hatchResult].emoji} {SPECIES[hatchResult].name}</div>
-                <button onClick={() => setHatchResult(null)} className="mt-3 px-4 py-1.5 rounded-lg bg-white/30 hover:bg-white/40 text-sm font-bold">Fechar</button>
-              </div>
-            )}
-          </>
-        )}
 
         {tab === "chests" && (
           <>
