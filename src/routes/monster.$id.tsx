@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { SPECIES, ITEMS, SKINS, ELEMENT_COLORS, skinFilter, xpForNextLevel } from "@/lib/game-data";
+import { SPECIES, ITEMS, SKINS, ELEMENT_COLORS, ROLE_INFO, ROLE_SKILLS, RARITY_INFO, skinFilter, xpForNextLevel } from "@/lib/game-data";
 import type { MonsterRow } from "@/components/MonsterCard";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
@@ -176,6 +176,36 @@ function MonsterPage() {
             </div>
           </div>
         </div>
+
+        {/* Skill card */}
+        {(() => {
+          const skill = ROLE_SKILLS[sp.role];
+          const rarity = RARITY_INFO[sp.rarity];
+          const role = ROLE_INFO[sp.role];
+          return (
+            <div className="rounded-2xl bg-gradient-to-br from-purple-900/80 to-fuchsia-900/80 border-2 border-white/30 p-4 text-white shadow-xl">
+              <div className="flex items-center gap-2 mb-2 flex-wrap">
+                <span className={`px-2 py-0.5 rounded-full ${role.color} text-[10px] font-extrabold`}>
+                  {role.emoji} {role.name}
+                </span>
+                <span className={`px-2 py-0.5 rounded-full ${rarity.color} text-[10px] font-extrabold`}>
+                  {rarity.emoji} {rarity.name} (×{rarity.skillMult} skill)
+                </span>
+              </div>
+              <div className="text-xs opacity-90 mb-3">
+                <span className="font-bold">Passiva:</span> {role.description}
+              </div>
+              <div className="rounded-xl bg-black/40 p-3 border border-white/20">
+                <div className="font-extrabold text-base flex items-center gap-1.5">
+                  <span className="text-xl">{skill.emoji}</span>
+                  {skill.name}
+                  <span className="ml-auto text-[10px] bg-white/20 px-2 py-0.5 rounded-full">CD {skill.cooldown}</span>
+                </div>
+                <div className="text-xs opacity-90 mt-1">{skill.description}</div>
+              </div>
+            </div>
+          );
+        })()}
 
         {/* Tabs */}
         <div className="flex bg-white/10 backdrop-blur-md rounded-xl overflow-hidden border border-white/20">

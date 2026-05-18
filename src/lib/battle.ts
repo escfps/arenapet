@@ -1,4 +1,4 @@
-import { SPECIES, defensiveMultiplier, totalStats, type Element, type Role } from "./game-data";
+import { SPECIES, ROLE_SKILLS, RARITY_INFO, defensiveMultiplier, totalStats, type Element, type Role, type Rarity } from "./game-data";
 
 export type BattleMonster = {
   id: string;
@@ -11,6 +11,7 @@ export type BattleMonster = {
   def: number;
   spd: number;
   role: Role;
+  rarity: Rarity;
 };
 
 export type BattleLogEntry = {
@@ -57,6 +58,7 @@ export function toBattleMonster(m: DBMonster): BattleMonster {
     def: stats.def,
     spd: stats.spd,
     role: sp?.role ?? "dps",
+    rarity: sp?.rarity ?? "common",
   };
 }
 
@@ -71,11 +73,24 @@ function rng(seed: number) {
   };
 }
 
-type Live = BattleMonster & { current: number; maxHp: number; healCd: number };
+type Live = BattleMonster & {
+  current: number;
+  maxHp: number;
+  healCd: number;
+  skillCd: number;
+  shield: number;
+  tauntTargetId: string | null;
+  tauntTurns: number;
+};
 
 function pickTarget(attacker: Live, enemies: Live[]): Live | null {
   const alive = enemies.filter((e) => e.current > 0);
   if (alive.length === 0) return null;
+  // Forced taunt target wins over everything else
+  if (attacker.tauntTargetId && attacker.tauntTurns > 0) {
+    const t = alive.find((e) => e.id === attacker.tauntTargetId);
+    if (t) return t;
+  }
   // Taunt: prefer tank if alive
   const tank = alive.find((e) => e.role === "tank");
   if (tank && attacker.role !== "assassin") return tank;
@@ -83,14 +98,29 @@ function pickTarget(attacker: Live, enemies: Live[]): Live | null {
   if (attacker.role === "assassin") {
     return alive.reduce((a, b) => (a.current < b.current ? a : b));
   }
-  // default: first alive
   return alive[0];
+}
+
+function applyDamage(target: Live, raw: number): number {
+  let dmg = raw;
+  if (target.shield > 0) {
+    const absorbed = Math.min(target.shield, dmg);
+    target.shield -= absorbed;
+    dmg -= absorbed;
+  }
+  target.current = Math.max(0, target.current - dmg);
+  return raw; // return original for log
 }
 
 export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], seed = Date.now()): BattleResult {
   const log: BattleLogEntry[] = [];
-  const a: Live[] = teamA.map((m) => ({ ...m, current: m.hp, maxHp: m.hp, healCd: 0 }));
-  const b: Live[] = teamB.map((m) => ({ ...m, current: m.hp, maxHp: m.hp, healCd: 0 }));
+  const mkLive = (m: BattleMonster): Live => ({
+    ...m, current: m.hp, maxHp: m.hp,
+    healCd: 0, skillCd: 1, shield: 0,
+    tauntTargetId: null, tauntTurns: 0,
+  });
+  const a: Live[] = teamA.map(mkLive);
+  const b: Live[] = teamB.map(mkLive);
   const rand = rng(seed);
 
   let turn = 1;
@@ -107,17 +137,119 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
 
     for (const { mon: attacker, side } of order) {
       if (attacker.current <= 0) continue;
+      // tick taunt
+      if (attacker.tauntTurns > 0) {
+        attacker.tauntTurns -= 1;
+        if (attacker.tauntTurns === 0) attacker.tauntTargetId = null;
+      }
       const allies = side === "team_a" ? a : b;
       const enemies = side === "team_a" ? b : a;
       if (!enemies.some((e) => e.current > 0)) break;
 
-      // Healer logic
+      const skill = ROLE_SKILLS[attacker.role];
+      const skillMult = RARITY_INFO[attacker.rarity].skillMult;
+      const canUseSkill = attacker.skillCd <= 0;
+
+      // ===== ACTIVE SKILLS =====
+      if (canUseSkill) {
+        attacker.skillCd = skill.cooldown;
+
+        if (skill.kind === "team_heal") {
+          const heal = Math.round((attacker.atk * 1.5 + attacker.maxHp * 0.10) * skillMult);
+          const targets = allies.filter((m) => m.current > 0);
+          for (const t of targets) {
+            t.current = Math.min(t.maxHp, t.current + heal);
+          }
+          log.push({
+            turn, actor: side, actorName: attacker.name, targetName: "todos os aliados",
+            damage: -heal, crit: false, effective: 1, remainingHp: 0,
+            message: `${skill.emoji} ${attacker.name} usou ${skill.name}! Curou todos os aliados em ${heal} HP`,
+          });
+          continue;
+        }
+
+        if (skill.kind === "shield_taunt") {
+          const shield = Math.round(attacker.maxHp * 0.30 * skillMult);
+          attacker.shield += shield;
+          for (const e of enemies.filter((x) => x.current > 0)) {
+            e.tauntTargetId = attacker.id;
+            e.tauntTurns = 2;
+          }
+          log.push({
+            turn, actor: side, actorName: attacker.name, targetName: attacker.name,
+            damage: 0, crit: false, effective: 1, remainingHp: attacker.current,
+            message: `${skill.emoji} ${attacker.name} usou ${skill.name}! Provocou todos e ganhou ${shield} de escudo`,
+          });
+          continue;
+        }
+
+        if (skill.kind === "aoe_magic") {
+          const targets = enemies.filter((e) => e.current > 0);
+          for (const t of targets) {
+            const eff = defensiveMultiplier(getElement(attacker.species), t.species);
+            const base = Math.max(1, attacker.atk * 2 - t.def * 0.3);
+            const dmg = Math.max(1, Math.round(base * eff * 1.2 * skillMult));
+            applyDamage(t, dmg);
+            log.push({
+              turn, actor: side, actorName: attacker.name, targetName: t.name,
+              damage: dmg, crit: false, effective: eff, remainingHp: t.current,
+              message: `${skill.emoji} ${attacker.name} → ${t.name}: ${dmg} de dano arcano`,
+            });
+            if (t.current <= 0) {
+              log.push({ turn, actor: side, actorName: attacker.name, targetName: t.name, damage: 0, crit: false, effective: 1, remainingHp: 0, message: `💀 ${t.name} foi derrotado!` });
+            }
+          }
+          continue;
+        }
+
+        if (skill.kind === "heavy_strike") {
+          const target = pickTarget(attacker, enemies);
+          if (target) {
+            const eff = defensiveMultiplier(getElement(attacker.species), target.species);
+            const base = Math.max(1, attacker.atk * 2 - target.def);
+            const dmg = Math.max(1, Math.round(base * eff * 2.2 * skillMult));
+            applyDamage(target, dmg);
+            log.push({
+              turn, actor: side, actorName: attacker.name, targetName: target.name,
+              damage: dmg, crit: true, effective: eff, remainingHp: target.current,
+              message: `${skill.emoji} ${attacker.name} usou ${skill.name} em ${target.name}: ${dmg} de dano massivo!`,
+            });
+            if (target.current <= 0) {
+              log.push({ turn, actor: side, actorName: attacker.name, targetName: target.name, damage: 0, crit: false, effective: 1, remainingHp: 0, message: `💀 ${target.name} foi derrotado!` });
+            }
+          }
+          continue;
+        }
+
+        if (skill.kind === "guaranteed_crit") {
+          const alive = enemies.filter((e) => e.current > 0);
+          const target = alive.length ? alive.reduce((x, y) => (x.current < y.current ? x : y)) : null;
+          if (target) {
+            const eff = defensiveMultiplier(getElement(attacker.species), target.species);
+            const base = Math.max(1, attacker.atk * 2 - target.def * 0.4);
+            const dmg = Math.max(1, Math.round(base * eff * 1.8 * 1.7 * skillMult));
+            applyDamage(target, dmg);
+            log.push({
+              turn, actor: side, actorName: attacker.name, targetName: target.name,
+              damage: dmg, crit: true, effective: eff, remainingHp: target.current,
+              message: `${skill.emoji} ${attacker.name} usou ${skill.name}: ${dmg} CRÍTICO em ${target.name}!`,
+            });
+            if (target.current <= 0) {
+              log.push({ turn, actor: side, actorName: attacker.name, targetName: target.name, damage: 0, crit: false, effective: 1, remainingHp: 0, message: `💀 ${target.name} foi derrotado!` });
+            }
+          }
+          continue;
+        }
+      }
+      if (attacker.skillCd > 0) attacker.skillCd -= 1;
+
+      // ===== PASSIVE: healer auto-heal =====
       if (attacker.role === "healer" && attacker.healCd <= 0) {
         const hurt = allies
           .filter((m) => m.current > 0 && m.current < m.maxHp)
           .sort((x, y) => x.current / x.maxHp - y.current / y.maxHp)[0];
         if (hurt) {
-          const heal = Math.round(attacker.atk * 2.2 + attacker.maxHp * 0.08);
+          const heal = Math.round((attacker.atk * 2.2 + attacker.maxHp * 0.08) * RARITY_INFO[attacker.rarity].skillMult);
           hurt.current = Math.min(hurt.maxHp, hurt.current + heal);
           attacker.healCd = 2;
           log.push({
@@ -130,6 +262,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
       }
       if (attacker.healCd > 0) attacker.healCd -= 1;
 
+      // ===== BASIC ATTACK =====
       const target = pickTarget(attacker, enemies);
       if (!target) continue;
 
@@ -141,7 +274,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
       if (attacker.role === "dps") base *= 1.15;
       const variance = 0.85 + rand() * 0.3;
       const damage = Math.max(1, Math.round(base * eff * variance * (crit ? 1.7 : 1)));
-      target.current = Math.max(0, target.current - damage);
+      applyDamage(target, damage);
 
       let msg = `${attacker.name} atacou ${target.name} causando ${damage} de dano`;
       if (crit) msg += " (CRÍTICO!)";

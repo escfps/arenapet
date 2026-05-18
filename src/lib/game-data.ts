@@ -39,10 +39,44 @@ export const ROLE_INFO: Record<Role, { name: string; emoji: string; description:
   healer: { name: "Healer", emoji: "✨", description: "A cada 2 turnos cura o aliado mais ferido.", color: "bg-emerald-500" },
 };
 
-export const RARITY_INFO: Record<Rarity, { name: string; emoji: string; color: string; ringColor: string; statMult: number }> = {
-  common: { name: "Mestiço", emoji: "✦", color: "bg-slate-400 text-white", ringColor: "ring-slate-300", statMult: 0.85 },
-  rare: { name: "Puro", emoji: "✦✦", color: "bg-amber-500 text-amber-950", ringColor: "ring-amber-400", statMult: 1.0 },
-  legendary: { name: "Lendário", emoji: "✦✦✦", color: "bg-gradient-to-r from-fuchsia-500 to-pink-500 text-white", ringColor: "ring-fuchsia-400", statMult: 1.2 },
+export const RARITY_INFO: Record<Rarity, { name: string; emoji: string; color: string; ringColor: string; statMult: number; skillMult: number }> = {
+  common: { name: "Mestiço", emoji: "✦", color: "bg-slate-400 text-white", ringColor: "ring-slate-300", statMult: 0.85, skillMult: 0.85 },
+  rare: { name: "Puro", emoji: "✦✦", color: "bg-amber-500 text-amber-950", ringColor: "ring-amber-400", statMult: 1.0, skillMult: 1.0 },
+  legendary: { name: "Lendário", emoji: "✦✦✦", color: "bg-gradient-to-r from-fuchsia-500 to-pink-500 text-white", ringColor: "ring-fuchsia-400", statMult: 1.2, skillMult: 1.5 },
+};
+
+// ===== Skills (1 por role, escala com raridade) =====
+export type SkillKind = "shield_taunt" | "heavy_strike" | "guaranteed_crit" | "aoe_magic" | "team_heal";
+
+export type Skill = {
+  name: string;
+  emoji: string;
+  description: string;
+  kind: SkillKind;
+  cooldown: number; // turnos
+};
+
+export const ROLE_SKILLS: Record<Role, Skill> = {
+  tank: {
+    name: "Provocação Brutal", emoji: "🛡️", kind: "shield_taunt", cooldown: 4,
+    description: "Provoca todos os inimigos por 2 turnos e ganha escudo (30% do HP máx).",
+  },
+  dps: {
+    name: "Investida Devastadora", emoji: "💥", kind: "heavy_strike", cooldown: 3,
+    description: "Golpe pesado: 2.2× o dano normal num alvo único.",
+  },
+  assassin: {
+    name: "Lâmina Sombria", emoji: "🗡️", kind: "guaranteed_crit", cooldown: 3,
+    description: "Ataque garantido CRÍTICO no inimigo mais fraco, ignorando 60% da DEF.",
+  },
+  mage: {
+    name: "Detonação Arcana", emoji: "🔮", kind: "aoe_magic", cooldown: 4,
+    description: "Explosão mágica que atinge TODOS os inimigos (1.2× dano cada, ignora defesa).",
+  },
+  healer: {
+    name: "Bênção Restauradora", emoji: "✨", kind: "team_heal", cooldown: 4,
+    description: "Cura todos os aliados vivos (~ATK×1.5 + 10% HP máx).",
+  },
 };
 
 export const SPECIES: Record<string, Species> = {
