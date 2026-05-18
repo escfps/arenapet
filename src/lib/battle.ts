@@ -13,6 +13,7 @@ export type BattleMonster = {
   int: number;
   role: Role;
   rarity: Rarity;
+  position: number; // 0 frontline, 1 middle, 2 backline
 };
 
 export type BattleLogEntry = {
