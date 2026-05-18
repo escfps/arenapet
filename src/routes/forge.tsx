@@ -17,8 +17,6 @@ type ForgeMonster = {
   owner_id: string;
   species: string;
   name: string;
-  level: number;
-  xp: number;
   rank: number;
   in_team: boolean;
 };
@@ -33,7 +31,7 @@ function ForgePage() {
     if (!userId) return;
     const { data } = await supabase
       .from("monsters")
-      .select("id,owner_id,species,name,level,xp,rank,in_team")
+      .select("id,owner_id,species,name,rank,in_team")
       .eq("owner_id", userId)
       .order("rank", { ascending: false });
     if (data) setMonsters(data as ForgeMonster[]);
