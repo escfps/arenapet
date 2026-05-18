@@ -191,7 +191,9 @@ function MonsterPage() {
           const rarity = RARITY_INFO[sp.rarity];
           const role = ROLE_INFO[sp.role];
           const skillMult = rarity.skillMult;
-          const stats = totalStats(monster.species, monster.rank);
+          const stats = totalStats(monster.species, monster.rank, {
+            hp: monster.hp ?? 0, atk: monster.atk ?? 0, def: monster.def ?? 0, spd: monster.spd ?? 0, int: monster.int ?? 0,
+          });
           const atk = monster.atk ?? stats.atk;
           const int = monster.int ?? stats.int;
           const maxHp = stats.hp;
