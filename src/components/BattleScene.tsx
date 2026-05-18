@@ -5,6 +5,7 @@ import type { MonsterRow } from "./MonsterCard";
 
 type Team = (MonsterRow & { owner_id: string })[];
 type HpMap = Map<string, { cur: number; max: number }>;
+type ShieldMap = Map<string, number>;
 type Fx = { actor: string | null; target: string | null; dmg: number | null; crit: boolean };
 
 export function BattleScene({
