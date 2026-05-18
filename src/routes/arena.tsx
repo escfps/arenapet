@@ -82,31 +82,47 @@ function ArenaPage() {
     return () => { cancelled = true; clearTimeout(initial); };
   }, [battleLog]);
 
+  const [searchCountdown, setSearchCountdown] = useState(0);
+
   async function findOpponent() {
     if (!userId || !profile || myTeam.length === 0) return;
+    if (searching) return;
     setSearching(true);
     setOpponent(null);
     setBattleLog(null);
     setWinner(null);
     setRewards(null);
 
-    // fetch candidate monsters (no embed — no FK between monsters and profiles)
-    const { data: mons } = await supabase
+    // Temporizador aleatório 1–13s pra simular a busca (evita ficar dando scout)
+    const waitMs = (1 + Math.floor(Math.random() * 13)) * 1000;
+    const startedAt = Date.now();
+    setSearchCountdown(Math.ceil(waitMs / 1000));
+    const tickId = window.setInterval(() => {
+      const remaining = Math.max(0, waitMs - (Date.now() - startedAt));
+      setSearchCountdown(Math.ceil(remaining / 1000));
+    }, 250);
+
+    // Busca os candidatos em paralelo com a espera
+    const monsPromise = supabase
       .from("monsters")
       .select("*")
       .neq("owner_id", userId)
       .eq("in_team", true)
       .limit(200);
 
-    setSearching(false);
+    await new Promise((r) => setTimeout(r, waitMs));
+    window.clearInterval(tickId);
+    setSearchCountdown(0);
+
+    const { data: mons } = await monsPromise;
 
     const allMons = (mons ?? []) as FullMonster[];
     if (allMons.length === 0) {
+      setSearching(false);
       toast("Ninguém disponível ainda. Convide amigos! 🎯", { icon: "👀" });
       return;
     }
 
-    // fetch profiles for those owners
     const ownerIds = Array.from(new Set(allMons.map((m) => m.owner_id)));
     const { data: profs } = await supabase
       .from("profiles")
@@ -114,7 +130,6 @@ function ArenaPage() {
       .in("id", ownerIds);
     const profById = new Map((profs ?? []).map((p) => [p.id as string, p]));
 
-    // group by owner
     const byOwner: Record<string, { team: FullMonster[]; username: string; level: number; arenaPoints: number }> = {};
     for (const m of allMons) {
       const p = profById.get(m.owner_id);
@@ -128,7 +143,6 @@ function ArenaPage() {
       byOwner[m.owner_id].team.push(m);
     }
 
-    // Matchmaking by arena_points: try progressively wider windows
     const myPts = profile.arena_points ?? 0;
     const allOwners = Object.keys(byOwner);
     const windows = [100, 200, 400, 800];
@@ -137,7 +151,6 @@ function ArenaPage() {
       ownerList = allOwners.filter((id) => Math.abs(byOwner[id].arenaPoints - myPts) <= w);
       if (ownerList.length > 0) break;
     }
-    // Fallback: pick the closest 5 by points
     if (ownerList.length === 0 && allOwners.length > 0) {
       ownerList = allOwners
         .slice()
@@ -145,12 +158,18 @@ function ArenaPage() {
         .slice(0, 5);
     }
     if (ownerList.length === 0) {
+      setSearching(false);
       toast("Ninguém disponível ainda. Convide amigos! 🎯", { icon: "👀" });
       return;
     }
     const chosen = ownerList[Math.floor(Math.random() * ownerList.length)];
-    setOpponent({ ownerId: chosen, ownerName: byOwner[chosen].username, arenaPoints: byOwner[chosen].arenaPoints, team: byOwner[chosen].team.slice(0, 4) });
+    const chosenOpp = { ownerId: chosen, ownerName: byOwner[chosen].username, arenaPoints: byOwner[chosen].arenaPoints, team: byOwner[chosen].team.slice(0, 4) };
+    setOpponent(chosenOpp);
+    setSearching(false);
+    // Já começa a partida imediatamente — não dá pra rebuscar oponente
+    void fight(chosenOpp);
   }
+
 
   // Compute current energy for each team pet (with regen applied)
   const teamEnergies = myTeam.map((m) => computeBattleEnergy(m.battle_energy, m.battle_energy_at));
