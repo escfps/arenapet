@@ -324,7 +324,17 @@ function ArenaPage() {
               )}
             </div>
 
-            {!canFight && myTeam.length > 0 && (
+            {starvingPets.length > 0 && (
+              <div className="rounded-xl bg-red-600/40 border border-red-300 p-3 text-white text-sm text-center">
+                🍖 {starvingPets.map((p) => p.name).join(", ")} {starvingPets.length === 1 ? "está faminto" : "estão famintos"} e não pode{starvingPets.length === 1 ? "" : "m"} batalhar. Dê ração primeiro!
+              </div>
+            )}
+            {starvingPets.length === 0 && hungryPets.length > 0 && (
+              <div className="rounded-xl bg-amber-500/30 border border-amber-300 p-3 text-white text-sm text-center">
+                🍖 {hungryPets.map((p) => `${p.name} (${Math.round((1 - hungerMultiplier(p.hunger ?? 100)) * 100)}%)`).join(", ")} com fome — vão lutar com stats reduzidos.
+              </div>
+            )}
+            {!canFight && starvingPets.length === 0 && myTeam.length > 0 && (
               <div className="rounded-xl bg-red-500/30 border border-red-300 p-3 text-white text-sm text-center">
                 ⚡ Algum pet do seu time está sem energia de batalha. Espere a regen (1/hora) ou compre energia na <button onClick={() => navigate({ to: "/shop" })} className="underline font-bold">loja</button>.
               </div>
