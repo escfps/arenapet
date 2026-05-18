@@ -16,10 +16,13 @@ export function BattleStats({
   log: BattleLogEntry[];
 }) {
   const { a, b, mvpKey } = useMemo(() => {
-    const mk = (team: Team, side: "a" | "b"): Map<string, Stat> => {
-      const m = new Map<string, Stat>();
+    // Stats per (side, id). Names may collide between teammates, so we share
+    // aggregated stats across same-named teammates on the same side.
+    const mk = (team: Team, side: "a" | "b") => {
+      const byId = new Map<string, Stat>();
+      const byName = new Map<string, Stat[]>();
       for (const mon of team) {
-        m.set(`${side}:${mon.name}`, {
+        const stat: Stat = {
           name: mon.name,
           species: mon.species,
           skin: mon.skin,
@@ -27,54 +30,78 @@ export function BattleStats({
           heal: 0,
           taken: 0,
           kills: 0,
-        });
+        };
+        byId.set(`${side}:${mon.id}`, stat);
+        const arr = byName.get(mon.name) ?? [];
+        arr.push(stat);
+        byName.set(mon.name, arr);
       }
-      return m;
+      return { byId, byName };
     };
     const a = mk(teamA, "a");
     const b = mk(teamB, "b");
 
+    const addToName = (
+      side: "a" | "b",
+      name: string,
+      apply: (s: Stat) => void,
+    ) => {
+      const map = side === "a" ? a.byName : b.byName;
+      const arr = map.get(name);
+      if (!arr || arr.length === 0) return;
+      // If duplicate names, split contribution evenly so totals stay correct.
+      const share = 1 / arr.length;
+      for (const s of arr) {
+        const before = { dmg: s.dmg, heal: s.heal, taken: s.taken, kills: s.kills };
+        apply(s);
+        s.dmg = before.dmg + (s.dmg - before.dmg) * share;
+        s.heal = before.heal + (s.heal - before.heal) * share;
+        s.taken = before.taken + (s.taken - before.taken) * share;
+        s.kills = before.kills + (s.kills - before.kills) * share;
+      }
+    };
+
     for (const e of log) {
       const actorSide: "a" | "b" = e.actor === "team_a" ? "a" : "b";
-      const actorMap = actorSide === "a" ? a : b;
-      const actor = actorMap.get(`${actorSide}:${e.actorName}`);
-      if (!actor) continue;
+      const enemySide: "a" | "b" = actorSide === "a" ? "b" : "a";
 
-      // Kill messages have damage:0 and message starts with 💀
       if (e.damage === 0 && e.message.startsWith("💀")) {
-        actor.kills += 1;
+        addToName(actorSide, e.actorName, (s) => { s.kills += 1; });
         continue;
       }
 
       if (e.damage > 0) {
-        actor.dmg += e.damage;
-        const enemySide: "a" | "b" = actorSide === "a" ? "b" : "a";
-        const enemyMap = enemySide === "a" ? a : b;
-        const target = enemyMap.get(`${enemySide}:${e.targetName}`);
-        if (target) target.taken += e.damage;
+        addToName(actorSide, e.actorName, (s) => { s.dmg += e.damage; });
+        addToName(enemySide, e.targetName, (s) => { s.taken += e.damage; });
       } else if (e.damage < 0) {
         const heal = -e.damage;
         if (e.targetName === "todos os aliados") {
           const allies = actorSide === "a" ? teamA : teamB;
-          actor.heal += heal * allies.length;
+          addToName(actorSide, e.actorName, (s) => { s.heal += heal * allies.length; });
         } else {
-          actor.heal += heal;
+          addToName(actorSide, e.actorName, (s) => { s.heal += heal; });
         }
       }
     }
 
-    // MVP = highest (dmg + heal) on team A (player side)
-    let mvpKey: string | null = null;
-    let mvpScore = -1;
-    for (const [k, s] of a) {
-      const score = s.dmg + s.heal;
-      if (score > mvpScore) {
-        mvpScore = score;
-        mvpKey = k;
-      }
+    // Round shares
+    for (const s of a.byId.values()) {
+      s.dmg = Math.round(s.dmg); s.heal = Math.round(s.heal);
+      s.taken = Math.round(s.taken); s.kills = Math.round(s.kills);
+    }
+    for (const s of b.byId.values()) {
+      s.dmg = Math.round(s.dmg); s.heal = Math.round(s.heal);
+      s.taken = Math.round(s.taken); s.kills = Math.round(s.kills);
     }
 
-    return { a, b, mvpKey };
+    let mvpKey: string | null = null;
+    let mvpScore = -1;
+    for (const [k, s] of a.byId) {
+      const score = s.dmg + s.heal;
+      if (score > mvpScore) { mvpScore = score; mvpKey = k; }
+    }
+
+    return { a: a.byId, b: b.byId, mvpKey };
   }, [teamA, teamB, log]);
 
   return (
