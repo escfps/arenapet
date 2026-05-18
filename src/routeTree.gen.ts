@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as ForgeRouteImport } from './routes/forge'
 import { Route as CollectionRouteImport } from './routes/collection'
 import { Route as ArenaRouteImport } from './routes/arena'
 import { Route as IndexRouteImport } from './routes/index'
@@ -24,6 +25,11 @@ const ShopRoute = ShopRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgeRoute = ForgeRouteImport.update({
+  id: '/forge',
+  path: '/forge',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CollectionRoute = CollectionRouteImport.update({
@@ -51,6 +57,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/arena': typeof ArenaRoute
   '/collection': typeof CollectionRoute
+  '/forge': typeof ForgeRoute
   '/login': typeof LoginRoute
   '/shop': typeof ShopRoute
   '/monster/$id': typeof MonsterIdRoute
@@ -59,6 +66,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/arena': typeof ArenaRoute
   '/collection': typeof CollectionRoute
+  '/forge': typeof ForgeRoute
   '/login': typeof LoginRoute
   '/shop': typeof ShopRoute
   '/monster/$id': typeof MonsterIdRoute
@@ -68,6 +76,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/arena': typeof ArenaRoute
   '/collection': typeof CollectionRoute
+  '/forge': typeof ForgeRoute
   '/login': typeof LoginRoute
   '/shop': typeof ShopRoute
   '/monster/$id': typeof MonsterIdRoute
@@ -78,16 +87,25 @@ export interface FileRouteTypes {
     | '/'
     | '/arena'
     | '/collection'
+    | '/forge'
     | '/login'
     | '/shop'
     | '/monster/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/arena' | '/collection' | '/login' | '/shop' | '/monster/$id'
+  to:
+    | '/'
+    | '/arena'
+    | '/collection'
+    | '/forge'
+    | '/login'
+    | '/shop'
+    | '/monster/$id'
   id:
     | '__root__'
     | '/'
     | '/arena'
     | '/collection'
+    | '/forge'
     | '/login'
     | '/shop'
     | '/monster/$id'
@@ -97,6 +115,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ArenaRoute: typeof ArenaRoute
   CollectionRoute: typeof CollectionRoute
+  ForgeRoute: typeof ForgeRoute
   LoginRoute: typeof LoginRoute
   ShopRoute: typeof ShopRoute
   MonsterIdRoute: typeof MonsterIdRoute
@@ -116,6 +135,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forge': {
+      id: '/forge'
+      path: '/forge'
+      fullPath: '/forge'
+      preLoaderRoute: typeof ForgeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/collection': {
@@ -153,6 +179,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ArenaRoute: ArenaRoute,
   CollectionRoute: CollectionRoute,
+  ForgeRoute: ForgeRoute,
   LoginRoute: LoginRoute,
   ShopRoute: ShopRoute,
   MonsterIdRoute: MonsterIdRoute,
@@ -160,3 +187,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
