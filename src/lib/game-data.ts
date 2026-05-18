@@ -440,17 +440,18 @@ export type Tier = {
   emoji: string;
 };
 
-// Cumulative thresholds. Each named tier has 5 divisions (V→I) spaced evenly.
-const LADDER: { name: string; emoji: string; color: string; iconColor: string; start: number; divSize: number }[] = [
-  { name: "Ferro",    emoji: "⛓️", color: "bg-zinc-600 text-white",       iconColor: "text-zinc-300",   start: 0,    divSize: 50  },
-  { name: "Bronze",   emoji: "🥉", color: "bg-amber-700 text-amber-50",   iconColor: "text-amber-300",  start: 300,  divSize: 100 },
-  { name: "Prata",    emoji: "🥈", color: "bg-slate-400 text-slate-900",  iconColor: "text-slate-200",  start: 900,  divSize: 150 },
-  { name: "Ouro",     emoji: "🥇", color: "bg-yellow-500 text-yellow-950",iconColor: "text-yellow-200", start: 1700, divSize: 200 },
-  { name: "Platina",  emoji: "💠", color: "bg-cyan-500 text-cyan-950",    iconColor: "text-cyan-200",   start: 2750, divSize: 250 },
-  { name: "Diamante", emoji: "💎", color: "bg-sky-400 text-sky-950",      iconColor: "text-sky-100",    start: 4050, divSize: 300 },
+// Each division = 100 pts. 5 divisions per tier (V→I) = 500 pts per tier.
+export const DIVISION_SIZE = 100;
+const LADDER: { name: string; emoji: string; color: string; iconColor: string; start: number }[] = [
+  { name: "Ferro",    emoji: "⛓️", color: "bg-zinc-600 text-white",       iconColor: "text-zinc-300",   start: 0    },
+  { name: "Bronze",   emoji: "🥉", color: "bg-amber-700 text-amber-50",   iconColor: "text-amber-300",  start: 500  },
+  { name: "Prata",    emoji: "🥈", color: "bg-slate-400 text-slate-900",  iconColor: "text-slate-200",  start: 1000 },
+  { name: "Ouro",     emoji: "🥇", color: "bg-yellow-500 text-yellow-950",iconColor: "text-yellow-200", start: 1500 },
+  { name: "Platina",  emoji: "💠", color: "bg-cyan-500 text-cyan-950",    iconColor: "text-cyan-200",   start: 2000 },
+  { name: "Diamante", emoji: "💎", color: "bg-sky-400 text-sky-950",      iconColor: "text-sky-100",    start: 2500 },
 ];
-const MASTER_THRESHOLD = 5700;
-const GRAND_MASTER_THRESHOLD = 7000;
+const MASTER_THRESHOLD = 3000;
+const GRAND_MASTER_THRESHOLD = 4000;
 const DIVISION_NAMES = ["V", "IV", "III", "II", "I"];
 
 export function getTier(points: number, leaderboardRank?: number): Tier {
