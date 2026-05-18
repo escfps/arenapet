@@ -299,6 +299,7 @@ export type Egg = {
   description: string;
   weights: Record<string, number>;
   pack?: number; // quantos pets vêm
+  event?: boolean; // ovo de evento — visível mas não comprável fora do evento
 };
 
 // Helpers to build weight tables
@@ -349,6 +350,7 @@ export const EGGS: Record<string, Egg> = {
   event_felinos: {
     id: "event_felinos", name: "Ovo de Evento — Felinos Lendários", emoji: "🥚✨", priceGems: 80,
     description: "Evento limitado: Onça Sombria, Leão Dourado, Tigre Infernal, Pantera Negra (rara) e Pantera Áurea (ULTRA rara).",
+    event: true,
     weights: {
       onca_sombria: 30,
       leao_dourado: 30,

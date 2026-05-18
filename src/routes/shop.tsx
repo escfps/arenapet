@@ -163,10 +163,11 @@ function ShopPage() {
                   <h3 className="font-extrabold text-lg">{egg.name}</h3>
                   <p className="text-xs opacity-80 mb-3">{egg.description}</p>
                   <button
-                    onClick={() => hatch(egg.id)}
-                    className="w-full py-2 rounded-xl bg-gradient-to-b from-yellow-400 to-amber-500 text-yellow-950 font-extrabold hover:scale-105 transition"
+                    onClick={() => egg.event ? null : hatch(egg.id)}
+                    disabled={egg.event}
+                    className="w-full py-2 rounded-xl bg-gradient-to-b from-yellow-400 to-amber-500 text-yellow-950 font-extrabold hover:scale-105 transition disabled:from-white/20 disabled:to-white/10 disabled:text-white/70 disabled:cursor-not-allowed disabled:hover:scale-100"
                   >
-                    Chocar por {egg.priceCoins ? `🪙 ${egg.priceCoins}` : `💎 ${egg.priceGems}`}
+                    {egg.event ? "🔒 Em breve — Evento" : `Chocar por ${egg.priceCoins ? `🪙 ${egg.priceCoins}` : `💎 ${egg.priceGems}`}`}
                   </button>
                 </div>
               ))}
