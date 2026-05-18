@@ -52,6 +52,7 @@ function ExpeditionsPage() {
   const [expeditions, setExpeditions] = useState<ExpRow[]>([]);
   const [foodQty, setFoodQty] = useState(0);
   const [pickMonsterFor, setPickMonsterFor] = useState<ExpeditionDuration | null>(null);
+  const [swapForExp, setSwapForExp] = useState<ExpRow | null>(null);
   const [now, setNow] = useState(Date.now());
   const [busy, setBusy] = useState(false);
 
@@ -59,6 +60,7 @@ function ExpeditionsPage() {
   const claim = useServerFn(claimExpedition);
   const cancel = useServerFn(cancelExpedition);
   const buySlot = useServerFn(buyExpeditionSlot);
+  const swap = useServerFn(swapExpeditionMonster);
 
   const refresh = useCallback(async () => {
     if (!userId) return;
