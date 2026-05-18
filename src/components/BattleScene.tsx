@@ -714,12 +714,12 @@ function SideColumn({
         return (
           <div
             key={m.id}
-            className={`relative w-full max-w-[200px] transition-all duration-200 ${
+            className={`relative w-full max-w-[130px] sm:max-w-[200px] transition-all duration-200 ${
               dead ? "opacity-30 grayscale" : ""
             } ${lunge} ${isTarget ? "animate-battle-shake" : ""}`}
           >
             <div
-              className={`flex items-center gap-2 p-2 rounded-lg bg-gradient-to-r ${
+              className={`flex items-center gap-1.5 sm:gap-2 p-1 sm:p-2 rounded-lg bg-gradient-to-r ${
                 ELEMENT_COLORS[sp.element]
               } ring-2 ${RARITY_INFO[sp.rarity].ringColor} ${
                 (m.rank ?? 1) >= MAX_RANK ? "rank-max-glow" : ""
@@ -730,26 +730,26 @@ function SideColumn({
               <img
                 src={sp.image}
                 alt=""
-                className="h-12 w-12 object-contain drop-shadow-lg"
+                className="h-8 w-8 sm:h-12 sm:w-12 object-contain drop-shadow-lg shrink-0"
                 style={{ filter: skinFilter(m.skin) }}
               />
               <div className="flex-1 min-w-0">
-                <div className="font-bold text-xs text-white truncate">{m.name}</div>
-                <div className="h-2 rounded-full bg-black/40 overflow-hidden mt-1">
+                <div className="font-bold text-[10px] sm:text-xs text-white truncate leading-tight">{m.name}</div>
+                <div className="h-1.5 sm:h-2 rounded-full bg-black/40 overflow-hidden mt-0.5 sm:mt-1">
                   <div
                     className={`h-full bg-gradient-to-r ${hpColor} transition-all duration-500`}
                     style={{ width: `${pct}%` }}
                   />
                 </div>
                 {shield > 0 && (
-                  <div className="h-1.5 rounded-full bg-black/40 overflow-hidden mt-0.5 ring-1 ring-cyan-300/50">
+                  <div className="h-1 sm:h-1.5 rounded-full bg-black/40 overflow-hidden mt-0.5 ring-1 ring-cyan-300/50">
                     <div
                       className="h-full bg-gradient-to-r from-sky-400 to-blue-500 transition-all duration-500 shadow-[0_0_6px_rgba(56,189,248,0.8)]"
                       style={{ width: `${shieldPct}%` }}
                     />
                   </div>
                 )}
-                <div className="text-[10px] text-white/90 font-bold flex items-center gap-1 flex-wrap">
+                <div className="text-[8px] sm:text-[10px] text-white/90 font-bold flex items-center gap-1 flex-wrap leading-tight">
                   <span>{Math.round(h.cur)}/{h.max}</span>
                   {shield > 0 && (
                     <span className="text-cyan-300">🛡 {Math.round(shield)}</span>
