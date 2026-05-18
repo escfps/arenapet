@@ -641,6 +641,53 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           }
           return;
         }
+
+        // ===== FÊNIX VERMELHA — Brasa Renascida =====
+        // Golpe de fogo amplificado pela passiva (effAtk já inclui phoenixAtkBonus)
+        if (skill.kind === "phoenix_rage") {
+          const target = pickTarget(attacker, enemies);
+          if (target) {
+            const eff = defensiveMultiplier(getElement(attacker.species), target.species);
+            const base = Math.max(1, effAtk * 2 - tgtEffDef(target));
+            const dmg = Math.max(1, Math.round(base * eff * 2.0 * skillMult));
+            applyDamage(target, dmg);
+            const bonusPct = Math.round((phoenixAtkBonus(attacker) - 1) * 100);
+            log.push({
+              turn, actor: side, actorName: attacker.name, targetName: target.name,
+              damage: dmg, crit: true, effective: eff, remainingHp: target.current, targetShield: target.shield,
+              message: `${skill.emoji} ${attacker.name} usou ${skill.name}: ${dmg} em ${target.name} (🔥 +${bonusPct}% ATK por HP perdido!)`,
+            });
+            if (target.current <= 0) {
+              target.lastFallenAt = turn;
+              log.push({ turn, actor: side, actorName: attacker.name, targetName: target.name, damage: 0, crit: false, effective: 1, remainingHp: 0, message: `💀 ${target.name} foi incinerado!` });
+            }
+          }
+          return;
+        }
+
+        // ===== FÊNIX NEGRA — Comunhão Sombria =====
+        // Golpe sombrio: dano causado vira HP máx adicional + cura
+        if (skill.kind === "phoenix_growth") {
+          const target = pickTarget(attacker, enemies);
+          if (target) {
+            const eff = defensiveMultiplier(getElement(attacker.species), target.species);
+            const base = Math.max(1, effAtk * 2 - tgtEffDef(target));
+            const dmg = Math.max(1, Math.round(base * eff * 2.0 * skillMult));
+            applyDamage(target, dmg);
+            phoenixOnDamageDealt(attacker, dmg);
+            const grown = Math.max(1, Math.round(dmg * 0.20));
+            log.push({
+              turn, actor: side, actorName: attacker.name, targetName: target.name,
+              damage: dmg, crit: true, effective: eff, remainingHp: target.current, targetShield: target.shield,
+              message: `${skill.emoji} ${attacker.name} usou ${skill.name}: ${dmg} em ${target.name} (🌑 absorveu +${grown} HP máx!)`,
+            });
+            if (target.current <= 0) {
+              target.lastFallenAt = turn;
+              log.push({ turn, actor: side, actorName: attacker.name, targetName: target.name, damage: 0, crit: false, effective: 1, remainingHp: 0, message: `💀 ${target.name} teve a essência devorada!` });
+            }
+          }
+          return;
+        }
       }
       if (attacker.skillCd > 0) attacker.skillCd -= 1;
 
