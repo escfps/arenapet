@@ -459,6 +459,32 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           return;
         }
 
+        if (skill.kind === "blind_debuff") {
+          // Aplica cegueira em TODOS os inimigos vivos + dano leve no alvo principal
+          const target = pickTarget(attacker, enemies);
+          if (target) {
+            const eff = defensiveMultiplier(getElement(attacker.species), target.species);
+            const dmg = Math.max(1, Math.round((effAtk * 1.2 - tgtEffDef(target) * 0.5) * eff * skillMult));
+            applyDamage(target, dmg);
+            const alive = enemies.filter((e) => e.current > 0);
+            for (const e of alive) {
+              e.blindTurns = Math.max(e.blindTurns, 3);
+            }
+            log.push({
+              turn, actor: side, actorName: attacker.name, targetName: target.name,
+              damage: dmg, crit: false, effective: eff, remainingHp: target.current, targetShield: target.shield,
+              message: `${skill.emoji} ${attacker.name} usou ${skill.name}: ${dmg} de dano + 😵‍💫 cegou TODOS inimigos (50% chance de errar por 3 turnos)`,
+            });
+            if (target.current <= 0) {
+              target.lastFallenAt = turn;
+              log.push({ turn, actor: side, actorName: attacker.name, targetName: target.name, damage: 0, crit: false, effective: 1, remainingHp: 0, message: `💀 ${target.name} foi derrotado!` });
+            }
+          }
+          return;
+        }
+
+
+
 
         if (skill.kind === "double_strike") {
           const alive = enemies.filter((e) => e.current > 0);
