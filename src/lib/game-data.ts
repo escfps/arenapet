@@ -54,6 +54,7 @@ export const RARITY_INFO: Record<Rarity, { name: string; emoji: string; color: s
   common: { name: "Mestiço", emoji: "✦", color: "bg-slate-400 text-white", ringColor: "ring-slate-300", statMult: 0.85, skillMult: 0.85 },
   rare: { name: "Puro", emoji: "✦✦", color: "bg-amber-500 text-amber-950", ringColor: "ring-amber-400", statMult: 1.0, skillMult: 1.0 },
   legendary: { name: "Lendário", emoji: "✦✦✦", color: "bg-gradient-to-r from-fuchsia-500 to-pink-500 text-white", ringColor: "ring-fuchsia-400", statMult: 1.2, skillMult: 1.5 },
+  mythic: { name: "Mítico", emoji: "✦✦✦✦", color: "bg-gradient-to-r from-cyan-400 via-fuchsia-500 to-amber-400 text-white", ringColor: "ring-cyan-300", statMult: 1.5, skillMult: 1.8 },
 };
 
 // ===== Skills (1 por role, escala com raridade) =====
