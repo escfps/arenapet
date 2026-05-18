@@ -21,6 +21,11 @@ const STEPS: Step[] = [
     body: "Aqui você vê todos os seus pets, alimenta, dá energia e monta seu TIME de 3 pets pra batalhar. Use os 3 slots no topo (Frente, Meio, Trás) pra escolher a posição de cada um.",
   },
   {
+    emoji: "💪",
+    title: "Treinar pets — DEIXA ELES FORTES!",
+    body: "Clique em qualquer pet no Pátio pra abrir os detalhes. Lá tem a aba TREINAR onde você gasta moedas + energia pra aumentar ATK, DEF, SPD, HP e INT PERMANENTEMENTE. É a forma principal de evoluir seus bichinhos — treine bastante antes de cada batalha!",
+  },
+  {
     emoji: "⚔️",
     title: "Arena — onde rola a batalha",
     body: "Na aba ARENA você procura adversários e luta automaticamente. Vencer dá moedas, XP e pontos de rank. Cada batalha gasta energia do pet.",
