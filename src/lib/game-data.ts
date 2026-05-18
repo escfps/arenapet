@@ -13,8 +13,12 @@ import tidewraithImg from "@/assets/monsters/tidewraith.png";
 import voltsproutImg from "@/assets/monsters/voltsprout.png";
 import nightbloomImg from "@/assets/monsters/nightbloom.png";
 import voidsparkImg from "@/assets/monsters/voidspark.png";
+import rockpupImg from "@/assets/monsters/rockpup.png";
+import magmaboulderImg from "@/assets/monsters/magmaboulder.png";
+import mudpawImg from "@/assets/monsters/mudpaw.png";
+import crystalspriteImg from "@/assets/monsters/crystalsprite.png";
 
-export type Element = "fire" | "water" | "grass" | "electric" | "shadow";
+export type Element = "fire" | "water" | "grass" | "electric" | "shadow" | "earth";
 export type Role = "tank" | "dps" | "assassin" | "mage" | "healer";
 export type Rarity = "common" | "rare" | "legendary";
 
