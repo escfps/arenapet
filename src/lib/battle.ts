@@ -215,6 +215,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
         if (attacker.current <= 0) {
           attacker.lastFallenAt = turn;
           log.push({ turn, actor: side, actorName: attacker.name, targetName: attacker.name, damage: 0, crit: false, effective: 1, remainingHp: 0, message: `💀 ${attacker.name} foi consumido pelas chamas!` });
+          sweepDeathExplosions();
           continue;
         }
       }
