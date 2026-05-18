@@ -52,12 +52,19 @@ function MonsterPage() {
   async function useItem(itemId: string) {
     if (!profile || !monster) return;
     const item = ITEMS[itemId];
-    if (item.priceCoins && profile.coins < item.priceCoins) { toast.error("Moedas insuficientes!"); return; }
-    if (item.priceGems && profile.gems < item.priceGems) { toast.error("Gemas insuficientes!"); return; }
-    await patch({
-      coins: profile.coins - (item.priceCoins ?? 0),
-      gems: profile.gems - (item.priceGems ?? 0),
-    });
+    const useFromInventory = itemId === "ration" && rations > 0;
+    if (!useFromInventory) {
+      if (item.priceCoins && profile.coins < item.priceCoins) { toast.error("Moedas insuficientes!"); return; }
+      if (item.priceGems && profile.gems < item.priceGems) { toast.error("Gemas insuficientes!"); return; }
+      await patch({
+        coins: profile.coins - (item.priceCoins ?? 0),
+        gems: profile.gems - (item.priceGems ?? 0),
+      });
+    } else {
+      const newQty = rations - 1;
+      setRations(newQty);
+      await supabase.from("inventory").update({ quantity: newQty }).eq("user_id", userId!).eq("item_type", "ration");
+    }
     const updates: Partial<MonsterRow> = {};
     if (item.effect.hunger) updates.hunger = Math.min(100, monster.hunger + item.effect.hunger);
     if (item.effect.energy) {
