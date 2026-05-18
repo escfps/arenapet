@@ -604,6 +604,8 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           message: `💀 ${target.name} foi derrotado!`,
         });
       }
+      // PASSIVA Rato Bomba: detona explosão após cada ação
+      sweepDeathExplosions();
     }
     turn += 1;
   }
