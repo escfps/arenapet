@@ -15,6 +15,7 @@ export type ProfileRow = {
   losses: number;
   expedition_slots: number;
   arena_points: number;
+  welcome_chest_claimed?: boolean;
 };
 
 export function HUD({ profile }: { profile: ProfileRow }) {
