@@ -336,7 +336,9 @@ function ArenaLineup({
 }) {
   return (
     <div className={`flex ${mirrored ? "justify-end flex-row-reverse" : "justify-start"} items-end gap-3 sm:gap-5`}>
-      {team.map((m) => {
+      {[...team].sort((a, b) => (b.team_position ?? 0) - (a.team_position ?? 0)).map((m) => {
+
+
         const sp = SPECIES[m.species];
         if (!sp) return null;
         const key = `${side}:${m.name}`;
@@ -688,7 +690,8 @@ function SideColumn({
 }) {
   return (
     <div className={`flex flex-col gap-2 ${mirrored ? "items-end" : "items-start"}`}>
-      {team.map((m) => {
+      {[...team].sort((a, b) => (b.team_position ?? 0) - (a.team_position ?? 0)).map((m) => {
+
         const sp = SPECIES[m.species];
         if (!sp) return null;
         const key = `${side}:${m.name}`;
