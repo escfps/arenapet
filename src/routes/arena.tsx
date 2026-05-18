@@ -192,8 +192,6 @@ function ArenaPage() {
     const a = myTeam.map(toBattleMonster);
     const b = opponent.team.map(toBattleMonster);
     const result = simulateBattle(a, b);
-    setBattleLog(result.log);
-    setWinner(result.winner);
     const won = result.winner === "team_a";
     const rew = computeRewards(profile.level, won, isVip(profile.vip_until));
 
@@ -241,8 +239,6 @@ function ArenaPage() {
 
     savePromo(userId, nextPromo);
 
-    setRewards({ ...rew, points: delta, oldPoints, newPoints, promoMsg, promoBefore, promoAfter: nextPromo });
-
     // persist
     const updates: Partial<typeof profile> = {
       coins: profile.coins + rew.coins,
@@ -261,6 +257,7 @@ function ArenaPage() {
     updates.level = newLevel;
 
     // Recompensas de level-up (baú de madeira; ouro a cada 10)
+    let levelUpToasts: Array<() => void> = [];
     if (newLevel > profile.level) {
       const lvRew = rollLevelUpRewards(profile.level, newLevel);
       updates.coins = (updates.coins ?? profile.coins) + lvRew.coins;
@@ -282,17 +279,17 @@ function ArenaPage() {
         });
         await supabase.from("monsters").insert(rows);
       }
-      // toasts
+      // toasts (defer to after animation start)
       for (const lv of lvRew.levels) {
         const tier = lv === 100 ? "👑 Baú LENDÁRIO" : lv === 50 ? "🥇 Baú de OURO" : lv % 10 === 0 ? "🥈 Baú de PRATA" : "📦 Baú de Madeira";
-        toast.success(`🎉 Level ${lv}! ${tier} aberto`, { duration: 4000 });
+        levelUpToasts.push(() => toast.success(`🎉 Level ${lv}! ${tier} aberto`, { duration: 4000 }));
       }
       const parts: string[] = [];
       if (lvRew.coins) parts.push(`🪙 ${lvRew.coins}`);
       if (lvRew.gems) parts.push(`💎 ${lvRew.gems}`);
       if (lvRew.rations) parts.push(`🍖 ${lvRew.rations}`);
       if (lvRew.petSpecies.length) parts.push(`🥚 ${lvRew.petSpecies.length} pet${lvRew.petSpecies.length > 1 ? "s" : ""}`);
-      if (parts.length) toast(`Recompensas: ${parts.join(" • ")}`, { duration: 5000 });
+      if (parts.length) levelUpToasts.push(() => toast(`Recompensas: ${parts.join(" • ")}`, { duration: 5000 }));
     } else {
       await patch(updates);
     }
@@ -321,6 +318,7 @@ function ArenaPage() {
     });
 
     // Ração drop on win (70% chance, 1-2 rações) — feeds expedition system
+    let rationToast: (() => void) | null = null;
     if (won && Math.random() < 0.70) {
       const dropped = 1 + Math.floor(Math.random() * 2);
       const { data: foodRow } = await supabase
@@ -336,9 +334,33 @@ function ArenaPage() {
           { user_id: userId, item_type: "ration", quantity: current + dropped },
           { onConflict: "user_id,item_type" }
         );
-      toast(`🍖 +${dropped} ração!`, { icon: "🎁" });
+      rationToast = () => toast(`🍖 +${dropped} ração!`, { icon: "🎁" });
     }
+
+    // ✅ Tudo persistido no banco. Só agora começamos a animação — assim F5/queda
+    // de internet/fechar aba não muda nada: o resultado já está gravado.
+    setRewards({ ...rew, points: delta, oldPoints, newPoints, promoMsg, promoBefore, promoAfter: nextPromo });
+    setBattleLog(result.log);
+    setWinner(result.winner);
+    levelUpToasts.forEach((fn) => fn());
+    if (rationToast) rationToast();
   }
+
+  // Avisar se o jogador tentar sair durante a animação da batalha
+  // (o resultado já está salvo no DB, mas evita confusão)
+  useEffect(() => {
+    if (!battleLog) return;
+    const animationDone = shownLog.length >= battleLog.length;
+    if (animationDone) return;
+    function onBeforeUnload(e: BeforeUnloadEvent) {
+      e.preventDefault();
+      e.returnValue = "Batalha em andamento! O resultado já foi registrado.";
+      return e.returnValue;
+    }
+    window.addEventListener("beforeunload", onBeforeUnload);
+    return () => window.removeEventListener("beforeunload", onBeforeUnload);
+  }, [battleLog, shownLog.length]);
+
 
 
   if (loading || !profile) {
