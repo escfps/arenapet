@@ -64,8 +64,24 @@ export const RARITY_INFO: Record<Rarity, { name: string; emoji: string; color: s
   mythic:     { name: "Mítico",     emoji: "✦✦✦✦✦✦", color: "bg-gradient-to-r from-cyan-400 via-fuchsia-500 to-amber-400 text-white",      ringColor: "ring-cyan-300",    statMult: 1.75, skillMult: 1.85 },
 };
 
-// ===== Skills (1 por role, escala com raridade) =====
-export type SkillKind = "shield_taunt" | "heavy_strike" | "guaranteed_crit" | "aoe_magic" | "team_heal";
+// ===== Skills =====
+// 5 mecânicas base (legadas) + 10 novas mecânicas exclusivas inspiradas em LoL
+export type SkillKind =
+  | "shield_taunt"      // tank — escudo + provoca (Garen-ish)
+  | "heavy_strike"      // dps — golpe pesado mono-alvo
+  | "guaranteed_crit"   // assassino — crítico no mais fraco (Zed)
+  | "aoe_magic"         // mago — explosão em todos (Brand)
+  | "team_heal"         // healer — cura todo o time (Soraka)
+  | "lifesteal_strike"  // dps — bate e cura (Aatrox)
+  | "execute"           // assassino — dano massivo em alvo < 30% HP (Garen R)
+  | "burn_dot"          // mago — queimadura em todos (Brand passiva)
+  | "double_strike"     // assassino — 2 golpes no mais forte (Master Yi)
+  | "shield_ally"       // healer — escudo + def num aliado (Lulu/Janna)
+  | "chain_lightning"   // mago — pula em 3 inimigos (Kennen)
+  | "silence_disable"   // mago — silencia (anula skill do alvo) (Fizz/Talon)
+  | "berserker_rage"    // dps/tank — buff ATK +50% por 3 turnos (Tryndamere)
+  | "revive_ally"       // healer — ressuscita um aliado com 30% HP (Zilean)
+  | "true_damage_nuke"; // mítico — dano puro ignora DEF e elemento (Vayne ult)
 
 export type Skill = {
   name: string;
@@ -75,6 +91,7 @@ export type Skill = {
   cooldown: number; // turnos
 };
 
+// Skills padrão por role — fallback se species.skill não estiver definida
 export const ROLE_SKILLS: Record<Role, Skill> = {
   tank: {
     name: "Provocação Brutal", emoji: "🛡️", kind: "shield_taunt", cooldown: 4,
@@ -97,6 +114,13 @@ export const ROLE_SKILLS: Record<Role, Skill> = {
     description: "Cura todos os aliados vivos (~INT×1.8 + 10% HP máx).",
   },
 };
+
+// Helper: pega a skill da espécie (com fallback pra role)
+export function getSkill(speciesId: string): Skill {
+  const sp = SPECIES[speciesId];
+  if (sp?.skill) return sp.skill;
+  return ROLE_SKILLS[sp?.role ?? "dps"];
+}
 
 export const SPECIES: Record<string, Species> = {
   // ===== PUROS (raros) =====
