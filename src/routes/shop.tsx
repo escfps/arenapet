@@ -233,7 +233,80 @@ function ShopPage() {
           </>
         )}
 
-        {tab === "skins" && (
+        {tab === "chests" && (
+          <>
+            <div className="grid sm:grid-cols-2 gap-4">
+              {Object.values(CHESTS).map((c) => {
+                const rarityEntries = Object.entries(c.petRarityWeights) as [import("@/lib/game-data").Rarity, number][];
+                const totalW = rarityEntries.reduce((a, [, w]) => a + w, 0);
+                return (
+                  <div key={c.id} className="rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 p-4 text-white">
+                    <div className="text-center">
+                      <div className="text-6xl mb-1">{c.emoji}</div>
+                      <h3 className="font-extrabold text-lg">{c.name}</h3>
+                      <p className="text-xs opacity-80 mb-3">{c.description}</p>
+                    </div>
+
+                    <div className="bg-black/30 rounded-xl p-3 text-[11px] space-y-1 mb-3">
+                      <div className="font-bold text-yellow-300 mb-1">📊 Drops garantidos:</div>
+                      <div>🪙 {c.coins[0]}–{c.coins[1]} moedas</div>
+                      <div>🍖 {c.rations[0]}–{c.rations[1]} rações</div>
+                      <div>💎 {c.gems[0]}–{c.gems[1]} gemas {c.gemChance < 1 && `(${Math.round(c.gemChance * 100)}% chance)`}</div>
+                      <div className="font-bold text-fuchsia-300 mt-2">🐾 Pet: {Math.round(c.petChance * 100)}% de cair</div>
+                      {c.petChance > 0 && (
+                        <div className="pl-2 space-y-0.5">
+                          {rarityEntries.map(([r, w]) => (
+                            <div key={r} className="flex justify-between">
+                              <span>{RARITY_INFO[r].emoji} {RARITY_INFO[r].name}</span>
+                              <span className="opacity-80">{((w / totalW) * c.petChance * 100).toFixed(1)}%</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    <button
+                      onClick={() => openChest(c.id)}
+                      className="w-full py-2 rounded-xl bg-gradient-to-b from-yellow-400 to-amber-500 text-yellow-950 font-extrabold hover:scale-105 transition"
+                    >
+                      Abrir por {c.priceCoins ? `🪙 ${c.priceCoins}` : `💎 ${c.priceGems}`}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+
+            {chestResult && (
+              <div className="rounded-2xl p-6 text-center text-white bg-gradient-to-br from-amber-500 to-yellow-700 animate-in fade-in zoom-in">
+                <div className="text-sm opacity-90">VOCÊ ABRIU {CHESTS[chestResult.tier].name.toUpperCase()}</div>
+                <div className="text-6xl my-2">{CHESTS[chestResult.tier].emoji}</div>
+                <div className="space-y-1 text-sm font-bold">
+                  {chestResult.reward.coins > 0 && <div>+🪙 {chestResult.reward.coins} moedas</div>}
+                  {chestResult.reward.gems > 0 && <div>+💎 {chestResult.reward.gems} gemas</div>}
+                  {chestResult.reward.rations > 0 && <div>+🍖 {chestResult.reward.rations} rações</div>}
+                  {chestResult.reward.petSpecies && (
+                    <div className="mt-3 pt-3 border-t border-white/30">
+                      <div className="text-xs opacity-90">🎉 BICHINHO RARO!</div>
+                      <img src={SPECIES[chestResult.reward.petSpecies].image} alt="" className="h-32 mx-auto drop-shadow-2xl" />
+                      <div className="text-xl font-extrabold">
+                        {SPECIES[chestResult.reward.petSpecies].emoji} {SPECIES[chestResult.reward.petSpecies].name}
+                      </div>
+                      <span className={`inline-block mt-1 px-2 py-0.5 rounded-full ${RARITY_INFO[SPECIES[chestResult.reward.petSpecies].rarity].color} text-[10px] font-extrabold`}>
+                        {RARITY_INFO[SPECIES[chestResult.reward.petSpecies].rarity].emoji} {RARITY_INFO[SPECIES[chestResult.reward.petSpecies].rarity].name}
+                      </span>
+                    </div>
+                  )}
+                  {!chestResult.reward.petSpecies && (
+                    <div className="mt-2 text-xs opacity-80">(sem pet desta vez — boa sorte na próxima!)</div>
+                  )}
+                </div>
+                <button onClick={() => setChestResult(null)} className="mt-3 px-4 py-1.5 rounded-lg bg-white/30 hover:bg-white/40 text-sm font-bold">Fechar</button>
+              </div>
+            )}
+          </>
+        )}
+
+
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {Object.values(SKINS).filter((s) => s.id !== "default").map((sk) => {
               const owned = ownedSkins.includes(sk.id);
