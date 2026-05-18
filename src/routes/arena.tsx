@@ -210,7 +210,7 @@ function ArenaPage() {
     })));
 
     const a = myTeam.map(toBattleMonster);
-    const b = opponent.team.map(toBattleMonster);
+    const b = opp.team.map(toBattleMonster);
     const result = simulateBattle(a, b);
     const isDraw = result.winner === "draw";
     const won = result.winner === "team_a";
@@ -317,19 +317,19 @@ function ArenaPage() {
       const { data: oppProfile } = await supabase
         .from("profiles")
         .select("arena_points")
-        .eq("id", opponent.ownerId)
+        .eq("id", opp.ownerId)
         .maybeSingle();
       if (oppProfile) {
         await supabase
           .from("profiles")
           .update({ arena_points: Math.max(0, (oppProfile.arena_points ?? 0) + opponentDelta) })
-          .eq("id", opponent.ownerId);
+          .eq("id", opp.ownerId);
       }
 
       await supabase.from("battles").insert({
         attacker_id: userId,
-        defender_id: opponent.ownerId,
-        winner_id: won ? userId : opponent.ownerId,
+        defender_id: opp.ownerId,
+        winner_id: won ? userId : opp.ownerId,
         log: JSON.parse(JSON.stringify(result.log)),
         coins_reward: rew.coins,
         xp_reward: rew.xp,
