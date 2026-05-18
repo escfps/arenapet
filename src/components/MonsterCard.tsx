@@ -1,4 +1,4 @@
-import { SPECIES, skinFilter, ELEMENT_COLORS, ELEMENT_NAMES, ROLE_INFO, RARITY_INFO, totalStats } from "@/lib/game-data";
+import { SPECIES, skinFilter, ELEMENT_COLORS, ELEMENT_NAMES, ROLE_INFO, RARITY_INFO, totalStats, rankStars } from "@/lib/game-data";
 
 export type MonsterRow = {
   id: string;
@@ -15,6 +15,7 @@ export type MonsterRow = {
   happiness: number;
   skin: string;
   in_team: boolean;
+  rank?: number;
 };
 
 type Props = {
@@ -27,7 +28,8 @@ type Props = {
 export function MonsterCard({ monster, onClick, compact, selected }: Props) {
   const sp = SPECIES[monster.species];
   if (!sp) return null;
-  const stats = totalStats(monster.species, monster.level);
+  const rank = monster.rank ?? 1;
+  const stats = totalStats(monster.species, monster.level, rank);
   const gradient = ELEMENT_COLORS[sp.element];
 
   return (
@@ -45,6 +47,11 @@ export function MonsterCard({ monster, onClick, compact, selected }: Props) {
       <span className="absolute top-2 right-2 z-10 px-2 py-0.5 rounded-full bg-black/70 text-white text-[10px] font-extrabold">
         Nv {monster.level}
       </span>
+      {rank > 1 && (
+        <span className="absolute top-8 right-2 z-10 px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-400 to-yellow-300 text-amber-950 text-[10px] font-extrabold shadow-lg max-w-[80%] truncate">
+          {rankStars(rank)}
+        </span>
+      )}
       <span className={`absolute bottom-[3.5rem] right-2 z-10 px-2 py-0.5 rounded-full ${ROLE_INFO[sp.role].color} text-white text-[10px] font-extrabold shadow-lg`}>
         {ROLE_INFO[sp.role].emoji} {ROLE_INFO[sp.role].name}
       </span>
