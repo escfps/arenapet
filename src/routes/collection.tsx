@@ -113,6 +113,73 @@ function CollectionPage() {
           ))}
         </div>
 
+        {/* Search + advanced filters */}
+        <div className="bg-black/40 backdrop-blur-md rounded-2xl border border-white/20 p-3 space-y-3">
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="🔍 Buscar pelo nome..."
+            className="w-full px-4 py-2 rounded-full bg-white/10 text-white placeholder-white/50 text-sm font-bold border border-white/20 focus:outline-none focus:border-yellow-400"
+          />
+
+          <div className="space-y-1">
+            <div className="text-white/70 text-[10px] font-extrabold uppercase tracking-wider px-1">Raridade</div>
+            <div className="flex flex-wrap gap-1.5">
+              <button
+                onClick={() => setRarityFilter("all")}
+                className={`px-3 py-1 rounded-full text-[11px] font-extrabold transition ${
+                  rarityFilter === "all" ? "bg-yellow-400 text-yellow-950" : "bg-white/10 text-white hover:bg-white/20"
+                }`}
+              >
+                Todas
+              </button>
+              {ALL_RARITIES.map((r) => (
+                <button
+                  key={r}
+                  onClick={() => setRarityFilter(r)}
+                  className={`px-3 py-1 rounded-full text-[11px] font-extrabold transition ${
+                    rarityFilter === r
+                      ? `${RARITY_INFO[r].color} ring-2 ${RARITY_INFO[r].ringColor}`
+                      : "bg-white/10 text-white hover:bg-white/20"
+                  }`}
+                >
+                  {RARITY_INFO[r].emoji} {RARITY_INFO[r].name}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="space-y-1">
+            <div className="text-white/70 text-[10px] font-extrabold uppercase tracking-wider px-1">Elemento</div>
+            <div className="flex flex-wrap gap-1.5">
+              <button
+                onClick={() => setElementFilter("all")}
+                className={`px-3 py-1 rounded-full text-[11px] font-extrabold transition ${
+                  elementFilter === "all" ? "bg-yellow-400 text-yellow-950" : "bg-white/10 text-white hover:bg-white/20"
+                }`}
+              >
+                Todos
+              </button>
+              {ALL_ELEMENTS.map((el) => (
+                <button
+                  key={el}
+                  onClick={() => setElementFilter(el)}
+                  className={`px-3 py-1 rounded-full text-[11px] font-extrabold text-white transition bg-gradient-to-r ${ELEMENT_COLORS[el]} ${
+                    elementFilter === el ? "ring-2 ring-white" : "opacity-60 hover:opacity-100"
+                  }`}
+                >
+                  {ELEMENT_NAMES[el]}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {filtered.length === 0 && (
+            <div className="text-center text-white/60 text-sm py-2">Nenhum bichinho com esses filtros.</div>
+          )}
+        </div>
+
         {/* Grid grouped by element */}
         <div className="space-y-6">
           {(["fire", "water", "grass", "electric", "shadow", "earth"] as Element[]).map((el) => {
