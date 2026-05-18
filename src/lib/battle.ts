@@ -158,13 +158,43 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
         attacker.tauntTurns -= 1;
         if (attacker.tauntTurns === 0) attacker.tauntTargetId = null;
       }
+      // tick burn (DoT)
+      if (attacker.burnTurns > 0 && attacker.current > 0) {
+        applyDamage(attacker, attacker.burnDmg);
+        log.push({
+          turn, actor: side, actorName: attacker.name, targetName: attacker.name,
+          damage: attacker.burnDmg, crit: false, effective: 1, remainingHp: attacker.current,
+          message: `🔥 ${attacker.name} sofreu ${attacker.burnDmg} de queimadura`,
+        });
+        attacker.burnTurns -= 1;
+        if (attacker.current <= 0) {
+          attacker.lastFallenAt = turn;
+          log.push({ turn, actor: side, actorName: attacker.name, targetName: attacker.name, damage: 0, crit: false, effective: 1, remainingHp: 0, message: `💀 ${attacker.name} foi consumido pelas chamas!` });
+          continue;
+        }
+      }
+      // tick rage
+      if (attacker.rageTurns > 0) {
+        attacker.rageTurns -= 1;
+        if (attacker.rageTurns === 0) {
+          attacker.rageAtkMult = 0;
+          attacker.rageDefDrop = 0;
+        }
+      }
+      // tick def buff
+      if (attacker.defBuffTurns > 0) {
+        attacker.defBuffTurns -= 1;
+        if (attacker.defBuffTurns === 0) attacker.defBuffPct = 0;
+      }
       const allies = side === "team_a" ? a : b;
       const enemies = side === "team_a" ? b : a;
       if (!enemies.some((e) => e.current > 0)) break;
 
-      const skill = ROLE_SKILLS[attacker.role];
+      const skill = getSkill(attacker.species);
       const skillMult = RARITY_INFO[attacker.rarity].skillMult;
-      const canUseSkill = attacker.skillCd <= 0;
+      const silenced = attacker.silenceTurns > 0;
+      if (silenced) attacker.silenceTurns -= 1;
+      const canUseSkill = attacker.skillCd <= 0 && !silenced;
 
       // ===== ACTIVE SKILLS =====
       if (canUseSkill) {
