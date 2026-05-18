@@ -349,6 +349,7 @@ export type Database = {
       }
       _bot_xp_for_next: { Args: { lvl: number }; Returns: number }
       simulate_bot_battles: { Args: never; Returns: undefined }
+      train_bot_pets: { Args: never; Returns: undefined }
     }
     Enums: {
       [_ in never]: never
