@@ -178,8 +178,9 @@ function ArenaPage() {
   const hungryPets = myTeam.filter((m) => (m.hunger ?? 100) > 0 && (m.hunger ?? 100) < 50);
   const canFight = myTeam.length > 0 && minEnergy >= 1 && starvingPets.length === 0;
 
-  async function fight() {
-    if (!profile || !userId || !opponent) return;
+  async function fight(forcedOpp?: NonNullable<typeof opponent>) {
+    const opp = forcedOpp ?? opponent;
+    if (!profile || !userId || !opp) return;
     if (starvingPets.length > 0) {
       toast.error(`${starvingPets[0].name} está faminto! Alimente antes de batalhar. 🍖`);
       return;
