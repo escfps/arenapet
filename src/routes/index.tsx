@@ -60,6 +60,23 @@ function PatioPage() {
     });
   }, [monsters, search, rarityFilter, elementFilter]);
 
+  const groupedSpecies = useMemo(() => {
+    const map = new Map<string, MonsterRow[]>();
+    for (const m of filteredMonsters) {
+      if (!map.has(m.species)) map.set(m.species, []);
+      map.get(m.species)!.push(m);
+    }
+    return Array.from(map.entries()).map(([species, list]) => {
+      const sorted = [...list].sort((a, b) => {
+        if (a.in_team !== b.in_team) return a.in_team ? -1 : 1;
+        return (b.rank ?? 1) - (a.rank ?? 1);
+      });
+      return { species, list: sorted, rep: sorted[0], teamCount: list.filter((x) => x.in_team).length };
+    });
+  }, [filteredMonsters]);
+
+  const groupModalList = groupModal ? (groupedSpecies.find((g) => g.species === groupModal)?.list ?? []) : [];
+
   async function openWelcomeChest() {
     if (!userId || !profile || hatching) return;
     if (profile.welcome_chest_claimed) {
