@@ -96,8 +96,8 @@ export function BattleScene({
   return (
     <div className="rounded-2xl bg-gradient-to-b from-slate-900/70 to-indigo-950/70 backdrop-blur-md border border-white/20 p-4">
       <div className="grid grid-cols-2 gap-3">
-        <SideColumn team={teamA} side="a" hp={hp} fx={fx} />
-        <SideColumn team={teamB} side="b" hp={hp} fx={fx} mirrored />
+        <SideColumn team={teamA} side="a" hp={hp} shields={shields} fx={fx} />
+        <SideColumn team={teamB} side="b" hp={hp} shields={shields} fx={fx} mirrored />
       </div>
     </div>
   );
