@@ -96,6 +96,24 @@ function ShopPage() {
     toast.success(`+${pack.gems + pack.bonus} 💎 (modo demo)`);
   }
 
+  async function refillEnergy(petId: string) {
+    if (!profile) return;
+    if (profile.gems < ENERGY_REFILL_GEM_COST) { toast.error("Gemas insuficientes!"); return; }
+    await patch({ gems: profile.gems - ENERGY_REFILL_GEM_COST });
+    await supabase.from("monsters").update({ battle_energy: MAX_BATTLE_ENERGY, battle_energy_at: new Date().toISOString() }).eq("id", petId);
+    await loadPets();
+    toast.success("⚡ Energia recarregada!");
+  }
+
+  async function refillAll() {
+    if (!profile || !userId) return;
+    if (profile.gems < ENERGY_REFILL_ALL_GEM_COST) { toast.error("Gemas insuficientes!"); return; }
+    await patch({ gems: profile.gems - ENERGY_REFILL_ALL_GEM_COST });
+    await supabase.from("monsters").update({ battle_energy: MAX_BATTLE_ENERGY, battle_energy_at: new Date().toISOString() }).eq("owner_id", userId);
+    await loadPets();
+    toast.success("⚡ Todo o time recarregado!");
+  }
+
   return (
     <main
       className="min-h-screen pb-12 bg-cover bg-fixed bg-center"
