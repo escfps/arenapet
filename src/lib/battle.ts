@@ -10,6 +10,7 @@ export type BattleMonster = {
   atk: number;
   def: number;
   spd: number;
+  int: number;
   role: Role;
   rarity: Rarity;
 };
@@ -57,6 +58,7 @@ export function toBattleMonster(m: DBMonster): BattleMonster {
     atk: stats.atk,
     def: stats.def,
     spd: stats.spd,
+    int: stats.int,
     role: sp?.role ?? "dps",
     rarity: sp?.rarity ?? "common",
   };
