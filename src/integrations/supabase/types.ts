@@ -329,6 +329,7 @@ export type Database = {
       }
       _bot_random_species: { Args: { rarity: string }; Returns: string }
       _bot_rarity_weight: { Args: { r: string }; Returns: number }
+      _bot_species_name: { Args: { sp: string }; Returns: string }
       _bot_species_rarity: { Args: { sp: string }; Returns: string }
       _bot_species_stats: {
         Args: { sp: string }
