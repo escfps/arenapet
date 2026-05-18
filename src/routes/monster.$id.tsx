@@ -364,7 +364,7 @@ function MonsterPage() {
                 <div className="text-3xl mb-1">{emoji}</div>
                 <div>Treinar {s.toUpperCase()}</div>
                 <div className="text-xs font-normal opacity-90 mt-1">
-                  🪙 {20 + monster.rank * 10} • -15 energia • {gain} {s.toUpperCase()}
+                  🪙 {20 + monster.rank * 10} • -{TRAIN_ENERGY_COST} energia • {gain} {s.toUpperCase()}
                 </div>
               </button>
             ))}
