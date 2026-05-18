@@ -145,8 +145,7 @@ function MonsterPage() {
                     <div className="mt-2 space-y-1 text-xs">
                       <Bar label="❤️ HP" value={stats.hp} max={stats.hp} color="bg-rose-500" />
                       <Bar label="🍖 Fome" value={monster.hunger} max={100} color="bg-amber-500" />
-                      <Bar label="💪 Vigor" value={monster.energy} max={100} color="bg-yellow-400" />
-                      <Bar label="⚡ Energia de Batalha" value={computeBattleEnergy(monster.battle_energy, monster.battle_energy_at).energy} max={MAX_BATTLE_ENERGY} color="bg-cyan-400" />
+                      <Bar label="⚡ Energia" value={computeBattleEnergy(monster.battle_energy, monster.battle_energy_at).energy} max={MAX_BATTLE_ENERGY} color="bg-yellow-400" />
                       <Bar label="😊 Felicidade" value={monster.happiness} max={100} color="bg-pink-500" />
                     </div>
                     <div className="mt-2 grid grid-cols-5 gap-1 text-xs font-bold bg-black/30 rounded-lg p-2">
