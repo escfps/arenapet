@@ -26,7 +26,7 @@ export const startExpedition = createServerFn({ method: "POST" })
     // load profile + monster + active expeditions count + ration inventory
     const [{ data: profile }, { data: monster }, { count: activeCount }, { data: foodRow }] = await Promise.all([
       supabaseAdmin.from("profiles").select("id,expedition_slots").eq("id", userId).maybeSingle(),
-      supabaseAdmin.from("monsters").select("id,owner_id,level,rank,in_team").eq("id", data.monsterId).maybeSingle(),
+      supabaseAdmin.from("monsters").select("id,owner_id,rank,in_team").eq("id", data.monsterId).maybeSingle(),
       supabaseAdmin.from("expeditions").select("id", { count: "exact", head: true }).eq("user_id", userId).eq("claimed", false),
       supabaseAdmin.from("inventory").select("quantity").eq("user_id", userId).eq("item_type", "ration").maybeSingle(),
     ]);
