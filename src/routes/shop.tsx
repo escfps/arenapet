@@ -15,6 +15,11 @@ import { useProfile } from "@/lib/use-profile";
 import { toast, Toaster } from "sonner";
 import arenaBg from "@/assets/arena-bg.jpg";
 
+const WHATSAPP_NUMBER = "5554999999872";
+function whatsappUrl(message: string) {
+  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+}
+
 export const Route = createFileRoute("/shop")({
   component: ShopPage,
 });
@@ -318,28 +323,38 @@ function ShopPage() {
               onClick={buyVip}
               className="mt-5 w-full py-3 rounded-xl bg-yellow-950 text-yellow-300 font-extrabold text-lg hover:bg-yellow-900 transition shadow-lg"
             >
-              {isVip(profile.vip_until)
+            {isVip(profile.vip_until)
                 ? `Renovar por 💎 ${VIP_PRICE_GEMS} (atual: ${new Date(profile.vip_until!).toLocaleDateString("pt-BR")})`
                 : `Ativar por 💎 ${VIP_PRICE_GEMS}`}
             </button>
+            <a
+              href={whatsappUrl(`Olá! Quero comprar o Passe VIP (${VIP_DURATION_DAYS} dias) no Arena Pet. Meu nick: ${profile.username}`)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3 w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-green-600 text-white font-extrabold text-base hover:bg-green-700 transition shadow-lg"
+            >
+              💬 Comprar VIP via WhatsApp
+            </a>
           </div>
         )}
 
         {tab === "gems" && (
           <div className="space-y-3">
-            <p className="text-white/80 text-xs text-center">⚠️ Modo demo — Stripe será integrado em breve. Por agora as gemas chegam grátis.</p>
+            <p className="text-white/80 text-xs text-center">💬 Pagamento manual via WhatsApp — após o pagamento confirmado, as gemas são creditadas na sua conta.</p>
             <div className="grid sm:grid-cols-2 gap-3">
               {GEM_PACKS.map((p) => (
                 <div key={p.id} className="rounded-2xl bg-gradient-to-br from-purple-600 to-fuchsia-700 border-2 border-purple-300 p-4 text-white">
                   <div className="text-3xl">💎</div>
                   <div className="text-xl font-extrabold">{p.gems.toLocaleString("pt-BR")} gemas</div>
                   {p.bonus > 0 && <div className="text-xs text-yellow-300 font-bold">+ {p.bonus} bônus 🎁</div>}
-                  <button
-                    onClick={() => buyGems(p)}
-                    className="mt-3 w-full py-2 rounded-lg bg-white text-purple-800 font-extrabold hover:bg-yellow-200 transition"
+                  <a
+                    href={whatsappUrl(`Olá! Quero comprar o pacote de ${p.gems.toLocaleString("pt-BR")}${p.bonus > 0 ? ` (+${p.bonus} bônus)` : ""} 💎 por R$ ${p.priceBRL.toFixed(2).replace(".", ",")} no Arena Pet. Meu nick: ${profile.username}`)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-3 w-full flex items-center justify-center gap-2 py-2 rounded-lg bg-green-500 text-white font-extrabold hover:bg-green-600 transition"
                   >
-                    R$ {p.priceBRL.toFixed(2).replace(".", ",")}
-                  </button>
+                    💬 R$ {p.priceBRL.toFixed(2).replace(".", ",")}
+                  </a>
                 </div>
               ))}
             </div>
