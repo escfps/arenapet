@@ -1,4 +1,4 @@
-import { SPECIES, defensiveMultiplier, totalStats, type Element, type Role } from "./game-data";
+import { SPECIES, ROLE_SKILLS, RARITY_INFO, defensiveMultiplier, totalStats, type Element, type Role, type Rarity } from "./game-data";
 
 export type BattleMonster = {
   id: string;
@@ -11,6 +11,7 @@ export type BattleMonster = {
   def: number;
   spd: number;
   role: Role;
+  rarity: Rarity;
 };
 
 export type BattleLogEntry = {
