@@ -1,4 +1,4 @@
-import { SPECIES, TYPE_CHART, totalStats, type Element } from "./game-data";
+import { SPECIES, TYPE_CHART, totalStats, type Element, type Role } from "./game-data";
 
 export type BattleMonster = {
   id: string;
@@ -10,6 +10,7 @@ export type BattleMonster = {
   atk: number;
   def: number;
   spd: number;
+  role: Role;
 };
 
 export type BattleLogEntry = {
@@ -19,7 +20,7 @@ export type BattleLogEntry = {
   targetName: string;
   damage: number;
   crit: boolean;
-  effective: number; // 1, 1.5, 0.7
+  effective: number;
   remainingHp: number;
   message: string;
 };
@@ -42,7 +43,8 @@ export type DBMonster = {
 };
 
 export function toBattleMonster(m: DBMonster): BattleMonster {
-  const stats = totalStats(m.species, m.level, { hp: m.hp - SPECIES[m.species]?.base.hp || 0, atk: 0, def: 0, spd: 0 });
+  const sp = SPECIES[m.species];
+  const stats = totalStats(m.species, m.level);
   return {
     id: m.id,
     owner_id: m.owner_id,
@@ -53,6 +55,7 @@ export function toBattleMonster(m: DBMonster): BattleMonster {
     atk: stats.atk,
     def: stats.def,
     spd: stats.spd,
+    role: sp?.role ?? "dps",
   };
 }
 
@@ -61,75 +64,108 @@ function getElement(species: string): Element {
 }
 
 function rng(seed: number) {
-  // simple deterministic-ish rng; ok for client display
   return () => {
     seed = (seed * 9301 + 49297) % 233280;
     return seed / 233280;
   };
 }
 
+type Live = BattleMonster & { current: number; maxHp: number; healCd: number };
+
+function pickTarget(attacker: Live, enemies: Live[]): Live | null {
+  const alive = enemies.filter((e) => e.current > 0);
+  if (alive.length === 0) return null;
+  // Taunt: prefer tank if alive
+  const tank = alive.find((e) => e.role === "tank");
+  if (tank && attacker.role !== "assassin") return tank;
+  // Assassin: lowest current HP
+  if (attacker.role === "assassin") {
+    return alive.reduce((a, b) => (a.current < b.current ? a : b));
+  }
+  // default: first alive
+  return alive[0];
+}
+
 export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], seed = Date.now()): BattleResult {
   const log: BattleLogEntry[] = [];
-  const a = teamA.map((m) => ({ ...m, current: m.hp }));
-  const b = teamB.map((m) => ({ ...m, current: m.hp }));
+  const a: Live[] = teamA.map((m) => ({ ...m, current: m.hp, maxHp: m.hp, healCd: 0 }));
+  const b: Live[] = teamB.map((m) => ({ ...m, current: m.hp, maxHp: m.hp, healCd: 0 }));
   const rand = rng(seed);
 
   let turn = 1;
-  let aIdx = 0;
-  let bIdx = 0;
-  const MAX_TURNS = 60;
+  const MAX_TURNS = 30;
 
-  while (aIdx < a.length && bIdx < b.length && turn <= MAX_TURNS) {
-    const atkA = a[aIdx];
-    const atkB = b[bIdx];
+  while (a.some((m) => m.current > 0) && b.some((m) => m.current > 0) && turn <= MAX_TURNS) {
+    type Actor = { mon: Live; side: "team_a" | "team_b" };
+    const order: Actor[] = [
+      ...a.map((mon) => ({ mon, side: "team_a" as const })),
+      ...b.map((mon) => ({ mon, side: "team_b" as const })),
+    ]
+      .filter((x) => x.mon.current > 0)
+      .sort((x, y) => y.mon.spd - x.mon.spd);
 
-    // turn order by speed
-    const order: ("team_a" | "team_b")[] = atkA.spd >= atkB.spd ? ["team_a", "team_b"] : ["team_b", "team_a"];
+    for (const { mon: attacker, side } of order) {
+      if (attacker.current <= 0) continue;
+      const allies = side === "team_a" ? a : b;
+      const enemies = side === "team_a" ? b : a;
+      if (!enemies.some((e) => e.current > 0)) break;
 
-    for (const side of order) {
-      const attacker = side === "team_a" ? atkA : atkB;
-      const defender = side === "team_a" ? atkB : atkA;
-      if (attacker.current <= 0 || defender.current <= 0) continue;
+      // Healer logic
+      if (attacker.role === "healer" && attacker.healCd <= 0) {
+        const hurt = allies
+          .filter((m) => m.current > 0 && m.current < m.maxHp)
+          .sort((x, y) => x.current / x.maxHp - y.current / y.maxHp)[0];
+        if (hurt) {
+          const heal = Math.round(attacker.atk * 2.2 + attacker.maxHp * 0.08);
+          hurt.current = Math.min(hurt.maxHp, hurt.current + heal);
+          attacker.healCd = 2;
+          log.push({
+            turn, actor: side, actorName: attacker.name, targetName: hurt.name,
+            damage: -heal, crit: false, effective: 1, remainingHp: hurt.current,
+            message: `✨ ${attacker.name} curou ${hurt.name} em ${heal} HP`,
+          });
+          continue;
+        }
+      }
+      if (attacker.healCd > 0) attacker.healCd -= 1;
 
-      const eff = TYPE_CHART[getElement(attacker.species)]?.[getElement(defender.species)] ?? 1;
-      const crit = rand() < 0.12;
-      const base = Math.max(1, attacker.atk * 2 - defender.def);
+      const target = pickTarget(attacker, enemies);
+      if (!target) continue;
+
+      const eff = TYPE_CHART[getElement(attacker.species)]?.[getElement(target.species)] ?? 1;
+      const critChance = attacker.role === "assassin" ? 0.35 : 0.12;
+      const crit = rand() < critChance;
+      const defUsed = attacker.role === "mage" ? target.def * 0.4 : target.def;
+      let base = Math.max(1, attacker.atk * 2 - defUsed);
+      if (attacker.role === "dps") base *= 1.15;
       const variance = 0.85 + rand() * 0.3;
       const damage = Math.max(1, Math.round(base * eff * variance * (crit ? 1.7 : 1)));
-      defender.current = Math.max(0, defender.current - damage);
+      target.current = Math.max(0, target.current - damage);
 
-      let msg = `${attacker.name} atacou ${defender.name} causando ${damage} de dano`;
+      let msg = `${attacker.name} atacou ${target.name} causando ${damage} de dano`;
       if (crit) msg += " (CRÍTICO!)";
+      if (attacker.role === "mage") msg += " 🔮";
       if (eff > 1) msg += " (super eficaz!)";
       else if (eff < 1) msg += " (pouco eficaz...)";
 
       log.push({
-        turn,
-        actor: side,
-        actorName: attacker.name,
-        targetName: defender.name,
-        damage,
-        crit,
-        effective: eff,
-        remainingHp: defender.current,
-        message: msg,
+        turn, actor: side, actorName: attacker.name, targetName: target.name,
+        damage, crit, effective: eff, remainingHp: target.current, message: msg,
       });
 
-      if (defender.current <= 0) {
+      if (target.current <= 0) {
         log.push({
-          turn, actor: side, actorName: attacker.name, targetName: defender.name,
+          turn, actor: side, actorName: attacker.name, targetName: target.name,
           damage: 0, crit: false, effective: 1, remainingHp: 0,
-          message: `💀 ${defender.name} foi derrotado!`,
+          message: `💀 ${target.name} foi derrotado!`,
         });
-        if (side === "team_a") bIdx += 1;
-        else aIdx += 1;
-        break;
       }
     }
     turn += 1;
   }
 
-  const winner: "team_a" | "team_b" = aIdx < a.length ? "team_a" : "team_b";
+  const aAlive = a.some((m) => m.current > 0);
+  const winner: "team_a" | "team_b" = aAlive ? "team_a" : "team_b";
   return { winner, log };
 }
 
