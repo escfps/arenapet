@@ -493,17 +493,21 @@ function ArenaPage() {
             )}
 
             {battleLog && opponent && (
-              <BattleScene
-                teamA={myTeam}
-                teamB={opponent.team}
-                log={battleLog}
-                step={shownLog.length}
-                playerAName={profile.username}
-                playerATier={getTier(profile.arena_points ?? 0).name}
-                playerBName={opponent.ownerName}
-                playerBTier={getTier(opponent.arenaPoints).name}
-              />
-
+              <div className="relative">
+                <div className="absolute top-2 left-1/2 -translate-x-1/2 z-20 px-4 py-1.5 rounded-full bg-black/70 backdrop-blur border border-white/30 text-white font-mono font-bold text-lg shadow-lg">
+                  ⏱️ {Math.floor(battleTimer / 60)}:{String(battleTimer % 60).padStart(2, "0")}
+                </div>
+                <BattleScene
+                  teamA={myTeam}
+                  teamB={opponent.team}
+                  log={battleLog}
+                  step={shownLog.length}
+                  playerAName={profile.username}
+                  playerATier={getTier(profile.arena_points ?? 0).name}
+                  playerBName={opponent.ownerName}
+                  playerBTier={getTier(opponent.arenaPoints).name}
+                />
+              </div>
             )}
 
             {battleLog && (
