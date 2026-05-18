@@ -89,13 +89,16 @@
 @layer base {
   * { border-color: var(--color-border); }
   body {
-    background-image: url('/src/assets/farm-bg.jpg');
+    background: oklch(0.78 0.15 140);
+    color: var(--color-foreground);
+    font-family: 'Nunito', 'Quicksand', system-ui, sans-serif;
+  }
+  .farm-bg {
     background-size: cover;
     background-position: center top;
     background-attachment: fixed;
     background-repeat: no-repeat;
-    color: var(--color-foreground);
-    font-family: 'Nunito', 'Quicksand', system-ui, sans-serif;
+    min-height: 100vh;
   }
 }
 
