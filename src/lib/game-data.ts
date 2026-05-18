@@ -229,7 +229,7 @@ export const SPECIES: Record<string, Species> = {
     emoji: "🌑⚡", image: voidsparkImg,
     description: "Orbe de raios sombrios. Assassino caótico.",
     base: { hp: 44, atk: 13, def: 7, spd: 17, int: 6 },
-    skill: { name: "Apagão", emoji: "🌑", kind: "silence_disable", cooldown: 4, description: "Apaga a mente do alvo: dano + silencia próxima skill." },
+    skill: { name: "Choque Sombrio", emoji: "🌑", kind: "guaranteed_crit", cooldown: 3, description: "Salta nas sombras: crítico garantido no mais fraco, ignora 60% da DEF." },
   },
 
   // ===== TERRA =====
