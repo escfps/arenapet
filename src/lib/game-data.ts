@@ -667,6 +667,17 @@ export function rollLevelUpRewards(prevLevel: number, newLevel: number): LevelUp
     out.gems += r.gems;
     out.rations += r.rations;
     if (r.petSpecies) out.petSpecies.push(r.petSpecies);
+    // Bônus: a cada 3 levels, ganha também um Baú de Prata extra
+    // (além do baú principal do level). Não duplica em levels que já são
+    // múltiplos de 10/50/100, pois esses já entregam baús melhores.
+    if (lv % 3 === 0 && tier === "wood") {
+      out.silverChests += 1;
+      const rs = rollChest("silver");
+      out.coins += rs.coins;
+      out.gems += rs.gems;
+      out.rations += rs.rations;
+      if (rs.petSpecies) out.petSpecies.push(rs.petSpecies);
+    }
   }
   return out;
 }
