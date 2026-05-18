@@ -348,13 +348,17 @@ function ArenaPage() {
       const opponentDelta = won ? -ARENA_LOSS_POINTS : ARENA_WIN_POINTS;
       const { data: oppProfile } = await supabase
         .from("profiles")
-        .select("arena_points")
+        .select("arena_points, wins, losses")
         .eq("id", opp.ownerId)
         .maybeSingle();
       if (oppProfile) {
         await supabase
           .from("profiles")
-          .update({ arena_points: Math.max(0, (oppProfile.arena_points ?? 0) + opponentDelta) })
+          .update({
+            arena_points: Math.max(0, (oppProfile.arena_points ?? 0) + opponentDelta),
+            wins: (oppProfile.wins ?? 0) + (won ? 0 : 1),
+            losses: (oppProfile.losses ?? 0) + (won ? 1 : 0),
+          })
           .eq("id", opp.ownerId);
       }
 
