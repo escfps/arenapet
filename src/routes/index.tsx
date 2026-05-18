@@ -208,16 +208,24 @@ function PatioPage() {
                   ⚔️ Ir pra Arena
                 </button>
               </div>
-              <p className="text-[11px] opacity-80">Posicione o tank na <b>Frente</b>, DPS no <b>Meio</b> e mages/healers <b>Trás</b>. Use ◀ ▶ pra reorganizar.</p>
+              <p className="text-[11px] opacity-80">Posicione mages/healers à <b>esquerda (Trás)</b>, DPS no <b>Meio</b> e tank à <b>direita (Frente)</b>. Arraste pra trocar ou use ◀ ▶.</p>
 
               <div className="mt-3 grid grid-cols-3 gap-2">
-                {Array.from({ length: TEAM_MAX }).map((_, i) => {
+                {[2, 1, 0].map((i) => {
                   const m = monsters.find((x) => x.in_team && (x.team_position ?? 0) === i);
                   if (!m) {
                     return (
                       <button
                         key={`slot-${i}`}
                         onClick={() => setSlotPicker(i)}
+                        onDragOver={(e) => { e.preventDefault(); e.currentTarget.classList.add("ring-2","ring-yellow-300"); }}
+                        onDragLeave={(e) => e.currentTarget.classList.remove("ring-2","ring-yellow-300")}
+                        onDrop={(e) => {
+                          e.preventDefault();
+                          e.currentTarget.classList.remove("ring-2","ring-yellow-300");
+                          const from = Number(e.dataTransfer.getData("text/plain"));
+                          if (!Number.isNaN(from) && from !== i) swapPositions(from, i);
+                        }}
                         className="aspect-square rounded-2xl border-2 border-dashed border-white/30 bg-white/5 hover:bg-white/15 hover:border-yellow-300 transition flex flex-col items-center justify-center text-white/60"
                       >
                         <div className="text-[10px] font-extrabold opacity-80">{PILLS[i]}</div>
@@ -227,8 +235,26 @@ function PatioPage() {
                     );
                   }
                   const sp = SPECIES[m.species];
+                  // Visual order is reversed: leftmost is "Trás" (i=2), rightmost is "Frente" (i=0).
+                  // ◀ moves visually left (toward backline → higher index).
+                  // ▶ moves visually right (toward frontline → lower index).
+                  const canMoveLeft = i < TEAM_MAX - 1;   // can increase position number
+                  const canMoveRight = i > 0;             // can decrease position number
                   return (
-                    <div key={m.id} className={`relative aspect-square rounded-2xl border-2 border-yellow-300 bg-gradient-to-br ${ELEMENT_COLORS[sp.element]} shadow-lg overflow-hidden`}>
+                    <div
+                      key={m.id}
+                      draggable
+                      onDragStart={(e) => { e.dataTransfer.setData("text/plain", String(i)); e.dataTransfer.effectAllowed = "move"; }}
+                      onDragOver={(e) => { e.preventDefault(); e.currentTarget.classList.add("ring-4","ring-yellow-300"); }}
+                      onDragLeave={(e) => e.currentTarget.classList.remove("ring-4","ring-yellow-300")}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        e.currentTarget.classList.remove("ring-4","ring-yellow-300");
+                        const from = Number(e.dataTransfer.getData("text/plain"));
+                        if (!Number.isNaN(from) && from !== i) swapPositions(from, i);
+                      }}
+                      className={`relative aspect-square rounded-2xl border-2 border-yellow-300 bg-gradient-to-br ${ELEMENT_COLORS[sp.element]} shadow-lg overflow-hidden cursor-grab active:cursor-grabbing`}
+                    >
                       <div className="absolute top-1 left-1 z-10 px-1.5 py-0.5 rounded-md bg-black/70 text-yellow-300 text-[9px] font-extrabold shadow">
                         {PILLS[i]}
                       </div>
@@ -237,7 +263,7 @@ function PatioPage() {
                         className="absolute inset-0 flex items-center justify-center p-2"
                         title={m.name}
                       >
-                        <img src={sp.image} alt={sp.name} className="h-full w-auto drop-shadow-2xl" />
+                        <img src={sp.image} alt={sp.name} className="h-full w-auto drop-shadow-2xl pointer-events-none" />
                       </button>
                       <div className="absolute bottom-0 inset-x-0 bg-black/70 px-1 py-0.5 text-white text-[10px] font-extrabold truncate text-center pointer-events-none">
                         {m.name}
@@ -250,18 +276,18 @@ function PatioPage() {
                         ×
                       </button>
                       <div className="absolute inset-x-0 bottom-6 flex justify-between px-1 z-10">
-                        {i > 0 ? (
-                          <button
-                            onClick={(e) => { e.stopPropagation(); swapPositions(i, i - 1); }}
-                            className="w-6 h-6 rounded-full bg-black/70 hover:bg-yellow-400 hover:text-yellow-950 text-white text-xs font-black flex items-center justify-center shadow"
-                            title="Mover pra frente"
-                          >◀</button>
-                        ) : <span />}
-                        {i < TEAM_MAX - 1 ? (
+                        {canMoveLeft ? (
                           <button
                             onClick={(e) => { e.stopPropagation(); swapPositions(i, i + 1); }}
                             className="w-6 h-6 rounded-full bg-black/70 hover:bg-yellow-400 hover:text-yellow-950 text-white text-xs font-black flex items-center justify-center shadow"
                             title="Mover pra trás"
+                          >◀</button>
+                        ) : <span />}
+                        {canMoveRight ? (
+                          <button
+                            onClick={(e) => { e.stopPropagation(); swapPositions(i, i - 1); }}
+                            className="w-6 h-6 rounded-full bg-black/70 hover:bg-yellow-400 hover:text-yellow-950 text-white text-xs font-black flex items-center justify-center shadow"
+                            title="Mover pra frente"
                           >▶</button>
                         ) : <span />}
                       </div>
@@ -270,6 +296,7 @@ function PatioPage() {
                 })}
               </div>
             </section>
+
 
 
 
