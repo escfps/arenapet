@@ -7,6 +7,59 @@ type Team = (MonsterRow & { owner_id: string })[];
 type HpMap = Map<string, { cur: number; max: number }>;
 type ShieldMap = Map<string, number>;
 type Fx = { actor: string | null; target: string | null; dmg: number | null; crit: boolean };
+type StatusKind = "burn" | "silence" | "rage" | "shield";
+type StatusMap = Map<string, Set<StatusKind>>;
+type EffectBanner = {
+  id: number;
+  emoji: string;
+  label: string;
+  detail?: string;
+  color: string; // tailwind gradient classes
+} | null;
+
+// Detecta o tipo de efeito a partir da mensagem do log
+function detectEffect(entry: BattleLogEntry): EffectBanner {
+  const m = entry.message;
+  const mkId = entry.turn * 10000 + Math.floor(Math.random() * 9999);
+  if (m.includes("EXECUÇÃO") || m.includes("executado"))
+    return { id: mkId, emoji: "☠️", label: "EXECUÇÃO!", detail: "Alvo abaixo de 30% HP — dano triplicado", color: "from-rose-600 to-red-900" };
+  if (m.includes("VERDADEIRO") || m.includes("reduzido a pó"))
+    return { id: mkId, emoji: "💥", label: "DANO VERDADEIRO", detail: "Ignora DEF e elemento", color: "from-fuchsia-600 to-purple-900" };
+  if (m.includes("ressuscitado"))
+    return { id: mkId, emoji: "✨", label: "RESSURREIÇÃO", detail: "Aliado caído voltou à batalha", color: "from-emerald-400 to-teal-700" };
+  if (m.includes("salto"))
+    return { id: mkId, emoji: "⚡", label: "CORRENTE ELÉTRICA", detail: "Raio salta entre os inimigos", color: "from-sky-400 to-indigo-700" };
+  if (m.includes("queimando") && m.includes("turnos"))
+    return { id: mkId, emoji: "🔥", label: "QUEIMADURA", detail: "Dano por 3 turnos aplicado", color: "from-orange-500 to-red-700" };
+  if (m.includes("sofreu") && m.includes("queimadura"))
+    return { id: mkId, emoji: "🔥", label: "DoT", detail: `Queimadura: ${entry.damage} de dano`, color: "from-amber-500 to-orange-700" };
+  if (m.includes("silenciou") || m.includes("silencia"))
+    return { id: mkId, emoji: "🤐", label: "SILÊNCIO", detail: "Próxima skill do alvo anulada", color: "from-violet-600 to-purple-900" };
+  if (m.includes("roubou"))
+    return { id: mkId, emoji: "🩸", label: "ROUBO DE VIDA", detail: "Cura proporcional ao dano", color: "from-rose-500 to-red-800" };
+  if (m.includes("golpe ") && m.includes("/2"))
+    return { id: mkId, emoji: "⚡⚡", label: "GOLPE DUPLO", detail: "Dois ataques no alvo mais forte", color: "from-yellow-400 to-amber-700" };
+  if (m.includes("fúria") || m.includes("ATK e -"))
+    return { id: mkId, emoji: "😡", label: "FÚRIA", detail: "+ATK / -DEF por 3 turnos", color: "from-red-600 to-rose-900" };
+  if (m.includes("escudo") && m.includes("DEF por"))
+    return { id: mkId, emoji: "🛡️", label: "ESCUDO ALIADO", detail: "Aliado protegido e blindado", color: "from-cyan-500 to-blue-800" };
+  if (m.includes("Provocou") && m.includes("escudo"))
+    return { id: mkId, emoji: "🛡️", label: "PROVOCAR", detail: "Inimigos forçados a atacar o tank", color: "from-amber-500 to-yellow-800" };
+  if (m.includes("Curou todos"))
+    return { id: mkId, emoji: "💚", label: "CURA EM ÁREA", detail: "Time inteiro recuperou HP", color: "from-emerald-400 to-green-700" };
+  if (m.includes("dano arcano") || m.includes("dano em CADA"))
+    return { id: mkId, emoji: "🔮", label: "DANO MÁGICO EM ÁREA", color: "from-fuchsia-500 to-purple-800" };
+  return null;
+}
+
+// Detecta status persistentes pela mensagem
+function statusFromMessage(msg: string): StatusKind | null {
+  if (msg.includes("queimando") && msg.includes("turnos")) return "burn";
+  if (msg.includes("silenciou") || msg.includes("silencia próxima")) return "silence";
+  if (msg.includes("fúria") || msg.includes("ATK por 3 turnos")) return "rage";
+  if (msg.includes("DEF por") && msg.includes("escudo")) return "shield";
+  return null;
+}
 
 export function BattleScene({
   teamA,
