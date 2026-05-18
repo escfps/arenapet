@@ -155,6 +155,8 @@ function ArenaPage() {
         );
       toast(`🍖 +${dropped} ração!`, { icon: "🎁" });
     }
+  }
+
 
   if (loading || !profile) {
     return <div className="min-h-screen flex items-center justify-center text-white">Carregando...</div>;
