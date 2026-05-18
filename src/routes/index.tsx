@@ -27,6 +27,7 @@ function PatioPage() {
   const { userId, profile, loading, reload } = useProfile();
   const [monsters, setMonsters] = useState<MonsterRow[]>([]);
   const [hatching, setHatching] = useState(false);
+  const [welcomeReveal, setWelcomeReveal] = useState<string[] | null>(null);
   const [search, setSearch] = useState("");
   const [rarityFilter, setRarityFilter] = useState<Rarity | "all">("all");
   const [elementFilter, setElementFilter] = useState<Element | "all">("all");
