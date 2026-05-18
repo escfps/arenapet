@@ -204,7 +204,7 @@ function ShopPage() {
           ))}
         </div>
 
-        {tab === "eggs" && (
+        {false && (
           <>
             <div className="grid sm:grid-cols-2 gap-4">
               {Object.values(EGGS).map((egg) => (
