@@ -188,8 +188,18 @@ export function BattleScene({
   }, [step, log, teamA, teamB]);
 
   return (
-    <div className="relative rounded-2xl bg-gradient-to-b from-slate-900/70 to-indigo-950/70 backdrop-blur-md border border-white/20 p-4 overflow-hidden">
-      <div className="grid grid-cols-2 gap-3">
+    <div
+      className="relative rounded-2xl border-2 border-white/30 p-4 overflow-hidden shadow-2xl"
+      style={{
+        backgroundImage: `url(${grassBg})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        imageRendering: "pixelated",
+      }}
+    >
+      {/* Vinheta escura nas bordas pra contraste */}
+      <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-black/10 via-transparent to-black/40" />
+      <div className="relative grid grid-cols-2 gap-3">
         <SideColumn team={teamA} side="a" hp={hp} shields={shields} fx={fx} statuses={statuses} />
         <SideColumn team={teamB} side="b" hp={hp} shields={shields} fx={fx} statuses={statuses} mirrored />
       </div>
