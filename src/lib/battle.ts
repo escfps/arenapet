@@ -30,7 +30,7 @@ export type BattleLogEntry = {
 };
 
 export type BattleResult = {
-  winner: "team_a" | "team_b";
+  winner: "team_a" | "team_b" | "draw";
   log: BattleLogEntry[];
 };
 
@@ -572,7 +572,16 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
   }
 
   const aAlive = a.some((m) => m.current > 0);
-  const winner: "team_a" | "team_b" = aAlive ? "team_a" : "team_b";
+  const bAlive = b.some((m) => m.current > 0);
+  const winner: "team_a" | "team_b" | "draw" =
+    aAlive && bAlive ? "draw" : aAlive ? "team_a" : "team_b";
+  if (winner === "draw") {
+    log.push({
+      turn, actor: "team_a", actorName: "—", targetName: "—",
+      damage: 0, crit: false, effective: 1, remainingHp: 0,
+      message: "⏱️ Tempo esgotado! A batalha terminou em EMPATE.",
+    });
+  }
   return { winner, log };
 }
 
