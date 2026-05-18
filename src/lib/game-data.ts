@@ -31,6 +31,7 @@ import macacoPregoImg from "@/assets/monsters/macaco_prego.png";
 import tubaraoAbissalImg from "@/assets/monsters/tubarao_abissal.png";
 import polvoVenenosoImg from "@/assets/monsters/polvo_venenoso.png";
 import cobraSangrentaImg from "@/assets/monsters/cobra_sangrenta.png";
+import aguiaCegaImg from "@/assets/monsters/aguia_cega.png";
 
 export type Element = "fire" | "water" | "grass" | "electric" | "shadow" | "earth";
 export type Role = "tank" | "dps" | "assassin" | "mage" | "healer";
@@ -85,6 +86,7 @@ export type SkillKind =
   | "berserker_rage"    // dps/tank — buff ATK +50% por 3 turnos (Tryndamere)
   | "revive_ally"       // healer — ressuscita um aliado com 30% HP (Zilean)
   | "bleed_dot"         // dps — sangramento físico escala com ATK (Darius)
+  | "blind_debuff"      // mago — cega TODOS inimigos: 50% miss em ataques básicos por 3 turnos
   | "true_damage_nuke"; // mítico — dano puro ignora DEF e elemento (Vayne ult)
 
 export type Skill = {
