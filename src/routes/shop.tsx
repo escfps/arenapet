@@ -20,16 +20,22 @@ export const Route = createFileRoute("/shop")({
 function ShopPage() {
   const navigate = useNavigate();
   const { userId, profile, patch, loading } = useProfile();
-  const [tab, setTab] = useState<"eggs" | "skins" | "vip" | "gems">("eggs");
+  const [tab, setTab] = useState<"eggs" | "skins" | "vip" | "gems" | "energy">("eggs");
   const [ownedSkins, setOwnedSkins] = useState<string[]>(["default"]);
   const [hatchResult, setHatchResult] = useState<string | null>(null);
+  const [pets, setPets] = useState<MonsterRow[]>([]);
 
   const loadSkins = useCallback(async () => {
     if (!userId) return;
     const { data } = await supabase.from("skins_owned").select("skin_id").eq("user_id", userId);
     if (data) setOwnedSkins(["default", ...data.map((s) => s.skin_id)]);
   }, [userId]);
-  useEffect(() => { if (userId) loadSkins(); }, [userId, loadSkins]);
+  const loadPets = useCallback(async () => {
+    if (!userId) return;
+    const { data } = await supabase.from("monsters").select("*").eq("owner_id", userId);
+    if (data) setPets(data as MonsterRow[]);
+  }, [userId]);
+  useEffect(() => { if (userId) { loadSkins(); loadPets(); } }, [userId, loadSkins, loadPets]);
 
   if (loading || !profile) return <div className="min-h-screen flex items-center justify-center text-white">Carregando...</div>;
 
