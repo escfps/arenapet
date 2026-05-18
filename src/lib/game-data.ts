@@ -245,7 +245,7 @@ export const SPECIES: Record<string, Species> = {
     emoji: "🌋", image: magmaboulderImg,
     description: "Rocha vulcânica. Tank que queima quem encosta.",
     base: { hp: 75, atk: 11, def: 16, spd: 7, int: 8 },
-    skill: { name: "Erupção Lenta", emoji: "🌋", kind: "burn_dot", cooldown: 4, description: "Lava escorre pelo alvo: dano + queimadura por 3 turnos." },
+    skill: { name: "Crosta Vulcânica", emoji: "🌋", kind: "shield_taunt", cooldown: 3, description: "Endurece a casca de magma: provoca todos por 2 turnos e ganha 30% HP de escudo." },
   },
   mudpaw: {
     id: "mudpaw", name: "Mudpaw", element: "earth", secondaryElement: "water", role: "dps", rarity: "common",
