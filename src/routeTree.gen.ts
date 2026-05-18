@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TradeRouteImport } from './routes/trade'
 import { Route as ShopRouteImport } from './routes/shop'
+import { Route as RankingRouteImport } from './routes/ranking'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgeRouteImport } from './routes/forge'
 import { Route as ExpeditionsRouteImport } from './routes/expeditions'
@@ -27,6 +28,11 @@ const TradeRoute = TradeRouteImport.update({
 const ShopRoute = ShopRouteImport.update({
   id: '/shop',
   path: '/shop',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RankingRoute = RankingRouteImport.update({
+  id: '/ranking',
+  path: '/ranking',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -72,6 +78,7 @@ export interface FileRoutesByFullPath {
   '/expeditions': typeof ExpeditionsRoute
   '/forge': typeof ForgeRoute
   '/login': typeof LoginRoute
+  '/ranking': typeof RankingRoute
   '/shop': typeof ShopRoute
   '/trade': typeof TradeRoute
   '/monster/$id': typeof MonsterIdRoute
@@ -83,6 +90,7 @@ export interface FileRoutesByTo {
   '/expeditions': typeof ExpeditionsRoute
   '/forge': typeof ForgeRoute
   '/login': typeof LoginRoute
+  '/ranking': typeof RankingRoute
   '/shop': typeof ShopRoute
   '/trade': typeof TradeRoute
   '/monster/$id': typeof MonsterIdRoute
@@ -95,6 +103,7 @@ export interface FileRoutesById {
   '/expeditions': typeof ExpeditionsRoute
   '/forge': typeof ForgeRoute
   '/login': typeof LoginRoute
+  '/ranking': typeof RankingRoute
   '/shop': typeof ShopRoute
   '/trade': typeof TradeRoute
   '/monster/$id': typeof MonsterIdRoute
@@ -108,6 +117,7 @@ export interface FileRouteTypes {
     | '/expeditions'
     | '/forge'
     | '/login'
+    | '/ranking'
     | '/shop'
     | '/trade'
     | '/monster/$id'
@@ -119,6 +129,7 @@ export interface FileRouteTypes {
     | '/expeditions'
     | '/forge'
     | '/login'
+    | '/ranking'
     | '/shop'
     | '/trade'
     | '/monster/$id'
@@ -130,6 +141,7 @@ export interface FileRouteTypes {
     | '/expeditions'
     | '/forge'
     | '/login'
+    | '/ranking'
     | '/shop'
     | '/trade'
     | '/monster/$id'
@@ -142,6 +154,7 @@ export interface RootRouteChildren {
   ExpeditionsRoute: typeof ExpeditionsRoute
   ForgeRoute: typeof ForgeRoute
   LoginRoute: typeof LoginRoute
+  RankingRoute: typeof RankingRoute
   ShopRoute: typeof ShopRoute
   TradeRoute: typeof TradeRoute
   MonsterIdRoute: typeof MonsterIdRoute
@@ -161,6 +174,13 @@ declare module '@tanstack/react-router' {
       path: '/shop'
       fullPath: '/shop'
       preLoaderRoute: typeof ShopRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ranking': {
+      id: '/ranking'
+      path: '/ranking'
+      fullPath: '/ranking'
+      preLoaderRoute: typeof RankingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -222,6 +242,7 @@ const rootRouteChildren: RootRouteChildren = {
   ExpeditionsRoute: ExpeditionsRoute,
   ForgeRoute: ForgeRoute,
   LoginRoute: LoginRoute,
+  RankingRoute: RankingRoute,
   ShopRoute: ShopRoute,
   TradeRoute: TradeRoute,
   MonsterIdRoute: MonsterIdRoute,

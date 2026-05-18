@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { SPECIES, ELEMENT_COLORS, ROLE_INFO, skinFilter, isVip, xpForNextLevel, rankStars, totalStats } from "@/lib/game-data";
+import { SPECIES, ELEMENT_COLORS, ROLE_INFO, skinFilter, isVip, xpForNextLevel, rankStars, totalStats, ARENA_WIN_POINTS, ARENA_LOSS_POINTS, getTier } from "@/lib/game-data";
 import type { MonsterRow } from "@/components/MonsterCard";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
@@ -25,7 +25,7 @@ function ArenaPage() {
   const [searching, setSearching] = useState(false);
   const [battleLog, setBattleLog] = useState<BattleLogEntry[] | null>(null);
   const [winner, setWinner] = useState<"team_a" | "team_b" | null>(null);
-  const [rewards, setRewards] = useState<{ coins: number; xp: number } | null>(null);
+  const [rewards, setRewards] = useState<{ coins: number; xp: number; points: number; oldPoints: number; newPoints: number } | null>(null);
   const [shownLog, setShownLog] = useState<BattleLogEntry[]>([]);
 
   useEffect(() => {
@@ -111,7 +111,13 @@ function ArenaPage() {
     setWinner(result.winner);
     const won = result.winner === "team_a";
     const rew = computeRewards(profile.level, won, isVip(profile.vip_until));
-    setRewards(rew);
+
+    // Arena points: +25 on win, -15 on loss (floor at 0)
+    const oldPoints = profile.arena_points ?? 0;
+    const delta = won ? ARENA_WIN_POINTS : -ARENA_LOSS_POINTS;
+    const newPoints = Math.max(0, oldPoints + delta);
+
+    setRewards({ ...rew, points: delta, oldPoints, newPoints });
 
     // persist
     const updates: Partial<typeof profile> = {
@@ -119,6 +125,7 @@ function ArenaPage() {
       xp: profile.xp + rew.xp,
       wins: profile.wins + (won ? 1 : 0),
       losses: profile.losses + (won ? 0 : 1),
+      arena_points: newPoints,
     };
     let newXp = updates.xp!;
     let newLevel = profile.level;
@@ -129,6 +136,20 @@ function ArenaPage() {
     updates.xp = newXp;
     updates.level = newLevel;
     await patch(updates);
+
+    // Bot/opponent profile also gains/loses points (opposite outcome)
+    const opponentDelta = won ? -ARENA_LOSS_POINTS : ARENA_WIN_POINTS;
+    const { data: oppProfile } = await supabase
+      .from("profiles")
+      .select("arena_points")
+      .eq("id", opponent.ownerId)
+      .maybeSingle();
+    if (oppProfile) {
+      await supabase
+        .from("profiles")
+        .update({ arena_points: Math.max(0, (oppProfile.arena_points ?? 0) + opponentDelta) })
+        .eq("id", opponent.ownerId);
+    }
 
     await supabase.from("battles").insert({
       attacker_id: userId,
@@ -241,6 +262,13 @@ function ArenaPage() {
                     <div className={`mt-4 p-4 rounded-xl text-center font-extrabold ${winner === "team_a" ? "bg-green-500/40" : "bg-red-500/40"}`}>
                       {winner === "team_a" ? "🏆 VITÓRIA!" : "💀 Derrota..."}
                       <div className="text-sm font-normal mt-1">+🪙 {rewards.coins} • +✨ {rewards.xp} XP</div>
+                      <div className="text-xs font-bold mt-1 flex items-center justify-center gap-2">
+                        <span className={`px-2 py-0.5 rounded ${getTier(rewards.oldPoints).color}`}>{getTier(rewards.oldPoints).short}</span>
+                        <span className={rewards.points >= 0 ? "text-green-300" : "text-red-300"}>
+                          {rewards.points >= 0 ? `+${rewards.points}` : rewards.points} pts
+                        </span>
+                        <span className={`px-2 py-0.5 rounded ${getTier(rewards.newPoints).color}`}>{getTier(rewards.newPoints).short}</span>
+                      </div>
                       {!isVip(profile.vip_until) && winner === "team_a" && (
                         <div className="mt-2 text-xs opacity-90">👑 VIP daria <b>+50% nas recompensas!</b></div>
                       )}
