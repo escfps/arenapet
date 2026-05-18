@@ -31,6 +31,7 @@ function PatioPage() {
   const [search, setSearch] = useState("");
   const [rarityFilter, setRarityFilter] = useState<Rarity | "all">("all");
   const [elementFilter, setElementFilter] = useState<Element | "all">("all");
+  const [groupModal, setGroupModal] = useState<string | null>(null);
 
   const loadMonsters = useCallback(async () => {
     if (!userId) return;
