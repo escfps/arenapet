@@ -187,7 +187,7 @@ export const SPECIES: Record<string, Species> = {
     emoji: "👻🔥", image: cinderwispImg,
     description: "Fantasminha de brasa. Mago ofensivo.",
     base: { hp: 50, atk: 14, def: 9, spd: 11, int: 22 },
-    skill: { name: "Sussurro de Cinzas", emoji: "🔥", kind: "burn_dot", cooldown: 3, description: "Aplica queimadura mágica no alvo: dano inicial + 3 turnos de dano por fogo." },
+    skill: { name: "Chuva de Cinzas", emoji: "🔥", kind: "aoe_magic", cooldown: 4, description: "Cobre o campo com cinzas mágicas: dano em todos inimigos (1.15× cada)." },
   },
   mossfin: {
     id: "mossfin", name: "Mossfin", element: "water", secondaryElement: "grass", role: "healer", rarity: "common",
