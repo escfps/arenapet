@@ -64,7 +64,7 @@ export const adminGrantResources = createServerFn({ method: "POST" })
       .single();
     if (!p) throw new Error("Jogador não encontrado");
 
-    const update: Record<string, unknown> = {};
+    const update: { gems?: number; coins?: number; vip_until?: string } = {};
     if (typeof data.gems === "number" && data.gems !== 0) {
       update.gems = Math.max(0, (p.gems ?? 0) + data.gems);
     }
