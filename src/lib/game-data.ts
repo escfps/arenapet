@@ -75,7 +75,7 @@ export const ROLE_SKILLS: Record<Role, Skill> = {
   },
   healer: {
     name: "Bênção Restauradora", emoji: "✨", kind: "team_heal", cooldown: 4,
-    description: "Cura todos os aliados vivos (~ATK×1.5 + 10% HP máx).",
+    description: "Cura todos os aliados vivos (~INT×1.8 + 10% HP máx).",
   },
 };
 
