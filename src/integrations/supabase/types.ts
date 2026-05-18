@@ -14,27 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
-      animals: {
+      battles: {
         Row: {
-          animal_type: string
+          attacker_id: string
+          coins_reward: number
           created_at: string
+          defender_id: string
           id: string
-          last_collected_at: string
-          user_id: string
+          log: Json
+          winner_id: string
+          xp_reward: number
         }
         Insert: {
-          animal_type: string
+          attacker_id: string
+          coins_reward?: number
           created_at?: string
+          defender_id: string
           id?: string
-          last_collected_at?: string
-          user_id: string
+          log?: Json
+          winner_id: string
+          xp_reward?: number
         }
         Update: {
-          animal_type?: string
+          attacker_id?: string
+          coins_reward?: number
           created_at?: string
+          defender_id?: string
           id?: string
-          last_collected_at?: string
-          user_id?: string
+          log?: Json
+          winner_id?: string
+          xp_reward?: number
         }
         Relationships: []
       }
@@ -56,30 +65,63 @@ export type Database = {
         }
         Relationships: []
       }
-      plots: {
+      monsters: {
         Row: {
+          atk: number
           created_at: string
-          crop_type: string | null
+          def: number
+          energy: number
+          happiness: number
+          hp: number
+          hunger: number
           id: string
-          planted_at: string | null
-          slot_index: number
-          user_id: string
+          in_team: boolean
+          last_tick: string
+          level: number
+          name: string
+          owner_id: string
+          skin: string
+          spd: number
+          species: string
+          xp: number
         }
         Insert: {
+          atk?: number
           created_at?: string
-          crop_type?: string | null
+          def?: number
+          energy?: number
+          happiness?: number
+          hp?: number
+          hunger?: number
           id?: string
-          planted_at?: string | null
-          slot_index: number
-          user_id: string
+          in_team?: boolean
+          last_tick?: string
+          level?: number
+          name: string
+          owner_id: string
+          skin?: string
+          spd?: number
+          species: string
+          xp?: number
         }
         Update: {
+          atk?: number
           created_at?: string
-          crop_type?: string | null
+          def?: number
+          energy?: number
+          happiness?: number
+          hp?: number
+          hunger?: number
           id?: string
-          planted_at?: string | null
-          slot_index?: number
-          user_id?: string
+          in_team?: boolean
+          last_tick?: string
+          level?: number
+          name?: string
+          owner_id?: string
+          skin?: string
+          spd?: number
+          species?: string
+          xp?: number
         }
         Relationships: []
       }
@@ -87,29 +129,59 @@ export type Database = {
         Row: {
           coins: number
           created_at: string
+          gems: number
           id: string
           level: number
+          losses: number
           updated_at: string
           username: string
+          vip_until: string | null
+          wins: number
           xp: number
         }
         Insert: {
           coins?: number
           created_at?: string
+          gems?: number
           id: string
           level?: number
+          losses?: number
           updated_at?: string
           username: string
+          vip_until?: string | null
+          wins?: number
           xp?: number
         }
         Update: {
           coins?: number
           created_at?: string
+          gems?: number
           id?: string
           level?: number
+          losses?: number
           updated_at?: string
           username?: string
+          vip_until?: string | null
+          wins?: number
           xp?: number
+        }
+        Relationships: []
+      }
+      skins_owned: {
+        Row: {
+          acquired_at: string
+          skin_id: string
+          user_id: string
+        }
+        Insert: {
+          acquired_at?: string
+          skin_id: string
+          user_id: string
+        }
+        Update: {
+          acquired_at?: string
+          skin_id?: string
+          user_id?: string
         }
         Relationships: []
       }
