@@ -89,7 +89,7 @@ export function BattleScene({
 
   const [hp, setHp] = useState<HpMap>(initialHp);
   const [shields, setShields] = useState<ShieldMap>(new Map());
-  const [fx, setFx] = useState<Fx>({ actor: null, target: null, dmg: null, crit: false });
+  const [fx, setFx] = useState<Fx>({ actor: null, target: null, dmg: null, crit: false, skillFx: null, targets: [] });
   const [banner, setBanner] = useState<EffectBanner>(null);
   const [statuses, setStatuses] = useState<StatusMap>(new Map());
 
