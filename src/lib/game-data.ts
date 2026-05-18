@@ -17,6 +17,11 @@ import rockpupImg from "@/assets/monsters/rockpup.png";
 import magmaboulderImg from "@/assets/monsters/magmaboulder.png";
 import mudpawImg from "@/assets/monsters/mudpaw.png";
 import crystalspriteImg from "@/assets/monsters/crystalsprite.png";
+import oncaSombriaImg from "@/assets/monsters/onca_sombria.png";
+import leaoDouradoImg from "@/assets/monsters/leao_dourado.png";
+import tigreInfernalImg from "@/assets/monsters/tigre_infernal.png";
+import panteraNegraImg from "@/assets/monsters/pantera_negra.png";
+import panteraAureaImg from "@/assets/monsters/pantera_aurea.png";
 
 export type Element = "fire" | "water" | "grass" | "electric" | "shadow" | "earth";
 export type Role = "tank" | "dps" | "assassin" | "mage" | "healer";
@@ -203,6 +208,38 @@ export const SPECIES: Record<string, Species> = {
     description: "Geodo mágico cristalino. Mago de cristal com raios.",
     base: { hp: 52, atk: 12, def: 11, spd: 10, int: 21 },
   },
+
+  // ===== EVENTO (lendários — só caem no Ovo de Evento) =====
+  onca_sombria: {
+    id: "onca_sombria", name: "Onça Sombria", element: "shadow", role: "assassin", rarity: "legendary",
+    emoji: "🐆", image: oncaSombriaImg,
+    description: "Onça-pintada das sombras. Crítico letal nos mais fracos.",
+    base: { hp: 62, atk: 17, def: 10, spd: 16, int: 10 },
+  },
+  leao_dourado: {
+    id: "leao_dourado", name: "Leão Dourado", element: "earth", role: "dps", rarity: "legendary",
+    emoji: "🦁", image: leaoDouradoImg,
+    description: "Rei dourado. Dano consistente avassalador.",
+    base: { hp: 68, atk: 18, def: 13, spd: 11, int: 9 },
+  },
+  tigre_infernal: {
+    id: "tigre_infernal", name: "Tigre Infernal", element: "fire", role: "dps", rarity: "legendary",
+    emoji: "🔥", image: tigreInfernalImg,
+    description: "Tigre de chamas eternas. Investida devastadora em fogo.",
+    base: { hp: 64, atk: 19, def: 10, spd: 14, int: 10 },
+  },
+  pantera_negra: {
+    id: "pantera_negra", name: "Pantera Negra", element: "shadow", role: "assassin", rarity: "legendary",
+    emoji: "🐈‍⬛", image: panteraNegraImg,
+    description: "Olhos vermelhos no escuro. Mortal e ágil.",
+    base: { hp: 60, atk: 18, def: 10, spd: 17, int: 11 },
+  },
+  pantera_aurea: {
+    id: "pantera_aurea", name: "Pantera Áurea", element: "shadow", role: "mage", rarity: "legendary",
+    emoji: "✨", image: panteraAureaImg,
+    description: "Olhos dourados — variante ultra-rara da Pantera Negra. Mago sombrio supremo.",
+    base: { hp: 65, atk: 14, def: 12, spd: 15, int: 24 },
+  },
 };
 
 export const ELEMENT_COLORS: Record<Element, string> = {
@@ -308,6 +345,17 @@ export const EGGS: Record<string, Egg> = {
     description: "10 ovos raros. 10% por ovo de vir um raro.",
     weights: RARE_EGG_WEIGHTS,
     pack: 10,
+  },
+  event_felinos: {
+    id: "event_felinos", name: "Ovo de Evento — Felinos Lendários", emoji: "🥚✨", priceGems: 80,
+    description: "Evento limitado: Onça Sombria, Leão Dourado, Tigre Infernal, Pantera Negra (rara) e Pantera Áurea (ULTRA rara).",
+    weights: {
+      onca_sombria: 30,
+      leao_dourado: 30,
+      tigre_infernal: 30,
+      pantera_negra: 9,
+      pantera_aurea: 1,
+    },
   },
 };
 
