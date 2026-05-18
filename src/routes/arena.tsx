@@ -132,7 +132,7 @@ function ArenaPage() {
       attacker_id: userId,
       defender_id: opponent.ownerId,
       winner_id: won ? userId : opponent.ownerId,
-      log: result.log as unknown as object,
+      log: JSON.parse(JSON.stringify(result.log)),
       coins_reward: rew.coins,
       xp_reward: rew.xp,
     });

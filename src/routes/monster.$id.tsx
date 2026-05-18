@@ -122,7 +122,7 @@ function MonsterPage() {
   async function toggleTeam() {
     if (!monster || !profile) return;
     if (!monster.in_team) {
-      const { data: team } = await supabase.from("monsters").select("id").eq("owner_id", monster.owner_id || userId!).eq("in_team", true);
+      const { data: team } = await supabase.from("monsters").select("id").eq("owner_id", userId!).eq("in_team", true);
       if ((team?.length ?? 0) >= teamMax) {
         toast.error(`Time cheio (${teamMax}).`); return;
       }
