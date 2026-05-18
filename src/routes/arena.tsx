@@ -527,11 +527,17 @@ function ArenaPage() {
 }
 
 function TeamPanel({ title, team, side, energies }: { title: string; team: FullMonster[]; side: "left" | "right"; energies?: { energy: number; nextRegenAt: Date | null }[] }) {
+  // Frente (position 0) deve aparecer mais perto do oponente:
+  // time da esquerda → Frente embaixo (inverter); time da direita → Frente em cima (ordem natural).
+  const ordered = side === "left"
+    ? [...team].map((m, i) => ({ m, i })).sort((a, b) => (b.m.team_position ?? 0) - (a.m.team_position ?? 0))
+    : [...team].map((m, i) => ({ m, i })).sort((a, b) => (a.m.team_position ?? 0) - (b.m.team_position ?? 0));
   return (
     <div className={`rounded-2xl bg-white/10 backdrop-blur-md border-2 ${side === "left" ? "border-blue-300/50" : "border-red-300/50"} p-3 text-white`}>
       <h3 className="font-extrabold mb-2">{title}</h3>
       <div className="space-y-2">
-        {team.map((m, i) => {
+        {ordered.map(({ m, i }) => {
+
           const sp = SPECIES[m.species];
           if (!sp) return null;
           const en = energies?.[i];
