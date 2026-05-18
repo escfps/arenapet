@@ -225,7 +225,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           attacker.lastFallenAt = turn;
           log.push({ turn, actor: side, actorName: attacker.name, targetName: attacker.name, damage: 0, crit: false, effective: 1, remainingHp: 0, message: `💀 ${attacker.name} foi consumido pelas chamas!` });
           sweepDeathExplosions();
-          continue;
+          return;
         }
       }
       // tick rage
@@ -266,7 +266,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
             damage: -heal, crit: false, effective: 1, remainingHp: 0,
             message: `${skill.emoji} ${attacker.name} usou ${skill.name}! Curou todos os aliados em ${heal} HP`,
           });
-          continue;
+          return;
         }
 
         if (skill.kind === "shield_taunt") {
@@ -282,7 +282,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
             targetShield: attacker.shield,
             message: `${skill.emoji} ${attacker.name} usou ${skill.name}! Provocou todos e ganhou ${shield} de escudo`,
           });
-          continue;
+          return;
         }
 
         if (skill.kind === "aoe_magic") {
@@ -302,7 +302,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
               log.push({ turn, actor: side, actorName: attacker.name, targetName: t.name, damage: 0, crit: false, effective: 1, remainingHp: 0, message: `💀 ${t.name} foi derrotado!` });
             }
           }
-          continue;
+          return;
         }
 
         if (skill.kind === "heavy_strike") {
@@ -322,7 +322,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
               log.push({ turn, actor: side, actorName: attacker.name, targetName: target.name, damage: 0, crit: false, effective: 1, remainingHp: 0, message: `💀 ${target.name} foi derrotado!` });
             }
           }
-          continue;
+          return;
         }
 
         if (skill.kind === "guaranteed_crit") {
@@ -343,7 +343,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
               log.push({ turn, actor: side, actorName: attacker.name, targetName: target.name, damage: 0, crit: false, effective: 1, remainingHp: 0, message: `💀 ${target.name} foi derrotado!` });
             }
           }
-          continue;
+          return;
         }
 
         // ===== NOVAS MECÂNICAS =====
@@ -370,7 +370,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
               log.push({ turn, actor: side, actorName: attacker.name, targetName: target.name, damage: 0, crit: false, effective: 1, remainingHp: 0, message: `💀 ${target.name} foi derrotado!` });
             }
           }
-          continue;
+          return;
         }
 
         if (skill.kind === "execute") {
@@ -393,7 +393,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
               log.push({ turn, actor: side, actorName: attacker.name, targetName: target.name, damage: 0, crit: false, effective: 1, remainingHp: 0, message: `💀 ${target.name} foi executado!` });
             }
           }
-          continue;
+          return;
         }
 
         if (skill.kind === "burn_dot") {
@@ -415,7 +415,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
               log.push({ turn, actor: side, actorName: attacker.name, targetName: target.name, damage: 0, crit: false, effective: 1, remainingHp: 0, message: `💀 ${target.name} foi derrotado!` });
             }
           }
-          continue;
+          return;
         }
 
         if (skill.kind === "double_strike") {
@@ -438,7 +438,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
               log.push({ turn, actor: side, actorName: attacker.name, targetName: target.name, damage: 0, crit: false, effective: 1, remainingHp: 0, message: `💀 ${target.name} foi derrotado!` });
             }
           }
-          continue;
+          return;
         }
 
         if (skill.kind === "shield_ally") {
@@ -454,7 +454,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
             damage: 0, crit: false, effective: 1, remainingHp: hurt.current, targetShield: hurt.shield,
             message: `${skill.emoji} ${attacker.name} usou ${skill.name} em ${hurt.name}: +${shield} escudo e +30% DEF por 2 turnos`,
           });
-          continue;
+          return;
         }
 
         if (skill.kind === "chain_lightning") {
@@ -478,7 +478,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
               log.push({ turn, actor: side, actorName: attacker.name, targetName: t.name, damage: 0, crit: false, effective: 1, remainingHp: 0, message: `💀 ${t.name} foi derrotado!` });
             }
           }
-          continue;
+          return;
         }
 
         if (skill.kind === "silence_disable") {
@@ -499,7 +499,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
               log.push({ turn, actor: side, actorName: attacker.name, targetName: target.name, damage: 0, crit: false, effective: 1, remainingHp: 0, message: `💀 ${target.name} foi derrotado!` });
             }
           }
-          continue;
+          return;
         }
 
         if (skill.kind === "berserker_rage") {
@@ -511,7 +511,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
             damage: 0, crit: false, effective: 1, remainingHp: attacker.current,
             message: `${skill.emoji} ${attacker.name} usou ${skill.name}! +${Math.round(attacker.rageAtkMult * 100)}% ATK e -25% DEF por 3 turnos`,
           });
-          continue;
+          return;
         }
 
         if (skill.kind === "revive_ally") {
@@ -537,7 +537,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
               message: `${skill.emoji} ${attacker.name} usou ${skill.name}! Curou o time em ${heal} HP (ninguém caído)`,
             });
           }
-          continue;
+          return;
         }
 
         if (skill.kind === "true_damage_nuke") {
@@ -556,7 +556,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
               log.push({ turn, actor: side, actorName: attacker.name, targetName: target.name, damage: 0, crit: false, effective: 1, remainingHp: 0, message: `💀 ${target.name} foi reduzido a pó!` });
             }
           }
-          continue;
+          return;
         }
       }
       if (attacker.skillCd > 0) attacker.skillCd -= 1;
@@ -575,7 +575,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
             damage: -heal, crit: false, effective: 1, remainingHp: hurt.current,
             message: `✨ ${attacker.name} curou ${hurt.name} em ${heal} HP`,
           });
-          continue;
+          return;
         }
       }
       if (attacker.healCd > 0) attacker.healCd -= 1;
