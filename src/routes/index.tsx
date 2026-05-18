@@ -97,6 +97,7 @@ function PatioPage() {
         def: sp.base.def,
         spd: sp.base.spd,
         in_team: idx < TEAM_MAX,
+        team_position: idx < TEAM_MAX ? idx : 0,
       };
     });
     const { error: insErr } = await supabase.from("monsters").insert(rows);
