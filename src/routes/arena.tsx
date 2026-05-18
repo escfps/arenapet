@@ -139,10 +139,16 @@ function ArenaPage() {
   // Compute current energy for each team pet (with regen applied)
   const teamEnergies = myTeam.map((m) => computeBattleEnergy(m.battle_energy, m.battle_energy_at));
   const minEnergy = teamEnergies.length ? Math.min(...teamEnergies.map((e) => e.energy)) : 0;
-  const canFight = myTeam.length > 0 && minEnergy >= 1;
+  const starvingPets = myTeam.filter((m) => (m.hunger ?? 100) <= 0);
+  const hungryPets = myTeam.filter((m) => (m.hunger ?? 100) > 0 && (m.hunger ?? 100) < 50);
+  const canFight = myTeam.length > 0 && minEnergy >= 1 && starvingPets.length === 0;
 
   async function fight() {
     if (!profile || !userId || !opponent) return;
+    if (starvingPets.length > 0) {
+      toast.error(`${starvingPets[0].name} está faminto! Alimente antes de batalhar. 🍖`);
+      return;
+    }
     if (!canFight) {
       toast.error("Algum pet do seu time está sem energia de batalha! ⚡");
       return;
