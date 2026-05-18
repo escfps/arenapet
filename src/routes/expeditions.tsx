@@ -22,6 +22,8 @@ import {
   claimExpedition,
   cancelExpedition,
   buyExpeditionSlot,
+  swapExpeditionMonster,
+  EXPEDITION_SWAP_GEM_COST,
 } from "@/lib/expeditions.functions";
 import { toast, Toaster } from "sonner";
 import type { MonsterRow } from "@/components/MonsterCard";
