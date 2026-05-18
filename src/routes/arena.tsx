@@ -438,7 +438,7 @@ function ArenaPage() {
                 disabled={searching}
                 className="px-6 py-3 rounded-xl bg-white/20 text-white font-extrabold hover:bg-white/30 transition disabled:opacity-50"
               >
-                {searching ? "🔍 Buscando..." : "🎯 Buscar oponente"}
+                {searching ? `🔍 Procurando oponente... ${searchCountdown}s` : "🎯 Buscar oponente"}
               </button>
               {opponent && !battleLog && (
                 <button
