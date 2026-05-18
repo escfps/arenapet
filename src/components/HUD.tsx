@@ -53,7 +53,7 @@ export function HUD({ profile }: { profile: ProfileRow }) {
               <span className={`px-1.5 py-0.5 rounded font-extrabold ${tier.color}`}>{tier.emoji} {tier.short}</span>
               <span>• {profile.wins}V/{profile.losses}D</span>
             </div>
-          </div>
+          </Link>
           <CoinBadge amount={profile.coins} />
           <GemBadge amount={profile.gems} />
           <button onClick={logout} className="text-[10px] text-white/70 hover:text-white px-1.5">Sair</button>
