@@ -7,6 +7,7 @@ import {
   EXPEDITION_SLOT_PRICES,
   MAX_EXPEDITION_SLOTS,
   computeExpeditionReward,
+  computeBattleEnergy,
   xpForNextLevel,
 } from "@/lib/game-data";
 
