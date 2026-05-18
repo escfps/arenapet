@@ -352,6 +352,29 @@ export const TRADE_FEE_COINS = 50;
 export const TRADE_FEE_GEMS = 5;
 export const MAX_TRADEABLE_RANK = 7; // ✦8+ não pode ser trocado
 
+// ===== Energia de batalha =====
+export const MAX_BATTLE_ENERGY = 24;
+export const BATTLE_ENERGY_REGEN_MS = 60 * 60 * 1000; // 1 energia por hora
+export const ENERGY_REFILL_GEM_COST = 3; // custo pra encher 1 pet
+export const ENERGY_REFILL_ALL_GEM_COST = 15; // encher o time inteiro
+
+export function computeBattleEnergy(stored: number | undefined | null, at: string | undefined | null): {
+  energy: number;
+  nextRegenAt: Date | null; // null se cheio
+  nextStoredAt: string; // novo timestamp pra persistir após uso
+} {
+  const base = Math.min(MAX_BATTLE_ENERGY, Math.max(0, stored ?? MAX_BATTLE_ENERGY));
+  const atDate = at ? new Date(at) : new Date();
+  const now = Date.now();
+  const elapsed = now - atDate.getTime();
+  const regened = Math.max(0, Math.floor(elapsed / BATTLE_ENERGY_REGEN_MS));
+  const energy = Math.min(MAX_BATTLE_ENERGY, base + regened);
+  // Avança o timestamp pelos ticks consumidos
+  const newAt = new Date(atDate.getTime() + regened * BATTLE_ENERGY_REGEN_MS);
+  const nextRegenAt = energy >= MAX_BATTLE_ENERGY ? null : new Date(newAt.getTime() + BATTLE_ENERGY_REGEN_MS);
+  return { energy, nextRegenAt, nextStoredAt: newAt.toISOString() };
+}
+
 // ===== Expedições (farm offline) =====
 export type ExpeditionDuration = {
   id: string;
