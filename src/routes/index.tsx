@@ -43,6 +43,21 @@ function PatioPage() {
 
   useEffect(() => { if (userId) loadMonsters(); }, [userId, loadMonsters]);
 
+  const filteredMonsters = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return monsters.filter((m) => {
+      const sp = SPECIES[m.species];
+      if (!sp) return true;
+      if (rarityFilter !== "all" && sp.rarity !== rarityFilter) return false;
+      if (elementFilter !== "all" && sp.element !== elementFilter && sp.secondaryElement !== elementFilter) return false;
+      if (q) {
+        const hay = `${m.name ?? ""} ${sp.name}`.toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
+      return true;
+    });
+  }, [monsters, search, rarityFilter, elementFilter]);
+
   async function pickStarter(speciesId: string) {
     if (!userId || hatching) return;
     setHatching(true);
