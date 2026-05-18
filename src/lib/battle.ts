@@ -95,6 +95,8 @@ type Live = BattleMonster & {
   // novos
   burnDmg: number;       // dano por turno enquanto burnTurns > 0
   burnTurns: number;
+  bleedDmg: number;      // dano físico por turno enquanto bleedTurns > 0
+  bleedTurns: number;
   silenceTurns: number;  // se >0, próxima skill é anulada
   rageTurns: number;     // berserker: +rageAtkMult e -rageDefDrop
   rageAtkMult: number;
@@ -142,7 +144,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
     ...m, current: m.hp, maxHp: m.hp,
     healCd: 0, skillCd: 1, shield: 0,
     tauntTargetId: null, tauntTurns: 0,
-    burnDmg: 0, burnTurns: 0, silenceTurns: 0,
+    burnDmg: 0, burnTurns: 0, bleedDmg: 0, bleedTurns: 0, silenceTurns: 0,
     rageTurns: 0, rageAtkMult: 0, rageDefDrop: 0,
     defBuffTurns: 0, defBuffPct: 0, lastFallenAt: 0,
   });
@@ -224,6 +226,22 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
         if (attacker.current <= 0) {
           attacker.lastFallenAt = turn;
           log.push({ turn, actor: side, actorName: attacker.name, targetName: attacker.name, damage: 0, crit: false, effective: 1, remainingHp: 0, message: `💀 ${attacker.name} foi consumido pelas chamas!` });
+          sweepDeathExplosions();
+          return;
+        }
+      }
+      // tick bleed (DoT físico — sangramento)
+      if (attacker.bleedTurns > 0 && attacker.current > 0) {
+        applyDamage(attacker, attacker.bleedDmg);
+        log.push({
+          turn, actor: side, actorName: attacker.name, targetName: attacker.name,
+          damage: attacker.bleedDmg, crit: false, effective: 1, remainingHp: attacker.current,
+          message: `🩸 ${attacker.name} sangrou ${attacker.bleedDmg} de HP`,
+        });
+        attacker.bleedTurns -= 1;
+        if (attacker.current <= 0) {
+          attacker.lastFallenAt = turn;
+          log.push({ turn, actor: side, actorName: attacker.name, targetName: attacker.name, damage: 0, crit: false, effective: 1, remainingHp: 0, message: `💀 ${attacker.name} sucumbiu à hemorragia!` });
           sweepDeathExplosions();
           return;
         }
@@ -418,6 +436,29 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           return;
         }
 
+        if (skill.kind === "bleed_dot") {
+          const target = pickTarget(attacker, enemies);
+          if (target) {
+            const eff = defensiveMultiplier(getElement(attacker.species), target.species);
+            const baseHit = Math.max(1, Math.round((effAtk * 1.6 - tgtEffDef(target) * 0.4) * eff * skillMult));
+            applyDamage(target, baseHit);
+            const dot = Math.max(1, Math.round(effAtk * 0.55 * skillMult));
+            target.bleedDmg = Math.max(target.bleedDmg, dot);
+            target.bleedTurns = Math.max(target.bleedTurns, 3);
+            log.push({
+              turn, actor: side, actorName: attacker.name, targetName: target.name,
+              damage: baseHit, crit: false, effective: eff, remainingHp: target.current, targetShield: target.shield,
+              message: `${skill.emoji} ${attacker.name} usou ${skill.name}: ${baseHit} de dano + 🩸 sangrando ${dot}/turno por 3 turnos`,
+            });
+            if (target.current <= 0) {
+              target.lastFallenAt = turn;
+              log.push({ turn, actor: side, actorName: attacker.name, targetName: target.name, damage: 0, crit: false, effective: 1, remainingHp: 0, message: `💀 ${target.name} foi derrotado!` });
+            }
+          }
+          return;
+        }
+
+
         if (skill.kind === "double_strike") {
           const alive = enemies.filter((e) => e.current > 0);
           const target = alive.length ? alive.reduce((x, y) => (x.atk > y.atk ? x : y)) : null;
@@ -519,7 +560,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           if (fallen) {
             fallen.current = Math.round(fallen.maxHp * 0.40);
             fallen.shield = 0;
-            fallen.burnTurns = 0; fallen.silenceTurns = 0;
+            fallen.burnTurns = 0; fallen.bleedTurns = 0; fallen.silenceTurns = 0;
             log.push({
               turn, actor: side, actorName: attacker.name, targetName: fallen.name,
               damage: -fallen.current, crit: false, effective: 1, remainingHp: fallen.current,
