@@ -231,17 +231,23 @@ function MonsterPage() {
         )}
 
         {tab === "train" && (
-          <div className="grid sm:grid-cols-3 gap-3">
-            {(["atk", "def", "spd"] as const).map((s) => (
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            {([
+              { s: "atk", emoji: "⚔️", grad: "from-orange-500 to-red-600", gain: "+1~2" },
+              { s: "def", emoji: "🛡️", grad: "from-blue-500 to-indigo-600", gain: "+1~2" },
+              { s: "spd", emoji: "💨", grad: "from-purple-500 to-fuchsia-600", gain: "+1~2" },
+              { s: "hp",  emoji: "❤️", grad: "from-rose-500 to-pink-600", gain: "+3~5" },
+              { s: "int", emoji: "🧠", grad: "from-fuchsia-500 to-violet-600", gain: "+1~2" },
+            ] as const).map(({ s, emoji, grad, gain }) => (
               <button
                 key={s}
                 onClick={() => train(s)}
-                className="p-4 rounded-2xl bg-gradient-to-br from-orange-500 to-red-600 text-white font-extrabold transition shadow-lg hover:scale-105"
+                className={`p-4 rounded-2xl bg-gradient-to-br ${grad} text-white font-extrabold transition shadow-lg hover:scale-105`}
               >
-                <div className="text-3xl mb-1">{s === "atk" ? "⚔️" : s === "def" ? "🛡️" : "💨"}</div>
+                <div className="text-3xl mb-1">{emoji}</div>
                 <div>Treinar {s.toUpperCase()}</div>
                 <div className="text-xs font-normal opacity-90 mt-1">
-                  🪙 {20 + monster.rank * 10} • -15 energia • +1~2 {s.toUpperCase()}
+                  🪙 {20 + monster.rank * 10} • -15 energia • {gain} {s.toUpperCase()}
                 </div>
               </button>
             ))}
