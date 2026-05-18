@@ -957,6 +957,20 @@ export function promoNeeded(type: "bo3" | "bo5"): number {
   return type === "bo5" ? 3 : 2;
 }
 
+// Baús ganhos ao subir para um novo TIER (não divisão)
+// Recebe o nome do tier alcançado (ex: "Bronze", "Prata", ...)
+export function tierPromotionChests(newTierName: string): { silver: number; gold: number; legendary: number } {
+  switch (newTierName) {
+    case "Bronze":     return { silver: 1, gold: 0, legendary: 0 };
+    case "Prata":      return { silver: 2, gold: 0, legendary: 0 };
+    case "Ouro":       return { silver: 3, gold: 0, legendary: 0 };
+    case "Platina":    return { silver: 0, gold: 1, legendary: 0 };
+    case "Diamante":   return { silver: 1, gold: 1, legendary: 0 };
+    case "Mestre":     return { silver: 0, gold: 2, legendary: 0 };
+    case "Grão-Mestre":return { silver: 0, gold: 0, legendary: 1 };
+    default:           return { silver: 0, gold: 0, legendary: 0 };
+  }
+
 export const ARENA_WIN_POINTS = 25;
 export const ARENA_LOSS_POINTS = 15;
 
