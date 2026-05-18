@@ -30,6 +30,7 @@ import ratoBombaImg from "@/assets/monsters/rato_bomba.png";
 import macacoPregoImg from "@/assets/monsters/macaco_prego.png";
 import tubaraoAbissalImg from "@/assets/monsters/tubarao_abissal.png";
 import polvoVenenosoImg from "@/assets/monsters/polvo_venenoso.png";
+import cobraSangrentaImg from "@/assets/monsters/cobra_sangrenta.png";
 
 export type Element = "fire" | "water" | "grass" | "electric" | "shadow" | "earth";
 export type Role = "tank" | "dps" | "assassin" | "mage" | "healer";
@@ -83,6 +84,7 @@ export type SkillKind =
   | "silence_disable"   // mago — silencia (anula skill do alvo) (Fizz/Talon)
   | "berserker_rage"    // dps/tank — buff ATK +50% por 3 turnos (Tryndamere)
   | "revive_ally"       // healer — ressuscita um aliado com 30% HP (Zilean)
+  | "bleed_dot"         // dps — sangramento físico escala com ATK (Darius)
   | "true_damage_nuke"; // mítico — dano puro ignora DEF e elemento (Vayne ult)
 
 export type Skill = {
@@ -330,6 +332,13 @@ export const SPECIES: Record<string, Species> = {
     description: "Polvo místico das fossas tóxicas. Mago de veneno: corrói os inimigos turno após turno.",
     base: { hp: 58, atk: 13, def: 11, spd: 12, int: 24 },
     skill: { name: "Tinta Venenosa", emoji: "☠️", kind: "burn_dot", cooldown: 3, description: "Cospe tinta venenosa: dano mágico agora + veneno corrosivo por 3 turnos (INT×0.65 cada turno)." },
+  },
+  cobra_sangrenta: {
+    id: "cobra_sangrenta", name: "Cobra Sangrenta", element: "shadow", secondaryElement: "grass", role: "dps", rarity: "super_rare",
+    emoji: "🐍", image: cobraSangrentaImg,
+    description: "Víbora ancestral de presas afiadas. Sua mordida rasga a carne e provoca hemorragia letal turno após turno.",
+    base: { hp: 54, atk: 19, def: 9, spd: 16, int: 9 },
+    skill: { name: "Presa Dilacerante", emoji: "🩸", kind: "bleed_dot", cooldown: 3, description: "Crava as presas no alvo: dano físico agora + sangramento (ATK×0.55) por 3 turnos." },
   },
 
   // ===== ÉPICOS =====
