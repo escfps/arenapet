@@ -127,11 +127,13 @@ export const confirmTrade = createServerFn({ method: "POST" })
 
     // Both confirmed — execute atomic swap
     // 1. validate balances + monsters still owned + not in team
+    if (!trade.to_monster_id) throw new Error("Troca ainda sem monstro do destinatário");
+    const toMonsterId = trade.to_monster_id;
     const [{ data: fromProfile }, { data: toProfile }, { data: monFrom }, { data: monTo }] = await Promise.all([
       supabaseAdmin.from("profiles").select("id,coins,gems").eq("id", trade.from_user_id).single(),
       supabaseAdmin.from("profiles").select("id,coins,gems").eq("id", trade.to_user_id).single(),
       supabaseAdmin.from("monsters").select("id,owner_id,in_team").eq("id", trade.from_monster_id).maybeSingle(),
-      supabaseAdmin.from("monsters").select("id,owner_id,in_team").eq("id", trade.to_monster_id).maybeSingle(),
+      supabaseAdmin.from("monsters").select("id,owner_id,in_team").eq("id", toMonsterId).maybeSingle(),
     ]);
     if (!monFrom || monFrom.owner_id !== trade.from_user_id || monFrom.in_team) {
       await supabaseAdmin.from("trades").update({ status: "cancelled" }).eq("id", trade.id);
