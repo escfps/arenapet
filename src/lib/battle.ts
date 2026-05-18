@@ -561,7 +561,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           if (fallen) {
             fallen.current = Math.round(fallen.maxHp * 0.40);
             fallen.shield = 0;
-            fallen.burnTurns = 0; fallen.bleedTurns = 0; fallen.silenceTurns = 0;
+            fallen.burnTurns = 0; fallen.bleedTurns = 0; fallen.blindTurns = 0; fallen.silenceTurns = 0;
             log.push({
               turn, actor: side, actorName: attacker.name, targetName: fallen.name,
               damage: -fallen.current, crit: false, effective: 1, remainingHp: fallen.current,
