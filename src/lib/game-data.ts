@@ -24,6 +24,8 @@ import panteraNegraImg from "@/assets/monsters/pantera_negra.png";
 import panteraAureaImg from "@/assets/monsters/pantera_aurea.png";
 import dragaoBrancoImg from "@/assets/monsters/dragao_branco.png";
 import dragaoNegroImg from "@/assets/monsters/dragao_negro.png";
+import jacareAncestralImg from "@/assets/monsters/jacare_ancestral.png";
+import gorilaTitanImg from "@/assets/monsters/gorila_titan.png";
 
 export type Element = "fire" | "water" | "grass" | "electric" | "shadow" | "earth";
 export type Role = "tank" | "dps" | "assassin" | "mage" | "healer";
@@ -244,6 +246,20 @@ export const SPECIES: Record<string, Species> = {
     emoji: "✨", image: panteraAureaImg,
     description: "Olhos dourados — variante ultra-rara da Pantera Negra. Mago sombrio supremo.",
     base: { hp: 65, atk: 14, def: 12, spd: 15, int: 24 },
+  },
+
+  // ===== ÉPICOS =====
+  jacare_ancestral: {
+    id: "jacare_ancestral", name: "Jacaré Ancestral", element: "water", secondaryElement: "earth", role: "dps", rarity: "epic",
+    emoji: "🐊", image: jacareAncestralImg,
+    description: "Predador ancestral dos rios esmeralda. Mordida devastadora que ignora defesa leve.",
+    base: { hp: 62, atk: 17, def: 12, spd: 11, int: 8 },
+  },
+  gorila_titan: {
+    id: "gorila_titan", name: "Gorila Titã", element: "earth", role: "tank", rarity: "epic",
+    emoji: "🦍", image: gorilaTitanImg,
+    description: "Titã das montanhas com cristais místicos. Tank brutal que provoca e contra-ataca.",
+    base: { hp: 78, atk: 15, def: 17, spd: 8, int: 9 },
   },
 
   // ===== MÍTICOS (classe suprema — só em eventos especiais) =====
