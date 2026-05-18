@@ -745,12 +745,15 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
       const critChance = attacker.role === "assassin" ? 0.35 : 0.12;
       const crit = rand() < critChance;
       const defUsed = attacker.role === "mage" ? target.def * 0.4 : target.def;
-      const atkStat = attacker.role === "mage" ? attacker.int : attacker.atk;
+      const atkStat = attacker.role === "mage"
+        ? attacker.int
+        : attacker.atk * phoenixAtkBonus(attacker);
       let base = Math.max(1, atkStat * 2 - defUsed);
       if (attacker.role === "dps") base *= 1.15;
       const variance = 0.85 + rand() * 0.3;
       const damage = Math.max(1, Math.round(base * eff * variance * (crit ? 1.7 : 1)));
       applyDamage(target, damage);
+      phoenixOnDamageDealt(attacker, damage);
 
       let msg = `${attacker.name} atacou ${target.name} causando ${damage} de dano`;
       if (crit) msg += " (CRÍTICO!)";
