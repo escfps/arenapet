@@ -14,6 +14,7 @@ import { Route as ShopRouteImport } from './routes/shop'
 import { Route as RankingRouteImport } from './routes/ranking'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as HistoryRouteImport } from './routes/history'
 import { Route as ForgeRouteImport } from './routes/forge'
 import { Route as ExpeditionsRouteImport } from './routes/expeditions'
 import { Route as CollectionRouteImport } from './routes/collection'
@@ -44,6 +45,11 @@ const ProfileRoute = ProfileRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HistoryRoute = HistoryRouteImport.update({
+  id: '/history',
+  path: '/history',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ForgeRoute = ForgeRouteImport.update({
@@ -83,6 +89,7 @@ export interface FileRoutesByFullPath {
   '/collection': typeof CollectionRoute
   '/expeditions': typeof ExpeditionsRoute
   '/forge': typeof ForgeRoute
+  '/history': typeof HistoryRoute
   '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
   '/ranking': typeof RankingRoute
@@ -96,6 +103,7 @@ export interface FileRoutesByTo {
   '/collection': typeof CollectionRoute
   '/expeditions': typeof ExpeditionsRoute
   '/forge': typeof ForgeRoute
+  '/history': typeof HistoryRoute
   '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
   '/ranking': typeof RankingRoute
@@ -110,6 +118,7 @@ export interface FileRoutesById {
   '/collection': typeof CollectionRoute
   '/expeditions': typeof ExpeditionsRoute
   '/forge': typeof ForgeRoute
+  '/history': typeof HistoryRoute
   '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
   '/ranking': typeof RankingRoute
@@ -125,6 +134,7 @@ export interface FileRouteTypes {
     | '/collection'
     | '/expeditions'
     | '/forge'
+    | '/history'
     | '/login'
     | '/profile'
     | '/ranking'
@@ -138,6 +148,7 @@ export interface FileRouteTypes {
     | '/collection'
     | '/expeditions'
     | '/forge'
+    | '/history'
     | '/login'
     | '/profile'
     | '/ranking'
@@ -151,6 +162,7 @@ export interface FileRouteTypes {
     | '/collection'
     | '/expeditions'
     | '/forge'
+    | '/history'
     | '/login'
     | '/profile'
     | '/ranking'
@@ -165,6 +177,7 @@ export interface RootRouteChildren {
   CollectionRoute: typeof CollectionRoute
   ExpeditionsRoute: typeof ExpeditionsRoute
   ForgeRoute: typeof ForgeRoute
+  HistoryRoute: typeof HistoryRoute
   LoginRoute: typeof LoginRoute
   ProfileRoute: typeof ProfileRoute
   RankingRoute: typeof RankingRoute
@@ -208,6 +221,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/history': {
+      id: '/history'
+      path: '/history'
+      fullPath: '/history'
+      preLoaderRoute: typeof HistoryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/forge': {
@@ -261,6 +281,7 @@ const rootRouteChildren: RootRouteChildren = {
   CollectionRoute: CollectionRoute,
   ExpeditionsRoute: ExpeditionsRoute,
   ForgeRoute: ForgeRoute,
+  HistoryRoute: HistoryRoute,
   LoginRoute: LoginRoute,
   ProfileRoute: ProfileRoute,
   RankingRoute: RankingRoute,
