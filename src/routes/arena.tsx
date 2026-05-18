@@ -194,6 +194,10 @@ function ArenaPage() {
     const chosenOpp = { ownerId: chosen, ownerName: byOwner[chosen].username, arenaPoints: byOwner[chosen].arenaPoints, team: byOwner[chosen].team.slice(0, 3) };
     setOpponent(chosenOpp);
     setSearching(false);
+    // Bots têm energia ilimitada — recarrega antes da batalha pra nunca travarem
+    if (profById.get(chosen)?.is_bot) {
+      void supabase.from("monsters").update({ battle_energy: 24, battle_energy_at: new Date().toISOString(), hunger: 100 }).eq("owner_id", chosen);
+    }
     // Já começa a partida imediatamente — não dá pra rebuscar oponente
     void fight(chosenOpp);
   }
