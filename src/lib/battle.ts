@@ -582,7 +582,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
 
       // ===== BASIC ATTACK =====
       const target = pickTarget(attacker, enemies);
-      if (!target) continue;
+      if (!target) return;
 
       const eff = defensiveMultiplier(getElement(attacker.species), target.species);
       const critChance = attacker.role === "assassin" ? 0.35 : 0.12;
@@ -614,7 +614,8 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           message: `💀 ${target.name} foi derrotado!`,
         });
       }
-      // PASSIVA Rato Bomba: detona explosão após cada ação
+      })();
+      // PASSIVA Rato Bomba: detona explosão APÓS cada ator (skill ou ataque)
       sweepDeathExplosions();
     }
     turn += 1;
