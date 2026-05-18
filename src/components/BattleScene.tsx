@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import type { BattleLogEntry } from "@/lib/battle";
 import { SPECIES, ELEMENT_COLORS, RARITY_INFO, MAX_RANK, skinFilter, totalStats } from "@/lib/game-data";
 import type { MonsterRow } from "./MonsterCard";
+import grassBg from "@/assets/battle-grass-bg.jpg";
 
 type Team = (MonsterRow & { owner_id: string })[];
 type HpMap = Map<string, { cur: number; max: number }>;
