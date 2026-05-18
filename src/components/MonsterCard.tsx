@@ -31,7 +31,9 @@ export function MonsterCard({ monster, onClick, compact, selected }: Props) {
   const sp = SPECIES[monster.species];
   if (!sp) return null;
   const rank = monster.rank ?? 1;
-  const stats = totalStats(monster.species, rank);
+  const stats = totalStats(monster.species, rank, {
+    hp: monster.hp ?? 0, atk: monster.atk ?? 0, def: monster.def ?? 0, spd: monster.spd ?? 0, int: monster.int ?? 0,
+  });
   const gradient = ELEMENT_COLORS[sp.element];
 
   const isMax = rank >= MAX_RANK;
