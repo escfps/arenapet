@@ -136,7 +136,25 @@ function ArenaPage() {
       coins_reward: rew.coins,
       xp_reward: rew.xp,
     });
-  }
+
+    // Ração drop on win (70% chance, 1-2 rações) — feeds expedition system
+    if (won && Math.random() < 0.70) {
+      const dropped = 1 + Math.floor(Math.random() * 2);
+      const { data: foodRow } = await supabase
+        .from("inventory")
+        .select("quantity")
+        .eq("user_id", userId)
+        .eq("item_type", "ration")
+        .maybeSingle();
+      const current = foodRow?.quantity ?? 0;
+      await supabase
+        .from("inventory")
+        .upsert(
+          { user_id: userId, item_type: "ration", quantity: current + dropped },
+          { onConflict: "user_id,item_type" }
+        );
+      toast(`🍖 +${dropped} ração!`, { icon: "🎁" });
+    }
 
   if (loading || !profile) {
     return <div className="min-h-screen flex items-center justify-center text-white">Carregando...</div>;
