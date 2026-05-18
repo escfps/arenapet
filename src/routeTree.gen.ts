@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TradeRouteImport } from './routes/trade'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgeRouteImport } from './routes/forge'
@@ -17,6 +18,11 @@ import { Route as ArenaRouteImport } from './routes/arena'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as MonsterIdRouteImport } from './routes/monster.$id'
 
+const TradeRoute = TradeRouteImport.update({
+  id: '/trade',
+  path: '/trade',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ShopRoute = ShopRouteImport.update({
   id: '/shop',
   path: '/shop',
@@ -60,6 +66,7 @@ export interface FileRoutesByFullPath {
   '/forge': typeof ForgeRoute
   '/login': typeof LoginRoute
   '/shop': typeof ShopRoute
+  '/trade': typeof TradeRoute
   '/monster/$id': typeof MonsterIdRoute
 }
 export interface FileRoutesByTo {
@@ -69,6 +76,7 @@ export interface FileRoutesByTo {
   '/forge': typeof ForgeRoute
   '/login': typeof LoginRoute
   '/shop': typeof ShopRoute
+  '/trade': typeof TradeRoute
   '/monster/$id': typeof MonsterIdRoute
 }
 export interface FileRoutesById {
@@ -79,6 +87,7 @@ export interface FileRoutesById {
   '/forge': typeof ForgeRoute
   '/login': typeof LoginRoute
   '/shop': typeof ShopRoute
+  '/trade': typeof TradeRoute
   '/monster/$id': typeof MonsterIdRoute
 }
 export interface FileRouteTypes {
@@ -90,6 +99,7 @@ export interface FileRouteTypes {
     | '/forge'
     | '/login'
     | '/shop'
+    | '/trade'
     | '/monster/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -99,6 +109,7 @@ export interface FileRouteTypes {
     | '/forge'
     | '/login'
     | '/shop'
+    | '/trade'
     | '/monster/$id'
   id:
     | '__root__'
@@ -108,6 +119,7 @@ export interface FileRouteTypes {
     | '/forge'
     | '/login'
     | '/shop'
+    | '/trade'
     | '/monster/$id'
   fileRoutesById: FileRoutesById
 }
@@ -118,11 +130,19 @@ export interface RootRouteChildren {
   ForgeRoute: typeof ForgeRoute
   LoginRoute: typeof LoginRoute
   ShopRoute: typeof ShopRoute
+  TradeRoute: typeof TradeRoute
   MonsterIdRoute: typeof MonsterIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/trade': {
+      id: '/trade'
+      path: '/trade'
+      fullPath: '/trade'
+      preLoaderRoute: typeof TradeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/shop': {
       id: '/shop'
       path: '/shop'
@@ -182,8 +202,19 @@ const rootRouteChildren: RootRouteChildren = {
   ForgeRoute: ForgeRoute,
   LoginRoute: LoginRoute,
   ShopRoute: ShopRoute,
+  TradeRoute: TradeRoute,
   MonsterIdRoute: MonsterIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
