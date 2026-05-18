@@ -111,7 +111,13 @@ function ArenaPage() {
     setWinner(result.winner);
     const won = result.winner === "team_a";
     const rew = computeRewards(profile.level, won, isVip(profile.vip_until));
-    setRewards(rew);
+
+    // Arena points: +25 on win, -15 on loss (floor at 0)
+    const oldPoints = profile.arena_points ?? 0;
+    const delta = won ? ARENA_WIN_POINTS : -ARENA_LOSS_POINTS;
+    const newPoints = Math.max(0, oldPoints + delta);
+
+    setRewards({ ...rew, points: delta, oldPoints, newPoints });
 
     // persist
     const updates: Partial<typeof profile> = {
@@ -119,6 +125,7 @@ function ArenaPage() {
       xp: profile.xp + rew.xp,
       wins: profile.wins + (won ? 1 : 0),
       losses: profile.losses + (won ? 0 : 1),
+      arena_points: newPoints,
     };
     let newXp = updates.xp!;
     let newLevel = profile.level;
@@ -129,6 +136,21 @@ function ArenaPage() {
     updates.xp = newXp;
     updates.level = newLevel;
     await patch(updates);
+
+    // Bot opponents also gain/lose points (opposite outcome)
+    await supabase.rpc("noop").catch(() => {}); // no-op safe call (ignore if missing)
+    const opponentDelta = won ? -ARENA_LOSS_POINTS : ARENA_WIN_POINTS;
+    const { data: oppProfile } = await supabase
+      .from("profiles")
+      .select("arena_points")
+      .eq("id", opponent.ownerId)
+      .maybeSingle();
+    if (oppProfile) {
+      await supabase
+        .from("profiles")
+        .update({ arena_points: Math.max(0, (oppProfile.arena_points ?? 0) + opponentDelta) })
+        .eq("id", opponent.ownerId);
+    }
 
     await supabase.from("battles").insert({
       attacker_id: userId,
