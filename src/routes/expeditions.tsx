@@ -240,13 +240,22 @@ function ExpeditionsPage() {
                         Reclamar
                       </button>
                     ) : (
-                      <button
-                        onClick={() => handleCancel(exp)}
-                        disabled={busy}
-                        className="px-3 py-2 rounded-lg bg-red-500/80 hover:bg-red-600 text-xs font-bold text-white disabled:opacity-50"
-                      >
-                        Cancelar
-                      </button>
+                      <div className="flex flex-col gap-1">
+                        <button
+                          onClick={() => setSwapForExp(exp)}
+                          disabled={busy}
+                          className="px-3 py-1.5 rounded-lg bg-fuchsia-500/90 hover:bg-fuchsia-600 text-xs font-bold text-white disabled:opacity-50 whitespace-nowrap"
+                        >
+                          🔄 Trocar ({EXPEDITION_SWAP_GEM_COST}💎)
+                        </button>
+                        <button
+                          onClick={() => handleCancel(exp)}
+                          disabled={busy}
+                          className="px-3 py-1.5 rounded-lg bg-red-500/80 hover:bg-red-600 text-xs font-bold text-white disabled:opacity-50"
+                        >
+                          Cancelar
+                        </button>
+                      </div>
                     )}
                   </div>
                 </div>
