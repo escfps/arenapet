@@ -68,11 +68,19 @@ export function BattleScene({
   teamB,
   log,
   step,
+  playerAName,
+  playerATier,
+  playerBName,
+  playerBTier,
 }: {
   teamA: Team;
   teamB: Team;
   log: BattleLogEntry[];
   step: number;
+  playerAName?: string;
+  playerATier?: string;
+  playerBName?: string;
+  playerBTier?: string;
 }) {
   const initialHp = useMemo<HpMap>(() => {
     const map: HpMap = new Map();
