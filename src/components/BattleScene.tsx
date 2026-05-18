@@ -88,11 +88,15 @@ export function BattleScene({
   const [hp, setHp] = useState<HpMap>(initialHp);
   const [shields, setShields] = useState<ShieldMap>(new Map());
   const [fx, setFx] = useState<Fx>({ actor: null, target: null, dmg: null, crit: false });
+  const [banner, setBanner] = useState<EffectBanner>(null);
+  const [statuses, setStatuses] = useState<StatusMap>(new Map());
 
   useEffect(() => {
     setHp(new Map(initialHp));
     setShields(new Map());
     setFx({ actor: null, target: null, dmg: null, crit: false });
+    setBanner(null);
+    setStatuses(new Map());
   }, [initialHp]);
 
   useEffect(() => {
@@ -139,19 +143,74 @@ export function BattleScene({
     }
 
     setFx({ actor: actorKey, target: targetKey, dmg: entry.damage, crit: entry.crit });
+
+    // ===== Banner de efeito especial =====
+    const eff = detectEffect(entry);
+    if (eff) setBanner(eff);
+
+    // ===== Status persistentes no alvo =====
+    const st = statusFromMessage(entry.message);
+    if (st) {
+      const key = st === "rage" ? actorKey : (targetKey ?? actorKey);
+      setStatuses((prev) => {
+        const next = new Map(prev);
+        const cur = new Set(next.get(key) ?? []);
+        cur.add(st);
+        next.set(key, cur);
+        return next;
+      });
+      // expira após algumas etapas
+      const stepsToClear = st === "silence" ? 2 : 3;
+      const clearTimer = setTimeout(() => {
+        setStatuses((prev) => {
+          const next = new Map(prev);
+          const cur = new Set(next.get(key) ?? []);
+          cur.delete(st);
+          if (cur.size === 0) next.delete(key);
+          else next.set(key, cur);
+          return next;
+        });
+      }, 650 * stepsToClear);
+      // não retornamos esse timer pra não atrapalhar o cleanup principal
+      void clearTimer;
+    }
+
     const t = setTimeout(
       () => setFx({ actor: null, target: null, dmg: null, crit: false }),
       650
     );
-    return () => clearTimeout(t);
+    const tb = setTimeout(() => setBanner(null), 1100);
+    return () => {
+      clearTimeout(t);
+      clearTimeout(tb);
+    };
   }, [step, log, teamA, teamB]);
 
   return (
-    <div className="rounded-2xl bg-gradient-to-b from-slate-900/70 to-indigo-950/70 backdrop-blur-md border border-white/20 p-4">
+    <div className="relative rounded-2xl bg-gradient-to-b from-slate-900/70 to-indigo-950/70 backdrop-blur-md border border-white/20 p-4 overflow-hidden">
       <div className="grid grid-cols-2 gap-3">
-        <SideColumn team={teamA} side="a" hp={hp} shields={shields} fx={fx} />
-        <SideColumn team={teamB} side="b" hp={hp} shields={shields} fx={fx} mirrored />
+        <SideColumn team={teamA} side="a" hp={hp} shields={shields} fx={fx} statuses={statuses} />
+        <SideColumn team={teamB} side="b" hp={hp} shields={shields} fx={fx} statuses={statuses} mirrored />
       </div>
+
+      {/* Overlay central de efeito */}
+      {banner && (
+        <div
+          key={banner.id}
+          className="pointer-events-none absolute inset-0 flex items-center justify-center z-30 animate-fade-in"
+        >
+          <div
+            className={`px-5 py-3 rounded-2xl bg-gradient-to-br ${banner.color} border-2 border-white/40 shadow-2xl text-white text-center animate-scale-in`}
+            style={{ textShadow: "0 2px 6px rgba(0,0,0,0.7)" }}
+          >
+            <div className="text-4xl leading-none">{banner.emoji}</div>
+            <div className="text-base font-extrabold tracking-wide mt-1">{banner.label}</div>
+            {banner.detail && (
+              <div className="text-[10px] opacity-90 font-semibold mt-0.5 max-w-[200px]">{banner.detail}</div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -162,6 +221,7 @@ function SideColumn({
   hp,
   shields,
   fx,
+  statuses,
   mirrored,
 }: {
   team: Team;
@@ -169,6 +229,7 @@ function SideColumn({
   hp: HpMap;
   shields: ShieldMap;
   fx: Fx;
+  statuses: StatusMap;
   mirrored?: boolean;
 }) {
   return (
@@ -191,6 +252,7 @@ function SideColumn({
             : pct > 25
             ? "from-yellow-400 to-orange-500"
             : "from-red-500 to-rose-600";
+        const st = statuses.get(key);
         return (
           <div
             key={m.id}
