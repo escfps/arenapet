@@ -290,7 +290,7 @@ function ArenaPage() {
         ) : (
           <>
             <div className="grid md:grid-cols-2 gap-4">
-              <TeamPanel title="Seu time" team={myTeam} side="left" />
+              <TeamPanel title="Seu time" team={myTeam} side="left" energies={teamEnergies} />
               {opponent ? (
                 <TeamPanel title={`vs ${opponent.ownerName}`} team={opponent.team} side="right" />
               ) : (
@@ -299,6 +299,12 @@ function ArenaPage() {
                 </div>
               )}
             </div>
+
+            {!canFight && myTeam.length > 0 && (
+              <div className="rounded-xl bg-red-500/30 border border-red-300 p-3 text-white text-sm text-center">
+                ⚡ Algum pet do seu time está sem energia de batalha. Espere a regen (1/hora) ou compre energia na <button onClick={() => navigate({ to: "/shop" })} className="underline font-bold">loja</button>.
+              </div>
+            )}
 
             <div className="flex gap-3 justify-center">
               <button
@@ -311,7 +317,8 @@ function ArenaPage() {
               {opponent && !battleLog && (
                 <button
                   onClick={fight}
-                  className="px-8 py-3 rounded-xl bg-gradient-to-b from-red-500 to-red-700 text-white font-extrabold shadow-xl hover:scale-105 transition"
+                  disabled={!canFight}
+                  className="px-8 py-3 rounded-xl bg-gradient-to-b from-red-500 to-red-700 text-white font-extrabold shadow-xl hover:scale-105 transition disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   ⚔️ BATALHAR!
                 </button>
