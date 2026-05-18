@@ -6,7 +6,7 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/login")({
   component: LoginPage,
-  head: () => ({ meta: [{ title: "Entrar — Colheita Feliz" }] }),
+  head: () => ({ meta: [{ title: "Entrar — Arena Pet" }] }),
 });
 
 function LoginPage() {
@@ -63,9 +63,9 @@ function LoginPage() {
       <div className="w-full max-w-md panel-wood rounded-2xl p-1">
         <div className="bg-card rounded-xl p-8">
           <div className="text-center mb-6">
-            <div className="text-6xl mb-2">🌻</div>
-            <h1 className="text-3xl font-extrabold text-foreground">Colheita Feliz</h1>
-            <p className="text-muted-foreground text-sm mt-1">Plante, colhe e cuide da sua fazenda</p>
+            <div className="text-6xl mb-2">🐉</div>
+            <h1 className="text-3xl font-extrabold text-foreground">Arena Pet</h1>
+            <p className="text-muted-foreground text-sm mt-1">Colecione, treine e batalhe com seus pets</p>
           </div>
 
           <div className="flex gap-2 mb-5 bg-muted rounded-lg p-1">
@@ -83,7 +83,7 @@ function LoginPage() {
             {mode === "signup" && (
               <input
                 value={username} onChange={(e) => setUsername(e.target.value)}
-                placeholder="Nome do fazendeiro"
+                placeholder="Nome do treinador"
                 className="w-full px-4 py-3 rounded-lg bg-muted border-2 border-border focus:border-primary outline-none"
               />
             )}
