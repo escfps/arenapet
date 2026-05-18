@@ -27,7 +27,7 @@ import dragaoNegroImg from "@/assets/monsters/dragao_negro.png";
 
 export type Element = "fire" | "water" | "grass" | "electric" | "shadow" | "earth";
 export type Role = "tank" | "dps" | "assassin" | "mage" | "healer";
-export type Rarity = "common" | "rare" | "legendary";
+export type Rarity = "common" | "rare" | "legendary" | "mythic";
 
 export type Species = {
   id: string;
