@@ -157,7 +157,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
         attacker.skillCd = skill.cooldown;
 
         if (skill.kind === "team_heal") {
-          const heal = Math.round((attacker.atk * 1.5 + attacker.maxHp * 0.10) * skillMult);
+          const heal = Math.round((attacker.int * 1.8 + attacker.maxHp * 0.10) * skillMult);
           const targets = allies.filter((m) => m.current > 0);
           for (const t of targets) {
             t.current = Math.min(t.maxHp, t.current + heal);
