@@ -121,18 +121,63 @@ function PatioPage() {
   }
 
 
+  const PILLS = ["🛡️ Frente", "⚔️ Meio", "🏹 Trás"] as const;
+
+  async function setSlot(m: MonsterRow, slot: number) {
+    if (!profile) return;
+    // If another monster occupies that slot, swap
+    const occupant = monsters.find((x) => x.in_team && x.team_position === slot && x.id !== m.id);
+    const updates: { id: string; in_team: boolean; team_position: number }[] = [
+      { id: m.id, in_team: true, team_position: slot },
+    ];
+    if (occupant) {
+      // give occupant the old position of m if m was in team, else mark as removed
+      if (m.in_team) {
+        updates.push({ id: occupant.id, in_team: true, team_position: m.team_position ?? slot });
+      } else {
+        updates.push({ id: occupant.id, in_team: false, team_position: 0 });
+      }
+    }
+    setMonsters(monsters.map((x) => {
+      const u = updates.find((u) => u.id === x.id);
+      return u ? { ...x, in_team: u.in_team, team_position: u.team_position } : x;
+    }));
+    for (const u of updates) {
+      await supabase.from("monsters").update({ in_team: u.in_team, team_position: u.team_position }).eq("id", u.id);
+    }
+  }
+
   async function toggleTeam(m: MonsterRow) {
     if (!profile) return;
-    const teamMax = TEAM_MAX;
-    const teamCount = monsters.filter((x) => x.in_team).length;
-    if (!m.in_team && teamCount >= teamMax) {
-      toast.error(`Time cheio (${teamMax}).`);
+    const teamMembers = monsters.filter((x) => x.in_team);
+    if (!m.in_team) {
+      if (teamMembers.length >= TEAM_MAX) {
+        toast.error(`Time cheio (${TEAM_MAX}).`);
+        return;
+      }
+      const used = new Set(teamMembers.map((x) => x.team_position ?? 0));
+      let slot = 0;
+      while (slot < TEAM_MAX && used.has(slot)) slot += 1;
+      await setSlot(m, slot);
       return;
     }
-    const newVal = !m.in_team;
-    setMonsters(monsters.map((x) => x.id === m.id ? { ...x, in_team: newVal } : x));
-    await supabase.from("monsters").update({ in_team: newVal }).eq("id", m.id);
+    setMonsters(monsters.map((x) => x.id === m.id ? { ...x, in_team: false } : x));
+    await supabase.from("monsters").update({ in_team: false }).eq("id", m.id);
   }
+
+  async function swapPositions(slotA: number, slotB: number) {
+    const a = monsters.find((x) => x.in_team && (x.team_position ?? 0) === slotA);
+    const b = monsters.find((x) => x.in_team && (x.team_position ?? 0) === slotB);
+    if (!a) return;
+    setMonsters(monsters.map((x) => {
+      if (a && x.id === a.id) return { ...x, team_position: slotB };
+      if (b && x.id === b.id) return { ...x, team_position: slotA };
+      return x;
+    }));
+    await supabase.from("monsters").update({ team_position: slotB }).eq("id", a.id);
+    if (b) await supabase.from("monsters").update({ team_position: slotA }).eq("id", b.id);
+  }
+
 
   if (loading || !profile) {
     return <div className="min-h-screen flex items-center justify-center text-white text-xl">🌟 Carregando...</div>;
