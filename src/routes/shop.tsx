@@ -347,12 +347,14 @@ function ShopPage() {
                   <div className="text-3xl">💎</div>
                   <div className="text-xl font-extrabold">{p.gems.toLocaleString("pt-BR")} gemas</div>
                   {p.bonus > 0 && <div className="text-xs text-yellow-300 font-bold">+ {p.bonus} bônus 🎁</div>}
-                  <button
-                    onClick={() => buyGems(p)}
-                    className="mt-3 w-full py-2 rounded-lg bg-white text-purple-800 font-extrabold hover:bg-yellow-200 transition"
+                  <a
+                    href={whatsappUrl(`Olá! Quero comprar o pacote de ${p.gems.toLocaleString("pt-BR")}${p.bonus > 0 ? ` (+${p.bonus} bônus)` : ""} 💎 por R$ ${p.priceBRL.toFixed(2).replace(".", ",")} no Arena Pet. Meu nick: ${profile.username}`)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-3 w-full flex items-center justify-center gap-2 py-2 rounded-lg bg-green-500 text-white font-extrabold hover:bg-green-600 transition"
                   >
-                    R$ {p.priceBRL.toFixed(2).replace(".", ",")}
-                  </button>
+                    💬 R$ {p.priceBRL.toFixed(2).replace(".", ",")}
+                  </a>
                 </div>
               ))}
             </div>
