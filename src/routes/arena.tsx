@@ -292,6 +292,28 @@ function ArenaPage() {
               )}
             </div>
 
+            {promo && !battleLog && (
+              <div className="rounded-xl bg-gradient-to-r from-yellow-500/30 to-orange-500/30 border-2 border-yellow-300 p-3 text-white text-center">
+                <div className="font-extrabold text-lg">⚡ SÉRIE DE PROMOÇÃO ({promo.type.toUpperCase()})</div>
+                <div className="text-sm opacity-90">
+                  Vença {promoNeeded(promo.type)} pra subir • {promo.wins}V / {promo.losses}D
+                </div>
+                <div className="flex gap-1 justify-center mt-2">
+                  {Array.from({ length: promoNeeded(promo.type) * 2 - 1 }).map((_, i) => {
+                    const isWin = i < promo.wins;
+                    const isLoss = i >= promo.wins && i < promo.wins + promo.losses;
+                    return (
+                      <div key={i} className={`w-6 h-6 rounded-full border-2 ${
+                        isWin ? "bg-green-400 border-green-200" :
+                        isLoss ? "bg-red-500 border-red-200" :
+                        "bg-white/10 border-white/40"
+                      }`} />
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             {battleLog && opponent && (
               <BattleScene teamA={myTeam} teamB={opponent.team} log={battleLog} step={shownLog.length} />
             )}
