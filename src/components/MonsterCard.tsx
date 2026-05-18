@@ -1,4 +1,4 @@
-import { SPECIES, skinFilter, ELEMENT_COLORS, ELEMENT_NAMES, totalStats } from "@/lib/game-data";
+import { SPECIES, skinFilter, ELEMENT_COLORS, ELEMENT_NAMES, ROLE_INFO, totalStats } from "@/lib/game-data";
 
 export type MonsterRow = {
   id: string;
@@ -44,6 +44,9 @@ export function MonsterCard({ monster, onClick, compact, selected }: Props) {
       )}
       <span className="absolute top-2 right-2 z-10 px-2 py-0.5 rounded-full bg-black/70 text-white text-[10px] font-extrabold">
         Nv {monster.level}
+      </span>
+      <span className={`absolute bottom-[3.5rem] right-2 z-10 px-2 py-0.5 rounded-full ${ROLE_INFO[sp.role].color} text-white text-[10px] font-extrabold shadow-lg`}>
+        {ROLE_INFO[sp.role].emoji} {ROLE_INFO[sp.role].name}
       </span>
       <div className={`bg-gradient-to-br ${gradient} ${compact ? "p-2" : "p-3"}`}>
         <div className={`flex items-center justify-center ${compact ? "h-20" : "h-32"}`}>

@@ -5,62 +5,57 @@ import voltbunImg from "@/assets/monsters/voltbun.png";
 import shadepupImg from "@/assets/monsters/shadepup.png";
 
 export type Element = "fire" | "water" | "grass" | "electric" | "shadow";
+export type Role = "tank" | "dps" | "assassin" | "mage" | "healer";
 
 export type Species = {
   id: string;
   name: string;
   element: Element;
+  role: Role;
   emoji: string;
   image: string;
   description: string;
   base: { hp: number; atk: number; def: number; spd: number };
 };
 
+export const ROLE_INFO: Record<Role, { name: string; emoji: string; description: string; color: string }> = {
+  tank: { name: "Tank", emoji: "🛡️", description: "Provoca: inimigos atacam ele primeiro. Muito HP/DEF.", color: "bg-blue-500" },
+  dps: { name: "DPS", emoji: "⚔️", description: "Dano consistente alto (+15% de dano).", color: "bg-orange-500" },
+  assassin: { name: "Assassino", emoji: "🗡️", description: "Crítico em 35% dos golpes e mira no mais fraco.", color: "bg-purple-500" },
+  mage: { name: "Mago", emoji: "🔮", description: "Dano mágico ignora 60% da DEF inimiga.", color: "bg-fuchsia-500" },
+  healer: { name: "Healer", emoji: "✨", description: "A cada 2 turnos cura o aliado mais ferido.", color: "bg-emerald-500" },
+};
+
 export const SPECIES: Record<string, Species> = {
   flarepup: {
-    id: "flarepup",
-    name: "Flarepup",
-    element: "fire",
-    emoji: "🔥",
-    image: flarepupImg,
-    description: "Raposinha de fogo. Ataque alto, defesa baixa.",
+    id: "flarepup", name: "Flarepup", element: "fire", role: "dps",
+    emoji: "🔥", image: flarepupImg,
+    description: "Raposinha de fogo. DPS clássico: dano alto e estável.",
     base: { hp: 55, atk: 15, def: 8, spd: 12 },
   },
   aquakitty: {
-    id: "aquakitty",
-    name: "Aquakitty",
-    element: "water",
-    emoji: "💧",
-    image: aquakittyImg,
-    description: "Gatinho aquático. Equilibrado e rápido.",
-    base: { hp: 60, atk: 11, def: 11, spd: 14 },
+    id: "aquakitty", name: "Aquakitty", element: "water", role: "healer",
+    emoji: "💧", image: aquakittyImg,
+    description: "Gatinho aquático. Cura o time a cada 2 turnos.",
+    base: { hp: 60, atk: 9, def: 11, spd: 13 },
   },
   leafox: {
-    id: "leafox",
-    name: "Leafox",
-    element: "grass",
-    emoji: "🌿",
-    image: leafoxImg,
-    description: "Raposa-folha. Defesa altíssima e regenera.",
-    base: { hp: 70, atk: 9, def: 16, spd: 9 },
+    id: "leafox", name: "Leafox", element: "grass", role: "tank",
+    emoji: "🌿", image: leafoxImg,
+    description: "Raposa-folha. Tank: provoca e absorve dano.",
+    base: { hp: 80, atk: 8, def: 18, spd: 8 },
   },
   voltbun: {
-    id: "voltbun",
-    name: "Voltbun",
-    element: "electric",
-    emoji: "⚡",
-    image: voltbunImg,
-    description: "Coelhinho elétrico. Velocidade absurda.",
-    base: { hp: 50, atk: 13, def: 9, spd: 17 },
+    id: "voltbun", name: "Voltbun", element: "electric", role: "assassin",
+    emoji: "⚡", image: voltbunImg,
+    description: "Coelhinho elétrico. Assassino: muito crítico e veloz.",
+    base: { hp: 48, atk: 13, def: 8, spd: 18 },
   },
   shadepup: {
-    id: "shadepup",
-    name: "Shadepup",
-    element: "shadow",
-    emoji: "🌙",
-    image: shadepupImg,
-    description: "Lobinho das sombras. Misterioso e poderoso.",
-    base: { hp: 58, atk: 14, def: 11, spd: 13 },
+    id: "shadepup", name: "Shadepup", element: "shadow", role: "mage",
+    emoji: "🌙", image: shadepupImg,
+    description: "Lobinho das sombras. Mago: dano ignora defesa.",
+    base: { hp: 55, atk: 16, def: 9, spd: 12 },
   },
 };
 
