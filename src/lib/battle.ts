@@ -174,13 +174,19 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
         const aliveEnemies = enemyTeam.filter((m) => m.current > 0);
         if (aliveEnemies.length === 0) continue;
         const victim = aliveEnemies.reduce((x, y) => (x.current < y.current ? x : y));
+        const lethalDmg = Math.max(1, victim.current);
         victim.current = 0;
         victim.shield = 0;
         victim.lastFallenAt = turn;
         log.push({
           turn, actor: deadSide, actorName: dead.name, targetName: victim.name,
-          damage: 0, crit: true, effective: 1, remainingHp: 0,
+          damage: lethalDmg, crit: true, effective: 1, remainingHp: 0, targetShield: 0,
           message: `💣💥 ${dead.name} EXPLODIU ao morrer e levou ${victim.name} junto!`,
+        });
+        log.push({
+          turn, actor: deadSide, actorName: dead.name, targetName: victim.name,
+          damage: 0, crit: false, effective: 1, remainingHp: 0,
+          message: `💀 ${victim.name} foi derrotado!`,
         });
         changed = true; // permite que a vítima (se for outro rato_bomba) também detone
       }
