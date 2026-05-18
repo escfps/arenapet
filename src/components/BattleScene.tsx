@@ -309,6 +309,7 @@ function ArenaLineup({
         const dead = h.cur <= 0;
         const isActor = fx.actor === key && !dead;
         const isTarget = fx.target === key;
+        const hasSkillFx = fx.skillFx && (fx.targets.includes(key) || (isActor && (fx.skillFx === "fury" || fx.skillFx === "shield")));
         // Avança em direção ao inimigo
         const lunge = isActor ? (mirrored ? "-translate-x-6 -translate-y-2" : "translate-x-6 -translate-y-2") : "";
         return (
@@ -332,6 +333,9 @@ function ArenaLineup({
                 transform: mirrored ? "scaleX(-1)" : undefined,
               }}
             />
+            {hasSkillFx && fx.skillFx && (
+              <SkillFxOverlay kind={fx.skillFx} keyId={`${fx.actor}-${key}-${fx.dmg}`} />
+            )}
             {isTarget && fx.dmg !== null && fx.dmg !== 0 && (
               <div
                 key={`arena-${fx.actor}-${fx.target}-${fx.dmg}`}
@@ -347,6 +351,35 @@ function ArenaLineup({
           </div>
         );
       })}
+    </div>
+  );
+}
+
+// === Animação visual da skill sobre o pet ===
+function SkillFxOverlay({ kind, keyId }: { kind: SkillFxKind; keyId: string }) {
+  const config: Record<SkillFxKind, { emoji: string; anim: string; size: string; color: string }> = {
+    heal:      { emoji: "✚",  anim: "animate-skill-heal",    size: "text-5xl", color: "text-emerald-300" },
+    bite:      { emoji: "🦷",  anim: "animate-skill-pop",     size: "text-5xl", color: "" },
+    explosion: { emoji: "💥",  anim: "animate-skill-explode", size: "text-6xl", color: "" },
+    lightning: { emoji: "⚡",  anim: "animate-skill-pop",     size: "text-6xl", color: "" },
+    fire:      { emoji: "🔥",  anim: "animate-skill-explode", size: "text-5xl", color: "" },
+    shield:    { emoji: "🛡️",  anim: "animate-skill-shield",  size: "text-5xl", color: "" },
+    slash:     { emoji: "⚔️",  anim: "animate-skill-slash",   size: "text-6xl", color: "" },
+    skull:     { emoji: "💀",  anim: "animate-skill-pop",     size: "text-6xl", color: "" },
+    fury:      { emoji: "😡",  anim: "animate-skill-pop",     size: "text-5xl", color: "" },
+    silence:   { emoji: "🤐",  anim: "animate-skill-pop",     size: "text-5xl", color: "" },
+    magic:     { emoji: "🔮",  anim: "animate-skill-explode", size: "text-5xl", color: "" },
+    revive:    { emoji: "✨",  anim: "animate-skill-heal",    size: "text-5xl", color: "text-yellow-200" },
+    true:      { emoji: "💢",  anim: "animate-skill-explode", size: "text-6xl", color: "text-fuchsia-300" },
+  };
+  const c = config[kind];
+  return (
+    <div
+      key={keyId}
+      className={`pointer-events-none absolute top-1/2 left-1/2 z-20 font-extrabold ${c.size} ${c.color} ${c.anim}`}
+      style={{ textShadow: "0 2px 6px rgba(0,0,0,0.8)" }}
+    >
+      {c.emoji}
     </div>
   );
 }
