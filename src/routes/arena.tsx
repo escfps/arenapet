@@ -171,8 +171,13 @@ function ArenaPage() {
     }
 
     const myPts = profile.arena_points ?? 0;
+    // Evita repetir os últimos oponentes (anti-rematch)
+    const recentKey = `recent_opps_${userId}`;
+    let recent: string[] = [];
+    try { recent = JSON.parse(localStorage.getItem(recentKey) ?? "[]"); } catch { recent = []; }
     // Só considera oponentes com time COMPLETO (3 pets), pra evitar luta 3v2
-    const allOwners = Object.keys(byOwner).filter((id) => byOwner[id].team.length >= 3);
+    const allOwnersFull = Object.keys(byOwner).filter((id) => byOwner[id].team.length >= 3);
+    const allOwners = allOwnersFull.filter((id) => !recent.includes(id));
     const windows = [100, 200, 400, 800];
     let ownerList: string[] = [];
     for (const w of windows) {
@@ -185,12 +190,24 @@ function ArenaPage() {
         .sort((a, b) => Math.abs(byOwner[a].arenaPoints - myPts) - Math.abs(byOwner[b].arenaPoints - myPts))
         .slice(0, 5);
     }
+    // fallback: se sobrou ninguém após excluir recentes, libera os recentes
+    if (ownerList.length === 0 && allOwnersFull.length > 0) {
+      ownerList = allOwnersFull
+        .slice()
+        .sort((a, b) => Math.abs(byOwner[a].arenaPoints - myPts) - Math.abs(byOwner[b].arenaPoints - myPts))
+        .slice(0, 5);
+    }
     if (ownerList.length === 0) {
       setSearching(false);
       toast("Ninguém com time completo agora. Tente em instantes! 🎯", { icon: "👀" });
       return;
     }
     const chosen = ownerList[Math.floor(Math.random() * ownerList.length)];
+    // grava nos recentes (mantém últimos 5)
+    try {
+      const updated = [chosen, ...recent.filter((id) => id !== chosen)].slice(0, 5);
+      localStorage.setItem(recentKey, JSON.stringify(updated));
+    } catch { /* ignore */ }
     const chosenOpp = { ownerId: chosen, ownerName: byOwner[chosen].username, arenaPoints: byOwner[chosen].arenaPoints, team: byOwner[chosen].team.slice(0, 3) };
     setOpponent(chosenOpp);
     setSearching(false);
