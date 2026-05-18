@@ -259,7 +259,7 @@ export const SPECIES: Record<string, Species> = {
     emoji: "💎", image: crystalspriteImg,
     description: "Geodo mágico cristalino. Mago de cristal com raios.",
     base: { hp: 52, atk: 12, def: 11, spd: 10, int: 21 },
-    skill: { name: "Raio Cristalino", emoji: "💎", kind: "chain_lightning", cooldown: 4, description: "Raio prismático salta entre até 3 inimigos (100% → 60% → 35%)." },
+    skill: { name: "Estilhaços Mágicos", emoji: "💎", kind: "aoe_magic", cooldown: 4, description: "Explode cristais em todos os inimigos (1.15× cada, ignora defesa)." },
   },
 
   // ===== EVENTO (lendários) =====
