@@ -204,34 +204,6 @@ function ShopPage() {
           ))}
         </div>
 
-        {false && (
-          <>
-            <div className="grid sm:grid-cols-2 gap-4">
-              {Object.values(EGGS).map((egg) => (
-                <div key={egg.id} className="rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 p-4 text-white text-center">
-                  <div className="text-6xl mb-2">{egg.emoji}</div>
-                  <h3 className="font-extrabold text-lg">{egg.name}</h3>
-                  <p className="text-xs opacity-80 mb-3">{egg.description}</p>
-                  <button
-                    onClick={() => egg.event ? null : hatch(egg.id)}
-                    disabled={egg.event}
-                    className="w-full py-2 rounded-xl bg-gradient-to-b from-yellow-400 to-amber-500 text-yellow-950 font-extrabold hover:scale-105 transition disabled:from-white/20 disabled:to-white/10 disabled:text-white/70 disabled:cursor-not-allowed disabled:hover:scale-100"
-                  >
-                    {egg.event ? "🔒 Em breve — Evento" : `Chocar por ${egg.priceCoins ? `🪙 ${egg.priceCoins}` : `💎 ${egg.priceGems}`}`}
-                  </button>
-                </div>
-              ))}
-            </div>
-            {hatchResult && (
-              <div className={`rounded-2xl p-6 text-center text-white bg-gradient-to-br ${ELEMENT_COLORS[SPECIES[hatchResult].element]} animate-in fade-in zoom-in`}>
-                <div className="text-sm opacity-90">VOCÊ CHOCOU</div>
-                <img src={SPECIES[hatchResult].image} alt="" className="h-40 mx-auto drop-shadow-2xl" />
-                <div className="text-2xl font-extrabold">{SPECIES[hatchResult].emoji} {SPECIES[hatchResult].name}</div>
-                <button onClick={() => setHatchResult(null)} className="mt-3 px-4 py-1.5 rounded-lg bg-white/30 hover:bg-white/40 text-sm font-bold">Fechar</button>
-              </div>
-            )}
-          </>
-        )}
 
         {tab === "chests" && (
           <>
