@@ -92,7 +92,15 @@ function ArenaPage() {
     const done = shownLog.length >= battleLog.length;
     if (done) return;
     const id = setInterval(() => {
-      setBattleTimer((t) => (t > 0 ? t - 1 : 0));
+      setBattleTimer((t) => {
+        if (t <= 1) {
+          // Tempo esgotado: pula direto pro fim da animação pra concluir a batalha
+          setShownLog(battleLog);
+          clearInterval(id);
+          return 0;
+        }
+        return t - 1;
+      });
     }, 1000);
     return () => clearInterval(id);
   }, [battleLog]);
