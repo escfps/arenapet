@@ -137,8 +137,7 @@ function ArenaPage() {
     updates.level = newLevel;
     await patch(updates);
 
-    // Bot opponents also gain/lose points (opposite outcome)
-    await supabase.rpc("noop").catch(() => {}); // no-op safe call (ignore if missing)
+    // Bot/opponent profile also gains/loses points (opposite outcome)
     const opponentDelta = won ? -ARENA_LOSS_POINTS : ARENA_WIN_POINTS;
     const { data: oppProfile } = await supabase
       .from("profiles")
