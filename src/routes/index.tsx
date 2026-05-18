@@ -41,8 +41,34 @@ function PatioPage() {
       .select("*")
       .eq("owner_id", userId)
       .order("created_at");
-    if (data) setMonsters(data as MonsterRow[]);
+    if (!data) return;
+    let list = data as MonsterRow[];
+    // 🛡️ Normalizar time: garantir no máx TEAM_MAX pets in_team, sem posições duplicadas.
+    const inTeam = list.filter((m) => m.in_team);
+    const needsFix = inTeam.length > TEAM_MAX ||
+      new Set(inTeam.map((m) => m.team_position ?? 0)).size !== inTeam.length;
+    if (needsFix) {
+      const sorted = [...inTeam].sort((a, b) => (a.team_position ?? 0) - (b.team_position ?? 0));
+      const keep = sorted.slice(0, TEAM_MAX);
+      const drop = sorted.slice(TEAM_MAX);
+      const updates: { id: string; in_team: boolean; team_position: number }[] = [];
+      keep.forEach((m, idx) => {
+        if ((m.team_position ?? -1) !== idx || !m.in_team) {
+          updates.push({ id: m.id, in_team: true, team_position: idx });
+        }
+      });
+      drop.forEach((m) => updates.push({ id: m.id, in_team: false, team_position: 0 }));
+      for (const u of updates) {
+        await supabase.from("monsters").update({ in_team: u.in_team, team_position: u.team_position }).eq("id", u.id);
+      }
+      list = list.map((m) => {
+        const u = updates.find((x) => x.id === m.id);
+        return u ? { ...m, in_team: u.in_team, team_position: u.team_position } : m;
+      });
+    }
+    setMonsters(list);
   }, [userId]);
+
 
   useEffect(() => { if (userId) loadMonsters(); }, [userId, loadMonsters]);
 
@@ -127,6 +153,14 @@ function PatioPage() {
     if (!profile) return;
     // If another monster occupies that slot, swap
     const occupant = monsters.find((x) => x.in_team && x.team_position === slot && x.id !== m.id);
+    // 🛡️ Se m ainda não está no time e o slot está vazio, verificar limite
+    if (!m.in_team && !occupant) {
+      const currentTeam = monsters.filter((x) => x.in_team).length;
+      if (currentTeam >= TEAM_MAX) {
+        toast.error(`Time cheio (${TEAM_MAX}). Remova um pet antes.`);
+        return;
+      }
+    }
     const updates: { id: string; in_team: boolean; team_position: number }[] = [
       { id: m.id, in_team: true, team_position: slot },
     ];
@@ -146,6 +180,7 @@ function PatioPage() {
       await supabase.from("monsters").update({ in_team: u.in_team, team_position: u.team_position }).eq("id", u.id);
     }
   }
+
 
   async function toggleTeam(m: MonsterRow) {
     if (!profile) return;
