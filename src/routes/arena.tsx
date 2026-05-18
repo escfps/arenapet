@@ -442,7 +442,7 @@ function ArenaPage() {
               </button>
               {opponent && !battleLog && (
                 <button
-                  onClick={fight}
+                  onClick={() => fight()}
                   disabled={!canFight}
                   className="px-8 py-3 rounded-xl bg-gradient-to-b from-red-500 to-red-700 text-white font-extrabold shadow-xl hover:scale-105 transition disabled:opacity-40 disabled:cursor-not-allowed"
                 >
