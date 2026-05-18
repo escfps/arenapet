@@ -26,6 +26,8 @@ import dragaoBrancoImg from "@/assets/monsters/dragao_branco.png";
 import dragaoNegroImg from "@/assets/monsters/dragao_negro.png";
 import jacareAncestralImg from "@/assets/monsters/jacare_ancestral.png";
 import gorilaTitanImg from "@/assets/monsters/gorila_titan.png";
+import macacoPregoImg from "@/assets/monsters/macaco_prego.png";
+import tubaraoAbissalImg from "@/assets/monsters/tubarao_abissal.png";
 
 export type Element = "fire" | "water" | "grass" | "electric" | "shadow" | "earth";
 export type Role = "tank" | "dps" | "assassin" | "mage" | "healer";
@@ -246,6 +248,20 @@ export const SPECIES: Record<string, Species> = {
     emoji: "✨", image: panteraAureaImg,
     description: "Olhos dourados — variante ultra-rara da Pantera Negra. Mago sombrio supremo.",
     base: { hp: 65, atk: 14, def: 12, spd: 15, int: 24 },
+  },
+
+  // ===== SUPER RAROS =====
+  macaco_prego: {
+    id: "macaco_prego", name: "Macaco-Prego", element: "grass", role: "assassin", rarity: "super_rare",
+    emoji: "🐒", image: macacoPregoImg,
+    description: "Macaquinho astuto da floresta. Rouba turnos com agilidade e crítico afiado.",
+    base: { hp: 50, atk: 14, def: 9, spd: 18, int: 9 },
+  },
+  tubarao_abissal: {
+    id: "tubarao_abissal", name: "Tubarão Abissal", element: "water", role: "dps", rarity: "super_rare",
+    emoji: "🦈", image: tubaraoAbissalImg,
+    description: "Predador das profundezas azuis. Mordida feroz que rasga qualquer presa.",
+    base: { hp: 60, atk: 17, def: 11, spd: 13, int: 8 },
   },
 
   // ===== ÉPICOS =====
