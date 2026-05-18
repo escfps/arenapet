@@ -19,7 +19,6 @@ type Mon = {
   owner_id: string;
   species: string;
   name: string;
-  level: number;
   rank: number;
   in_team: boolean;
 };
