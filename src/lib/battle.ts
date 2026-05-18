@@ -58,6 +58,7 @@ export function toBattleMonster(m: DBMonster): BattleMonster {
     def: stats.def,
     spd: stats.spd,
     role: sp?.role ?? "dps",
+    rarity: sp?.rarity ?? "common",
   };
 }
 
