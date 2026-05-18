@@ -21,7 +21,7 @@ function ArenaPage() {
   const navigate = useNavigate();
   const { userId, profile, patch, loading } = useProfile();
   const [myTeam, setMyTeam] = useState<FullMonster[]>([]);
-  const [opponent, setOpponent] = useState<{ ownerId: string; ownerName: string; team: FullMonster[] } | null>(null);
+  const [opponent, setOpponent] = useState<{ ownerId: string; ownerName: string; arenaPoints: number; team: FullMonster[] } | null>(null);
   const [searching, setSearching] = useState(false);
   const [battleLog, setBattleLog] = useState<BattleLogEntry[] | null>(null);
   const [winner, setWinner] = useState<"team_a" | "team_b" | null>(null);
