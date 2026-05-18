@@ -288,12 +288,14 @@ function ExpeditionsPage() {
                     const sp = SPECIES[m.species];
                     if (!sp) return null;
                     const preview = computeExpeditionReward(pickMonsterFor, m.rank ?? 1);
+                    const en = computeBattleEnergy(m.battle_energy, m.battle_energy_at);
+                    const enough = en.energy >= pickMonsterFor.foodCost;
                     return (
                       <button
                         key={m.id}
-                        onClick={() => handleStart(m.id, pickMonsterFor)}
-                        disabled={busy}
-                        className={`rounded-xl bg-gradient-to-r ${ELEMENT_COLORS[sp.element]} p-3 text-white text-left hover:scale-105 transition disabled:opacity-50`}
+                        onClick={() => enough && handleStart(m.id, pickMonsterFor)}
+                        disabled={busy || !enough}
+                        className={`rounded-xl bg-gradient-to-r ${ELEMENT_COLORS[sp.element]} p-3 text-white text-left hover:scale-105 transition disabled:opacity-50 disabled:hover:scale-100`}
                       >
                         <div className="flex items-center gap-2">
                           <img src={sp.image} alt="" className="h-12 w-12 object-contain drop-shadow-lg" style={{ filter: skinFilter(m.skin) }} />
@@ -301,7 +303,7 @@ function ExpeditionsPage() {
                             <div className="font-bold text-sm truncate">{m.name}</div>
                             <div className="text-[10px] opacity-90">{rankStars(m.rank ?? 1)}</div>
                             <div className="text-[10px] mt-1">
-                              ✨{preview.xp} 🪙{preview.coins}
+                              ✨{preview.xp} 🪙{preview.coins} • <span className={enough ? "" : "text-red-200 font-bold"}>⚡{en.energy}/{MAX_BATTLE_ENERGY}</span>
                             </div>
                           </div>
                         </div>
