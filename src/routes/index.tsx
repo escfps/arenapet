@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { SPECIES, ELEMENT_COLORS, ELEMENT_NAMES } from "@/lib/game-data";
+import { SPECIES, ELEMENT_COLORS, ELEMENT_NAMES, RARITY_INFO, type Rarity, type Element } from "@/lib/game-data";
 import { MonsterCard, type MonsterRow } from "@/components/MonsterCard";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
@@ -19,12 +19,17 @@ export const Route = createFileRoute("/")({
 });
 
 const TEAM_MAX = 3;
+const ALL_RARITIES: Rarity[] = ["common", "rare", "super_rare", "epic", "legendary", "mythic"];
+const ALL_ELEMENTS: Element[] = ["fire", "water", "grass", "electric", "shadow", "earth"];
 
 function PatioPage() {
   const navigate = useNavigate();
   const { userId, profile, loading, reload } = useProfile();
   const [monsters, setMonsters] = useState<MonsterRow[]>([]);
   const [hatching, setHatching] = useState(false);
+  const [search, setSearch] = useState("");
+  const [rarityFilter, setRarityFilter] = useState<Rarity | "all">("all");
+  const [elementFilter, setElementFilter] = useState<Element | "all">("all");
 
   const loadMonsters = useCallback(async () => {
     if (!userId) return;
@@ -37,6 +42,21 @@ function PatioPage() {
   }, [userId]);
 
   useEffect(() => { if (userId) loadMonsters(); }, [userId, loadMonsters]);
+
+  const filteredMonsters = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return monsters.filter((m) => {
+      const sp = SPECIES[m.species];
+      if (!sp) return true;
+      if (rarityFilter !== "all" && sp.rarity !== rarityFilter) return false;
+      if (elementFilter !== "all" && sp.element !== elementFilter && sp.secondaryElement !== elementFilter) return false;
+      if (q) {
+        const hay = `${m.name ?? ""} ${sp.name}`.toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
+      return true;
+    });
+  }, [monsters, search, rarityFilter, elementFilter]);
 
   async function pickStarter(speciesId: string) {
     if (!userId || hatching) return;
@@ -129,27 +149,91 @@ function PatioPage() {
               <p className="text-[11px] opacity-80">Toque num monstro pra cuidar dele. Toque no botão de TIME pra alternar quem batalha.</p>
             </section>
 
-            <section>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-                {monsters.map((m) => (
-                  <div key={m.id} className="space-y-2">
-                    <MonsterCard
-                      monster={m}
-                      onClick={() => navigate({ to: "/monster/$id", params: { id: m.id } })}
-                    />
+            <section className="bg-black/40 backdrop-blur-md rounded-2xl border border-white/20 p-3 space-y-3">
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="🔍 Buscar pelo nome..."
+                className="w-full px-4 py-2 rounded-full bg-white/10 text-white placeholder-white/50 text-sm font-bold border border-white/20 focus:outline-none focus:border-yellow-400"
+              />
+              <div className="space-y-1">
+                <div className="text-white/70 text-[10px] font-extrabold uppercase tracking-wider px-1">Raridade</div>
+                <div className="flex flex-wrap gap-1.5">
+                  <button
+                    onClick={() => setRarityFilter("all")}
+                    className={`px-3 py-1 rounded-full text-[11px] font-extrabold transition ${
+                      rarityFilter === "all" ? "bg-yellow-400 text-yellow-950" : "bg-white/10 text-white hover:bg-white/20"
+                    }`}
+                  >
+                    Todas
+                  </button>
+                  {ALL_RARITIES.map((r) => (
                     <button
-                      onClick={() => toggleTeam(m)}
-                      className={`w-full text-[11px] font-bold rounded-lg py-1.5 transition ${
-                        m.in_team
-                          ? "bg-yellow-400 text-yellow-950 hover:bg-yellow-300"
-                          : "bg-white/15 text-white hover:bg-white/25"
+                      key={r}
+                      onClick={() => setRarityFilter(r)}
+                      className={`px-3 py-1 rounded-full text-[11px] font-extrabold transition ${
+                        rarityFilter === r
+                          ? `${RARITY_INFO[r].color} ring-2 ${RARITY_INFO[r].ringColor}`
+                          : "bg-white/10 text-white hover:bg-white/20"
                       }`}
                     >
-                      {m.in_team ? "✓ No time" : "+ Time"}
+                      {RARITY_INFO[r].emoji} {RARITY_INFO[r].name}
                     </button>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
+              <div className="space-y-1">
+                <div className="text-white/70 text-[10px] font-extrabold uppercase tracking-wider px-1">Elemento</div>
+                <div className="flex flex-wrap gap-1.5">
+                  <button
+                    onClick={() => setElementFilter("all")}
+                    className={`px-3 py-1 rounded-full text-[11px] font-extrabold transition ${
+                      elementFilter === "all" ? "bg-yellow-400 text-yellow-950" : "bg-white/10 text-white hover:bg-white/20"
+                    }`}
+                  >
+                    Todos
+                  </button>
+                  {ALL_ELEMENTS.map((el) => (
+                    <button
+                      key={el}
+                      onClick={() => setElementFilter(el)}
+                      className={`px-3 py-1 rounded-full text-[11px] font-extrabold text-white transition bg-gradient-to-r ${ELEMENT_COLORS[el]} ${
+                        elementFilter === el ? "ring-2 ring-white" : "opacity-60 hover:opacity-100"
+                      }`}
+                    >
+                      {ELEMENT_NAMES[el]}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            <section>
+              {filteredMonsters.length === 0 ? (
+                <div className="text-center text-white/70 text-sm py-8">Nenhum monstro com esses filtros.</div>
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                  {filteredMonsters.map((m) => (
+                    <div key={m.id} className="space-y-2">
+                      <MonsterCard
+                        monster={m}
+                        onClick={() => navigate({ to: "/monster/$id", params: { id: m.id } })}
+                      />
+                      <button
+                        onClick={() => toggleTeam(m)}
+                        className={`w-full text-[11px] font-bold rounded-lg py-1.5 transition ${
+                          m.in_team
+                            ? "bg-yellow-400 text-yellow-950 hover:bg-yellow-300"
+                            : "bg-white/15 text-white hover:bg-white/25"
+                        }`}
+                      >
+                        {m.in_team ? "✓ No time" : "+ Time"}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </section>
           </>
         )}
