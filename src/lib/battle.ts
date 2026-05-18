@@ -30,7 +30,7 @@ export type BattleLogEntry = {
 };
 
 export type BattleResult = {
-  winner: "team_a" | "team_b";
+  winner: "team_a" | "team_b" | "draw";
   log: BattleLogEntry[];
 };
 
