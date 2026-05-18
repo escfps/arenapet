@@ -201,7 +201,7 @@ export const SPECIES: Record<string, Species> = {
     emoji: "⚡💧", image: stormtadImg,
     description: "Girino-relâmpago. Mago elétrico.",
     base: { hp: 48, atk: 13, def: 8, spd: 14, int: 22 },
-    skill: { name: "Trovão Saltador", emoji: "⚡", kind: "chain_lightning", cooldown: 4, description: "Raio salta entre até 3 inimigos (100% → 60% → 35% do dano)." },
+    skill: { name: "Tempestade Elétrica", emoji: "⚡", kind: "aoe_magic", cooldown: 4, description: "Solta raios em todos os inimigos (1.15× cada, ignora defesa)." },
   },
   tidewraith: {
     id: "tidewraith", name: "Tidewraith", element: "water", secondaryElement: "shadow", role: "assassin", rarity: "common",
