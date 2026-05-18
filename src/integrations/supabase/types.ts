@@ -116,6 +116,8 @@ export type Database = {
       monsters: {
         Row: {
           atk: number
+          battle_energy: number
+          battle_energy_at: string
           created_at: string
           def: number
           energy: number
@@ -135,6 +137,8 @@ export type Database = {
         }
         Insert: {
           atk?: number
+          battle_energy?: number
+          battle_energy_at?: string
           created_at?: string
           def?: number
           energy?: number
@@ -154,6 +158,8 @@ export type Database = {
         }
         Update: {
           atk?: number
+          battle_energy?: number
+          battle_energy_at?: string
           created_at?: string
           def?: number
           energy?: number
