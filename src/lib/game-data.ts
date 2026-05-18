@@ -398,7 +398,7 @@ export const SPECIES: Record<string, Species> = {
     emoji: "🌑🦅", image: fenixNegraImg,
     description: "Fênix obsidiana de chamas violetas. Devora a essência dos inimigos e cresce sem fim.",
     base: { hp: 78, atk: 18, def: 14, spd: 14, int: 14 },
-    skill: { name: "Comunhão Sombria", emoji: "🌑", kind: "phoenix_growth", cooldown: 4, description: "PASSIVA: cada dano causado vira +10% HP máx e cura (permanente!). ATIVA: golpe sombrio (2× dano)." },
+    skill: { name: "Comunhão Sombria", emoji: "🌑", kind: "phoenix_growth", cooldown: 4, description: "PASSIVA: cada dano causado vira +4% HP máx e cura na batalha (cap +50%). ATIVA: golpe sombrio (2× dano)." },
   },
 };
 

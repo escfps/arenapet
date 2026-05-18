@@ -84,10 +84,12 @@ function phoenixAtkBonus(attacker: Live): number {
   const hpLostPct = 1 - attacker.current / Math.max(1, attacker.maxHp);
   return 1 + hpLostPct * 0.6;
 }
-// Fênix Negra: 10% do dano causado vira HP máx adicional + cura
+// Fênix Negra: 4% do dano causado vira HP máx + cura (SÓ NA BATALHA, máx +50% do HP base)
 function phoenixOnDamageDealt(attacker: Live, dmg: number) {
   if (attacker.species !== "fenix_negra" || dmg <= 0) return;
-  const grow = Math.max(1, Math.round(dmg * 0.10));
+  const cap = Math.round(attacker.hp * 1.5); // hp = base inicial; cap = 150% do base
+  if (attacker.maxHp >= cap) return;
+  const grow = Math.min(cap - attacker.maxHp, Math.max(1, Math.round(dmg * 0.04)));
   attacker.maxHp += grow;
   attacker.current = Math.min(attacker.maxHp, attacker.current + grow);
 }
@@ -675,7 +677,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
             const dmg = Math.max(1, Math.round(base * eff * 2.0 * skillMult));
             applyDamage(target, dmg);
             phoenixOnDamageDealt(attacker, dmg);
-            const grown = Math.max(1, Math.round(dmg * 0.10));
+            const grown = Math.max(1, Math.round(dmg * 0.04));
             log.push({
               turn, actor: side, actorName: attacker.name, targetName: target.name,
               damage: dmg, crit: true, effective: eff, remainingHp: target.current, targetShield: target.shield,
