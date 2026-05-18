@@ -301,16 +301,17 @@ export function rankStars(rank: number): string {
   return "✦".repeat(Math.min(Math.max(rank, 1), MAX_RANK));
 }
 
-export function totalStats(species: string, rank = 1, bonus = { hp: 0, atk: 0, def: 0, spd: 0 }) {
+export function totalStats(species: string, rank = 1, bonus = { hp: 0, atk: 0, def: 0, spd: 0, int: 0 }) {
   const s = SPECIES[species];
-  if (!s) return { hp: 0, atk: 0, def: 0, spd: 0 };
+  if (!s) return { hp: 0, atk: 0, def: 0, spd: 0, int: 0 };
   const r = RANK_MULT[Math.min(Math.max(rank, 1), MAX_RANK)] ?? 1;
   const mult = RARITY_INFO[s.rarity].statMult * r;
   return {
-    hp: Math.round(s.base.hp * mult) + bonus.hp,
-    atk: Math.round(s.base.atk * mult) + bonus.atk,
-    def: Math.round(s.base.def * mult) + bonus.def,
-    spd: Math.round(s.base.spd * mult) + bonus.spd,
+    hp: Math.round(s.base.hp * mult) + (bonus.hp ?? 0),
+    atk: Math.round(s.base.atk * mult) + (bonus.atk ?? 0),
+    def: Math.round(s.base.def * mult) + (bonus.def ?? 0),
+    spd: Math.round(s.base.spd * mult) + (bonus.spd ?? 0),
+    int: Math.round(s.base.int * mult) + (bonus.int ?? 0),
   };
 }
 
