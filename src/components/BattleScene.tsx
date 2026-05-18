@@ -189,7 +189,7 @@ export function BattleScene({
 
   return (
     <div
-      className="relative rounded-2xl border-2 border-white/30 p-4 overflow-hidden shadow-2xl"
+      className="relative rounded-2xl border-2 border-white/30 overflow-hidden shadow-2xl"
       style={{
         backgroundImage: `url(${grassBg})`,
         backgroundSize: "cover",
@@ -199,9 +199,21 @@ export function BattleScene({
     >
       {/* Vinheta escura nas bordas pra contraste */}
       <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-black/10 via-transparent to-black/40" />
-      <div className="relative grid grid-cols-2 gap-3">
-        <SideColumn team={teamA} side="a" hp={hp} shields={shields} fx={fx} statuses={statuses} />
-        <SideColumn team={teamB} side="b" hp={hp} shields={shields} fx={fx} statuses={statuses} mirrored />
+
+      {/* === ARENA: linha dos 3 pets de cada lado === */}
+      <div className="relative px-4 pt-4 pb-2">
+        <div className="grid grid-cols-2 gap-3 items-end min-h-[140px]">
+          <ArenaLineup team={teamA} side="a" hp={hp} fx={fx} />
+          <ArenaLineup team={teamB} side="b" hp={hp} fx={fx} mirrored />
+        </div>
+      </div>
+
+      {/* === Cards detalhados embaixo === */}
+      <div className="relative px-4 pb-4 pt-2 bg-gradient-to-t from-black/50 to-transparent">
+        <div className="grid grid-cols-2 gap-3">
+          <SideColumn team={teamA} side="a" hp={hp} shields={shields} fx={fx} statuses={statuses} />
+          <SideColumn team={teamB} side="b" hp={hp} shields={shields} fx={fx} statuses={statuses} mirrored />
+        </div>
       </div>
 
       {/* Overlay central de efeito */}
@@ -222,6 +234,72 @@ export function BattleScene({
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+// === Linha dos 3 pets no cenário (apenas sprite) ===
+function ArenaLineup({
+  team,
+  side,
+  hp,
+  fx,
+  mirrored,
+}: {
+  team: Team;
+  side: "a" | "b";
+  hp: HpMap;
+  fx: Fx;
+  mirrored?: boolean;
+}) {
+  return (
+    <div className={`flex ${mirrored ? "justify-end flex-row-reverse" : "justify-start"} items-end gap-3 sm:gap-5`}>
+      {team.map((m) => {
+        const sp = SPECIES[m.species];
+        if (!sp) return null;
+        const key = `${side}:${m.name}`;
+        const h = hp.get(key) ?? { cur: 0, max: 1 };
+        const dead = h.cur <= 0;
+        const isActor = fx.actor === key && !dead;
+        const isTarget = fx.target === key;
+        // Avança em direção ao inimigo
+        const lunge = isActor ? (mirrored ? "-translate-x-6 -translate-y-2" : "translate-x-6 -translate-y-2") : "";
+        return (
+          <div
+            key={m.id}
+            className={`relative transition-all duration-300 ease-out ${lunge} ${
+              dead ? "opacity-20 grayscale rotate-90" : ""
+            } ${isTarget ? "animate-battle-shake" : ""}`}
+          >
+            {/* Plataforma circular */}
+            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-16 h-3 rounded-full bg-black/40 blur-sm" />
+            <img
+              src={sp.image}
+              alt={m.name}
+              loading="lazy"
+              className={`relative h-20 w-20 sm:h-24 sm:w-24 object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.6)] ${
+                isActor ? "ring-4 ring-yellow-300/80 rounded-full" : ""
+              } ${isTarget ? "ring-4 ring-red-400/80 rounded-full" : ""}`}
+              style={{
+                filter: skinFilter(m.skin),
+                transform: mirrored ? "scaleX(-1)" : undefined,
+              }}
+            />
+            {isTarget && fx.dmg !== null && fx.dmg !== 0 && (
+              <div
+                key={`arena-${fx.actor}-${fx.target}-${fx.dmg}`}
+                className={`absolute -top-3 left-1/2 -translate-x-1/2 font-extrabold text-2xl pointer-events-none animate-battle-float ${
+                  fx.dmg < 0 ? "text-green-300" : fx.crit ? "text-yellow-300" : "text-red-300"
+                }`}
+                style={{ textShadow: "0 2px 4px rgba(0,0,0,0.9)" }}
+              >
+                {fx.dmg < 0 ? `+${-fx.dmg}` : `-${fx.dmg}`}
+                {fx.crit ? "!" : ""}
+              </div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }
