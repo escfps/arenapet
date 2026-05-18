@@ -33,7 +33,7 @@ export const createTrade = createServerFn({ method: "POST" })
     if (!mon || mon.owner_id !== userId) throw new Error("Monstro inválido");
     if (mon.in_team) throw new Error("Tire o monstro do time antes");
     const sp = SPECIES[mon.species];
-    if (sp?.rarity === "legendary") throw new Error("Lendários não podem ser trocados");
+    if (sp?.rarity === "legendary" || sp?.rarity === "mythic") throw new Error("Lendários e Míticos não podem ser trocados");
     if ((mon.rank ?? 1) > MAX_TRADEABLE_RANK) throw new Error(`Bichinhos ✦${MAX_TRADEABLE_RANK + 1}+ não podem ser trocados`);
 
     // check pending duplicate
@@ -87,7 +87,7 @@ export const respondToTrade = createServerFn({ method: "POST" })
     if (!mon || mon.owner_id !== userId) throw new Error("Monstro inválido");
     if (mon.in_team) throw new Error("Tire o monstro do time antes");
     const sp = SPECIES[mon.species];
-    if (sp?.rarity === "legendary") throw new Error("Lendários não podem ser trocados");
+    if (sp?.rarity === "legendary" || sp?.rarity === "mythic") throw new Error("Lendários e Míticos não podem ser trocados");
     if ((mon.rank ?? 1) > MAX_TRADEABLE_RANK) throw new Error(`Bichinhos ✦${MAX_TRADEABLE_RANK + 1}+ não podem ser trocados`);
 
     const { error } = await supabaseAdmin

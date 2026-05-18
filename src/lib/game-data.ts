@@ -22,10 +22,12 @@ import leaoDouradoImg from "@/assets/monsters/leao_dourado.png";
 import tigreInfernalImg from "@/assets/monsters/tigre_infernal.png";
 import panteraNegraImg from "@/assets/monsters/pantera_negra.png";
 import panteraAureaImg from "@/assets/monsters/pantera_aurea.png";
+import dragaoBrancoImg from "@/assets/monsters/dragao_branco.png";
+import dragaoNegroImg from "@/assets/monsters/dragao_negro.png";
 
 export type Element = "fire" | "water" | "grass" | "electric" | "shadow" | "earth";
 export type Role = "tank" | "dps" | "assassin" | "mage" | "healer";
-export type Rarity = "common" | "rare" | "legendary";
+export type Rarity = "common" | "rare" | "legendary" | "mythic";
 
 export type Species = {
   id: string;
@@ -52,6 +54,7 @@ export const RARITY_INFO: Record<Rarity, { name: string; emoji: string; color: s
   common: { name: "Mestiço", emoji: "✦", color: "bg-slate-400 text-white", ringColor: "ring-slate-300", statMult: 0.85, skillMult: 0.85 },
   rare: { name: "Puro", emoji: "✦✦", color: "bg-amber-500 text-amber-950", ringColor: "ring-amber-400", statMult: 1.0, skillMult: 1.0 },
   legendary: { name: "Lendário", emoji: "✦✦✦", color: "bg-gradient-to-r from-fuchsia-500 to-pink-500 text-white", ringColor: "ring-fuchsia-400", statMult: 1.2, skillMult: 1.5 },
+  mythic: { name: "Mítico", emoji: "✦✦✦✦", color: "bg-gradient-to-r from-cyan-400 via-fuchsia-500 to-amber-400 text-white", ringColor: "ring-cyan-300", statMult: 1.5, skillMult: 1.8 },
 };
 
 // ===== Skills (1 por role, escala com raridade) =====
@@ -239,6 +242,20 @@ export const SPECIES: Record<string, Species> = {
     emoji: "✨", image: panteraAureaImg,
     description: "Olhos dourados — variante ultra-rara da Pantera Negra. Mago sombrio supremo.",
     base: { hp: 65, atk: 14, def: 12, spd: 15, int: 24 },
+  },
+
+  // ===== MÍTICOS (classe suprema — só em eventos especiais) =====
+  dragao_branco: {
+    id: "dragao_branco", name: "Dragão Branco", element: "water", role: "healer", rarity: "mythic",
+    emoji: "🐉", image: dragaoBrancoImg,
+    description: "Dragão místico de escamas brancas e olhos de safira. Cura divina que ressoa pelo time.",
+    base: { hp: 80, atk: 16, def: 16, spd: 14, int: 26 },
+  },
+  dragao_negro: {
+    id: "dragao_negro", name: "Dragão Negro", element: "shadow", role: "dps", rarity: "mythic",
+    emoji: "🐲", image: dragaoNegroImg,
+    description: "Dragão obsidiana de olhos vermelhos. Dano apocalíptico que devasta inimigos.",
+    base: { hp: 75, atk: 24, def: 14, spd: 15, int: 14 },
   },
 };
 
