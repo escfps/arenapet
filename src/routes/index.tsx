@@ -1,320 +1,159 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { ANIMALS, CROPS, getCropStage, xpToLevel } from "@/lib/game-data";
-import { Plot } from "@/components/Plot";
-import { AnimalCard } from "@/components/AnimalCard";
-import { CoinBadge } from "@/components/CoinBadge";
+import { SPECIES, ELEMENT_COLORS, ELEMENT_NAMES } from "@/lib/game-data";
+import { MonsterCard, type MonsterRow } from "@/components/MonsterCard";
+import { HUD } from "@/components/HUD";
+import { useProfile } from "@/lib/use-profile";
 import { toast, Toaster } from "sonner";
-import farmBg from "@/assets/farm-bg.jpg";
+import arenaBg from "@/assets/arena-bg.jpg";
 
 export const Route = createFileRoute("/")({
-  component: GamePage,
+  component: PatioPage,
   head: () => ({
     meta: [
-      { title: "Colheita Feliz — Sua fazenda online" },
-      { name: "description", content: "Plante, colhe, crie animais e construa sua fazenda dos sonhos." },
+      { title: "MonstroBattle — Colecione e batalhe" },
+      { name: "description", content: "Treine monstrinhos e batalhe contra jogadores reais." },
     ],
   }),
 });
 
-type Profile = { id: string; username: string; coins: number; xp: number; level: number };
-type PlotRow = { id: string; slot_index: number; crop_type: string | null; planted_at: string | null };
-type AnimalRow = { id: string; animal_type: string; last_collected_at: string };
-type InvRow = { item_type: string; quantity: number };
+const TEAM_MAX = 3;
+const TEAM_MAX_VIP = 4;
 
-function GamePage() {
+function PatioPage() {
   const navigate = useNavigate();
-  const [userId, setUserId] = useState<string | null>(null);
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [plots, setPlots] = useState<PlotRow[]>([]);
-  const [animals, setAnimals] = useState<AnimalRow[]>([]);
-  const [inventory, setInventory] = useState<InvRow[]>([]);
-  const [selectedSeed, setSelectedSeed] = useState<string>("morango");
-  const [tab, setTab] = useState<"shop" | "inventory" | "animals">("shop");
-  const [loading, setLoading] = useState(true);
+  const { userId, profile, loading, reload } = useProfile();
+  const [monsters, setMonsters] = useState<MonsterRow[]>([]);
+  const [hatching, setHatching] = useState(false);
 
-  useEffect(() => {
-    supabase.auth.getSession().then(async ({ data }) => {
-      if (!data.session) { navigate({ to: "/login" }); return; }
-      setUserId(data.session.user.id);
-    });
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, s) => {
-      if (!s) navigate({ to: "/login" });
-    });
-    return () => subscription.unsubscribe();
-  }, [navigate]);
-
-  async function reload() {
+  const loadMonsters = useCallback(async () => {
     if (!userId) return;
-    const [p, pl, an, inv] = await Promise.all([
-      supabase.from("profiles").select("*").eq("id", userId).single(),
-      supabase.from("plots").select("*").eq("user_id", userId).order("slot_index"),
-      supabase.from("animals").select("*").eq("user_id", userId).order("created_at"),
-      supabase.from("inventory").select("*").eq("user_id", userId),
-    ]);
-    if (p.data) setProfile(p.data as Profile);
-    if (pl.data) setPlots(pl.data as PlotRow[]);
-    if (an.data) setAnimals(an.data as AnimalRow[]);
-    if (inv.data) setInventory(inv.data as InvRow[]);
-    setLoading(false);
+    const { data } = await supabase
+      .from("monsters")
+      .select("*")
+      .eq("owner_id", userId)
+      .order("created_at");
+    if (data) setMonsters(data as MonsterRow[]);
+  }, [userId]);
+
+  useEffect(() => { if (userId) loadMonsters(); }, [userId, loadMonsters]);
+
+  async function pickStarter(speciesId: string) {
+    if (!userId || hatching) return;
+    setHatching(true);
+    const sp = SPECIES[speciesId];
+    const { error } = await supabase.from("monsters").insert({
+      owner_id: userId,
+      species: speciesId,
+      name: sp.name,
+      hp: sp.base.hp,
+      atk: sp.base.atk,
+      def: sp.base.def,
+      spd: sp.base.spd,
+      in_team: true,
+    });
+    setHatching(false);
+    if (error) { toast.error("Erro ao escolher: " + error.message); return; }
+    toast.success(`${sp.name} é seu! 🎉`);
+    loadMonsters();
   }
 
-  useEffect(() => { if (userId) reload(); }, [userId]);
-
-  async function addCoinsXp(deltaCoins: number, deltaXp: number) {
+  async function toggleTeam(m: MonsterRow) {
     if (!profile) return;
-    const newCoins = profile.coins + deltaCoins;
-    const newXp = profile.xp + deltaXp;
-    const { level } = xpToLevel(newXp);
-    setProfile({ ...profile, coins: newCoins, xp: newXp, level });
-    await supabase.from("profiles").update({ coins: newCoins, xp: newXp, level }).eq("id", profile.id);
-    if (level > profile.level) toast.success(`🎉 Subiu para nível ${level}!`);
-  }
-
-  async function bumpInventory(item: string, delta: number) {
-    if (!userId) return;
-    const existing = inventory.find((i) => i.item_type === item);
-    const newQty = (existing?.quantity ?? 0) + delta;
-    if (newQty <= 0) {
-      setInventory(inventory.filter((i) => i.item_type !== item));
-      await supabase.from("inventory").delete().eq("user_id", userId).eq("item_type", item);
-    } else {
-      setInventory([...inventory.filter((i) => i.item_type !== item), { item_type: item, quantity: newQty }]);
-      await supabase.from("inventory").upsert({ user_id: userId, item_type: item, quantity: newQty });
+    const teamMax = profile.vip_until && new Date(profile.vip_until) > new Date() ? TEAM_MAX_VIP : TEAM_MAX;
+    const teamCount = monsters.filter((x) => x.in_team).length;
+    if (!m.in_team && teamCount >= teamMax) {
+      toast.error(`Time cheio (${teamMax}). ${teamMax === TEAM_MAX ? "Vire VIP pra 4 slots!" : ""}`);
+      return;
     }
+    const newVal = !m.in_team;
+    setMonsters(monsters.map((x) => x.id === m.id ? { ...x, in_team: newVal } : x));
+    await supabase.from("monsters").update({ in_team: newVal }).eq("id", m.id);
   }
-
-  async function handlePlot(plot: PlotRow) {
-    if (!profile) return;
-    const stage = getCropStage(plot.planted_at, plot.crop_type);
-    if (stage === "ready" && plot.crop_type) {
-      const crop = CROPS[plot.crop_type];
-      setPlots(plots.map((p) => p.id === plot.id ? { ...p, crop_type: null, planted_at: null } : p));
-      await supabase.from("plots").update({ crop_type: null, planted_at: null }).eq("id", plot.id);
-      await bumpInventory(crop.id, 1);
-      await addCoinsXp(0, crop.xp);
-      toast.success(`Colheu 1 ${crop.name} ${crop.emoji}! +${crop.xp} XP`);
-    } else if (stage === "empty") {
-      const crop = CROPS[selectedSeed];
-      if (profile.coins < crop.seedCost) { toast.error("Moedas insuficientes!"); return; }
-      const now = new Date().toISOString();
-      setPlots(plots.map((p) => p.id === plot.id ? { ...p, crop_type: crop.id, planted_at: now } : p));
-      await supabase.from("plots").update({ crop_type: crop.id, planted_at: now }).eq("id", plot.id);
-      await addCoinsXp(-crop.seedCost, 0);
-    } else {
-      toast("Ainda crescendo...", { icon: "🌿" });
-    }
-  }
-
-  async function buyAnimal(animalId: string) {
-    if (!profile || !userId) return;
-    const a = ANIMALS[animalId];
-    if (profile.coins < a.buyCost) { toast.error("Moedas insuficientes!"); return; }
-    const { data } = await supabase.from("animals").insert({
-      user_id: userId, animal_type: animalId,
-      last_collected_at: new Date(Date.now() - a.cooldownSeconds * 1000).toISOString(),
-    }).select().single();
-    if (data) setAnimals([...animals, data as AnimalRow]);
-    await addCoinsXp(-a.buyCost, 0);
-    toast.success(`Comprou ${a.name} ${a.emoji}!`);
-  }
-
-  async function collectAnimal(animal: AnimalRow) {
-    const a = ANIMALS[animal.animal_type];
-    const now = new Date().toISOString();
-    setAnimals(animals.map((x) => x.id === animal.id ? { ...x, last_collected_at: now } : x));
-    await supabase.from("animals").update({ last_collected_at: now }).eq("id", animal.id);
-    await bumpInventory(a.produces.toLowerCase(), 1);
-    await addCoinsXp(0, a.xp);
-    toast.success(`Coletou ${a.productEmoji} ${a.produces}! +${a.xp} XP`);
-  }
-
-  async function sellItem(item: string, qty: number = 1) {
-    const inv = inventory.find((i) => i.item_type === item);
-    if (!inv || inv.quantity < qty) return;
-    const crop = CROPS[item];
-    const animal = Object.values(ANIMALS).find((a) => a.produces.toLowerCase() === item);
-    const price = crop?.sellPrice ?? animal?.productSell ?? 0;
-    await bumpInventory(item, -qty);
-    await addCoinsXp(price * qty, 0);
-    toast.success(`Vendeu ${qty}x por 🪙 ${price * qty}`);
-  }
-
-  async function logout() {
-    await supabase.auth.signOut();
-  }
-
-  const levelInfo = useMemo(() => profile ? xpToLevel(profile.xp) : null, [profile]);
 
   if (loading || !profile) {
-    return <div className="min-h-screen flex items-center justify-center text-2xl">🌻 Carregando fazenda...</div>;
+    return <div className="min-h-screen flex items-center justify-center text-white text-xl">🌟 Carregando...</div>;
   }
 
   return (
-    <main className="farm-bg pb-8" style={{ backgroundImage: `url(${farmBg})` }}>
+    <main
+      className="min-h-screen pb-12 bg-cover bg-fixed bg-center"
+      style={{ backgroundImage: `linear-gradient(rgba(30,10,60,0.65),rgba(30,10,60,0.85)),url(${arenaBg})` }}
+    >
       <Toaster position="top-center" richColors />
+      <HUD profile={profile} />
 
-      {/* HUD */}
-      <header className="sticky top-0 z-10 backdrop-blur-md bg-card/80 border-b-2 border-border shadow-sm">
-        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3 flex-wrap">
-          <div className="flex items-center gap-2 font-extrabold">
-            <span className="text-2xl">🌻</span>
-            <span className="hidden sm:inline">Colheita Feliz</span>
-          </div>
-          <div className="flex items-center gap-2 ml-auto flex-wrap">
-            <div className="text-sm">
-              <div className="font-bold text-xs text-muted-foreground">{profile.username}</div>
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold bg-primary text-primary-foreground rounded-full px-2 py-0.5">Nv {profile.level}</span>
-                {levelInfo && (
-                  <div className="w-20 h-2 bg-muted rounded-full overflow-hidden">
-                    <div className="h-full bg-primary" style={{ width: `${levelInfo.progress * 100}%` }} />
+      <div className="max-w-6xl mx-auto px-4 mt-6 space-y-6">
+        {monsters.length === 0 ? (
+          <section className="text-center text-white">
+            <h1 className="text-3xl font-extrabold mb-2">🥚 Escolha seu primeiro monstro!</h1>
+            <p className="text-white/80 mb-6 text-sm">Esse parceiro vai te acompanhar nas primeiras batalhas. Escolha com carinho.</p>
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+              {Object.values(SPECIES).map((sp) => (
+                <button
+                  key={sp.id}
+                  onClick={() => pickStarter(sp.id)}
+                  disabled={hatching}
+                  className={`group rounded-2xl overflow-hidden border-2 border-white/30 hover:border-yellow-400 hover:scale-105 transition shadow-xl bg-gradient-to-br ${ELEMENT_COLORS[sp.element]}`}
+                >
+                  <div className="aspect-square p-2 flex items-center justify-center">
+                    <img src={sp.image} alt={sp.name} className="h-full w-auto drop-shadow-2xl group-hover:scale-110 transition" loading="lazy" />
                   </div>
-                )}
-              </div>
+                  <div className="bg-card/95 backdrop-blur-sm p-2">
+                    <div className="font-extrabold text-sm">{sp.emoji} {sp.name}</div>
+                    <div className="text-[10px] text-muted-foreground">{ELEMENT_NAMES[sp.element]}</div>
+                    <div className="text-[10px] mt-1 text-foreground/80">{sp.description}</div>
+                  </div>
+                </button>
+              ))}
             </div>
-            <CoinBadge amount={profile.coins} />
-            <button onClick={logout} className="text-xs text-muted-foreground hover:text-foreground px-2 py-1">Sair</button>
-          </div>
-        </div>
-      </header>
+          </section>
+        ) : (
+          <>
+            <section className="rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 p-4 text-white">
+              <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
+                <div>
+                  <h2 className="text-xl font-extrabold">🏠 Seu Pátio</h2>
+                  <p className="text-xs opacity-80">
+                    {monsters.length} monstro{monsters.length > 1 ? "s" : ""} • Time: {monsters.filter((m) => m.in_team).length}/{profile.vip_until && new Date(profile.vip_until) > new Date() ? TEAM_MAX_VIP : TEAM_MAX}
+                  </p>
+                </div>
+                <button
+                  onClick={() => navigate({ to: "/arena" })}
+                  disabled={monsters.filter((m) => m.in_team).length === 0}
+                  className="px-5 py-2.5 rounded-xl bg-gradient-to-b from-red-400 to-red-600 text-white font-extrabold shadow-lg hover:scale-105 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  ⚔️ Ir pra Arena
+                </button>
+              </div>
+              <p className="text-[11px] opacity-80">Toque num monstro pra cuidar dele. Toque no botão de TIME pra alternar quem batalha.</p>
+            </section>
 
-      <div className="max-w-6xl mx-auto px-4 mt-6 grid lg:grid-cols-[1fr_360px] gap-6">
-        {/* Farm */}
-        <section>
-          <div className="bg-card/70 backdrop-blur-sm rounded-2xl p-4 border-2 border-amber-900/30 shadow-xl">
-            <h2 className="font-extrabold text-lg mb-3 flex items-center gap-2 text-amber-950">
-              🚜 Sua Plantação
-              <span className="text-xs font-normal text-amber-900/70">
-                Plantando: {CROPS[selectedSeed].emoji} {CROPS[selectedSeed].name} (🪙 {CROPS[selectedSeed].seedCost})
-              </span>
-            </h2>
-            {/* Ploughed field */}
-            <div className="relative p-3 rounded-xl bg-gradient-to-b from-amber-900/40 to-amber-950/50 border-2 border-amber-950/60 shadow-inner">
-              <div className="grid grid-cols-4 gap-2">
-                {plots.map((p) => (
-                  <Plot key={p.id} cropType={p.crop_type} plantedAt={p.planted_at} onClick={() => handlePlot(p)} />
+            <section>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                {monsters.map((m) => (
+                  <div key={m.id} className="space-y-2">
+                    <MonsterCard
+                      monster={m}
+                      onClick={() => navigate({ to: "/monster/$id", params: { id: m.id } })}
+                    />
+                    <button
+                      onClick={() => toggleTeam(m)}
+                      className={`w-full text-[11px] font-bold rounded-lg py-1.5 transition ${
+                        m.in_team
+                          ? "bg-yellow-400 text-yellow-950 hover:bg-yellow-300"
+                          : "bg-white/15 text-white hover:bg-white/25"
+                      }`}
+                    >
+                      {m.in_team ? "✓ No time" : "+ Time"}
+                    </button>
+                  </div>
                 ))}
               </div>
-            </div>
-          </div>
-
-          {/* Animals pasture */}
-          <div className="pasture rounded-2xl p-4 mt-5">
-            <h2 className="font-extrabold text-lg mb-3 text-amber-950 drop-shadow-sm">🏡 Curral dos Animais</h2>
-            {animals.length === 0 ? (
-              <p className="text-sm text-amber-950/80 text-center py-4 bg-white/40 rounded-lg">
-                Compre animais na loja → eles produzem ovos, leite e mais!
-              </p>
-            ) : (
-              <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
-                {animals.map((a) => (
-                  <AnimalCard key={a.id} animalType={a.animal_type} lastCollected={a.last_collected_at} onCollect={() => collectAnimal(a)} />
-                ))}
-              </div>
-            )}
-          </div>
-        </section>
-
-        {/* Side panel: Shop / Inventory / Animals */}
-        <aside>
-          <div className="panel-wood rounded-2xl p-1 sticky top-24">
-            <div className="bg-card rounded-xl">
-              <div className="flex border-b-2 border-border">
-                {(["shop", "inventory", "animals"] as const).map((t) => (
-                  <button
-                    key={t}
-                    onClick={() => setTab(t)}
-                    className={`flex-1 py-3 text-sm font-bold transition ${tab === t ? "bg-primary text-primary-foreground" : "hover:bg-muted"}`}
-                  >
-                    {t === "shop" ? "🌱 Sementes" : t === "inventory" ? "📦 Estoque" : "🐾 Animais"}
-                  </button>
-                ))}
-              </div>
-
-              <div className="p-3 max-h-[60vh] overflow-y-auto">
-                {tab === "shop" && (
-                  <div className="space-y-2">
-                    {Object.values(CROPS).map((c) => (
-                      <button
-                        key={c.id}
-                        onClick={() => setSelectedSeed(c.id)}
-                        className={`w-full p-2.5 rounded-lg flex items-center gap-3 border-2 transition btn-pop ${
-                          selectedSeed === c.id ? "border-primary bg-primary/10" : "border-border hover:bg-muted"
-                        }`}
-                      >
-                        <span className="text-3xl">{c.emoji}</span>
-                        <div className="flex-1 text-left">
-                          <div className="font-bold text-sm">{c.name}</div>
-                          <div className="text-xs text-muted-foreground">
-                            🪙 {c.seedCost} • {c.growSeconds < 60 ? `${c.growSeconds}s` : `${Math.round(c.growSeconds / 60)}m`} • vende 🪙 {c.sellPrice}
-                          </div>
-                        </div>
-                        {selectedSeed === c.id && <span className="text-primary font-bold">✓</span>}
-                      </button>
-                    ))}
-                  </div>
-                )}
-
-                {tab === "inventory" && (
-                  <div className="space-y-2">
-                    {inventory.length === 0 && (
-                      <p className="text-sm text-muted-foreground text-center py-4">Estoque vazio. Colhe alguma coisa!</p>
-                    )}
-                    {inventory.map((i) => {
-                      const crop = CROPS[i.item_type];
-                      const animalProd = Object.values(ANIMALS).find((a) => a.produces.toLowerCase() === i.item_type);
-                      const emoji = crop?.emoji ?? animalProd?.productEmoji ?? "📦";
-                      const name = crop?.name ?? animalProd?.produces ?? i.item_type;
-                      const price = crop?.sellPrice ?? animalProd?.productSell ?? 0;
-                      return (
-                        <div key={i.item_type} className="p-2.5 rounded-lg border-2 border-border bg-muted/50 flex items-center gap-2">
-                          <span className="text-2xl">{emoji}</span>
-                          <div className="flex-1">
-                            <div className="font-bold text-sm">{name}</div>
-                            <div className="text-xs text-muted-foreground">x{i.quantity} • 🪙 {price} cada</div>
-                          </div>
-                          <button
-                            onClick={() => sellItem(i.item_type, 1)}
-                            className="px-3 py-1.5 bg-accent text-accent-foreground rounded-md text-xs font-bold btn-pop hover:brightness-110"
-                          >Vender</button>
-                          {i.quantity > 1 && (
-                            <button
-                              onClick={() => sellItem(i.item_type, i.quantity)}
-                              className="px-2 py-1.5 bg-primary text-primary-foreground rounded-md text-xs font-bold btn-pop hover:brightness-110"
-                            >Tudo</button>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-
-                {tab === "animals" && (
-                  <div className="space-y-2">
-                    {Object.values(ANIMALS).map((a) => (
-                      <div key={a.id} className="p-2.5 rounded-lg border-2 border-border bg-muted/50 flex items-center gap-3">
-                        <span className="text-3xl">{a.emoji}</span>
-                        <div className="flex-1">
-                          <div className="font-bold text-sm">{a.name}</div>
-                          <div className="text-xs text-muted-foreground">
-                            {a.productEmoji} a cada {Math.round(a.cooldownSeconds / 60) || `${a.cooldownSeconds}s`}m
-                          </div>
-                        </div>
-                        <button
-                          onClick={() => buyAnimal(a.id)}
-                          disabled={profile.coins < a.buyCost}
-                          className="px-3 py-1.5 bg-primary text-primary-foreground rounded-md text-xs font-bold btn-pop disabled:opacity-50"
-                        >🪙 {a.buyCost}</button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </aside>
+            </section>
+          </>
+        )}
       </div>
     </main>
   );

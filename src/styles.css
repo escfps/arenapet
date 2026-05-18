@@ -29,143 +29,71 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --color-soil: var(--soil);
-  --color-soil-dark: var(--soil-dark);
-  --color-grass: var(--grass);
-  --color-sky: var(--sky);
-  --color-gold: var(--gold);
 }
 
 :root {
-  --radius: 0.875rem;
-  --background: oklch(0.96 0.04 130);
-  --foreground: oklch(0.25 0.05 60);
-  --card: oklch(0.99 0.015 90);
-  --card-foreground: oklch(0.25 0.05 60);
-  --popover: oklch(0.99 0.015 90);
-  --popover-foreground: oklch(0.25 0.05 60);
-  --primary: oklch(0.62 0.18 145);
-  --primary-foreground: oklch(0.98 0.01 90);
-  --secondary: oklch(0.85 0.08 90);
-  --secondary-foreground: oklch(0.3 0.06 60);
-  --muted: oklch(0.92 0.03 100);
-  --muted-foreground: oklch(0.45 0.04 80);
-  --accent: oklch(0.82 0.16 70);
-  --accent-foreground: oklch(0.25 0.05 60);
+  --radius: 1rem;
+  --background: oklch(0.18 0.05 290);
+  --foreground: oklch(0.98 0.01 280);
+  --card: oklch(0.99 0.01 280);
+  --card-foreground: oklch(0.18 0.05 290);
+  --popover: oklch(0.99 0.01 280);
+  --popover-foreground: oklch(0.18 0.05 290);
+  --primary: oklch(0.62 0.22 300);
+  --primary-foreground: oklch(0.98 0.01 280);
+  --secondary: oklch(0.7 0.18 30);
+  --secondary-foreground: oklch(0.15 0.05 290);
+  --muted: oklch(0.9 0.02 280);
+  --muted-foreground: oklch(0.45 0.04 290);
+  --accent: oklch(0.78 0.18 70);
+  --accent-foreground: oklch(0.2 0.05 290);
   --destructive: oklch(0.6 0.22 25);
-  --destructive-foreground: oklch(0.98 0.01 90);
-  --border: oklch(0.85 0.05 90);
-  --input: oklch(0.9 0.04 90);
-  --ring: oklch(0.62 0.18 145);
-
-  /* Farm tokens */
-  --soil: oklch(0.45 0.08 55);
-  --soil-dark: oklch(0.32 0.06 50);
-  --grass: oklch(0.7 0.18 140);
-  --sky: oklch(0.78 0.1 230);
-  --gold: oklch(0.82 0.17 80);
+  --destructive-foreground: oklch(0.98 0.01 280);
+  --border: oklch(0.85 0.04 290);
+  --input: oklch(0.9 0.03 290);
+  --ring: oklch(0.62 0.22 300);
 }
 
 .dark {
-  --background: oklch(0.2 0.04 140);
-  --foreground: oklch(0.95 0.02 90);
-  --card: oklch(0.26 0.05 140);
-  --card-foreground: oklch(0.95 0.02 90);
-  --popover: oklch(0.26 0.05 140);
-  --popover-foreground: oklch(0.95 0.02 90);
-  --primary: oklch(0.68 0.18 145);
-  --primary-foreground: oklch(0.15 0.04 140);
-  --secondary: oklch(0.3 0.05 90);
-  --secondary-foreground: oklch(0.95 0.02 90);
-  --muted: oklch(0.3 0.04 100);
-  --muted-foreground: oklch(0.7 0.03 90);
-  --accent: oklch(0.55 0.16 70);
-  --accent-foreground: oklch(0.98 0.01 90);
+  --background: oklch(0.15 0.05 290);
+  --foreground: oklch(0.95 0.02 280);
+  --card: oklch(0.22 0.05 290);
+  --card-foreground: oklch(0.95 0.02 280);
+  --popover: oklch(0.22 0.05 290);
+  --popover-foreground: oklch(0.95 0.02 280);
+  --primary: oklch(0.7 0.22 300);
+  --primary-foreground: oklch(0.15 0.05 290);
+  --secondary: oklch(0.3 0.05 290);
+  --secondary-foreground: oklch(0.95 0.02 280);
+  --muted: oklch(0.3 0.04 290);
+  --muted-foreground: oklch(0.7 0.03 290);
+  --accent: oklch(0.65 0.18 70);
+  --accent-foreground: oklch(0.98 0.01 280);
   --border: oklch(1 0 0 / 12%);
   --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.68 0.18 145);
+  --ring: oklch(0.7 0.22 300);
 }
 
 @layer base {
   * { border-color: var(--color-border); }
   body {
-    background: oklch(0.78 0.15 140);
+    background: oklch(0.18 0.05 290);
     color: var(--color-foreground);
     font-family: 'Nunito', 'Quicksand', system-ui, sans-serif;
-  }
-  .farm-bg {
-    background-size: cover;
-    background-position: center top;
-    background-attachment: fixed;
-    background-repeat: no-repeat;
-    min-height: 100vh;
   }
 }
 
 @layer components {
-  .farm-field {
-    background-image: url('/src/assets/soil-patch.png');
-    background-size: 100% 100%;
-    background-repeat: no-repeat;
-    filter: drop-shadow(0 8px 16px oklch(0 0 0 / 0.3));
-  }
-  .plot-tile {
-    background:
-      repeating-linear-gradient(90deg,
-        oklch(0.42 0.08 50) 0px,
-        oklch(0.42 0.08 50) 6px,
-        oklch(0.36 0.07 50) 6px,
-        oklch(0.36 0.07 50) 12px);
-    box-shadow:
-      inset 0 -3px 0 oklch(0.24 0.05 50),
-      inset 0 2px 0 oklch(0.55 0.08 55 / 0.5),
-      0 2px 6px oklch(0 0 0 / 0.25);
-    border: 2px solid oklch(0.28 0.05 50);
-  }
-  .plot-empty:hover {
-    background:
-      repeating-linear-gradient(90deg,
-        oklch(0.5 0.09 55) 0px,
-        oklch(0.5 0.09 55) 6px,
-        oklch(0.42 0.08 50) 6px,
-        oklch(0.42 0.08 50) 12px);
-  }
-  .pasture {
-    background:
-      radial-gradient(ellipse at center, oklch(0.78 0.18 140) 0%, oklch(0.65 0.18 140) 100%);
-    border: 4px solid oklch(0.5 0.1 60);
-    box-shadow:
-      inset 0 0 0 3px oklch(0.7 0.12 60),
-      inset 0 0 30px oklch(0.5 0.15 140 / 0.4),
-      0 6px 16px oklch(0 0 0 / 0.25);
-  }
-  .panel-wood {
-    background:
-      linear-gradient(135deg, oklch(0.65 0.1 60), oklch(0.55 0.1 55));
-    border: 3px solid oklch(0.35 0.08 50);
-    box-shadow: 0 6px 0 oklch(0.3 0.06 50), 0 10px 20px oklch(0 0 0 / 0.2);
-  }
   .coin-badge {
-    background: linear-gradient(180deg, var(--gold), oklch(0.7 0.18 70));
+    background: linear-gradient(180deg, oklch(0.85 0.17 80), oklch(0.7 0.18 70));
     border: 2px solid oklch(0.45 0.12 60);
-    box-shadow: inset 0 2px 0 oklch(1 0 0 / 0.4), 0 3px 0 oklch(0.5 0.12 60);
-  }
-  .btn-pop {
-    transition: transform 0.1s, box-shadow 0.1s;
-  }
-  .btn-pop:active { transform: translateY(2px); }
-  .bounce-in {
-    animation: bounceIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-  @keyframes bounceIn {
-    0% { transform: scale(0.3); opacity: 0; }
-    100% { transform: scale(1); opacity: 1; }
+    box-shadow: inset 0 2px 0 oklch(1 0 0 / 0.4), 0 2px 0 oklch(0.5 0.12 60);
   }
   .grow-pulse {
     animation: growPulse 2s ease-in-out infinite;
   }
   @keyframes growPulse {
     0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.08); }
+    50% { transform: scale(1.06); }
   }
 }
