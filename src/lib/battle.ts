@@ -84,6 +84,16 @@ type Live = BattleMonster & {
   shield: number;
   tauntTargetId: string | null;
   tauntTurns: number;
+  // novos
+  burnDmg: number;       // dano por turno enquanto burnTurns > 0
+  burnTurns: number;
+  silenceTurns: number;  // se >0, próxima skill é anulada
+  rageTurns: number;     // berserker: +rageAtkMult e -rageDefDrop
+  rageAtkMult: number;
+  rageDefDrop: number;
+  defBuffTurns: number;  // bônus de DEF temporário (shield_ally)
+  defBuffPct: number;    // ex: 0.3 = +30% DEF
+  lastFallenAt: number;  // turno em que morreu (pra revive_ally)
 };
 
 function pickTarget(attacker: Live, enemies: Live[]): Live | null {
