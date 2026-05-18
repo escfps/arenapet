@@ -33,10 +33,12 @@ export function BattleScene({
   }, [teamA, teamB]);
 
   const [hp, setHp] = useState<HpMap>(initialHp);
+  const [shields, setShields] = useState<ShieldMap>(new Map());
   const [fx, setFx] = useState<Fx>({ actor: null, target: null, dmg: null, crit: false });
 
   useEffect(() => {
     setHp(new Map(initialHp));
+    setShields(new Map());
     setFx({ actor: null, target: null, dmg: null, crit: false });
   }, [initialHp]);
 
