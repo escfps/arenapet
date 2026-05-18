@@ -177,7 +177,19 @@ function ArenaPage() {
     try { recent = JSON.parse(localStorage.getItem(recentKey) ?? "[]"); } catch { recent = []; }
     // Só considera oponentes com time COMPLETO (3 pets), pra evitar luta 3v2
     const allOwnersFull = Object.keys(byOwner).filter((id) => byOwner[id].team.length >= 3);
-    const allOwners = allOwnersFull.filter((id) => !recent.includes(id));
+    // Cap de rank do oponente em tiers iniciais (proteção pra novatos)
+    // Ferro: max rank 2 • Bronze: max rank 4 • Prata: max rank 6 • Ouro+: sem cap
+    const myMaxRank = Math.max(1, ...myTeam.map((m) => m.rank ?? 1));
+    let rankCap = 99;
+    if (myPts < 500) rankCap = Math.max(2, myMaxRank + 1);
+    else if (myPts < 1000) rankCap = Math.max(4, myMaxRank + 1);
+    else if (myPts < 1500) rankCap = Math.max(6, myMaxRank + 2);
+    const allOwnersCapped = allOwnersFull.filter((id) => {
+      const maxR = Math.max(...byOwner[id].team.map((m) => m.rank ?? 1));
+      return maxR <= rankCap;
+    });
+    const poolBase = allOwnersCapped.length > 0 ? allOwnersCapped : allOwnersFull;
+    const allOwners = poolBase.filter((id) => !recent.includes(id));
     const windows = [100, 200, 400, 800];
     let ownerList: string[] = [];
     for (const w of windows) {
