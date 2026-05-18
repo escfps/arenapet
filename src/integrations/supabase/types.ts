@@ -14,7 +14,105 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      animals: {
+        Row: {
+          animal_type: string
+          created_at: string
+          id: string
+          last_collected_at: string
+          user_id: string
+        }
+        Insert: {
+          animal_type: string
+          created_at?: string
+          id?: string
+          last_collected_at?: string
+          user_id: string
+        }
+        Update: {
+          animal_type?: string
+          created_at?: string
+          id?: string
+          last_collected_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      inventory: {
+        Row: {
+          item_type: string
+          quantity: number
+          user_id: string
+        }
+        Insert: {
+          item_type: string
+          quantity?: number
+          user_id: string
+        }
+        Update: {
+          item_type?: string
+          quantity?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      plots: {
+        Row: {
+          created_at: string
+          crop_type: string | null
+          id: string
+          planted_at: string | null
+          slot_index: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          crop_type?: string | null
+          id?: string
+          planted_at?: string | null
+          slot_index: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          crop_type?: string | null
+          id?: string
+          planted_at?: string | null
+          slot_index?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          coins: number
+          created_at: string
+          id: string
+          level: number
+          updated_at: string
+          username: string
+          xp: number
+        }
+        Insert: {
+          coins?: number
+          created_at?: string
+          id: string
+          level?: number
+          updated_at?: string
+          username: string
+          xp?: number
+        }
+        Update: {
+          coins?: number
+          created_at?: string
+          id?: string
+          level?: number
+          updated_at?: string
+          username?: string
+          xp?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
