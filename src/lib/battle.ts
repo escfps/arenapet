@@ -152,6 +152,40 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
 
   let turn = 1;
   const MAX_TURNS = 30;
+  const exploded = new Set<string>();
+
+  // PASSIVA "Rato Bomba": ao morrer, explode e mata o inimigo com menos HP.
+  // Chain-explosões são suportadas (se a vítima também for rato_bomba).
+  function sweepDeathExplosions() {
+    let changed = true;
+    while (changed) {
+      changed = false;
+      const allMons: { mon: Live; side: "team_a" | "team_b" }[] = [
+        ...a.map((mon) => ({ mon, side: "team_a" as const })),
+        ...b.map((mon) => ({ mon, side: "team_b" as const })),
+      ];
+      for (const { mon: dead, side: deadSide } of allMons) {
+        if (dead.species !== "rato_bomba") continue;
+        if (dead.current > 0) continue;
+        if (exploded.has(dead.id)) continue;
+        exploded.add(dead.id);
+        const enemyTeam = deadSide === "team_a" ? b : a;
+        const enemySide: "team_a" | "team_b" = deadSide === "team_a" ? "team_b" : "team_a";
+        const aliveEnemies = enemyTeam.filter((m) => m.current > 0);
+        if (aliveEnemies.length === 0) continue;
+        const victim = aliveEnemies.reduce((x, y) => (x.current < y.current ? x : y));
+        victim.current = 0;
+        victim.shield = 0;
+        victim.lastFallenAt = turn;
+        log.push({
+          turn, actor: deadSide, actorName: dead.name, targetName: victim.name,
+          damage: 0, crit: true, effective: 1, remainingHp: 0,
+          message: `💣💥 ${dead.name} EXPLODIU ao morrer e levou ${victim.name} junto!`,
+        });
+        changed = true; // permite que a vítima (se for outro rato_bomba) também detone
+      }
+    }
+  }
 
   while (a.some((m) => m.current > 0) && b.some((m) => m.current > 0) && turn <= MAX_TURNS) {
     type Actor = { mon: Live; side: "team_a" | "team_b" };
