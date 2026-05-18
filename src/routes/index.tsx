@@ -59,25 +59,47 @@ function PatioPage() {
     });
   }, [monsters, search, rarityFilter, elementFilter]);
 
-  async function pickStarter(speciesId: string) {
-    if (!userId || hatching) return;
+  async function openWelcomeChest() {
+    if (!userId || !profile || hatching) return;
+    if (profile.welcome_chest_claimed) {
+      toast.error("Você já abriu seu baú de boas-vindas.");
+      return;
+    }
     setHatching(true);
-    const sp = SPECIES[speciesId];
-    const { error } = await supabase.from("monsters").insert({
-      owner_id: userId,
-      species: speciesId,
-      name: sp.name,
-      hp: sp.base.hp,
-      atk: sp.base.atk,
-      def: sp.base.def,
-      spd: sp.base.spd,
-      in_team: true,
+    const speciesIds = rollWelcomeChest();
+    const rows = speciesIds.map((id, idx) => {
+      const sp = SPECIES[id];
+      return {
+        owner_id: userId,
+        species: id,
+        name: sp.name,
+        hp: sp.base.hp,
+        atk: sp.base.atk,
+        def: sp.base.def,
+        spd: sp.base.spd,
+        in_team: idx < TEAM_MAX,
+      };
     });
+    const { error: insErr } = await supabase.from("monsters").insert(rows);
+    if (insErr) {
+      setHatching(false);
+      toast.error("Erro ao abrir baú: " + insErr.message);
+      return;
+    }
+    const { error: updErr } = await supabase
+      .from("profiles")
+      .update({ welcome_chest_claimed: true })
+      .eq("id", userId);
     setHatching(false);
-    if (error) { toast.error("Erro ao escolher: " + error.message); return; }
-    toast.success(`${sp.name} é seu! 🎉`);
-    loadMonsters();
+    if (updErr) {
+      toast.error("Baú aberto, mas falhou ao registrar: " + updErr.message);
+    }
+    await reload();
+    await loadMonsters();
+    setWelcomeReveal(speciesIds);
+    toast.success("Baú de boas-vindas aberto! 🎁");
   }
+
 
   async function toggleTeam(m: MonsterRow) {
     if (!profile) return;
