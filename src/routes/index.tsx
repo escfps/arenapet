@@ -153,6 +153,14 @@ function PatioPage() {
     if (!profile) return;
     // If another monster occupies that slot, swap
     const occupant = monsters.find((x) => x.in_team && x.team_position === slot && x.id !== m.id);
+    // 🛡️ Se m ainda não está no time e o slot está vazio, verificar limite
+    if (!m.in_team && !occupant) {
+      const currentTeam = monsters.filter((x) => x.in_team).length;
+      if (currentTeam >= TEAM_MAX) {
+        toast.error(`Time cheio (${TEAM_MAX}). Remova um pet antes.`);
+        return;
+      }
+    }
     const updates: { id: string; in_team: boolean; team_position: number }[] = [
       { id: m.id, in_team: true, team_position: slot },
     ];
@@ -172,6 +180,7 @@ function PatioPage() {
       await supabase.from("monsters").update({ in_team: u.in_team, team_position: u.team_position }).eq("id", u.id);
     }
   }
+
 
   async function toggleTeam(m: MonsterRow) {
     if (!profile) return;
