@@ -970,6 +970,9 @@ export function tierPromotionChests(newTierName: string): { silver: number; gold
     case "Grão-Mestre":return { silver: 0, gold: 0, legendary: 1 };
     default:           return { silver: 0, gold: 0, legendary: 0 };
   }
+}
+
+
 
 export const ARENA_WIN_POINTS = 25;
 export const ARENA_LOSS_POINTS = 15;
