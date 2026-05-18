@@ -6,6 +6,8 @@ import {
   VIP_PRICE_GEMS, VIP_DURATION_DAYS,
   rollEgg, skinFilter, isVip,
   MAX_BATTLE_ENERGY, ENERGY_REFILL_GEM_COST, ENERGY_REFILL_ALL_GEM_COST, computeBattleEnergy,
+  CHESTS, rollChest, RARITY_INFO,
+  type ChestTier, type ChestReward,
 } from "@/lib/game-data";
 import type { MonsterRow } from "@/components/MonsterCard";
 import { HUD } from "@/components/HUD";
