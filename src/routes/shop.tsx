@@ -251,7 +251,7 @@ function ShopPage() {
                       <div className="font-bold text-yellow-300 mb-1">📊 Drops garantidos:</div>
                       <div>🪙 {c.coins[0]}–{c.coins[1]} moedas</div>
                       <div>🍖 {c.rations[0]}–{c.rations[1]} rações</div>
-                      <div>💎 {c.gems[0]}–{c.gems[1]} gemas {c.gemChance < 1 && `(${Math.round(c.gemChance * 100)}% chance)`}</div>
+                      <div>💎 {c.gems[0]}–{c.gems[1]} gemas{c.gemChance < 1 ? ` (${Math.round(c.gemChance * 100)}% chance)` : ""}</div>
                       <div className="font-bold text-fuchsia-300 mt-2">🐾 Pet: {Math.round(c.petChance * 100)}% de cair</div>
                       {c.petChance > 0 && (
                         <div className="pl-2 space-y-0.5">
