@@ -482,7 +482,7 @@ export function getTier(points: number, leaderboardRank?: number): Tier {
     const t = LADDER[i];
     if (points >= t.start) {
       const over = points - t.start;
-      const div = Math.min(4, Math.floor(over / t.divSize));
+      const div = Math.min(4, Math.floor(over / DIVISION_SIZE));
       const division = DIVISION_NAMES[div];
       return {
         name: t.name, division, short: `${t.name} ${division}`,
@@ -501,16 +501,38 @@ export function nextTierProgress(points: number): { next: number; current: numbe
     const t = LADDER[i];
     if (points >= t.start) {
       const over = points - t.start;
-      const div = Math.min(4, Math.floor(over / t.divSize));
-      const divStart = t.start + div * t.divSize;
-      const divEnd = div === 4
-        ? (i === LADDER.length - 1 ? MASTER_THRESHOLD : LADDER[i + 1].start)
-        : divStart + t.divSize;
-      return { current: divStart, next: divEnd, pct: ((points - divStart) / (divEnd - divStart)) * 100 };
+      const div = Math.min(4, Math.floor(over / DIVISION_SIZE));
+      const divStart = t.start + div * DIVISION_SIZE;
+      const divEnd = divStart + DIVISION_SIZE;
+      return { current: divStart, next: divEnd, pct: ((points - divStart) / DIVISION_SIZE) * 100 };
     }
   }
-  return { current: 0, next: LADDER[0].divSize, pct: 0 };
+  return { current: 0, next: DIVISION_SIZE, pct: 0 };
+}
+
+// Current division bounds + whether the next division is a new tier (promo would be md5)
+export function divisionBounds(points: number): {
+  start: number; end: number; tierIndex: number; divIndex: number; nextIsTierUp: boolean;
+} | null {
+  if (points >= MASTER_THRESHOLD) return null;
+  for (let i = LADDER.length - 1; i >= 0; i--) {
+    const t = LADDER[i];
+    if (points >= t.start) {
+      const over = points - t.start;
+      const div = Math.min(4, Math.floor(over / DIVISION_SIZE));
+      const start = t.start + div * DIVISION_SIZE;
+      return { start, end: start + DIVISION_SIZE, tierIndex: i, divIndex: div, nextIsTierUp: div === 4 };
+    }
+  }
+  return null;
+}
+
+export type PromoSeries = { wins: number; losses: number; type: "bo3" | "bo5"; targetFrom: number };
+
+export function promoNeeded(type: "bo3" | "bo5"): number {
+  return type === "bo5" ? 3 : 2;
 }
 
 export const ARENA_WIN_POINTS = 25;
 export const ARENA_LOSS_POINTS = 15;
+
