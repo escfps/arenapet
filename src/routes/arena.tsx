@@ -346,6 +346,16 @@ function ArenaPage() {
                         </span>
                         <span className={`px-2 py-0.5 rounded ${getTier(rewards.newPoints).color}`}>{getTier(rewards.newPoints).short}</span>
                       </div>
+                      {rewards.promoMsg && (
+                        <div className="mt-2 text-sm font-extrabold bg-black/30 rounded-lg px-3 py-2">
+                          {rewards.promoMsg}
+                          {rewards.promoAfter && (
+                            <div className="text-xs font-normal opacity-90 mt-1">
+                              Faltam {promoNeeded(rewards.promoAfter.type) - rewards.promoAfter.wins} vitória(s)
+                            </div>
+                          )}
+                        </div>
+                      )}
                       {!isVip(profile.vip_until) && winner === "team_a" && (
                         <div className="mt-2 text-xs opacity-90">👑 VIP daria <b>+50% nas recompensas!</b></div>
                       )}
