@@ -262,6 +262,13 @@ function ArenaPage() {
                     <div className={`mt-4 p-4 rounded-xl text-center font-extrabold ${winner === "team_a" ? "bg-green-500/40" : "bg-red-500/40"}`}>
                       {winner === "team_a" ? "🏆 VITÓRIA!" : "💀 Derrota..."}
                       <div className="text-sm font-normal mt-1">+🪙 {rewards.coins} • +✨ {rewards.xp} XP</div>
+                      <div className="text-xs font-bold mt-1 flex items-center justify-center gap-2">
+                        <span className={`px-2 py-0.5 rounded ${getTier(rewards.oldPoints).color}`}>{getTier(rewards.oldPoints).short}</span>
+                        <span className={rewards.points >= 0 ? "text-green-300" : "text-red-300"}>
+                          {rewards.points >= 0 ? `+${rewards.points}` : rewards.points} pts
+                        </span>
+                        <span className={`px-2 py-0.5 rounded ${getTier(rewards.newPoints).color}`}>{getTier(rewards.newPoints).short}</span>
+                      </div>
                       {!isVip(profile.vip_until) && winner === "team_a" && (
                         <div className="mt-2 text-xs opacity-90">👑 VIP daria <b>+50% nas recompensas!</b></div>
                       )}
