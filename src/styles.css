@@ -104,11 +104,7 @@
       0 0 0 9px rgba(167, 139, 250, 0.75),
       0 0 28px 8px rgba(253, 224, 71, 0.8),
       0 0 56px 16px rgba(167, 139, 250, 0.6);
-    animation: rankMaxHue 3s linear infinite, rankMaxPulse 1.6s ease-in-out infinite;
-  }
-  @keyframes rankMaxHue {
-    0%   { filter: hue-rotate(0deg) saturate(1.2); }
-    100% { filter: hue-rotate(360deg) saturate(1.2); }
+    animation: rankMaxPulse 1.6s ease-in-out infinite;
   }
   @keyframes rankMaxPulse {
     0%, 100% {
