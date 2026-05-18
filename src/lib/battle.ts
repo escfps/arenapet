@@ -84,10 +84,10 @@ function phoenixAtkBonus(attacker: Live): number {
   const hpLostPct = 1 - attacker.current / Math.max(1, attacker.maxHp);
   return 1 + hpLostPct * 1.2;
 }
-// Fênix Negra: 20% do dano causado vira HP máx adicional + cura
+// Fênix Negra: 10% do dano causado vira HP máx adicional + cura
 function phoenixOnDamageDealt(attacker: Live, dmg: number) {
   if (attacker.species !== "fenix_negra" || dmg <= 0) return;
-  const grow = Math.max(1, Math.round(dmg * 0.20));
+  const grow = Math.max(1, Math.round(dmg * 0.10));
   attacker.maxHp += grow;
   attacker.current = Math.min(attacker.maxHp, attacker.current + grow);
 }
