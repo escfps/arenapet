@@ -167,6 +167,48 @@ function MonsterPage() {
           const skill = ROLE_SKILLS[sp.role];
           const rarity = RARITY_INFO[sp.rarity];
           const role = ROLE_INFO[sp.role];
+          const skillMult = rarity.skillMult;
+          const stats = totalStats(monster.species, monster.rank);
+          const atk = monster.atk ?? stats.atk;
+          const int = monster.int ?? stats.int;
+          const maxHp = stats.hp;
+
+          // Preview de efeito e ganho por +1 no stat que escala a skill
+          let scaleStat: "ATK" | "INT" | "HP" = "ATK";
+          let currentLabel = "";
+          let perPointLabel = "";
+          if (skill.kind === "heavy_strike") {
+            scaleStat = "ATK";
+            const dmg = Math.round(atk * 2.2 * skillMult);
+            const perPoint = (2.2 * skillMult).toFixed(2);
+            currentLabel = `💥 ~${dmg} de dano (sem def)`;
+            perPointLabel = `+1 ⚔️ ATK ≈ +${perPoint} dano`;
+          } else if (skill.kind === "guaranteed_crit") {
+            scaleStat = "ATK";
+            const dmg = Math.round(atk * 1.8 * 1.7 * skillMult);
+            const perPoint = (1.8 * 1.7 * skillMult).toFixed(2);
+            currentLabel = `🗡️ ~${dmg} de dano crítico`;
+            perPointLabel = `+1 ⚔️ ATK ≈ +${perPoint} dano`;
+          } else if (skill.kind === "aoe_magic") {
+            scaleStat = "INT";
+            const dmg = Math.round(int * 2.2 * 1.2 * skillMult);
+            const perPoint = (2.2 * 1.2 * skillMult).toFixed(2);
+            currentLabel = `🔮 ~${dmg} de dano em CADA inimigo`;
+            perPointLabel = `+1 🧠 INT ≈ +${perPoint} dano por alvo`;
+          } else if (skill.kind === "team_heal") {
+            scaleStat = "INT";
+            const heal = Math.round((int * 1.8 + maxHp * 0.10) * skillMult);
+            const perPoint = (1.8 * skillMult).toFixed(2);
+            currentLabel = `✨ ~${heal} de cura em cada aliado`;
+            perPointLabel = `+1 🧠 INT ≈ +${perPoint} de cura`;
+          } else if (skill.kind === "shield_taunt") {
+            scaleStat = "HP";
+            const shield = Math.round(maxHp * 0.30 * skillMult);
+            const perPoint = (0.30 * skillMult).toFixed(2);
+            currentLabel = `🛡️ ~${shield} de escudo`;
+            perPointLabel = `+1 ❤️ HP máx ≈ +${perPoint} de escudo`;
+          }
+
           return (
             <div className="rounded-2xl bg-gradient-to-br from-purple-900/80 to-fuchsia-900/80 border-2 border-white/30 p-4 text-white shadow-xl">
               <div className="flex items-center gap-2 mb-2 flex-wrap">
@@ -187,6 +229,14 @@ function MonsterPage() {
                   <span className="ml-auto text-[10px] bg-white/20 px-2 py-0.5 rounded-full">CD {skill.cooldown}</span>
                 </div>
                 <div className="text-xs opacity-90 mt-1">{skill.description}</div>
+
+                {/* Preview de dano/efeito */}
+                <div className="mt-3 rounded-lg bg-fuchsia-500/20 border border-fuchsia-300/30 p-2 text-xs">
+                  <div className="font-extrabold text-fuchsia-100">{currentLabel}</div>
+                  <div className="opacity-90 mt-0.5">
+                    Escala com <span className="font-bold">{scaleStat}</span> — {perPointLabel}
+                  </div>
+                </div>
               </div>
             </div>
           );
