@@ -22,12 +22,20 @@ export const Route = createFileRoute("/collection")({
 });
 
 type Filter = "all" | "owned" | "missing";
+type RarityFilter = Rarity | "all";
+type ElementFilter = Element | "all";
+
+const ALL_RARITIES: Rarity[] = ["common", "rare", "super_rare", "epic", "legendary", "mythic"];
+const ALL_ELEMENTS: Element[] = ["fire", "water", "grass", "electric", "shadow", "earth"];
 
 function CollectionPage() {
   const navigate = useNavigate();
   const { userId, profile, loading } = useProfile();
   const [ownedSpecies, setOwnedSpecies] = useState<Set<string>>(new Set());
   const [filter, setFilter] = useState<Filter>("all");
+  const [rarityFilter, setRarityFilter] = useState<RarityFilter>("all");
+  const [elementFilter, setElementFilter] = useState<ElementFilter>("all");
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     if (!userId) return;
@@ -42,10 +50,16 @@ function CollectionPage() {
 
   const allSpecies = useMemo(() => Object.values(SPECIES), []);
   const filtered = useMemo(() => {
-    if (filter === "owned") return allSpecies.filter((s) => ownedSpecies.has(s.id));
-    if (filter === "missing") return allSpecies.filter((s) => !ownedSpecies.has(s.id));
-    return allSpecies;
-  }, [allSpecies, ownedSpecies, filter]);
+    const q = search.trim().toLowerCase();
+    return allSpecies.filter((s) => {
+      if (filter === "owned" && !ownedSpecies.has(s.id)) return false;
+      if (filter === "missing" && ownedSpecies.has(s.id)) return false;
+      if (rarityFilter !== "all" && s.rarity !== rarityFilter) return false;
+      if (elementFilter !== "all" && s.element !== elementFilter && s.secondaryElement !== elementFilter) return false;
+      if (q && !s.name.toLowerCase().includes(q)) return false;
+      return true;
+    });
+  }, [allSpecies, ownedSpecies, filter, rarityFilter, elementFilter, search]);
 
   const ownedCount = ownedSpecies.size;
   const totalCount = allSpecies.length;
