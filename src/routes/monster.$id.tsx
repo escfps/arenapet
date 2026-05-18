@@ -342,19 +342,28 @@ function MonsterPage() {
               🎮 Brincar
               <div className="text-xs font-normal opacity-90">Grátis • +20 felicidade • -{PLAY_ENERGY_COST} energia</div>
             </button>
-            {Object.values(ITEMS).map((it) => (
-              <button
-                key={it.id}
-                onClick={() => useItem(it.id)}
-                className="p-4 rounded-2xl bg-white/15 hover:bg-white/25 backdrop-blur-sm text-white text-left transition border border-white/20"
-              >
-                <div className="font-extrabold text-sm">{it.emoji} {it.name}</div>
-                <div className="text-xs opacity-90 mb-1">{it.description}</div>
-                <div className="text-xs font-bold">
-                  {it.priceCoins ? `🪙 ${it.priceCoins}` : `💎 ${it.priceGems}`}
-                </div>
-              </button>
-            ))}
+            {Object.values(ITEMS).map((it) => {
+              const qty = it.id === "ration" ? rations : 0;
+              const freeFromInv = it.id === "ration" && qty > 0;
+              return (
+                <button
+                  key={it.id}
+                  onClick={() => useItem(it.id)}
+                  className="p-4 rounded-2xl bg-white/15 hover:bg-white/25 backdrop-blur-sm text-white text-left transition border border-white/20 relative"
+                >
+                  {it.id === "ration" && (
+                    <span className="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-amber-500 text-black text-[10px] font-extrabold">
+                      x{qty}
+                    </span>
+                  )}
+                  <div className="font-extrabold text-sm">{it.emoji} {it.name}</div>
+                  <div className="text-xs opacity-90 mb-1">{it.description}</div>
+                  <div className="text-xs font-bold">
+                    {freeFromInv ? "🎒 Do inventário" : it.priceCoins ? `🪙 ${it.priceCoins}` : `💎 ${it.priceGems}`}
+                  </div>
+                </button>
+              );
+            })}
           </div>
         )}
 
