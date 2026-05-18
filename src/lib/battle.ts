@@ -626,6 +626,19 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
       const target = pickTarget(attacker, enemies);
       if (!target) return;
 
+      // Cegueira: 50% de chance de errar o ataque básico
+      if (attacker.blindTurns > 0) {
+        attacker.blindTurns -= 1;
+        if (rand() < 0.5) {
+          log.push({
+            turn, actor: side, actorName: attacker.name, targetName: target.name,
+            damage: 0, crit: false, effective: 1, remainingHp: target.current,
+            message: `😵‍💫 ${attacker.name} errou o ataque (cegueira)!`,
+          });
+          return;
+        }
+      }
+
       const eff = defensiveMultiplier(getElement(attacker.species), target.species);
       const critChance = attacker.role === "assassin" ? 0.35 : 0.12;
       const crit = rand() < critChance;
