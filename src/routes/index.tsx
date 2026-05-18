@@ -115,7 +115,7 @@ function PatioPage() {
                 <div>
                   <h2 className="text-xl font-extrabold">🏠 Seu Pátio</h2>
                   <p className="text-xs opacity-80">
-                    {monsters.length} monstro{monsters.length > 1 ? "s" : ""} • Time: {monsters.filter((m) => m.in_team).length}/{profile.vip_until && new Date(profile.vip_until) > new Date() ? TEAM_MAX_VIP : TEAM_MAX}
+                    {monsters.length} monstro{monsters.length > 1 ? "s" : ""} • Time: {monsters.filter((m) => m.in_team).length}/{TEAM_MAX}
                   </p>
                 </div>
                 <button
