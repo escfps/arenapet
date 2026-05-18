@@ -1,4 +1,4 @@
-import { SPECIES, skinFilter, ELEMENT_COLORS, ELEMENT_NAMES, ROLE_INFO, RARITY_INFO, totalStats, rankStars } from "@/lib/game-data";
+import { SPECIES, skinFilter, ELEMENT_COLORS, ELEMENT_NAMES, ROLE_INFO, RARITY_INFO, totalStats, rankStars, MAX_RANK } from "@/lib/game-data";
 
 export type MonsterRow = {
   id: string;
@@ -30,19 +30,20 @@ export function MonsterCard({ monster, onClick, compact, selected }: Props) {
   const stats = totalStats(monster.species, rank);
   const gradient = ELEMENT_COLORS[sp.element];
 
+  const isMax = rank >= MAX_RANK;
   return (
     <button
       onClick={onClick}
       className={`relative w-full text-left rounded-2xl overflow-hidden border-2 transition-transform hover:scale-[1.02] ${
         selected ? "border-yellow-400 ring-4 ring-yellow-300/50" : "border-white/30"
-      } shadow-xl backdrop-blur-sm ring-2 ${RARITY_INFO[sp.rarity].ringColor}`}
+      } shadow-xl backdrop-blur-sm ring-2 ${RARITY_INFO[sp.rarity].ringColor} ${isMax ? "rank-max-glow" : ""}`}
     >
       {monster.in_team && (
         <span className="absolute top-2 left-2 z-10 px-2 py-0.5 rounded-full bg-yellow-400 text-yellow-950 text-[10px] font-extrabold shadow">
           ⚔️ TIME
         </span>
       )}
-      <span className="absolute top-2 right-2 z-10 px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-400 to-yellow-300 text-amber-950 text-[10px] font-extrabold shadow-lg">
+      <span className={`absolute top-2 right-2 z-10 px-2 py-0.5 rounded-full text-[10px] font-extrabold shadow-lg ${isMax ? "bg-gradient-to-r from-yellow-300 via-pink-400 to-violet-400 text-white animate-pulse" : "bg-gradient-to-r from-amber-400 to-yellow-300 text-amber-950"}`}>
         {rankStars(rank)}
       </span>
       <span className={`absolute bottom-[3.5rem] right-2 z-10 px-2 py-0.5 rounded-full ${ROLE_INFO[sp.role].color} text-white text-[10px] font-extrabold shadow-lg`}>
