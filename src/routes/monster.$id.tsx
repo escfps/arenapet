@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { SPECIES, ITEMS, SKINS, ELEMENT_COLORS, ROLE_INFO, ROLE_SKILLS, RARITY_INFO, skinFilter, rankStars } from "@/lib/game-data";
+import { SPECIES, ITEMS, SKINS, ELEMENT_COLORS, ROLE_INFO, ROLE_SKILLS, RARITY_INFO, skinFilter, rankStars, totalStats } from "@/lib/game-data";
 import type { MonsterRow } from "@/components/MonsterCard";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
@@ -128,18 +128,25 @@ function MonsterPage() {
             <div className="flex-1 text-white">
               <h1 className="text-3xl font-extrabold drop-shadow-md">{monster.name}</h1>
               <p className="text-sm opacity-90">{sp.emoji} {sp.name} • {"✦".repeat(monster.rank)}</p>
-              <div className="mt-2 space-y-1 text-xs">
-                <Bar label="❤️ HP" value={monster.hp} max={monster.hp} color="bg-rose-500" />
-                <Bar label="🍖 Fome" value={monster.hunger} max={100} color="bg-amber-500" />
-                <Bar label="⚡ Energia" value={monster.energy} max={100} color="bg-yellow-400" />
-                <Bar label="😊 Felicidade" value={monster.happiness} max={100} color="bg-pink-500" />
-              </div>
-              <div className="mt-2 grid grid-cols-4 gap-1 text-xs font-bold bg-black/30 rounded-lg p-2">
-                <span>⚔️ {monster.atk}</span>
-                <span>🛡️ {monster.def}</span>
-                <span>💨 {monster.spd}</span>
-                <span>❤️ {monster.hp}</span>
-              </div>
+              {(() => {
+                const stats = totalStats(monster.species, monster.rank);
+                return (
+                  <>
+                    <div className="mt-2 space-y-1 text-xs">
+                      <Bar label="❤️ HP" value={stats.hp} max={stats.hp} color="bg-rose-500" />
+                      <Bar label="🍖 Fome" value={monster.hunger} max={100} color="bg-amber-500" />
+                      <Bar label="⚡ Energia" value={monster.energy} max={100} color="bg-yellow-400" />
+                      <Bar label="😊 Felicidade" value={monster.happiness} max={100} color="bg-pink-500" />
+                    </div>
+                    <div className="mt-2 grid grid-cols-4 gap-1 text-xs font-bold bg-black/30 rounded-lg p-2">
+                      <span>⚔️ {stats.atk}</span>
+                      <span>🛡️ {stats.def}</span>
+                      <span>💨 {stats.spd}</span>
+                      <span>❤️ {stats.hp}</span>
+                    </div>
+                  </>
+                );
+              })()}
               <button
                 onClick={toggleTeam}
                 className={`mt-3 w-full py-2 rounded-lg text-sm font-extrabold transition ${

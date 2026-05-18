@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { SPECIES, ELEMENT_COLORS, ROLE_INFO, skinFilter, isVip, xpForNextLevel, rankStars } from "@/lib/game-data";
+import { SPECIES, ELEMENT_COLORS, ROLE_INFO, skinFilter, isVip, xpForNextLevel, rankStars, totalStats } from "@/lib/game-data";
 import type { MonsterRow } from "@/components/MonsterCard";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
@@ -264,7 +264,9 @@ function TeamPanel({ title, team, side }: { title: string; team: FullMonster[]; 
                     {ROLE_INFO[sp.role].emoji} {ROLE_INFO[sp.role].name}
                   </span>
                 </div>
-                <div className="text-[10px] opacity-90">{rankStars(m.rank ?? 1)} • ❤️{m.hp} ⚔️{m.atk} 🛡️{m.def} 💨{m.spd}</div>
+                {(() => { const st = totalStats(m.species, m.rank ?? 1); return (
+                  <div className="text-[10px] opacity-90">{rankStars(m.rank ?? 1)} • ❤️{st.hp} ⚔️{st.atk} 🛡️{st.def} 💨{st.spd}</div>
+                ); })()}
               </div>
             </div>
           );
