@@ -342,6 +342,46 @@ function ExpeditionsPage() {
             </div>
           </div>
         )}
+
+        {/* Swap modal */}
+        {swapForExp && (
+          <div className="fixed inset-0 z-30 bg-black/70 flex items-center justify-center p-4" onClick={() => setSwapForExp(null)}>
+            <div className="bg-purple-950 border-2 border-fuchsia-400/50 rounded-2xl p-4 max-w-2xl w-full max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+              <div className="flex items-center justify-between mb-3 text-white">
+                <h3 className="font-extrabold text-lg">🔄 Trocar bichinho ({EXPEDITION_SWAP_GEM_COST} 💎)</h3>
+                <button onClick={() => setSwapForExp(null)} className="text-white/60 hover:text-white">✕</button>
+              </div>
+              <p className="text-white/70 text-xs mb-3">A expedição continua de onde parou; só o bichinho muda.</p>
+              {availableMonsters.length === 0 ? (
+                <p className="text-white/70 text-sm text-center py-6">Nenhum bichinho disponível pra trocar.</p>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {availableMonsters.map((m) => {
+                    const sp = SPECIES[m.species];
+                    if (!sp) return null;
+                    const canPay = (profile.gems ?? 0) >= EXPEDITION_SWAP_GEM_COST;
+                    return (
+                      <button
+                        key={m.id}
+                        onClick={() => canPay && handleSwap(swapForExp, m.id)}
+                        disabled={busy || !canPay}
+                        className={`rounded-xl bg-gradient-to-r ${ELEMENT_COLORS[sp.element]} p-3 text-white text-left hover:scale-105 transition disabled:opacity-50 disabled:hover:scale-100`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <img src={sp.image} alt="" className="h-12 w-12 object-contain drop-shadow-lg" style={{ filter: skinFilter(m.skin) }} />
+                          <div className="flex-1 min-w-0">
+                            <div className="font-bold text-sm truncate">{m.name}</div>
+                            <div className="text-[10px] opacity-90">{rankStars(m.rank ?? 1)}</div>
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </main>
   );
