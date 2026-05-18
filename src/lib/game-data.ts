@@ -208,7 +208,7 @@ export const SPECIES: Record<string, Species> = {
     emoji: "🌊👻", image: tidewraithImg,
     description: "Fantasma das marés. Assassino furtivo.",
     base: { hp: 44, atk: 12, def: 8, spd: 16, int: 6 },
-    skill: { name: "Mordaça da Maré", emoji: "🌊", kind: "silence_disable", cooldown: 4, description: "Ataque furtivo que cala o inimigo (anula a próxima skill dele)." },
+    skill: { name: "Bote da Maré", emoji: "🌊", kind: "guaranteed_crit", cooldown: 3, description: "Crítico garantido no inimigo mais fraco, ignora 60% da DEF." },
   },
   voltsprout: {
     id: "voltsprout", name: "Voltsprout", element: "grass", secondaryElement: "electric", role: "healer", rarity: "common",
