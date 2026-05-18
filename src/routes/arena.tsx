@@ -24,7 +24,7 @@ function ArenaPage() {
   const [opponent, setOpponent] = useState<{ ownerId: string; ownerName: string; arenaPoints: number; team: FullMonster[] } | null>(null);
   const [searching, setSearching] = useState(false);
   const [battleLog, setBattleLog] = useState<BattleLogEntry[] | null>(null);
-  const [winner, setWinner] = useState<"team_a" | "team_b" | null>(null);
+  const [winner, setWinner] = useState<"team_a" | "team_b" | "draw" | null>(null);
   const [rewards, setRewards] = useState<{ coins: number; xp: number; points: number; oldPoints: number; newPoints: number; promoMsg?: string; promoBefore?: PromoSeries | null; promoAfter?: PromoSeries | null } | null>(null);
   const [shownLog, setShownLog] = useState<BattleLogEntry[]>([]);
   const [promo, setPromo] = useState<PromoSeries | null>(null);
