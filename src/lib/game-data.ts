@@ -255,10 +255,22 @@ export function xpForNextLevel(level: number): number {
   return Math.floor(50 * Math.pow(1.4, level - 1));
 }
 
-export function totalStats(species: string, level: number, bonus = { hp: 0, atk: 0, def: 0, spd: 0 }) {
+// ===== Rank (fusion ✦1 a ✦10) =====
+export const RANK_MULT: Record<number, number> = {
+  1: 1.00, 2: 1.10, 3: 1.22, 4: 1.36, 5: 1.52,
+  6: 1.70, 7: 1.90, 8: 2.13, 9: 2.40, 10: 2.70,
+};
+export const MAX_RANK = 10;
+
+export function rankStars(rank: number): string {
+  return "✦".repeat(Math.min(Math.max(rank, 1), MAX_RANK));
+}
+
+export function totalStats(species: string, level: number, rank = 1, bonus = { hp: 0, atk: 0, def: 0, spd: 0 }) {
   const s = SPECIES[species];
   if (!s) return { hp: 0, atk: 0, def: 0, spd: 0 };
-  const mult = (1 + (level - 1) * 0.12) * RARITY_INFO[s.rarity].statMult;
+  const r = RANK_MULT[Math.min(Math.max(rank, 1), MAX_RANK)] ?? 1;
+  const mult = (1 + (level - 1) * 0.12) * RARITY_INFO[s.rarity].statMult * r;
   return {
     hp: Math.round(s.base.hp * mult) + bonus.hp,
     atk: Math.round(s.base.atk * mult) + bonus.atk,
@@ -266,6 +278,10 @@ export function totalStats(species: string, level: number, bonus = { hp: 0, atk:
     spd: Math.round(s.base.spd * mult) + bonus.spd,
   };
 }
+
+export const TRADE_FEE_COINS = 50;
+export const TRADE_FEE_GEMS = 5;
+export const MAX_TRADEABLE_RANK = 7; // ✦8+ não pode ser trocado
 
 export function isVip(vipUntil: string | null): boolean {
   if (!vipUntil) return false;

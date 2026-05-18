@@ -40,11 +40,12 @@ export type DBMonster = {
   atk: number;
   def: number;
   spd: number;
+  rank?: number;
 };
 
 export function toBattleMonster(m: DBMonster): BattleMonster {
   const sp = SPECIES[m.species];
-  const stats = totalStats(m.species, m.level);
+  const stats = totalStats(m.species, m.level, m.rank ?? 1);
   return {
     id: m.id,
     owner_id: m.owner_id,
