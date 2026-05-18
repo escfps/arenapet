@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { SPECIES, ELEMENT_COLORS, ROLE_INFO, skinFilter, isVip, xpForNextLevel, rankStars, totalStats, ARENA_WIN_POINTS, ARENA_LOSS_POINTS, getTier, divisionBounds, promoNeeded, type PromoSeries, computeBattleEnergy, MAX_BATTLE_ENERGY } from "@/lib/game-data";
+import { SPECIES, ELEMENT_COLORS, ROLE_INFO, RARITY_INFO, MAX_RANK, skinFilter, isVip, xpForNextLevel, rankStars, totalStats, ARENA_WIN_POINTS, ARENA_LOSS_POINTS, getTier, divisionBounds, promoNeeded, type PromoSeries, computeBattleEnergy, MAX_BATTLE_ENERGY } from "@/lib/game-data";
 import type { MonsterRow } from "@/components/MonsterCard";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
@@ -415,7 +415,7 @@ function TeamPanel({ title, team, side, energies }: { title: string; team: FullM
           if (!sp) return null;
           const en = energies?.[i];
           return (
-            <div key={m.id} className={`flex items-center gap-2 p-2 rounded-lg bg-gradient-to-r ${ELEMENT_COLORS[sp.element]}`}>
+            <div key={m.id} className={`flex items-center gap-2 p-2 rounded-lg bg-gradient-to-r ${ELEMENT_COLORS[sp.element]} ring-2 ${RARITY_INFO[sp.rarity].ringColor} ${(m.rank ?? 1) >= MAX_RANK ? "rank-max-glow" : ""}`}>
               <img src={sp.image} alt="" className="h-14 w-14 object-contain drop-shadow-lg" style={{ filter: skinFilter(m.skin) }} />
               <div className="flex-1 min-w-0">
                 <div className="font-bold text-sm truncate flex items-center gap-1">
