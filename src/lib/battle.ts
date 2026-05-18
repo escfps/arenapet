@@ -1,4 +1,4 @@
-import { SPECIES, ROLE_SKILLS, RARITY_INFO, defensiveMultiplier, totalStats, type Element, type Role, type Rarity } from "./game-data";
+import { SPECIES, ROLE_SKILLS, RARITY_INFO, defensiveMultiplier, totalStats, getSkill, type Element, type Role, type Rarity } from "./game-data";
 
 export type BattleMonster = {
   id: string;
@@ -84,6 +84,16 @@ type Live = BattleMonster & {
   shield: number;
   tauntTargetId: string | null;
   tauntTurns: number;
+  // novos
+  burnDmg: number;       // dano por turno enquanto burnTurns > 0
+  burnTurns: number;
+  silenceTurns: number;  // se >0, próxima skill é anulada
+  rageTurns: number;     // berserker: +rageAtkMult e -rageDefDrop
+  rageAtkMult: number;
+  rageDefDrop: number;
+  defBuffTurns: number;  // bônus de DEF temporário (shield_ally)
+  defBuffPct: number;    // ex: 0.3 = +30% DEF
+  lastFallenAt: number;  // turno em que morreu (pra revive_ally)
 };
 
 function pickTarget(attacker: Live, enemies: Live[]): Live | null {
@@ -121,6 +131,9 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
     ...m, current: m.hp, maxHp: m.hp,
     healCd: 0, skillCd: 1, shield: 0,
     tauntTargetId: null, tauntTurns: 0,
+    burnDmg: 0, burnTurns: 0, silenceTurns: 0,
+    rageTurns: 0, rageAtkMult: 0, rageDefDrop: 0,
+    defBuffTurns: 0, defBuffPct: 0, lastFallenAt: 0,
   });
   const a: Live[] = teamA.map(mkLive);
   const b: Live[] = teamB.map(mkLive);
@@ -145,13 +158,43 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
         attacker.tauntTurns -= 1;
         if (attacker.tauntTurns === 0) attacker.tauntTargetId = null;
       }
+      // tick burn (DoT)
+      if (attacker.burnTurns > 0 && attacker.current > 0) {
+        applyDamage(attacker, attacker.burnDmg);
+        log.push({
+          turn, actor: side, actorName: attacker.name, targetName: attacker.name,
+          damage: attacker.burnDmg, crit: false, effective: 1, remainingHp: attacker.current,
+          message: `🔥 ${attacker.name} sofreu ${attacker.burnDmg} de queimadura`,
+        });
+        attacker.burnTurns -= 1;
+        if (attacker.current <= 0) {
+          attacker.lastFallenAt = turn;
+          log.push({ turn, actor: side, actorName: attacker.name, targetName: attacker.name, damage: 0, crit: false, effective: 1, remainingHp: 0, message: `💀 ${attacker.name} foi consumido pelas chamas!` });
+          continue;
+        }
+      }
+      // tick rage
+      if (attacker.rageTurns > 0) {
+        attacker.rageTurns -= 1;
+        if (attacker.rageTurns === 0) {
+          attacker.rageAtkMult = 0;
+          attacker.rageDefDrop = 0;
+        }
+      }
+      // tick def buff
+      if (attacker.defBuffTurns > 0) {
+        attacker.defBuffTurns -= 1;
+        if (attacker.defBuffTurns === 0) attacker.defBuffPct = 0;
+      }
       const allies = side === "team_a" ? a : b;
       const enemies = side === "team_a" ? b : a;
       if (!enemies.some((e) => e.current > 0)) break;
 
-      const skill = ROLE_SKILLS[attacker.role];
+      const skill = getSkill(attacker.species);
       const skillMult = RARITY_INFO[attacker.rarity].skillMult;
-      const canUseSkill = attacker.skillCd <= 0;
+      const silenced = attacker.silenceTurns > 0;
+      if (silenced) attacker.silenceTurns -= 1;
+      const canUseSkill = attacker.skillCd <= 0 && !silenced;
 
       // ===== ACTIVE SKILLS =====
       if (canUseSkill) {
@@ -243,6 +286,219 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
             });
             if (target.current <= 0) {
               log.push({ turn, actor: side, actorName: attacker.name, targetName: target.name, damage: 0, crit: false, effective: 1, remainingHp: 0, message: `💀 ${target.name} foi derrotado!` });
+            }
+          }
+          continue;
+        }
+
+        // ===== NOVAS MECÂNICAS =====
+        const effAtk = attacker.atk * (1 + attacker.rageAtkMult);
+        const effInt = attacker.int;
+        const tgtEffDef = (t: Live) => t.def * (1 + t.defBuffPct);
+
+        if (skill.kind === "lifesteal_strike") {
+          const target = pickTarget(attacker, enemies);
+          if (target) {
+            const eff = defensiveMultiplier(getElement(attacker.species), target.species);
+            const base = Math.max(1, effAtk * 2 - tgtEffDef(target));
+            const dmg = Math.max(1, Math.round(base * eff * 2.0 * skillMult));
+            applyDamage(target, dmg);
+            const healed = Math.round(dmg * 0.55);
+            attacker.current = Math.min(attacker.maxHp, attacker.current + healed);
+            log.push({
+              turn, actor: side, actorName: attacker.name, targetName: target.name,
+              damage: dmg, crit: false, effective: eff, remainingHp: target.current, targetShield: target.shield,
+              message: `${skill.emoji} ${attacker.name} usou ${skill.name}: ${dmg} de dano e roubou ${healed} HP!`,
+            });
+            if (target.current <= 0) {
+              target.lastFallenAt = turn;
+              log.push({ turn, actor: side, actorName: attacker.name, targetName: target.name, damage: 0, crit: false, effective: 1, remainingHp: 0, message: `💀 ${target.name} foi derrotado!` });
+            }
+          }
+          continue;
+        }
+
+        if (skill.kind === "execute") {
+          const alive = enemies.filter((e) => e.current > 0);
+          const target = alive.length ? alive.reduce((x, y) => (x.current / x.maxHp < y.current / y.maxHp ? x : y)) : null;
+          if (target) {
+            const eff = defensiveMultiplier(getElement(attacker.species), target.species);
+            const lowHp = target.current / target.maxHp < 0.3;
+            const mult = lowHp ? 3.0 : 1.75;
+            const base = Math.max(1, effAtk * 2 - tgtEffDef(target) * 0.5);
+            const dmg = Math.max(1, Math.round(base * eff * mult * skillMult));
+            applyDamage(target, dmg);
+            log.push({
+              turn, actor: side, actorName: attacker.name, targetName: target.name,
+              damage: dmg, crit: true, effective: eff, remainingHp: target.current, targetShield: target.shield,
+              message: `${skill.emoji} ${attacker.name} usou ${skill.name}${lowHp ? " — EXECUÇÃO!" : ""}: ${dmg} em ${target.name}`,
+            });
+            if (target.current <= 0) {
+              target.lastFallenAt = turn;
+              log.push({ turn, actor: side, actorName: attacker.name, targetName: target.name, damage: 0, crit: false, effective: 1, remainingHp: 0, message: `💀 ${target.name} foi executado!` });
+            }
+          }
+          continue;
+        }
+
+        if (skill.kind === "burn_dot") {
+          const target = pickTarget(attacker, enemies);
+          if (target) {
+            const eff = defensiveMultiplier(getElement(attacker.species), target.species);
+            const baseHit = Math.max(1, Math.round((effInt * 1.4 + effAtk * 0.8) * eff * skillMult));
+            applyDamage(target, baseHit);
+            const dot = Math.max(1, Math.round((effInt * 0.6 + attacker.atk * 0.3) * skillMult));
+            target.burnDmg = Math.max(target.burnDmg, dot);
+            target.burnTurns = Math.max(target.burnTurns, 3);
+            log.push({
+              turn, actor: side, actorName: attacker.name, targetName: target.name,
+              damage: baseHit, crit: false, effective: eff, remainingHp: target.current, targetShield: target.shield,
+              message: `${skill.emoji} ${attacker.name} usou ${skill.name}: ${baseHit} de dano + 🔥 queimando ${dot}/turno por 3 turnos`,
+            });
+            if (target.current <= 0) {
+              target.lastFallenAt = turn;
+              log.push({ turn, actor: side, actorName: attacker.name, targetName: target.name, damage: 0, crit: false, effective: 1, remainingHp: 0, message: `💀 ${target.name} foi derrotado!` });
+            }
+          }
+          continue;
+        }
+
+        if (skill.kind === "double_strike") {
+          const alive = enemies.filter((e) => e.current > 0);
+          const target = alive.length ? alive.reduce((x, y) => (x.atk > y.atk ? x : y)) : null;
+          if (target) {
+            const eff = defensiveMultiplier(getElement(attacker.species), target.species);
+            for (let hit = 0; hit < 2 && target.current > 0; hit++) {
+              const base = Math.max(1, effAtk * 2 - tgtEffDef(target));
+              const dmg = Math.max(1, Math.round(base * eff * 1.25 * skillMult));
+              applyDamage(target, dmg);
+              log.push({
+                turn, actor: side, actorName: attacker.name, targetName: target.name,
+                damage: dmg, crit: true, effective: eff, remainingHp: target.current, targetShield: target.shield,
+                message: `${skill.emoji} ${attacker.name} ${skill.name} (golpe ${hit + 1}/2): ${dmg} em ${target.name}`,
+              });
+            }
+            if (target.current <= 0) {
+              target.lastFallenAt = turn;
+              log.push({ turn, actor: side, actorName: attacker.name, targetName: target.name, damage: 0, crit: false, effective: 1, remainingHp: 0, message: `💀 ${target.name} foi derrotado!` });
+            }
+          }
+          continue;
+        }
+
+        if (skill.kind === "shield_ally") {
+          const hurt = allies
+            .filter((m) => m.current > 0 && m.current < m.maxHp)
+            .sort((x, y) => x.current / x.maxHp - y.current / y.maxHp)[0] ?? allies.find((m) => m.current > 0) ?? attacker;
+          const shield = Math.round(effInt * 1.4 * skillMult);
+          hurt.shield += shield;
+          hurt.defBuffPct = Math.max(hurt.defBuffPct, 0.3);
+          hurt.defBuffTurns = Math.max(hurt.defBuffTurns, 2);
+          log.push({
+            turn, actor: side, actorName: attacker.name, targetName: hurt.name,
+            damage: 0, crit: false, effective: 1, remainingHp: hurt.current, targetShield: hurt.shield,
+            message: `${skill.emoji} ${attacker.name} usou ${skill.name} em ${hurt.name}: +${shield} escudo e +30% DEF por 2 turnos`,
+          });
+          continue;
+        }
+
+        if (skill.kind === "chain_lightning") {
+          const aliveTargets = enemies.filter((e) => e.current > 0)
+            .sort((x, y) => y.current - x.current)
+            .slice(0, 3);
+          const mults = [1.0, 0.6, 0.35];
+          for (let i = 0; i < aliveTargets.length; i++) {
+            const t = aliveTargets[i];
+            const eff = defensiveMultiplier(getElement(attacker.species), t.species);
+            const base = Math.max(1, effInt * 1.8 - t.def * 0.3);
+            const dmg = Math.max(1, Math.round(base * eff * mults[i] * skillMult));
+            applyDamage(t, dmg);
+            log.push({
+              turn, actor: side, actorName: attacker.name, targetName: t.name,
+              damage: dmg, crit: false, effective: eff, remainingHp: t.current, targetShield: t.shield,
+              message: `${skill.emoji} ${attacker.name} ${skill.name} (salto ${i + 1}): ${dmg} em ${t.name}`,
+            });
+            if (t.current <= 0) {
+              t.lastFallenAt = turn;
+              log.push({ turn, actor: side, actorName: attacker.name, targetName: t.name, damage: 0, crit: false, effective: 1, remainingHp: 0, message: `💀 ${t.name} foi derrotado!` });
+            }
+          }
+          continue;
+        }
+
+        if (skill.kind === "silence_disable") {
+          const target = pickTarget(attacker, enemies);
+          if (target) {
+            const eff = defensiveMultiplier(getElement(attacker.species), target.species);
+            const base = Math.max(1, effInt * 1.6 - target.def * 0.3);
+            const dmg = Math.max(1, Math.round(base * eff * 1.1 * skillMult));
+            applyDamage(target, dmg);
+            target.silenceTurns = Math.max(target.silenceTurns, 2);
+            log.push({
+              turn, actor: side, actorName: attacker.name, targetName: target.name,
+              damage: dmg, crit: false, effective: eff, remainingHp: target.current, targetShield: target.shield,
+              message: `${skill.emoji} ${attacker.name} usou ${skill.name}: ${dmg} em ${target.name} e 🤐 silenciou próxima skill`,
+            });
+            if (target.current <= 0) {
+              target.lastFallenAt = turn;
+              log.push({ turn, actor: side, actorName: attacker.name, targetName: target.name, damage: 0, crit: false, effective: 1, remainingHp: 0, message: `💀 ${target.name} foi derrotado!` });
+            }
+          }
+          continue;
+        }
+
+        if (skill.kind === "berserker_rage") {
+          attacker.rageAtkMult = 0.65 * skillMult;
+          attacker.rageDefDrop = 0.25;
+          attacker.rageTurns = 3;
+          log.push({
+            turn, actor: side, actorName: attacker.name, targetName: attacker.name,
+            damage: 0, crit: false, effective: 1, remainingHp: attacker.current,
+            message: `${skill.emoji} ${attacker.name} usou ${skill.name}! +${Math.round(attacker.rageAtkMult * 100)}% ATK e -25% DEF por 3 turnos`,
+          });
+          continue;
+        }
+
+        if (skill.kind === "revive_ally") {
+          const fallen = allies.filter((m) => m.current <= 0).sort((x, y) => y.lastFallenAt - x.lastFallenAt)[0];
+          if (fallen) {
+            fallen.current = Math.round(fallen.maxHp * 0.40);
+            fallen.shield = 0;
+            fallen.burnTurns = 0; fallen.silenceTurns = 0;
+            log.push({
+              turn, actor: side, actorName: attacker.name, targetName: fallen.name,
+              damage: -fallen.current, crit: false, effective: 1, remainingHp: fallen.current,
+              message: `${skill.emoji} ${attacker.name} usou ${skill.name}! ✨ ${fallen.name} foi ressuscitado com ${fallen.current} HP`,
+            });
+          } else {
+            // Sem ninguém pra ressuscitar — cura todo o time
+            const heal = Math.round((effInt * 1.6 + attacker.maxHp * 0.10) * skillMult);
+            for (const t of allies.filter((m) => m.current > 0)) {
+              t.current = Math.min(t.maxHp, t.current + heal);
+            }
+            log.push({
+              turn, actor: side, actorName: attacker.name, targetName: "todos os aliados",
+              damage: -heal, crit: false, effective: 1, remainingHp: 0,
+              message: `${skill.emoji} ${attacker.name} usou ${skill.name}! Curou o time em ${heal} HP (ninguém caído)`,
+            });
+          }
+          continue;
+        }
+
+        if (skill.kind === "true_damage_nuke") {
+          const target = pickTarget(attacker, enemies);
+          if (target) {
+            const scale = attacker.role === "mage" ? effInt * 2.5 : effAtk * 2.8;
+            const dmg = Math.max(1, Math.round(scale * skillMult));
+            applyDamage(target, dmg);
+            log.push({
+              turn, actor: side, actorName: attacker.name, targetName: target.name,
+              damage: dmg, crit: true, effective: 1, remainingHp: target.current, targetShield: target.shield,
+              message: `${skill.emoji} ${attacker.name} usou ${skill.name}: ${dmg} de dano VERDADEIRO em ${target.name}!`,
+            });
+            if (target.current <= 0) {
+              target.lastFallenAt = turn;
+              log.push({ turn, actor: side, actorName: attacker.name, targetName: target.name, damage: 0, crit: false, effective: 1, remainingHp: 0, message: `💀 ${target.name} foi reduzido a pó!` });
             }
           }
           continue;

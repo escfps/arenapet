@@ -44,6 +44,7 @@ export type Species = {
   image: string;
   description: string;
   base: { hp: number; atk: number; def: number; spd: number; int: number };
+  skill?: Skill; // unique skill per species (overrides ROLE_SKILLS)
 };
 
 export const ROLE_INFO: Record<Role, { name: string; emoji: string; description: string; color: string }> = {
@@ -63,8 +64,24 @@ export const RARITY_INFO: Record<Rarity, { name: string; emoji: string; color: s
   mythic:     { name: "Mítico",     emoji: "✦✦✦✦✦✦", color: "bg-gradient-to-r from-cyan-400 via-fuchsia-500 to-amber-400 text-white",      ringColor: "ring-cyan-300",    statMult: 1.75, skillMult: 1.85 },
 };
 
-// ===== Skills (1 por role, escala com raridade) =====
-export type SkillKind = "shield_taunt" | "heavy_strike" | "guaranteed_crit" | "aoe_magic" | "team_heal";
+// ===== Skills =====
+// 5 mecânicas base (legadas) + 10 novas mecânicas exclusivas inspiradas em LoL
+export type SkillKind =
+  | "shield_taunt"      // tank — escudo + provoca (Garen-ish)
+  | "heavy_strike"      // dps — golpe pesado mono-alvo
+  | "guaranteed_crit"   // assassino — crítico no mais fraco (Zed)
+  | "aoe_magic"         // mago — explosão em todos (Brand)
+  | "team_heal"         // healer — cura todo o time (Soraka)
+  | "lifesteal_strike"  // dps — bate e cura (Aatrox)
+  | "execute"           // assassino — dano massivo em alvo < 30% HP (Garen R)
+  | "burn_dot"          // mago — queimadura em todos (Brand passiva)
+  | "double_strike"     // assassino — 2 golpes no mais forte (Master Yi)
+  | "shield_ally"       // healer — escudo + def num aliado (Lulu/Janna)
+  | "chain_lightning"   // mago — pula em 3 inimigos (Kennen)
+  | "silence_disable"   // mago — silencia (anula skill do alvo) (Fizz/Talon)
+  | "berserker_rage"    // dps/tank — buff ATK +50% por 3 turnos (Tryndamere)
+  | "revive_ally"       // healer — ressuscita um aliado com 30% HP (Zilean)
+  | "true_damage_nuke"; // mítico — dano puro ignora DEF e elemento (Vayne ult)
 
 export type Skill = {
   name: string;
@@ -74,6 +91,7 @@ export type Skill = {
   cooldown: number; // turnos
 };
 
+// Skills padrão por role — fallback se species.skill não estiver definida
 export const ROLE_SKILLS: Record<Role, Skill> = {
   tank: {
     name: "Provocação Brutal", emoji: "🛡️", kind: "shield_taunt", cooldown: 4,
@@ -97,6 +115,13 @@ export const ROLE_SKILLS: Record<Role, Skill> = {
   },
 };
 
+// Helper: pega a skill da espécie (com fallback pra role)
+export function getSkill(speciesId: string): Skill {
+  const sp = SPECIES[speciesId];
+  if (sp?.skill) return sp.skill;
+  return ROLE_SKILLS[sp?.role ?? "dps"];
+}
+
 export const SPECIES: Record<string, Species> = {
   // ===== PUROS (raros) =====
   flarepup: {
@@ -104,92 +129,107 @@ export const SPECIES: Record<string, Species> = {
     emoji: "🔥", image: flarepupImg,
     description: "Raposinha de fogo puro. DPS clássico de dano alto.",
     base: { hp: 55, atk: 15, def: 8, spd: 12, int: 7 },
+    skill: { name: "Fogareu", emoji: "🔥", kind: "burn_dot", cooldown: 3, description: "Queima o alvo: dano agora + dano por 3 turnos." },
   },
   aquakitty: {
     id: "aquakitty", name: "Aquakitty", element: "water", role: "healer", rarity: "rare",
     emoji: "💧", image: aquakittyImg,
     description: "Gatinho aquático puro. Cura o time a cada 2 turnos.",
     base: { hp: 60, atk: 9, def: 11, spd: 13, int: 20 },
+    skill: { name: "Bolha Curativa", emoji: "🫧", kind: "shield_ally", cooldown: 3, description: "Envolve o aliado mais ferido com escudo (INT×1.5) e +30% DEF por 2 turnos." },
   },
   leafox: {
     id: "leafox", name: "Leafox", element: "grass", role: "tank", rarity: "rare",
     emoji: "🌿", image: leafoxImg,
     description: "Raposa-folha pura. Tank: provoca e absorve dano.",
     base: { hp: 80, atk: 8, def: 18, spd: 8, int: 8 },
+    skill: { name: "Casca de Carvalho", emoji: "🌳", kind: "shield_taunt", cooldown: 3, description: "Provoca todos por 2 turnos e ganha escudo de 25% do HP máx (cd curto)." },
   },
   voltbun: {
     id: "voltbun", name: "Voltbun", element: "electric", role: "assassin", rarity: "rare",
     emoji: "⚡", image: voltbunImg,
     description: "Coelhinho elétrico puro. Assassino veloz com muito crit.",
     base: { hp: 48, atk: 13, def: 8, spd: 18, int: 6 },
+    skill: { name: "Tempo Acelerado", emoji: "⚡", kind: "double_strike", cooldown: 3, description: "Ataca 2× o alvo de maior ATK inimigo (1.2× cada golpe)." },
   },
   shadepup: {
     id: "shadepup", name: "Shadepup", element: "shadow", role: "mage", rarity: "rare",
     emoji: "🌙", image: shadepupImg,
     description: "Lobinho das sombras puro. Mago: dano ignora defesa.",
     base: { hp: 55, atk: 16, def: 9, spd: 12, int: 22 },
+    skill: { name: "Uivo Silenciador", emoji: "🌑", kind: "silence_disable", cooldown: 4, description: "Dano mágico no alvo e silencia (anula a próxima skill dele)." },
   },
 
-  // ===== MESTIÇOS (comuns) — combinações 2 a 2 dos 5 elementos =====
+  // ===== MESTIÇOS (comuns) =====
   steamcub: {
     id: "steamcub", name: "Steamcub", element: "fire", secondaryElement: "water", role: "tank", rarity: "common",
     emoji: "♨️", image: steamcubImg,
     description: "Ursinho de vapor. Tank meio fogo, meio água.",
     base: { hp: 70, atk: 9, def: 14, spd: 9, int: 8 },
+    skill: { name: "Cortina de Vapor", emoji: "♨️", kind: "shield_taunt", cooldown: 4, description: "Solta vapor: provoca todos por 2 turnos e ganha 28% HP de escudo." },
   },
   emberleaf: {
     id: "emberleaf", name: "Emberleaf", element: "fire", secondaryElement: "grass", role: "dps", rarity: "common",
     emoji: "🍂", image: emberleafImg,
     description: "Raposa de folhas em brasa. DPS de outono.",
     base: { hp: 52, atk: 13, def: 9, spd: 12, int: 7 },
+    skill: { name: "Tornado de Brasas", emoji: "🍂", kind: "heavy_strike", cooldown: 3, description: "Investida em redemoinho: 2.1× de dano num alvo." },
   },
   sparkpup: {
     id: "sparkpup", name: "Sparkpup", element: "fire", secondaryElement: "electric", role: "assassin", rarity: "common",
     emoji: "⚡🔥", image: sparkpupImg,
     description: "Filhote chamuscado e elétrico. Assassino rápido.",
     base: { hp: 46, atk: 12, def: 8, spd: 16, int: 6 },
+    skill: { name: "Estouro Elétrico", emoji: "💥", kind: "guaranteed_crit", cooldown: 3, description: "Crítico garantido no inimigo mais fraco, ignora 60% da DEF." },
   },
   cinderwisp: {
     id: "cinderwisp", name: "Cinderwisp", element: "fire", secondaryElement: "shadow", role: "mage", rarity: "common",
     emoji: "👻🔥", image: cinderwispImg,
     description: "Fantasminha de brasa. Mago ofensivo.",
     base: { hp: 50, atk: 14, def: 9, spd: 11, int: 22 },
+    skill: { name: "Sussurro de Cinzas", emoji: "🔥", kind: "burn_dot", cooldown: 3, description: "Aplica queimadura mágica no alvo: dano inicial + 3 turnos de dano por fogo." },
   },
   mossfin: {
     id: "mossfin", name: "Mossfin", element: "water", secondaryElement: "grass", role: "healer", rarity: "common",
     emoji: "🐸", image: mossfinImg,
     description: "Sapinho do brejo. Healer rústico.",
     base: { hp: 58, atk: 8, def: 12, spd: 10, int: 20 },
+    skill: { name: "Orvalho do Brejo", emoji: "🌧️", kind: "team_heal", cooldown: 4, description: "Cura todos os aliados (~INT×1.7 + 10% HP máx)." },
   },
   stormtad: {
     id: "stormtad", name: "Stormtad", element: "water", secondaryElement: "electric", role: "mage", rarity: "common",
     emoji: "⚡💧", image: stormtadImg,
     description: "Girino-relâmpago. Mago elétrico.",
     base: { hp: 48, atk: 13, def: 8, spd: 14, int: 22 },
+    skill: { name: "Trovão Saltador", emoji: "⚡", kind: "chain_lightning", cooldown: 4, description: "Raio salta entre até 3 inimigos (100% → 60% → 35% do dano)." },
   },
   tidewraith: {
     id: "tidewraith", name: "Tidewraith", element: "water", secondaryElement: "shadow", role: "assassin", rarity: "common",
     emoji: "🌊👻", image: tidewraithImg,
     description: "Fantasma das marés. Assassino furtivo.",
     base: { hp: 44, atk: 12, def: 8, spd: 16, int: 6 },
+    skill: { name: "Mordaça da Maré", emoji: "🌊", kind: "silence_disable", cooldown: 4, description: "Ataque furtivo que cala o inimigo (anula a próxima skill dele)." },
   },
   voltsprout: {
     id: "voltsprout", name: "Voltsprout", element: "grass", secondaryElement: "electric", role: "healer", rarity: "common",
     emoji: "🌱⚡", image: voltsproutImg,
     description: "Broto voltaico. Healer com punch.",
     base: { hp: 54, atk: 9, def: 11, spd: 12, int: 20 },
+    skill: { name: "Broto Energizante", emoji: "🌱", kind: "shield_ally", cooldown: 3, description: "Energiza o aliado mais ferido: escudo (INT×1.3) e +25% DEF por 2 turnos." },
   },
   nightbloom: {
     id: "nightbloom", name: "Nightbloom", element: "grass", secondaryElement: "shadow", role: "mage", rarity: "common",
     emoji: "🌸🌙", image: nightbloomImg,
     description: "Flor noturna. Mago de controle.",
     base: { hp: 52, atk: 13, def: 10, spd: 10, int: 22 },
+    skill: { name: "Pólen Tóxico", emoji: "🌸", kind: "aoe_magic", cooldown: 4, description: "Nuvem tóxica em todos os inimigos (1.15× cada, ignora defesa)." },
   },
   voidspark: {
     id: "voidspark", name: "Voidspark", element: "electric", secondaryElement: "shadow", role: "assassin", rarity: "common",
     emoji: "🌑⚡", image: voidsparkImg,
     description: "Orbe de raios sombrios. Assassino caótico.",
     base: { hp: 44, atk: 13, def: 7, spd: 17, int: 6 },
+    skill: { name: "Apagão", emoji: "🌑", kind: "silence_disable", cooldown: 4, description: "Apaga a mente do alvo: dano + silencia próxima skill." },
   },
 
   // ===== TERRA =====
@@ -198,56 +238,65 @@ export const SPECIES: Record<string, Species> = {
     emoji: "🪨", image: rockpupImg,
     description: "Cãozinho de pedregulho puro. Tank rochoso com defesa absurda.",
     base: { hp: 85, atk: 9, def: 20, spd: 7, int: 8 },
+    skill: { name: "Muralha de Pedra", emoji: "🪨", kind: "shield_taunt", cooldown: 3, description: "Vira uma muralha: provoca todos por 2 turnos e ganha 35% HP de escudo." },
   },
   magmaboulder: {
     id: "magmaboulder", name: "Magmaboulder", element: "earth", secondaryElement: "fire", role: "tank", rarity: "common",
     emoji: "🌋", image: magmaboulderImg,
     description: "Rocha vulcânica. Tank que queima quem encosta.",
     base: { hp: 75, atk: 11, def: 16, spd: 7, int: 8 },
+    skill: { name: "Erupção Lenta", emoji: "🌋", kind: "burn_dot", cooldown: 4, description: "Lava escorre pelo alvo: dano + queimadura por 3 turnos." },
   },
   mudpaw: {
     id: "mudpaw", name: "Mudpaw", element: "earth", secondaryElement: "water", role: "dps", rarity: "common",
     emoji: "🟫", image: mudpawImg,
     description: "Golem de lama. DPS pesado que afunda os inimigos.",
     base: { hp: 60, atk: 14, def: 12, spd: 8, int: 7 },
+    skill: { name: "Soco de Lama", emoji: "👊", kind: "heavy_strike", cooldown: 3, description: "Soco pesadão num alvo: 2.3× dano." },
   },
   crystalsprite: {
     id: "crystalsprite", name: "Crystalsprite", element: "earth", secondaryElement: "electric", role: "mage", rarity: "common",
     emoji: "💎", image: crystalspriteImg,
     description: "Geodo mágico cristalino. Mago de cristal com raios.",
     base: { hp: 52, atk: 12, def: 11, spd: 10, int: 21 },
+    skill: { name: "Raio Cristalino", emoji: "💎", kind: "chain_lightning", cooldown: 4, description: "Raio prismático salta entre até 3 inimigos (100% → 60% → 35%)." },
   },
 
-  // ===== EVENTO (lendários — só caem no Ovo de Evento) =====
+  // ===== EVENTO (lendários) =====
   onca_sombria: {
     id: "onca_sombria", name: "Onça Sombria", element: "shadow", role: "assassin", rarity: "legendary",
     emoji: "🐆", image: oncaSombriaImg,
     description: "Onça-pintada das sombras. Crítico letal nos mais fracos.",
     base: { hp: 62, atk: 17, def: 10, spd: 16, int: 10 },
+    skill: { name: "Bote Mortal", emoji: "🐆", kind: "execute", cooldown: 3, description: "Execução: alvos com menos de 30% HP recebem dano TRIPLO. Senão, 1.8× dano normal." },
   },
   leao_dourado: {
     id: "leao_dourado", name: "Leão Dourado", element: "earth", role: "dps", rarity: "legendary",
     emoji: "🦁", image: leaoDouradoImg,
     description: "Rei dourado. Dano consistente avassalador.",
     base: { hp: 68, atk: 18, def: 13, spd: 11, int: 9 },
+    skill: { name: "Rugido Real", emoji: "🦁", kind: "lifesteal_strike", cooldown: 3, description: "Golpe régio (2× dano) que cura o leão em 50% do dano causado." },
   },
   tigre_infernal: {
     id: "tigre_infernal", name: "Tigre Infernal", element: "fire", role: "dps", rarity: "legendary",
     emoji: "🔥", image: tigreInfernalImg,
     description: "Tigre de chamas eternas. Investida devastadora em fogo.",
     base: { hp: 64, atk: 19, def: 10, spd: 14, int: 10 },
+    skill: { name: "Fúria das Chamas", emoji: "🔥", kind: "berserker_rage", cooldown: 5, description: "Entra em fúria: +60% ATK por 3 turnos (perde 25% DEF nesse período)." },
   },
   pantera_negra: {
     id: "pantera_negra", name: "Pantera Negra", element: "shadow", role: "assassin", rarity: "legendary",
     emoji: "🐈‍⬛", image: panteraNegraImg,
     description: "Olhos vermelhos no escuro. Mortal e ágil.",
     base: { hp: 60, atk: 18, def: 10, spd: 17, int: 11 },
+    skill: { name: "Garra Fantasma", emoji: "👻", kind: "execute", cooldown: 3, description: "Execução fantasma: alvos com menos de 35% HP morrem instantâneo. Senão, 1.7× dano." },
   },
   pantera_aurea: {
     id: "pantera_aurea", name: "Pantera Áurea", element: "shadow", role: "mage", rarity: "legendary",
     emoji: "✨", image: panteraAureaImg,
     description: "Olhos dourados — variante ultra-rara da Pantera Negra. Mago sombrio supremo.",
     base: { hp: 65, atk: 14, def: 12, spd: 15, int: 24 },
+    skill: { name: "Olhar Dourado", emoji: "👁️", kind: "true_damage_nuke", cooldown: 5, description: "Olhar puro: dano VERDADEIRO no alvo (ignora 100% DEF e elemento). ~INT×2.5." },
   },
 
   // ===== SUPER RAROS =====
@@ -256,12 +305,14 @@ export const SPECIES: Record<string, Species> = {
     emoji: "🐒", image: macacoPregoImg,
     description: "Macaquinho astuto da floresta. Rouba turnos com agilidade e crítico afiado.",
     base: { hp: 50, atk: 14, def: 9, spd: 18, int: 9 },
+    skill: { name: "Pancada Dupla", emoji: "🐒", kind: "double_strike", cooldown: 3, description: "Bate 2× no alvo de maior ATK (1.3× cada golpe) — desarma adversários." },
   },
   tubarao_abissal: {
     id: "tubarao_abissal", name: "Tubarão Abissal", element: "water", role: "dps", rarity: "super_rare",
     emoji: "🦈", image: tubaraoAbissalImg,
     description: "Predador das profundezas azuis. Mordida feroz que rasga qualquer presa.",
     base: { hp: 60, atk: 17, def: 11, spd: 13, int: 8 },
+    skill: { name: "Mordida Abissal", emoji: "🦈", kind: "execute", cooldown: 3, description: "Sente o sangue: alvos abaixo de 30% HP recebem dano TRIPLO. Senão, 1.7× dano." },
   },
 
   // ===== ÉPICOS =====
@@ -270,26 +321,30 @@ export const SPECIES: Record<string, Species> = {
     emoji: "🐊", image: jacareAncestralImg,
     description: "Predador ancestral dos rios esmeralda. Mordida devastadora que ignora defesa leve.",
     base: { hp: 56, atk: 15, def: 10, spd: 11, int: 8 },
+    skill: { name: "Mordida Esmeralda", emoji: "🐊", kind: "lifesteal_strike", cooldown: 3, description: "Crava as mandíbulas (2.1× dano) e cura 60% do dano causado." },
   },
   gorila_titan: {
     id: "gorila_titan", name: "Gorila Titã", element: "earth", role: "tank", rarity: "epic",
     emoji: "🦍", image: gorilaTitanImg,
     description: "Titã das montanhas com cristais místicos. Tank brutal que provoca e contra-ataca.",
     base: { hp: 70, atk: 13, def: 14, spd: 8, int: 9 },
+    skill: { name: "Fúria Titânica", emoji: "🦍", kind: "berserker_rage", cooldown: 5, description: "Bate no peito: +70% ATK por 3 turnos (perde 30% DEF). Pra trocar dano." },
   },
 
-  // ===== MÍTICOS (classe suprema — só em eventos especiais) =====
+  // ===== MÍTICOS =====
   dragao_branco: {
     id: "dragao_branco", name: "Dragão Branco", element: "water", role: "healer", rarity: "mythic",
     emoji: "🐉", image: dragaoBrancoImg,
     description: "Dragão místico de escamas brancas e olhos de safira. Cura divina que ressoa pelo time.",
     base: { hp: 80, atk: 16, def: 16, spd: 14, int: 26 },
+    skill: { name: "Sopro da Vida", emoji: "🐉", kind: "revive_ally", cooldown: 6, description: "Ressuscita o aliado caído mais recente com 40% do HP máx. Se ninguém caiu, cura todos." },
   },
   dragao_negro: {
     id: "dragao_negro", name: "Dragão Negro", element: "shadow", role: "dps", rarity: "mythic",
     emoji: "🐲", image: dragaoNegroImg,
     description: "Dragão obsidiana de olhos vermelhos. Dano apocalíptico que devasta inimigos.",
     base: { hp: 75, atk: 24, def: 14, spd: 15, int: 14 },
+    skill: { name: "Apocalipse Obsidiana", emoji: "🐲", kind: "true_damage_nuke", cooldown: 5, description: "Sopro apocalíptico: dano VERDADEIRO num alvo (~ATK×3, ignora 100% DEF e elemento)." },
   },
 };
 
