@@ -436,6 +436,29 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           return;
         }
 
+        if (skill.kind === "bleed_dot") {
+          const target = pickTarget(attacker, enemies);
+          if (target) {
+            const eff = defensiveMultiplier(getElement(attacker.species), target.species);
+            const baseHit = Math.max(1, Math.round((effAtk * 1.6 - tgtEffDef(target) * 0.4) * eff * skillMult));
+            applyDamage(target, baseHit);
+            const dot = Math.max(1, Math.round(effAtk * 0.55 * skillMult));
+            target.bleedDmg = Math.max(target.bleedDmg, dot);
+            target.bleedTurns = Math.max(target.bleedTurns, 3);
+            log.push({
+              turn, actor: side, actorName: attacker.name, targetName: target.name,
+              damage: baseHit, crit: false, effective: eff, remainingHp: target.current, targetShield: target.shield,
+              message: `${skill.emoji} ${attacker.name} usou ${skill.name}: ${baseHit} de dano + 🩸 sangrando ${dot}/turno por 3 turnos`,
+            });
+            if (target.current <= 0) {
+              target.lastFallenAt = turn;
+              log.push({ turn, actor: side, actorName: attacker.name, targetName: target.name, damage: 0, crit: false, effective: 1, remainingHp: 0, message: `💀 ${target.name} foi derrotado!` });
+            }
+          }
+          return;
+        }
+
+
         if (skill.kind === "double_strike") {
           const alive = enemies.filter((e) => e.current > 0);
           const target = alive.length ? alive.reduce((x, y) => (x.atk > y.atk ? x : y)) : null;
