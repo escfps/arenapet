@@ -261,6 +261,7 @@ export type Egg = {
   priceGems?: number;
   description: string;
   weights: Record<string, number>;
+  pack?: number; // quantos pets vêm
 };
 
 // Helpers to build weight tables
@@ -274,16 +275,39 @@ function makeWeights(commonW: number, rareW: number): Record<string, number> {
   return w;
 }
 
+// Pesos balanceados pra 10% raro / 90% comum no ovo raro
+// (multiplicamos pelo contador da outra raridade pra normalizar)
+const RARE_EGG_WEIGHTS: Record<string, number> = (() => {
+  const w: Record<string, number> = {};
+  const nC = ALL_COMMON.length || 1;
+  const nR = ALL_RARE.length || 1;
+  ALL_COMMON.forEach((id) => (w[id] = 9 * nR));
+  ALL_RARE.forEach((id) => (w[id] = 1 * nC));
+  return w;
+})();
+
 export const EGGS: Record<string, Egg> = {
   basic: {
     id: "basic", name: "Ovo Comum", emoji: "🥚", priceCoins: 1000,
     description: "Sorteia apenas monstros mestiços (comuns).",
     weights: makeWeights(1, 0),
   },
+  basic_10: {
+    id: "basic_10", name: "Pack 10x Ovo Comum", emoji: "🥚", priceCoins: 9000,
+    description: "10 ovos comuns de uma vez. Só pets comuns.",
+    weights: makeWeights(1, 0),
+    pack: 10,
+  },
   rare: {
     id: "rare", name: "Ovo Raro", emoji: "🪺", priceGems: 25,
-    description: "Alta chance de puro (raro) com stats melhores.",
-    weights: makeWeights(2, 14),
+    description: "10% de chance de vir um pet raro. Resto vem comum.",
+    weights: RARE_EGG_WEIGHTS,
+  },
+  rare_10: {
+    id: "rare_10", name: "Pack 10x Ovo Raro", emoji: "🪺", priceGems: 200,
+    description: "10 ovos raros. 10% por ovo de vir um raro.",
+    weights: RARE_EGG_WEIGHTS,
+    pack: 10,
   },
 };
 

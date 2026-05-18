@@ -50,20 +50,33 @@ function ShopPage() {
       gems: profile.gems - (egg.priceGems ?? 0),
     });
 
-    const species = rollEgg(eggId);
-    const sp = SPECIES[species];
-    const bonus = eggId === "rare" ? 5 : 0;
-    await supabase.from("monsters").insert({
-      owner_id: userId,
-      species,
-      name: sp.name,
-      hp: sp.base.hp + bonus,
-      atk: sp.base.atk + Math.floor(bonus / 2),
-      def: sp.base.def + Math.floor(bonus / 2),
-      spd: sp.base.spd + Math.floor(bonus / 2),
-    });
-    setHatchResult(species);
-    toast.success(`Você chocou um ${sp.name}! 🎉`);
+    const pack = egg.pack ?? 1;
+    const isRare = eggId === "rare" || eggId === "rare_10";
+    const bonus = isRare ? 5 : 0;
+    const rolled: string[] = [];
+    const rows = [];
+    for (let i = 0; i < pack; i++) {
+      const species = rollEgg(eggId);
+      const sp = SPECIES[species];
+      rolled.push(species);
+      rows.push({
+        owner_id: userId,
+        species,
+        name: sp.name,
+        hp: sp.base.hp + bonus,
+        atk: sp.base.atk + Math.floor(bonus / 2),
+        def: sp.base.def + Math.floor(bonus / 2),
+        spd: sp.base.spd + Math.floor(bonus / 2),
+      });
+    }
+    await supabase.from("monsters").insert(rows);
+    setHatchResult(rolled[rolled.length - 1]);
+    if (pack > 1) {
+      const rareCount = rolled.filter((s) => SPECIES[s].rarity === "rare").length;
+      toast.success(`Chocou ${pack} pets! 🎉 ${rareCount > 0 ? `(${rareCount} raro${rareCount > 1 ? "s" : ""}!)` : ""}`);
+    } else {
+      toast.success(`Você chocou um ${SPECIES[rolled[0]].name}! 🎉`);
+    }
   }
 
   async function buySkin(skinId: string) {
