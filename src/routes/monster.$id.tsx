@@ -233,7 +233,7 @@ function MonsterPage() {
                 <div className="text-3xl mb-1">{s === "atk" ? "⚔️" : s === "def" ? "🛡️" : "💨"}</div>
                 <div>Treinar {s.toUpperCase()}</div>
                 <div className="text-xs font-normal opacity-90 mt-1">
-                  🪙 {20 + monster.level * 5} • -15 energia • +1~2 {s.toUpperCase()}
+                  🪙 {20 + monster.rank * 10} • -15 energia • +1~2 {s.toUpperCase()}
                 </div>
               </button>
             ))}
