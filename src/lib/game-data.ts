@@ -28,6 +28,7 @@ import jacareAncestralImg from "@/assets/monsters/jacare_ancestral.png";
 import gorilaTitanImg from "@/assets/monsters/gorila_titan.png";
 import macacoPregoImg from "@/assets/monsters/macaco_prego.png";
 import tubaraoAbissalImg from "@/assets/monsters/tubarao_abissal.png";
+import polvoVenenosoImg from "@/assets/monsters/polvo_venenoso.png";
 
 export type Element = "fire" | "water" | "grass" | "electric" | "shadow" | "earth";
 export type Role = "tank" | "dps" | "assassin" | "mage" | "healer";
@@ -313,6 +314,13 @@ export const SPECIES: Record<string, Species> = {
     description: "Predador das profundezas azuis. Mordida feroz que rasga qualquer presa.",
     base: { hp: 60, atk: 17, def: 11, spd: 13, int: 8 },
     skill: { name: "Mordida Sanguinária", emoji: "🦈", kind: "lifesteal_strike", cooldown: 3, description: "Crava os dentes (2× dano) e cura o tubarão em 55% do dano causado." },
+  },
+  polvo_venenoso: {
+    id: "polvo_venenoso", name: "Polvo Venenoso", element: "water", secondaryElement: "shadow", role: "mage", rarity: "super_rare",
+    emoji: "🐙", image: polvoVenenosoImg,
+    description: "Polvo místico das fossas tóxicas. Mago de veneno: corrói os inimigos turno após turno.",
+    base: { hp: 58, atk: 13, def: 11, spd: 12, int: 24 },
+    skill: { name: "Tinta Venenosa", emoji: "☠️", kind: "burn_dot", cooldown: 3, description: "Cospe tinta venenosa: dano mágico agora + veneno corrosivo por 3 turnos (INT×0.65 cada turno)." },
   },
 
   // ===== ÉPICOS =====
