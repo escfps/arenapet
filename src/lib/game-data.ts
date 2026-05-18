@@ -390,7 +390,7 @@ export const SPECIES: Record<string, Species> = {
     id: "fenix_vermelha", name: "Fênix Vermelha", element: "fire", role: "dps", rarity: "mythic",
     emoji: "🔥🦅", image: fenixVermelhaImg,
     description: "Fênix carmesim envolta em chamas eternas. Quanto mais sofre, mais perigosa fica.",
-    base: { hp: 75, atk: 18, def: 14, spd: 15, int: 14 },
+    base: { hp: 75, atk: 42, def: 25, spd: 15, int: 14 },
     skill: { name: "Brasa Renascida", emoji: "🔥", kind: "phoenix_rage", cooldown: 4, description: "PASSIVA: cada 10% de HP perdido = +6% ATK (até +60% com 1 HP). ATIVA: golpe de fogo (2× dano)." },
   },
   fenix_negra: {
