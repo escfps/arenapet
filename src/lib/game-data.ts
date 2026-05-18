@@ -27,7 +27,7 @@ import dragaoNegroImg from "@/assets/monsters/dragao_negro.png";
 
 export type Element = "fire" | "water" | "grass" | "electric" | "shadow" | "earth";
 export type Role = "tank" | "dps" | "assassin" | "mage" | "healer";
-export type Rarity = "common" | "rare" | "legendary" | "mythic";
+export type Rarity = "common" | "rare" | "super_rare" | "epic" | "legendary" | "mythic";
 
 export type Species = {
   id: string;
@@ -51,10 +51,12 @@ export const ROLE_INFO: Record<Role, { name: string; emoji: string; description:
 };
 
 export const RARITY_INFO: Record<Rarity, { name: string; emoji: string; color: string; ringColor: string; statMult: number; skillMult: number }> = {
-  common: { name: "Mestiço", emoji: "✦", color: "bg-slate-400 text-white", ringColor: "ring-slate-300", statMult: 0.85, skillMult: 0.85 },
-  rare: { name: "Puro", emoji: "✦✦", color: "bg-amber-500 text-amber-950", ringColor: "ring-amber-400", statMult: 1.0, skillMult: 1.0 },
-  legendary: { name: "Lendário", emoji: "✦✦✦", color: "bg-gradient-to-r from-fuchsia-500 to-pink-500 text-white", ringColor: "ring-fuchsia-400", statMult: 1.2, skillMult: 1.5 },
-  mythic: { name: "Mítico", emoji: "✦✦✦✦", color: "bg-gradient-to-r from-cyan-400 via-fuchsia-500 to-amber-400 text-white", ringColor: "ring-cyan-300", statMult: 1.5, skillMult: 1.8 },
+  common:     { name: "Comum",      emoji: "✦",       color: "bg-slate-400 text-white",                                                       ringColor: "ring-slate-300",   statMult: 0.80, skillMult: 0.85 },
+  rare:       { name: "Raro",       emoji: "✦✦",     color: "bg-amber-500 text-amber-950",                                                   ringColor: "ring-amber-400",   statMult: 1.00, skillMult: 1.00 },
+  super_rare: { name: "Super Raro", emoji: "✦✦✦",   color: "bg-cyan-500 text-white",                                                         ringColor: "ring-cyan-400",    statMult: 1.15, skillMult: 1.15 },
+  epic:       { name: "Épico",      emoji: "✦✦✦✦", color: "bg-gradient-to-r from-violet-500 to-purple-600 text-white",                     ringColor: "ring-violet-400",  statMult: 1.30, skillMult: 1.35 },
+  legendary:  { name: "Lendário",   emoji: "✦✦✦✦✦", color: "bg-gradient-to-r from-fuchsia-500 to-pink-500 text-white",                    ringColor: "ring-fuchsia-400", statMult: 1.50, skillMult: 1.55 },
+  mythic:     { name: "Mítico",     emoji: "✦✦✦✦✦✦", color: "bg-gradient-to-r from-cyan-400 via-fuchsia-500 to-amber-400 text-white",      ringColor: "ring-cyan-300",    statMult: 1.75, skillMult: 1.85 },
 };
 
 // ===== Skills (1 por role, escala com raridade) =====
