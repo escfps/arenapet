@@ -127,53 +127,6 @@ function PatioPage() {
       <HUD profile={profile} />
 
       <div className="max-w-6xl mx-auto px-4 mt-6 space-y-6">
-        {!profile.welcome_chest_claimed ? (
-          <section className="text-center text-white">
-            <h1 className="text-4xl font-extrabold mb-2 drop-shadow-lg">🎁 Baú de Boas-Vindas!</h1>
-            <p className="text-white/80 mb-6 text-sm max-w-md mx-auto">
-              Bem-vindo à ARENA PET! Abra seu baú de cadastro e ganhe <b>2 bichinhos comuns</b> + <b>1 raro</b> totalmente aleatórios pra começar sua jornada.
-            </p>
-            <button
-              onClick={openWelcomeChest}
-              disabled={hatching}
-              className="px-8 py-4 rounded-2xl bg-gradient-to-b from-yellow-300 via-amber-400 to-yellow-600 text-yellow-950 font-black text-xl shadow-2xl hover:scale-105 transition disabled:opacity-60 disabled:cursor-wait border-4 border-yellow-200"
-            >
-              {hatching ? "Abrindo..." : "🎁 Abrir Baú"}
-            </button>
-            <p className="text-[11px] opacity-60 mt-3">⚠️ Apenas 1 baú por conta</p>
-
-            {welcomeReveal && (
-              <div className="mt-8 rounded-3xl p-6 bg-gradient-to-br from-amber-500 to-yellow-700 border-4 border-yellow-300 max-w-2xl mx-auto animate-in fade-in zoom-in">
-                <div className="text-sm font-bold opacity-90">VOCÊ GANHOU</div>
-                <div className="grid grid-cols-3 gap-3 mt-3">
-                  {welcomeReveal.map((id) => {
-                    const sp = SPECIES[id];
-                    return (
-                      <div key={id} className={`rounded-2xl overflow-hidden border-2 border-white/40 bg-gradient-to-br ${ELEMENT_COLORS[sp.element]} shadow-xl`}>
-                        <div className="aspect-square flex items-center justify-center p-2">
-                          <img src={sp.image} alt={sp.name} className="h-full w-auto drop-shadow-2xl" />
-                        </div>
-                        <div className="bg-card/95 p-2 text-center">
-                          <div className="font-extrabold text-xs truncate">{sp.emoji} {sp.name}</div>
-                          <span className={`inline-block mt-1 px-1.5 py-0.5 rounded-full ${RARITY_INFO[sp.rarity].color} text-[9px] font-extrabold`}>
-                            {RARITY_INFO[sp.rarity].emoji} {RARITY_INFO[sp.rarity].name}
-                          </span>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-                <button
-                  onClick={() => setWelcomeReveal(null)}
-                  className="mt-4 px-5 py-2 rounded-xl bg-yellow-950 text-yellow-200 font-extrabold hover:bg-yellow-900 transition"
-                >
-                  Vamos lá! 🚀
-                </button>
-              </div>
-            )}
-          </section>
-        ) : (
-          <>
             <section className="rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 p-4 text-white">
               <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
                 <div>
@@ -279,9 +232,60 @@ function PatioPage() {
                 </div>
               )}
             </section>
-          </>
-        )}
       </div>
+
+      {!profile.welcome_chest_claimed && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
+          <div className="max-w-2xl w-full rounded-3xl bg-gradient-to-br from-purple-900 via-fuchsia-900 to-amber-900 border-4 border-yellow-300 shadow-2xl p-6 text-center text-white animate-in zoom-in">
+            {!welcomeReveal ? (
+              <>
+                <div className="text-7xl mb-2 animate-bounce">🎁</div>
+                <h2 className="text-3xl font-black drop-shadow-lg">Baú de Boas-Vindas!</h2>
+                <p className="text-white/90 mt-2 text-sm">
+                  Bem-vindo à <b>ARENA PET</b>! Abra seu baú de cadastro e ganhe<br />
+                  <b>2 bichinhos comuns</b> + <b>1 raro</b> totalmente aleatórios.
+                </p>
+                <button
+                  onClick={openWelcomeChest}
+                  disabled={hatching}
+                  className="mt-5 px-8 py-4 rounded-2xl bg-gradient-to-b from-yellow-300 via-amber-400 to-yellow-600 text-yellow-950 font-black text-xl shadow-2xl hover:scale-105 transition disabled:opacity-60 disabled:cursor-wait border-4 border-yellow-200"
+                >
+                  {hatching ? "Abrindo..." : "🎁 Abrir Baú"}
+                </button>
+                <p className="text-[11px] opacity-70 mt-3">⚠️ Apenas 1 baú por conta</p>
+              </>
+            ) : (
+              <>
+                <div className="text-sm font-bold opacity-90">VOCÊ GANHOU</div>
+                <div className="grid grid-cols-3 gap-3 mt-3">
+                  {welcomeReveal.map((id) => {
+                    const sp = SPECIES[id];
+                    return (
+                      <div key={id} className={`rounded-2xl overflow-hidden border-2 border-white/40 bg-gradient-to-br ${ELEMENT_COLORS[sp.element]} shadow-xl`}>
+                        <div className="aspect-square flex items-center justify-center p-2">
+                          <img src={sp.image} alt={sp.name} className="h-full w-auto drop-shadow-2xl" />
+                        </div>
+                        <div className="bg-card/95 p-2 text-center">
+                          <div className="font-extrabold text-xs truncate">{sp.emoji} {sp.name}</div>
+                          <span className={`inline-block mt-1 px-1.5 py-0.5 rounded-full ${RARITY_INFO[sp.rarity].color} text-[9px] font-extrabold`}>
+                            {RARITY_INFO[sp.rarity].emoji} {RARITY_INFO[sp.rarity].name}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+                <button
+                  onClick={() => setWelcomeReveal(null)}
+                  className="mt-5 px-6 py-2.5 rounded-xl bg-yellow-300 text-yellow-950 font-extrabold hover:bg-yellow-200 transition shadow-lg"
+                >
+                  Vamos lá! 🚀
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </main>
   );
 }
