@@ -83,6 +83,7 @@ function TournamentPage() {
   const [matches, setMatches] = useState<Match[]>([]);
   const [profs, setProfs] = useState<Record<string, ProfileLite>>({});
   const [champs, setChamps] = useState<Array<{ user_id: string; wins: number; last_win_at: string; username: string }>>([]);
+  const [champTeams, setChampTeams] = useState<Record<string, ChampTeamPet[]>>({});
   const [joining, setJoining] = useState(false);
   const [now, setNow] = useState(Date.now());
   const [tab, setTab] = useState<"current" | "last" | "leaderboard">("current");
