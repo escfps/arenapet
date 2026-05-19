@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
 import { ARENA_WIN_POINTS, ARENA_LOSS_POINTS } from "@/lib/game-data";
+import { BattleDetailModal, type BattleRow } from "@/components/BattleDetailModal";
 import arenaBg from "@/assets/arena-bg.jpg";
 
 export const Route = createFileRoute("/history")({
@@ -15,19 +16,6 @@ export const Route = createFileRoute("/history")({
     ],
   }),
 });
-
-type BattleRow = {
-  id: string;
-  attacker_id: string;
-  defender_id: string;
-  winner_id: string;
-  coins_reward: number;
-  xp_reward: number;
-  created_at: string;
-  log: unknown;
-  attacker_points_delta?: number | null;
-  defender_points_delta?: number | null;
-};
 
 type OpponentMap = Record<string, { username: string; level: number }>;
 
