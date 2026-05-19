@@ -8,6 +8,9 @@ import { TournamentBattle } from "@/components/TournamentBattle";
 import { ChampionCelebration } from "@/components/ChampionCelebration";
 import type { BattleLogEntry } from "@/lib/battle";
 import arenaBg from "@/assets/arena-bg.jpg";
+import { SPECIES } from "@/lib/game-data";
+
+type ChampTeamPet = { species: string; team_position: number };
 
 export const Route = createFileRoute("/tournament")({
   component: TournamentPage,
