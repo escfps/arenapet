@@ -279,9 +279,12 @@ function TournamentPage() {
                   </div>
 
                   <div className="mt-4 rounded-xl bg-white/5 p-3 text-xs space-y-1">
-                    <div>🥇 <b>Campeão</b> ganha: 🥇 1 Baú de Ouro</div>
+                    <div>💎 <b>Inscrição:</b> 1 diamante</div>
+                    <div>🥇 <b>Campeão</b> ganha: 1 Baú de Ouro</div>
                     <div>⚔️ Chaveamento sorteado: oitavas → quartas → semis → final, tudo MD3</div>
+                    <div>📺 Acabou sua partida? Vá em <b>Assistir Copa</b> e acompanhe as outras chaves até o fim</div>
                   </div>
+
 
                 </>
               )}
