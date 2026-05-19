@@ -88,11 +88,35 @@ function AdminPage() {
 
   async function pickPlayer(p: ProfileRow) {
     setSelected(p);
+    setEdit({
+      username: p.username,
+      level: p.level,
+      xp: p.xp,
+      arena_points: p.arena_points,
+      wins: p.wins,
+      losses: p.losses,
+      coins: p.coins,
+      gems: p.gems,
+    });
     try {
       const r = await petsFn({ data: { userId: p.id } });
       setPets(r.pets as PetRow[]);
     } catch (e) {
       toast.error((e as Error).message);
+    }
+  }
+
+  async function saveEdit() {
+    if (!selected || !edit) return;
+    setBusy(true);
+    try {
+      await updateProfileFn({ data: { userId: selected.id, ...edit } });
+      toast.success("Perfil atualizado!");
+      await reloadSelected();
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setBusy(false);
     }
   }
 
