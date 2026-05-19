@@ -628,7 +628,7 @@ export const CHESTS: Record<ChestTier, Chest> = {
     priceCoins: 20000,
     coins: [1500, 4000],
     rations: [6, 12],
-    gemChance: 1, gems: [3, 5],
+    gemChance: 1, gems: [5, 10],
     petChance: 1,
     petRarityWeights: { rare: 55, super_rare: 35, epic: 10 },
   },
