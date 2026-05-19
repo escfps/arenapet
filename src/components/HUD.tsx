@@ -40,7 +40,7 @@ export function HUD({ profile }: { profile: ProfileRow }) {
           <NavLink to="/" label="Home" emoji="🏠" />
           <NavLink to="/arena" label="Arena" emoji="⚔️" />
           <NavLink to="/tournament" label="Copa" emoji="🏆" />
-          <NavLink to="/ranking" label="Ranking" emoji="🏆" />
+          <NavLink to="/ranking" label="Ranking" emoji="📊" />
           <NavLink to="/history" label="Histórico" emoji="📜" />
           <NavLink to="/forge" label="Elevar" emoji="🔨" />
           <NavLink to="/trade" label="Trocas" emoji="🔄" />
