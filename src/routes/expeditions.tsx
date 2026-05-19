@@ -56,6 +56,7 @@ function ExpeditionsPage() {
   const [swapForExp, setSwapForExp] = useState<ExpRow | null>(null);
   const [now, setNow] = useState(Date.now());
   const [busy, setBusy] = useState(false);
+  const [chestQueue, setChestQueue] = useState<PendingChest[]>([]);
 
   const start = useServerFn(startExpedition);
   const claim = useServerFn(claimExpedition);
