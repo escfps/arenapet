@@ -224,7 +224,11 @@ export function BattleScene({
       skillFx = "magic";
     }
 
-    setFx({ actor: actorKey, target: targetKey, dmg: entry.damage, crit: entry.crit, skillFx, targets });
+    // ===== Detecta ganho de escudo na mensagem =====
+    const shieldMatch = msg.match(/\+?(\d+)\s*(?:de\s+)?escudo/i);
+    const shieldGain = shieldMatch ? parseInt(shieldMatch[1], 10) : null;
+
+    setFx({ actor: actorKey, target: targetKey ?? actorKey, dmg: entry.damage, shieldGain, crit: entry.crit, skillFx, targets });
 
     // ===== Sound FX =====
     if (entry.damage < 0) {
