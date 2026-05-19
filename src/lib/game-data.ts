@@ -1050,20 +1050,21 @@ export function tierPromotionChests(newTierName: string): { silver: number; gold
 
 
 export const ARENA_WIN_POINTS = 25;
-export const ARENA_LOSS_POINTS = 15;
+export const ARENA_LOSS_POINTS = 17;
 
-// Faixas de pontos por tier — quanto mais alto o elo, menos se ganha e mais se perde.
-// Estilo LoL: random dentro do range pra dar variedade.
+// Faixas de pontos por tier — ganho 19-25, derrota 17-23.
+// Quanto mais alto o elo, mais difícil tirar o máximo de vitória e mais fácil
+// levar a perda máxima na derrota.
 const ARENA_POINT_RANGES: Array<{ name: string; win: [number, number]; loss: [number, number] }> = [
-  { name: "Ferro",       win: [24, 30], loss: [10, 14] },
-  { name: "Bronze",      win: [22, 28], loss: [12, 16] },
-  { name: "Prata",       win: [20, 26], loss: [14, 18] },
-  { name: "Ouro",        win: [18, 24], loss: [16, 20] },
-  { name: "Platina",     win: [16, 22], loss: [18, 22] },
-  { name: "Diamante",    win: [15, 20], loss: [20, 24] },
-  { name: "Mestre",      win: [13, 18], loss: [22, 26] },
-  { name: "Grão-Mestre", win: [11, 16], loss: [24, 28] },
-  { name: "Lendário",    win: [10, 14], loss: [26, 30] },
+  { name: "Ferro",       win: [22, 25], loss: [17, 19] },
+  { name: "Bronze",      win: [21, 25], loss: [17, 20] },
+  { name: "Prata",       win: [21, 24], loss: [18, 20] },
+  { name: "Ouro",        win: [20, 24], loss: [18, 21] },
+  { name: "Platina",     win: [20, 23], loss: [19, 21] },
+  { name: "Diamante",    win: [19, 23], loss: [19, 22] },
+  { name: "Mestre",      win: [19, 22], loss: [20, 22] },
+  { name: "Grão-Mestre", win: [19, 21], loss: [20, 23] },
+  { name: "Lendário",    win: [19, 20], loss: [21, 23] },
 ];
 
 function randInt(min: number, max: number) {
