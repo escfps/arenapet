@@ -242,7 +242,11 @@ export function BattleScene({
     setFx({ actor: actorKey, target: effectiveTarget, dmg: entry.damage, shieldGain, crit: entry.crit, skillFx, targets, miss });
 
     // ===== Sound FX =====
-    if (entry.damage < 0) {
+    if (miss?.kind === "dodge") {
+      playSfx("dodge");
+    } else if (miss?.kind === "miss") {
+      playSfx("miss");
+    } else if (entry.damage < 0) {
       playSfx("heal");
     } else if (skillFx === "fury" || msg.includes("ATK e -")) {
       playSfx("buff");
