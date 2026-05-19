@@ -184,6 +184,17 @@ export function playSfx(kind: SoundKind) {
       tone({ freq: 311, type: "sawtooth", duration: 0.3, gain: 0.22, delay: 0.25 });
       tone({ freq: 196, type: "sawtooth", duration: 0.7, gain: 0.25, delay: 0.5, freqEnd: 110 });
       break;
+    case "dodge":
+      // Whoosh agudo descendente — esquiva ágil
+      noise({ duration: 0.18, gain: 0.22, freq: 2400 });
+      tone({ freq: 1200, type: "sine", duration: 0.14, gain: 0.14, freqEnd: 600 });
+      tone({ freq: 1800, type: "triangle", duration: 0.1, gain: 0.1, freqEnd: 900, delay: 0.04 });
+      break;
+    case "miss":
+      // "Pluf" cômico — ataque errado no vazio
+      tone({ freq: 320, type: "triangle", duration: 0.16, gain: 0.18, freqEnd: 110 });
+      noise({ duration: 0.1, gain: 0.12, freq: 300, delay: 0.02 });
+      break;
     case "click":
       tone({ freq: 880, type: "square", duration: 0.04, gain: 0.12 });
       break;
