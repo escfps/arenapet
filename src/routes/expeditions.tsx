@@ -27,6 +27,7 @@ import {
 } from "@/lib/expeditions.functions";
 import { toast, Toaster } from "sonner";
 import type { MonsterRow } from "@/components/MonsterCard";
+import { ChestRewardPopup, type PendingChest } from "@/components/ChestRewardPopup";
 
 export const Route = createFileRoute("/expeditions")({
   component: ExpeditionsPage,
@@ -55,6 +56,7 @@ function ExpeditionsPage() {
   const [swapForExp, setSwapForExp] = useState<ExpRow | null>(null);
   const [now, setNow] = useState(Date.now());
   const [busy, setBusy] = useState(false);
+  const [chestQueue, setChestQueue] = useState<PendingChest[]>([]);
 
   const start = useServerFn(startExpedition);
   const claim = useServerFn(claimExpedition);
@@ -104,9 +106,14 @@ function ExpeditionsPage() {
       toast.success(`Recompensa: ${parts.join(" • ")}`);
       if (r.levelUp) {
         const lu = r.levelUp;
-        for (let lv = lu.fromLevel + 1; lv <= lu.toLevel; lv++) {
-          const tier = lv === 100 ? "👑 Baú LENDÁRIO" : lv === 50 ? "🥇 Baú de OURO" : lv % 10 === 0 ? "🥈 Baú de PRATA" : "📦 Baú de Madeira";
-          toast.success(`🎉 Level ${lv}! ${tier} aberto`, { duration: 4000 });
+        if (lu.chests && lu.chests.length > 0) {
+          const newChests: PendingChest[] = lu.chests.map((c, i) => ({
+            id: `exp-${Date.now()}-${i}`,
+            tier: c.tier,
+            label: `Level ${c.level}!`,
+            reward: c.reward,
+          }));
+          setChestQueue((q) => [...q, ...newChests]);
         }
         const lp: string[] = [];
         if (lu.coins) lp.push(`🪙 ${lu.coins}`);
@@ -179,6 +186,7 @@ function ExpeditionsPage() {
   return (
     <main className="min-h-screen pb-12 bg-gradient-to-b from-amber-900 via-orange-900 to-purple-950">
       <Toaster position="top-center" richColors />
+      <ChestRewardPopup queue={chestQueue} onConsume={(id) => setChestQueue((q) => q.filter((c) => c.id !== id))} />
       <HUD profile={profile} />
 
       <div className="max-w-5xl mx-auto px-4 mt-4 space-y-4">

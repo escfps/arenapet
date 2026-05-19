@@ -714,6 +714,7 @@ export type LevelUpReward = {
   goldChests: number;
   legendaryChests: number;
   levels: number[]; // levels alcançados
+  chests: Array<{ tier: ChestTier; level: number; reward: ChestReward }>;
 };
 
 export function chestTierForLevel(lv: number): ChestTier {
@@ -724,7 +725,7 @@ export function chestTierForLevel(lv: number): ChestTier {
 }
 
 export function rollLevelUpRewards(prevLevel: number, newLevel: number): LevelUpReward {
-  const out: LevelUpReward = { coins: 0, gems: 0, rations: 0, petSpecies: [], woodChests: 0, silverChests: 0, goldChests: 0, legendaryChests: 0, levels: [] };
+  const out: LevelUpReward = { coins: 0, gems: 0, rations: 0, petSpecies: [], woodChests: 0, silverChests: 0, goldChests: 0, legendaryChests: 0, levels: [], chests: [] };
   for (let lv = prevLevel + 1; lv <= newLevel; lv++) {
     out.levels.push(lv);
     const tier = chestTierForLevel(lv);
@@ -737,9 +738,7 @@ export function rollLevelUpRewards(prevLevel: number, newLevel: number): LevelUp
     out.gems += r.gems;
     out.rations += r.rations;
     if (r.petSpecies) out.petSpecies.push(r.petSpecies);
-    // Bônus: a cada 3 levels, ganha também um Baú de Prata extra
-    // (além do baú principal do level). Não duplica em levels que já são
-    // múltiplos de 10/50/100, pois esses já entregam baús melhores.
+    out.chests.push({ tier, level: lv, reward: r });
     if (lv % 3 === 0 && tier === "wood") {
       out.silverChests += 1;
       const rs = rollChest("silver");
@@ -747,6 +746,7 @@ export function rollLevelUpRewards(prevLevel: number, newLevel: number): LevelUp
       out.gems += rs.gems;
       out.rations += rs.rations;
       if (rs.petSpecies) out.petSpecies.push(rs.petSpecies);
+      out.chests.push({ tier: "silver", level: lv, reward: rs });
     }
   }
   return out;

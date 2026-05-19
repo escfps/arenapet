@@ -11,6 +11,7 @@ import { BattleStats } from "@/components/BattleStats";
 import { toast, Toaster } from "sonner";
 import arenaBg from "@/assets/arena-bg.jpg";
 import { playSfx, startMusic, stopMusic } from "@/lib/sound";
+import { ChestRewardPopup, type PendingChest } from "@/components/ChestRewardPopup";
 
 export const Route = createFileRoute("/arena")({
   component: ArenaPage,
@@ -67,6 +68,7 @@ function ArenaPage() {
   const [shownLog, setShownLog] = useState<BattleLogEntry[]>([]);
   const [promo, setPromo] = useState<PromoSeries | null>(null);
   const [autoRematch, setAutoRematch] = useState<number | null>(null);
+  const [chestQueue, setChestQueue] = useState<PendingChest[]>([]);
 
   // auto rematch: começa countdown de 10s quando a batalha termina
   useEffect(() => {
@@ -445,10 +447,13 @@ function ArenaPage() {
           });
           await supabase.from("monsters").insert(rows);
         }
-        for (const lv of lvRew.levels) {
-          const tier = lv === 100 ? "👑 Baú LENDÁRIO" : lv === 50 ? "🥇 Baú de OURO" : lv % 10 === 0 ? "🥈 Baú de PRATA" : "📦 Baú de Madeira";
-          levelUpToasts.push(() => toast.success(`🎉 Level ${lv}! ${tier} aberto`, { duration: 4000 }));
-        }
+        const newChests: PendingChest[] = lvRew.chests.map((c, i) => ({
+          id: `lv-${Date.now()}-${i}`,
+          tier: c.tier,
+          label: `Level ${c.level}!`,
+          reward: c.reward,
+        }));
+        setChestQueue((q) => [...q, ...newChests]);
         const parts: string[] = [];
         if (lvRew.coins) parts.push(`🪙 ${lvRew.coins}`);
         if (lvRew.gems) parts.push(`💎 ${lvRew.gems}`);
@@ -517,13 +522,21 @@ function ArenaPage() {
         if (tiersToRoll.length > 0) {
           let bonusCoins = 0, bonusGems = 0, bonusRations = 0;
           const bonusPets: string[] = [];
+          const tierChests: PendingChest[] = [];
           for (const tk of tiersToRoll) {
             const r = rollChest(tk);
             bonusCoins += r.coins;
             bonusGems += r.gems;
             bonusRations += r.rations;
             if (r.petSpecies) bonusPets.push(r.petSpecies);
+            tierChests.push({
+              id: `tier-${Date.now()}-${tierChests.length}`,
+              tier: tk,
+              label: `Promoção pra ${newTierName}!`,
+              reward: r,
+            });
           }
+          setChestQueue((q) => [...q, ...tierChests]);
 
           // Aplica no DB
           const { data: freshProfile } = await supabase
@@ -603,6 +616,7 @@ function ArenaPage() {
       style={{ backgroundImage: `linear-gradient(rgba(20,5,50,0.6),rgba(20,5,50,0.8)),url(${arenaBg})` }}
     >
       <Toaster position="top-center" richColors />
+      <ChestRewardPopup queue={chestQueue} onConsume={(id) => setChestQueue((q) => q.filter((c) => c.id !== id))} />
       <HUD profile={profile} />
 
       <div className="max-w-4xl mx-auto px-4 mt-4 space-y-4">
