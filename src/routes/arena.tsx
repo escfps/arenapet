@@ -10,6 +10,7 @@ import { BattleScene } from "@/components/BattleScene";
 import { BattleStats } from "@/components/BattleStats";
 import { toast, Toaster } from "sonner";
 import arenaBg from "@/assets/arena-bg.jpg";
+import { playSfx, startMusic, stopMusic } from "@/lib/sound";
 
 export const Route = createFileRoute("/arena")({
   component: ArenaPage,
