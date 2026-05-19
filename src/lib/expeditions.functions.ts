@@ -165,7 +165,7 @@ export const claimExpedition = createServerFn({ method: "POST" })
       gems: exp.gems_reward,
       rations: exp.ration_drop,
       levelUp: lvRew
-        ? { fromLevel: prevLevel, toLevel: newLevel, coins: lvRew.coins, gems: lvRew.gems, rations: lvRew.rations, pets: lvRew.petSpecies.length, woodChests: lvRew.woodChests, goldChests: lvRew.goldChests }
+        ? { fromLevel: prevLevel, toLevel: newLevel, coins: lvRew.coins, gems: lvRew.gems, rations: lvRew.rations, pets: lvRew.petSpecies.length, woodChests: lvRew.woodChests, goldChests: lvRew.goldChests, chests: lvRew.chests }
         : null,
     };
   });
