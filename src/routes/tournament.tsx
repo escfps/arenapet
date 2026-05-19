@@ -577,6 +577,20 @@ function TournamentPage() {
             onClose={() => { setBattleMatch(null); void refresh(); }}
           />
         )}
+
+        {celebrated && (
+          <ChampionCelebration
+            championName={pName(celebrated.champion_id)}
+            reward={celebrated.champion_reward}
+            onClose={() => {
+              if (typeof window !== "undefined") {
+                window.localStorage.setItem(`champion_seen_${celebrated.id}`, "1");
+              }
+              setCelebrated(null);
+              void refresh();
+            }}
+          />
+        )}
       </div>
     </div>
   );
