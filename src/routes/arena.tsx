@@ -468,8 +468,10 @@ function ArenaPage() {
         p_loss_pts: oppLossPts,
       });
 
-      // Delta real aplicado ao defensor (pode bater no piso 0)
-      const defenderDelta = won ? -Math.min(oppLossPts, opp.arenaPoints) : oppWinPts;
+      // Delta exibido no histórico: sempre os pontos rolados da partida
+      // (mesmo durante séries de promoção, quando o saldo no perfil não muda).
+      const displayedAttackerDelta = isDraw ? 0 : (won ? myWinPts : -myLossPts);
+      const displayedDefenderDelta = isDraw ? 0 : (won ? -Math.min(oppLossPts, opp.arenaPoints) : oppWinPts);
 
       await supabase.from("battles").insert({
         attacker_id: userId,
@@ -478,8 +480,8 @@ function ArenaPage() {
         log: JSON.parse(JSON.stringify(result.log)),
         coins_reward: rew.coins,
         xp_reward: rew.xp,
-        attacker_points_delta: delta,
-        defender_points_delta: defenderDelta,
+        attacker_points_delta: displayedAttackerDelta,
+        defender_points_delta: displayedDefenderDelta,
       });
 
       if (won && Math.random() < 0.70) {
