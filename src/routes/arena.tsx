@@ -206,8 +206,13 @@ function ArenaPage() {
     const recentKey = `recent_opps_${userId}`;
     let recent: string[] = [];
     try { recent = JSON.parse(localStorage.getItem(recentKey) ?? "[]"); } catch { recent = []; }
-    // Só considera oponentes com time COMPLETO (3 pets), pra evitar luta 3v2
-    const allOwnersFull = Object.keys(byOwner).filter((id) => byOwner[id].team.length >= 3);
+    // Só considera oponentes com time COMPLETO (3 pets) e SEM espécies repetidas
+    const allOwnersFull = Object.keys(byOwner).filter((id) => {
+      const team = byOwner[id].team;
+      if (team.length < 3) return false;
+      const species = new Set(team.map((m) => m.species));
+      return species.size === team.length;
+    });
     // Cap de rank do oponente por tier (proteção pra novatos)
     // Ferro: rank 2 • Bronze: 3 • Prata: 5 • Ouro: 6 • Platina+: sem cap
     const myMaxRank = Math.max(1, ...myTeam.map((m) => m.rank ?? 1));
