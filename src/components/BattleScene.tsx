@@ -430,29 +430,48 @@ function ArenaLineup({
             {hasSkillFx && fx.skillFx && (
               <SkillFxOverlay kind={fx.skillFx} keyId={`${fx.actor}-${key}-${fx.dmg}`} />
             )}
+            {isTarget && fx.crit && fx.dmg !== null && fx.dmg > 0 && (
+              <div className="absolute -top-14 left-1/2 -translate-x-1/2 pointer-events-none z-40 animate-crit-badge">
+                <div className="px-2.5 py-0.5 rounded-md bg-gradient-to-r from-yellow-300 via-orange-400 to-red-500 text-black text-[10px] font-black tracking-widest shadow-[0_0_18px_rgba(250,204,21,.9)] border border-yellow-200">
+                  CRÍTICO!
+                </div>
+              </div>
+            )}
             {isTarget && fx.dmg !== null && fx.dmg !== 0 && (
               <div
                 key={`arena-${fx.actor}-${fx.target}-${fx.dmg}`}
                 className={`absolute -top-6 left-1/2 font-black pointer-events-none z-30 ${
-                  fx.crit ? "text-4xl animate-battle-float-crit" : "text-3xl animate-battle-float"
+                  fx.crit ? "text-5xl animate-battle-float-crit" : "text-3xl animate-battle-float"
                 } ${
                   fx.dmg < 0
                     ? "text-emerald-300"
                     : fx.crit
-                    ? "text-yellow-300"
+                    ? "text-yellow-200"
                     : "text-red-400"
                 }`}
                 style={{
                   textShadow: fx.dmg < 0
                     ? "0 0 8px rgba(16,185,129,.9), 0 2px 4px rgba(0,0,0,.95)"
                     : fx.crit
-                    ? "0 0 10px rgba(250,204,21,1), 0 0 18px rgba(239,68,68,.8), 0 2px 4px rgba(0,0,0,.95)"
+                    ? "0 0 14px rgba(250,204,21,1), 0 0 24px rgba(239,68,68,.9), 0 3px 6px rgba(0,0,0,1)"
                     : "0 0 8px rgba(239,68,68,.9), 0 2px 4px rgba(0,0,0,.95)",
-                  WebkitTextStroke: "1px rgba(0,0,0,0.7)",
+                  WebkitTextStroke: fx.crit ? "2px rgba(0,0,0,0.85)" : "1px rgba(0,0,0,0.7)",
                 }}
               >
                 {fx.dmg < 0 ? `+${-fx.dmg}` : `-${fx.dmg}`}
                 {fx.crit ? "!" : ""}
+              </div>
+            )}
+            {isTarget && fx.shieldGain !== null && fx.shieldGain > 0 && (
+              <div
+                key={`arena-shield-${fx.actor}-${fx.target}-${fx.shieldGain}`}
+                className="absolute -top-6 left-1/2 font-black text-2xl pointer-events-none z-30 text-cyan-200 animate-battle-float"
+                style={{
+                  textShadow: "0 0 10px rgba(34,211,238,.95), 0 2px 4px rgba(0,0,0,.95)",
+                  WebkitTextStroke: "1px rgba(0,0,0,0.7)",
+                }}
+              >
+                🛡️+{fx.shieldGain}
               </div>
             )}
           </div>
