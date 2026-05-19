@@ -64,7 +64,7 @@ function ArenaPage() {
   const [searching, setSearching] = useState(false);
   const [battleLog, setBattleLog] = useState<BattleLogEntry[] | null>(null);
   const [winner, setWinner] = useState<"team_a" | "team_b" | "draw" | null>(null);
-  const [rewards, setRewards] = useState<{ coins: number; xp: number; points: number; oldPoints: number; newPoints: number; promoMsg?: string; promoBefore?: PromoSeries | null; promoAfter?: PromoSeries | null } | null>(null);
+  const [rewards, setRewards] = useState<{ coins: number; xp: number; gems: number; points: number; oldPoints: number; newPoints: number; promoMsg?: string; promoBefore?: PromoSeries | null; promoAfter?: PromoSeries | null } | null>(null);
   const [shownLog, setShownLog] = useState<BattleLogEntry[]>([]);
   const [promo, setPromo] = useState<PromoSeries | null>(null);
   const [autoRematch, setAutoRematch] = useState<number | null>(null);
@@ -356,6 +356,8 @@ function ArenaPage() {
     const rew = isDraw
       ? { coins: 0, xp: 0 }
       : computeRewards(profile.level, won, isVip(profile.vip_until));
+    const gemWin = won && !isDraw && Math.random() < 0.05 ? 1 : 0;
+
 
     // Arena points + promo series logic
     const oldPoints = profile.arena_points ?? 0;
@@ -414,11 +416,13 @@ function ArenaPage() {
 
       const updates: Partial<typeof profile> = {
         coins: profile.coins + rew.coins,
+        gems: (profile.gems ?? 0) + gemWin,
         xp: profile.xp + rew.xp,
         wins: profile.wins + (won ? 1 : 0),
         losses: profile.losses + (won ? 0 : 1),
         arena_points: newPoints,
       };
+
       let newXp = updates.xp!;
       let newLevel = profile.level;
       while (newXp >= xpForNextLevel(newLevel)) {
@@ -431,7 +435,7 @@ function ArenaPage() {
       if (newLevel > profile.level) {
         const lvRew = rollLevelUpRewards(profile.level, newLevel);
         updates.coins = (updates.coins ?? profile.coins) + lvRew.coins;
-        updates.gems = (profile.gems ?? 0) + lvRew.gems;
+        updates.gems = (updates.gems ?? (profile.gems ?? 0)) + lvRew.gems;
         await patch(updates);
         if (lvRew.rations > 0) {
           const { data: rRow } = await supabase.from("inventory").select("quantity").eq("user_id", userId).eq("item_type", "ration").maybeSingle();
@@ -582,7 +586,7 @@ function ArenaPage() {
       }
     }
 
-    setRewards({ ...rew, points: delta, oldPoints, newPoints, promoMsg, promoBefore, promoAfter: nextPromo });
+    setRewards({ ...rew, gems: gemWin, points: delta, oldPoints, newPoints, promoMsg, promoBefore, promoAfter: nextPromo });
     setBattleLog(result.log);
     setWinner(result.winner);
     levelUpToasts.forEach((fn) => fn());
@@ -794,7 +798,7 @@ function ArenaPage() {
                     <BattleStats teamA={myTeam} teamB={opponent.team} log={battleLog} />
                     <div className={`mt-4 p-4 rounded-xl text-center font-extrabold ${winner === "team_a" ? "bg-green-500/40" : winner === "draw" ? "bg-yellow-500/40" : "bg-red-500/40"}`}>
                       {winner === "team_a" ? "🏆 VITÓRIA!" : winner === "draw" ? "🤝 EMPATE!" : "💀 Derrota..."}
-                      <div className="text-sm font-normal mt-1">+🪙 {rewards.coins} • +✨ {rewards.xp} XP</div>
+                      <div className="text-sm font-normal mt-1">+🪙 {rewards.coins} • +✨ {rewards.xp} XP{rewards.gems > 0 && <> • <span className="text-cyan-200">+💎 {rewards.gems}</span></>}</div>
                       <div className="text-xs font-bold mt-1 flex items-center justify-center gap-2">
                         <span className={`px-2 py-0.5 rounded ${getTier(rewards.oldPoints).color}`}>{getTier(rewards.oldPoints).short}</span>
                         <span className={rewards.points >= 0 ? "text-green-300" : "text-red-300"}>
