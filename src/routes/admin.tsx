@@ -11,6 +11,7 @@ import {
   adminRankUpPet,
   adminAddPet,
   adminDeletePet,
+  adminUpdateProfile,
 } from "@/lib/admin.functions";
 
 const ADMIN_USER_IDS = new Set<string>([
