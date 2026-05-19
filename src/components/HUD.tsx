@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { CoinBadge, GemBadge, VipBadge } from "./CoinBadge";
+import { SoundControl } from "./SoundControl";
 import { isVip, getTier } from "@/lib/game-data";
 import { supabase } from "@/integrations/supabase/client";
 
