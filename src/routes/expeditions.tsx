@@ -186,6 +186,7 @@ function ExpeditionsPage() {
   return (
     <main className="min-h-screen pb-12 bg-gradient-to-b from-amber-900 via-orange-900 to-purple-950">
       <Toaster position="top-center" richColors />
+      <ChestRewardPopup queue={chestQueue} onConsume={(id) => setChestQueue((q) => q.filter((c) => c.id !== id))} />
       <HUD profile={profile} />
 
       <div className="max-w-5xl mx-auto px-4 mt-4 space-y-4">
