@@ -27,6 +27,7 @@ import {
 } from "@/lib/expeditions.functions";
 import { toast, Toaster } from "sonner";
 import type { MonsterRow } from "@/components/MonsterCard";
+import { ChestRewardPopup, type PendingChest } from "@/components/ChestRewardPopup";
 
 export const Route = createFileRoute("/expeditions")({
   component: ExpeditionsPage,
