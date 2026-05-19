@@ -84,6 +84,8 @@ function TournamentPage() {
   const [now, setNow] = useState(Date.now());
   const [tab, setTab] = useState<"current" | "last" | "leaderboard">("current");
   const [battleMatch, setBattleMatch] = useState<{ m: Match; mode: "play" | "watch" } | null>(null);
+  const [celebrated, setCelebrated] = useState<Tournament | null>(null);
+
 
   useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 500);
