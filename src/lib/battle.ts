@@ -789,12 +789,20 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
       applyDamage(target, damage);
       const phoenixGrow = phoenixOnDamageDealt(attacker, damage);
 
+      // PASSIVA Borboleta Sonífera: 50% de chance de adormecer o alvo por 2 turnos
+      let sleptByPassive = false;
+      if (attacker.species === "borboleta_sonifera" && target.current > 0 && rand() < 0.5) {
+        target.sleepTurns = Math.max(target.sleepTurns, 2);
+        sleptByPassive = true;
+      }
+
       let msg = `${attacker.name} atacou ${target.name} causando ${damage} de dano`;
       if (crit) msg += " (CRÍTICO!)";
       if (attacker.role === "mage") msg += " 🔮";
       if (eff > 1) msg += " (super eficaz!)";
       else if (eff < 1) msg += " (pouco eficaz...)";
       if (phoenixGrow > 0) msg += ` 🌑 (+${phoenixGrow} HP máx)`;
+      if (sleptByPassive) msg += ` 💤 ${target.name} adormeceu por 2 turnos!`;
 
       log.push({
         turn, actor: side, actorName: attacker.name, targetName: target.name,
