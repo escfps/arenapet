@@ -155,11 +155,18 @@ function TournamentPage() {
       .order("wins", { ascending: false })
       .limit(50);
     if (cs && cs.length > 0) {
-      const { data: ps } = await supabase
-        .from("profiles")
-        .select("id, username")
-        .in("id", cs.map((c) => c.user_id));
+      const ids = cs.map((c) => c.user_id);
+      const [{ data: ps }, { data: tm }] = await Promise.all([
+        supabase.from("profiles").select("id, username").in("id", ids),
+        supabase.from("monsters").select("owner_id, species, team_position").in("owner_id", ids).eq("in_team", true),
+      ]);
       const nameMap = new Map((ps ?? []).map((p) => [p.id as string, p.username as string]));
+      const teamMap: Record<string, ChampTeamPet[]> = {};
+      (tm ?? []).forEach((row: { owner_id: string; species: string; team_position: number }) => {
+        (teamMap[row.owner_id] ??= []).push({ species: row.species, team_position: row.team_position });
+      });
+      Object.values(teamMap).forEach((arr) => arr.sort((a, b) => a.team_position - b.team_position));
+      setChampTeams(teamMap);
       setChamps(
         cs.map((c) => ({
           user_id: c.user_id as string,
@@ -170,6 +177,7 @@ function TournamentPage() {
       );
     } else {
       setChamps([]);
+      setChampTeams({});
     }
   }
 
