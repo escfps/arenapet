@@ -68,6 +68,23 @@ if (typeof window !== "undefined") {
   window.addEventListener("pointerdown", unlock, { once: true });
   window.addEventListener("keydown", unlock, { once: true });
   window.addEventListener("touchstart", unlock, { once: true });
+
+  // Click global em elementos interativos (botões, links, tabs, etc).
+  window.addEventListener(
+    "pointerdown",
+    (e) => {
+      const target = e.target as HTMLElement | null;
+      if (!target) return;
+      const el = target.closest(
+        'button, a, [role="button"], [role="tab"], [role="menuitem"], input[type="checkbox"], input[type="radio"], summary, label[for]'
+      ) as HTMLElement | null;
+      if (!el) return;
+      if (el.hasAttribute("disabled") || el.getAttribute("aria-disabled") === "true") return;
+      if (el.dataset.noClickSfx === "true") return;
+      playSfx("click");
+    },
+    { capture: true }
+  );
 }
 
 function tone(opts: {
