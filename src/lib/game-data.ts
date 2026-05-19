@@ -361,7 +361,7 @@ export const SPECIES: Record<string, Species> = {
     id: "urso_polar", name: "Urso Polar", element: "water", role: "tank", rarity: "super_rare",
     emoji: "🐻‍❄️❄️", image: ursoPolarImg,
     description: "Urso ártico de pelagem nevada. Cada pata congelada paralisa o inimigo no meio do golpe.",
-    base: { hp: 68, atk: 14, def: 13, spd: 9, int: 12 },
+    base: { hp: 71, atk: 25, def: 12, spd: 13, int: 10 },
     skill: { name: "Toque Glacial", emoji: "❄️", kind: "freeze_strike", cooldown: 4, description: "PASSIVA: ataque básico tem 50% de chance de congelar o alvo por 2 turnos. ATIVA: golpe gélido + 80% de chance de congelar o alvo por 2 turnos." },
   },
 
