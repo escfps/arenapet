@@ -4,6 +4,8 @@ import { toast, Toaster } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
+import { TournamentBattle } from "@/components/TournamentBattle";
+import type { BattleLogEntry } from "@/lib/battle";
 import arenaBg from "@/assets/arena-bg.jpg";
 
 export const Route = createFileRoute("/tournament")({
@@ -13,9 +15,12 @@ export const Route = createFileRoute("/tournament")({
 type Tournament = {
   id: string;
   slot_at: string;
-  status: "open" | "finished";
+  status: "open" | "in_progress" | "finished";
   champion_id: string | null;
   finished_at: string | null;
+  current_round: number;
+  round_started_at: string | null;
+  round_duration_seconds: number;
 };
 
 type Entry = {
@@ -37,6 +42,8 @@ type Match = {
   p2_id: string | null;
   winner_id: string | null;
   score: string | null;
+  status: "pending" | "done";
+  log: BattleLogEntry[] | null;
 };
 
 type ProfileLite = { id: string; username: string; is_bot: boolean };
@@ -58,7 +65,7 @@ function fmtCountdown(ms: number) {
 
 function TournamentPage() {
   const { userId, profile, patch } = useProfile();
-  const [openT, setOpenT] = useState<Tournament | null>(null);
+  const [activeT, setActiveT] = useState<Tournament | null>(null);
   const [lastT, setLastT] = useState<Tournament | null>(null);
   const [entries, setEntries] = useState<Entry[]>([]);
   const [matches, setMatches] = useState<Match[]>([]);
@@ -67,6 +74,7 @@ function TournamentPage() {
   const [joining, setJoining] = useState(false);
   const [now, setNow] = useState(Date.now());
   const [tab, setTab] = useState<"current" | "last" | "leaderboard">("current");
+  const [battleMatch, setBattleMatch] = useState<{ m: Match; mode: "play" | "watch" } | null>(null);
 
   useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 500);
@@ -74,17 +82,18 @@ function TournamentPage() {
   }, []);
 
   async function refresh() {
-    // Próximo torneio aberto
-    const { data: openRows } = await supabase
+    // Active tournament: open or in_progress (prefer in_progress, then open)
+    const { data: actRows } = await supabase
       .from("tournaments")
       .select("*")
-      .eq("status", "open")
+      .in("status", ["open", "in_progress"])
       .order("slot_at", { ascending: true })
-      .limit(1);
-    const open = (openRows?.[0] as Tournament | undefined) ?? null;
-    setOpenT(open);
+      .limit(2);
+    const inProg = (actRows ?? []).find((t) => t.status === "in_progress") as Tournament | undefined;
+    const open = (actRows ?? []).find((t) => t.status === "open") as Tournament | undefined;
+    const active = (inProg ?? open ?? null) as Tournament | null;
+    setActiveT(active);
 
-    // Último finalizado
     const { data: lastRows } = await supabase
       .from("tournaments")
       .select("*")
@@ -94,8 +103,7 @@ function TournamentPage() {
     const last = (lastRows?.[0] as Tournament | undefined) ?? null;
     setLastT(last);
 
-    // Entries e matches dos dois torneios relevantes
-    const ids = [open?.id, last?.id].filter(Boolean) as string[];
+    const ids = [active?.id, last?.id, open?.id].filter(Boolean) as string[];
     if (ids.length > 0) {
       const [{ data: ents }, { data: ms }] = await Promise.all([
         supabase.from("tournament_entries").select("*").in("tournament_id", ids),
@@ -111,6 +119,7 @@ function TournamentPage() {
         if (m.p2_id) userIds.add(m.p2_id);
       });
       if (last?.champion_id) userIds.add(last.champion_id);
+      if (active?.champion_id) userIds.add(active.champion_id);
       if (userIds.size > 0) {
         const { data: ps } = await supabase
           .from("profiles")
@@ -125,7 +134,6 @@ function TournamentPage() {
       setMatches([]);
     }
 
-    // Hall dos campeões
     const { data: cs } = await supabase
       .from("tournament_champions")
       .select("user_id, wins, last_win_at")
@@ -152,36 +160,61 @@ function TournamentPage() {
 
   useEffect(() => {
     refresh();
-    const id = setInterval(refresh, 4000);
+    const id = setInterval(refresh, 3000);
     return () => clearInterval(id);
   }, []);
 
+  // Nudge the server tick when a round timer should have expired
+  useEffect(() => {
+    if (!activeT) return;
+    if (activeT.status !== "in_progress" || !activeT.round_started_at) return;
+    const expires = new Date(activeT.round_started_at).getTime() + activeT.round_duration_seconds * 1000;
+    if (now > expires) {
+      supabase.rpc("tournaments_tick").then(() => refresh());
+    }
+    if (activeT.status === "open") {
+      const closes = new Date(activeT.slot_at).getTime() + 60_000;
+      if (now > closes) supabase.rpc("tournaments_tick").then(() => refresh());
+    }
+  }, [activeT, now]);
 
-  const openSlotMs = openT ? new Date(openT.slot_at).getTime() : 0;
+  // Also nudge when registration window of open tournament closes
+  useEffect(() => {
+    if (!activeT || activeT.status !== "open") return;
+    const closes = new Date(activeT.slot_at).getTime() + 60_000;
+    if (now > closes) supabase.rpc("tournaments_tick").then(() => refresh());
+  }, [activeT, now]);
+
+  const openSlotMs = activeT && activeT.status === "open" ? new Date(activeT.slot_at).getTime() : 0;
   const closesAtMs = openSlotMs + 60_000;
   const closesIn = closesAtMs - now;
   const startsIn = openSlotMs - now;
-  const isRegistering = openT && now >= openSlotMs && now < closesAtMs;
-  const myEntry = openT && userId ? entries.find((e) => e.tournament_id === openT.id && e.user_id === userId) : null;
-  const openEntries = openT ? entries.filter((e) => e.tournament_id === openT.id) : [];
+  const isRegistering = activeT && activeT.status === "open" && now >= openSlotMs && now < closesAtMs;
+  const myEntry = activeT && userId ? entries.find((e) => e.tournament_id === activeT.id && e.user_id === userId) : null;
 
-  async function join() {
-    if (!openT || joining) return;
-    if (!profile || (profile.gems ?? 0) < 1) {
-      toast.error("Você precisa de 1 💎 pra entrar");
-      return;
-    }
-    setJoining(true);
-    const { error } = await supabase.rpc("join_tournament", { p_tournament_id: openT.id });
-    setJoining(false);
-    if (error) {
-      toast.error(error.message ?? "Não foi possível inscrever");
-      return;
-    }
-    patch?.({ gems: (profile.gems ?? 0) - 1 });
-    toast.success("Inscrito na copa! 🏆");
-    void refresh();
-  }
+  const currentRoundMatches = useMemo(() => {
+    if (!activeT || activeT.status !== "in_progress") return [];
+    return matches
+      .filter((m) => m.tournament_id === activeT.id && m.round === activeT.current_round)
+      .sort((a, b) => a.slot - b.slot);
+  }, [activeT, matches]);
+
+  const myCurrentMatch = useMemo(() => {
+    if (!userId) return null;
+    return currentRoundMatches.find((m) => m.p1_id === userId || m.p2_id === userId) ?? null;
+  }, [currentRoundMatches, userId]);
+
+  const myActiveBracket = useMemo(() => {
+    if (!activeT) return null;
+    const ms = matches.filter((m) => m.tournament_id === activeT.id);
+    const grouped: Record<number, Match[]> = {};
+    ms.forEach((m) => {
+      grouped[m.round] = grouped[m.round] ?? [];
+      grouped[m.round].push(m);
+    });
+    Object.values(grouped).forEach((arr) => arr.sort((a, b) => a.slot - b.slot));
+    return grouped;
+  }, [activeT, matches]);
 
   const lastBracket = useMemo(() => {
     if (!lastT) return null;
@@ -195,8 +228,31 @@ function TournamentPage() {
     return grouped;
   }, [lastT, matches]);
 
+  async function join() {
+    if (!activeT || joining) return;
+    if (!profile || (profile.gems ?? 0) < 1) {
+      toast.error("Você precisa de 1 💎 pra entrar");
+      return;
+    }
+    setJoining(true);
+    const { error } = await supabase.rpc("join_tournament", { p_tournament_id: activeT.id });
+    setJoining(false);
+    if (error) {
+      toast.error(error.message ?? "Não foi possível inscrever");
+      return;
+    }
+    patch?.({ gems: (profile.gems ?? 0) - 1 });
+    toast.success("Inscrito na copa! 🏆");
+    void refresh();
+  }
+
   const pName = (id?: string | null) => (id ? profs[id]?.username ?? "…" : "—");
   const pIsBot = (id?: string | null) => (id ? profs[id]?.is_bot ?? false : false);
+
+  const roundEndsAt = activeT?.round_started_at
+    ? new Date(activeT.round_started_at).getTime() + activeT.round_duration_seconds * 1000
+    : 0;
+  const roundTimeLeft = roundEndsAt - now;
 
   if (!profile) {
     return <div className="min-h-screen flex items-center justify-center text-white">Carregando…</div>;
@@ -211,17 +267,26 @@ function TournamentPage() {
         <main className="max-w-5xl mx-auto px-3 py-4 space-y-4">
           <div className="text-center text-white">
             <h1 className="text-3xl font-extrabold drop-shadow-lg">🏆 Copa Pet</h1>
-            <p className="text-sm opacity-80">Torneios de 32 a cada 10 minutos • MD3 até o campeão</p>
+            <p className="text-sm opacity-80">Torneios de 32 a cada 10 minutos • MD3 ao vivo</p>
           </div>
 
-          {/* Tabs */}
+          {/* Trophy banner */}
+          {lastT?.champion_id && (
+            <div className="rounded-2xl bg-gradient-to-r from-yellow-500/35 via-amber-400/40 to-yellow-500/35 border-2 border-yellow-300 px-4 py-3 text-center text-white shadow-lg">
+              <div className="text-3xl">🏆</div>
+              <div className="text-xs opacity-90">Campeão da última copa</div>
+              <div className="text-lg font-extrabold text-yellow-100 drop-shadow">
+                {pName(lastT.champion_id)} {pIsBot(lastT.champion_id) && <span className="text-[10px] opacity-70">(bot)</span>}
+              </div>
+            </div>
+          )}
+
           <div className="flex gap-2 justify-center">
             {([
-              ["current", "📥 Inscrição"],
-              ["last", "📺 Assistir Copa"],
+              ["current", "📥 Copa Atual"],
+              ["last", "🥇 Última Copa"],
               ["leaderboard", "👑 Campeões"],
             ] as const).map(([k, label]) => (
-
               <button
                 key={k}
                 onClick={() => setTab(k)}
@@ -235,15 +300,15 @@ function TournamentPage() {
           </div>
 
           {tab === "current" && (
-            <section className="rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 p-4 text-white">
-              {!openT ? (
+            <section className="rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 p-4 text-white space-y-4">
+              {!activeT ? (
                 <div className="text-center text-sm opacity-80">Carregando próxima copa…</div>
-              ) : (
+              ) : activeT.status === "open" ? (
                 <>
                   <div className="text-center">
                     <div className="text-xs opacity-80">Próxima copa</div>
                     <div className="text-2xl font-extrabold">
-                      {new Date(openT.slot_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
+                      {new Date(activeT.slot_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
                     </div>
                     {isRegistering ? (
                       <div className="mt-2 inline-block px-3 py-1 rounded-full bg-emerald-500/80 text-xs font-extrabold animate-pulse">
@@ -260,11 +325,10 @@ function TournamentPage() {
                     )}
                   </div>
 
-
-                  <div className="mt-4 text-center">
+                  <div className="text-center">
                     {myEntry ? (
                       <div className="px-4 py-2.5 rounded-xl bg-emerald-500/30 border border-emerald-400/60 text-sm font-extrabold">
-                        ✅ Você está inscrito! Aguarde a copa começar.
+                        ✅ Você está inscrito! Assim que fechar, a 1ª rodada começa.
                       </div>
                     ) : isRegistering ? (
                       <button
@@ -279,16 +343,135 @@ function TournamentPage() {
                     )}
                   </div>
 
-                  <div className="mt-4 rounded-xl bg-white/5 p-3 text-xs space-y-1">
+                  <div className="rounded-xl bg-white/5 p-3 text-xs space-y-1">
                     <div>💎 <b>Inscrição:</b> 1 diamante</div>
                     <div>🥇 <b>Campeão</b> ganha: 1 Baú de Ouro</div>
-                    <div>⚔️ Chaveamento sorteado: oitavas → quartas → semis → final, tudo MD3</div>
-                    <div>📺 Acabou sua partida? Vá em <b>Assistir Copa</b> e acompanhe as outras chaves até o fim</div>
+                    <div>⏱️ <b>90 segundos</b> por rodada — quem não jogar perde por W.O.</div>
+                    <div>📺 Terminou sua partida? Assista as outras enquanto a rodada não fecha</div>
+                  </div>
+                </>
+              ) : activeT.status === "in_progress" ? (
+                <>
+                  <div className="text-center">
+                    <div className="text-xs opacity-80">{ROUND_NAMES[activeT.current_round] ?? `Rodada ${activeT.current_round}`}</div>
+                    <div className={`mt-1 inline-block px-4 py-1.5 rounded-full font-extrabold text-lg ${roundTimeLeft > 20000 ? "bg-emerald-500/80" : roundTimeLeft > 0 ? "bg-amber-500/80 animate-pulse" : "bg-red-600/80"}`}>
+                      ⏱️ {fmtCountdown(Math.max(0, roundTimeLeft))}
+                    </div>
                   </div>
 
+                  {myCurrentMatch ? (
+                    myCurrentMatch.status === "pending" ? (
+                      <div className="rounded-xl bg-gradient-to-r from-red-500/30 to-rose-500/30 border-2 border-red-300 p-4 text-center">
+                        <div className="text-sm font-bold mb-2">⚔️ Sua partida está pronta!</div>
+                        <div className="text-xs opacity-90 mb-3">
+                          Vs <b>{myCurrentMatch.p1_id === userId ? pName(myCurrentMatch.p2_id) : pName(myCurrentMatch.p1_id)}</b>
+                          {pIsBot(myCurrentMatch.p1_id === userId ? myCurrentMatch.p2_id : myCurrentMatch.p1_id) && " 🤖"}
+                        </div>
+                        <button
+                          onClick={() => setBattleMatch({ m: myCurrentMatch, mode: "play" })}
+                          className="px-6 py-3 rounded-xl bg-gradient-to-b from-red-500 to-red-700 text-white font-extrabold shadow-xl hover:scale-105 transition"
+                        >
+                          ▶ JOGAR MINHA PARTIDA
+                        </button>
+                      </div>
+                    ) : (
+                      <div className={`rounded-xl border-2 p-3 text-center ${
+                        myCurrentMatch.winner_id === userId
+                          ? "bg-emerald-500/30 border-emerald-400"
+                          : "bg-red-500/30 border-red-400"
+                      }`}>
+                        <div className="text-sm font-extrabold">
+                          {myCurrentMatch.winner_id === userId ? "✅ Você passou de rodada!" : "❌ Você foi eliminado"}
+                        </div>
+                        <div className="text-xs opacity-90">Acompanhe as outras partidas abaixo enquanto a rodada não termina.</div>
+                      </div>
+                    )
+                  ) : (
+                    <div className="rounded-xl bg-white/5 p-3 text-center text-xs opacity-90">
+                      Você não está nesta copa. Assista as partidas em andamento abaixo.
+                    </div>
+                  )}
 
+                  {/* List of round matches */}
+                  <div className="grid sm:grid-cols-2 gap-2">
+                    {currentRoundMatches.map((m) => {
+                      const isMine = m.id === myCurrentMatch?.id;
+                      const winnerName = m.winner_id ? pName(m.winner_id) : null;
+                      return (
+                        <div key={m.id} className={`rounded-xl border p-3 text-xs ${
+                          isMine ? "bg-yellow-400/15 border-yellow-300/70" : "bg-white/10 border-white/20"
+                        }`}>
+                          <div className="flex items-center justify-between gap-2 mb-2">
+                            <div className="font-bold truncate">
+                              <span className={m.winner_id === m.p1_id ? "text-emerald-300" : m.status === "done" ? "opacity-50 line-through" : ""}>
+                                {m.p1_id === userId ? "👤 " : ""}{pName(m.p1_id)}{pIsBot(m.p1_id) && " 🤖"}
+                              </span>
+                              <span className="opacity-60 mx-1">vs</span>
+                              <span className={m.winner_id === m.p2_id ? "text-emerald-300" : m.status === "done" ? "opacity-50 line-through" : ""}>
+                                {m.p2_id === userId ? "👤 " : ""}{pName(m.p2_id)}{pIsBot(m.p2_id) && " 🤖"}
+                              </span>
+                            </div>
+                          </div>
+                          {m.status === "done" ? (
+                            <div className="flex items-center justify-between">
+                              <span className="text-emerald-300 font-bold">🏆 {winnerName}</span>
+                              <button
+                                onClick={() => setBattleMatch({ m, mode: "watch" })}
+                                className="px-2 py-1 rounded bg-white/15 hover:bg-white/25 text-[10px] font-bold"
+                              >
+                                👁 Assistir replay
+                              </button>
+                            </div>
+                          ) : isMine ? (
+                            <button
+                              onClick={() => setBattleMatch({ m, mode: "play" })}
+                              className="w-full px-2 py-1.5 rounded bg-red-500/70 hover:bg-red-500 text-[10px] font-extrabold"
+                            >
+                              ▶ Jogar agora
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => setBattleMatch({ m, mode: "watch" })}
+                              className="w-full px-2 py-1.5 rounded bg-white/15 hover:bg-white/25 text-[10px] font-bold"
+                            >
+                              👁 Assistir ao vivo
+                            </button>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Active bracket */}
+                  {myActiveBracket && (
+                    <div className="overflow-x-auto mt-2">
+                      <div className="flex gap-3 min-w-fit">
+                        {[1, 2, 3, 4].map((r) => (
+                          <div key={r} className="flex-shrink-0 w-44">
+                            <div className="text-[10px] font-extrabold opacity-80 text-center mb-1">{ROUND_NAMES[r]}</div>
+                            <div className="space-y-2" style={{ paddingTop: `${(Math.pow(2, r - 1) - 1) * 18}px` }}>
+                              {(myActiveBracket[r] ?? []).map((m) => {
+                                const w = m.winner_id;
+                                const mine = userId && (m.p1_id === userId || m.p2_id === userId);
+                                return (
+                                  <div key={m.id} className={`rounded-lg p-1.5 text-[10px] space-y-0.5 border ${mine ? "bg-yellow-400/20 border-yellow-300/70 ring-1 ring-yellow-300/60" : "bg-white/10 border-white/20"}`} style={{ marginBottom: `${(Math.pow(2, r) - 1) * 16}px` }}>
+                                    <div className={`flex justify-between gap-1 px-1 py-0.5 rounded ${w === m.p1_id ? "bg-emerald-500/30 font-extrabold" : m.status === "done" ? "opacity-50" : ""}`}>
+                                      <span className="truncate">{pName(m.p1_id)}{pIsBot(m.p1_id) && " 🤖"}</span>
+                                    </div>
+                                    <div className={`flex justify-between gap-1 px-1 py-0.5 rounded ${w === m.p2_id ? "bg-emerald-500/30 font-extrabold" : m.status === "done" ? "opacity-50" : ""}`}>
+                                      <span className="truncate">{pName(m.p2_id)}{pIsBot(m.p2_id) && " 🤖"}</span>
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </>
-              )}
+              ) : null}
             </section>
           )}
 
@@ -302,7 +485,7 @@ function TournamentPage() {
                     <div className="text-xs opacity-80">Copa de {new Date(lastT.slot_at).toLocaleString("pt-BR", { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "2-digit" })}</div>
                     {lastT.champion_id ? (
                       <div className="mt-1 text-xl font-extrabold">
-                        🥇 Campeão: <span className="text-yellow-300">{pName(lastT.champion_id)}</span>
+                        🏆 Campeão: <span className="text-yellow-300">{pName(lastT.champion_id)}</span>
                         {pIsBot(lastT.champion_id) && <span className="ml-1 text-[10px] opacity-70">(bot)</span>}
                       </div>
                     ) : (
@@ -328,11 +511,9 @@ function TournamentPage() {
                                     <div className={`flex justify-between gap-1 px-1 py-0.5 rounded ${w === m.p2_id ? "bg-emerald-500/30 font-extrabold" : "opacity-70"}`}>
                                       <span className="truncate">{m.p2_id === userId ? "👤 " : ""}{pName(m.p2_id)}{pIsBot(m.p2_id) && " 🤖"}</span>
                                     </div>
-                                    <div className="text-center text-[9px] opacity-70">{m.score}</div>
                                   </div>
                                 );
                               })}
-
                             </div>
                           </div>
                         ))}
@@ -363,6 +544,22 @@ function TournamentPage() {
             </section>
           )}
         </main>
+
+        {battleMatch && battleMatch.m.p1_id && battleMatch.m.p2_id && (
+          <TournamentBattle
+            matchId={battleMatch.m.id}
+            p1Id={battleMatch.m.p1_id}
+            p2Id={battleMatch.m.p2_id}
+            p1Name={pName(battleMatch.m.p1_id)}
+            p2Name={pName(battleMatch.m.p2_id)}
+            mode={battleMatch.mode}
+            existingLog={battleMatch.m.log ?? null}
+            existingWinner={battleMatch.m.winner_id}
+            meId={userId}
+            onFinished={() => { void refresh(); }}
+            onClose={() => { setBattleMatch(null); void refresh(); }}
+          />
+        )}
       </div>
     </div>
   );
