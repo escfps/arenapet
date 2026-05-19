@@ -37,7 +37,7 @@ export function HUD({ profile }: { profile: ProfileRow }) {
           <span className="hidden sm:inline text-sm">ARENA PET</span>
         </Link>
         <nav className="flex items-center gap-1 ml-2">
-          <NavLink to="/" label="Pátio" emoji="🏠" />
+          <NavLink to="/" label="Home" emoji="🏠" />
           <NavLink to="/arena" label="Arena" emoji="⚔️" />
           <NavLink to="/tournament" label="Copa" emoji="🏆" />
           <NavLink to="/ranking" label="Ranking" emoji="🏆" />
