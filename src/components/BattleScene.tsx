@@ -394,7 +394,23 @@ export function BattleScene({
             <div className="text-base font-extrabold tracking-wide mt-1">{banner.label}</div>
             {banner.detail && (
               <div className="text-[10px] opacity-90 font-semibold mt-0.5 max-w-[200px]">{banner.detail}</div>
-            )}
+      )}
+
+      {/* Flash centralizado quando muda de turno */}
+      {turnFlash && (
+        <div
+          key={turnFlash.id}
+          className="pointer-events-none absolute inset-0 flex items-center justify-center z-40 animate-fade-in"
+        >
+          <div
+            className="px-8 py-4 rounded-2xl bg-gradient-to-br from-indigo-600 via-purple-600 to-fuchsia-600 border-4 border-white/60 shadow-2xl text-white text-center animate-scale-in"
+            style={{ textShadow: "0 2px 8px rgba(0,0,0,0.8)" }}
+          >
+            <div className="text-xs font-extrabold tracking-[0.3em] opacity-90">TURNO</div>
+            <div className="text-5xl font-black leading-none mt-1">{turnFlash.turn}</div>
+          </div>
+        </div>
+      )}
           </div>
         </div>
       )}
