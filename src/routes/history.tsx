@@ -152,13 +152,16 @@ function HistoryPage() {
                     <div className="text-[11px] opacity-80">{role} • {timeAgo(b.created_at)}</div>
                   </div>
                   <div className="text-right text-xs font-bold text-white">
+                    <div className={won ? "text-emerald-300" : "text-rose-300"}>
+                      {won ? `+${ARENA_WIN_POINTS}` : `-${ARENA_LOSS_POINTS}`} 🏆
+                    </div>
                     {won ? (
                       <>
                         <div className="text-yellow-300">+{b.coins_reward} 🪙</div>
                         <div className="text-cyan-300">+{b.xp_reward} XP</div>
                       </>
                     ) : (
-                      <div className="text-white/60">—</div>
+                      <div className="text-white/50">—</div>
                     )}
                   </div>
                 </button>
