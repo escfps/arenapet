@@ -3,6 +3,7 @@ import type { BattleLogEntry } from "@/lib/battle";
 import { SPECIES, ELEMENT_COLORS, RARITY_INFO, MAX_RANK, skinFilter, totalStats, getSkill } from "@/lib/game-data";
 import type { MonsterRow } from "./MonsterCard";
 import grassBg from "@/assets/battle-grass-bg.jpg";
+import { playSfx } from "@/lib/sound";
 
 type Team = (MonsterRow & { owner_id: string })[];
 type HpMap = Map<string, { cur: number; max: number }>;
@@ -224,6 +225,21 @@ export function BattleScene({
     }
 
     setFx({ actor: actorKey, target: targetKey, dmg: entry.damage, crit: entry.crit, skillFx, targets });
+
+    // ===== Sound FX =====
+    if (entry.damage < 0) {
+      playSfx("heal");
+    } else if (skillFx === "fury" || msg.includes("ATK e -")) {
+      playSfx("buff");
+    } else if (skillFx === "silence" || skillFx === "fire") {
+      playSfx("debuff");
+    } else if (entry.crit) {
+      playSfx("crit");
+    } else if (skillFx && skillFx !== "heal") {
+      playSfx("skill");
+    } else if (entry.damage > 0) {
+      playSfx("hit");
+    }
 
     // ===== Banner de efeito especial =====
     const eff = detectEffect(entry);

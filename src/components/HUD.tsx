@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { CoinBadge, GemBadge, VipBadge } from "./CoinBadge";
+import { SoundControl } from "./SoundControl";
 import { isVip, getTier } from "@/lib/game-data";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -60,6 +61,7 @@ export function HUD({ profile }: { profile: ProfileRow }) {
           </Link>
           <CoinBadge amount={profile.coins} />
           <GemBadge amount={profile.gems} />
+          <SoundControl />
           <button onClick={logout} className="text-[10px] text-white/70 hover:text-white px-1.5">Sair</button>
         </div>
       </div>

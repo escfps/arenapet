@@ -10,6 +10,7 @@ import { BattleScene } from "@/components/BattleScene";
 import { BattleStats } from "@/components/BattleStats";
 import { toast, Toaster } from "sonner";
 import arenaBg from "@/assets/arena-bg.jpg";
+import { playSfx, startMusic, stopMusic } from "@/lib/sound";
 
 export const Route = createFileRoute("/arena")({
   component: ArenaPage,
@@ -72,11 +73,19 @@ function ArenaPage() {
     if (!battleLog || !winner) return;
     if (shownLog.length !== battleLog.length) return;
     setAutoRematch(10);
+    if (winner === "team_a") playSfx("victory");
+    else if (winner === "team_b") playSfx("defeat");
     const interval = setInterval(() => {
       setAutoRematch((v) => (v === null ? null : v - 1));
     }, 1000);
     return () => clearInterval(interval);
   }, [battleLog, winner, shownLog.length]);
+
+  // Trilha ambiente enquanto está na arena
+  useEffect(() => {
+    startMusic();
+    return () => stopMusic();
+  }, []);
 
   // dispara próxima batalha quando o contador zerar
   useEffect(() => {
