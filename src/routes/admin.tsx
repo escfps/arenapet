@@ -53,11 +53,13 @@ function AdminPage() {
   const rankUpFn = useServerFn(adminRankUpPet);
   const addPetFn = useServerFn(adminAddPet);
   const delPetFn = useServerFn(adminDeletePet);
+  const updateProfileFn = useServerFn(adminUpdateProfile);
 
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<ProfileRow[]>([]);
   const [selected, setSelected] = useState<ProfileRow | null>(null);
   const [pets, setPets] = useState<PetRow[]>([]);
+  const [edit, setEdit] = useState<{ username: string; level: number; xp: number; arena_points: number; wins: number; losses: number; coins: number; gems: number } | null>(null);
   const [gems, setGems] = useState(100);
   const [coins, setCoins] = useState(1000);
   const [vipDays, setVipDays] = useState(30);
