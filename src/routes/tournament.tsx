@@ -152,9 +152,10 @@ function TournamentPage() {
 
   useEffect(() => {
     refresh();
-    const id = setInterval(refresh, 15000);
+    const id = setInterval(refresh, 4000);
     return () => clearInterval(id);
   }, []);
+
 
   const openSlotMs = openT ? new Date(openT.slot_at).getTime() : 0;
   const closesAtMs = openSlotMs + 60_000;
@@ -217,9 +218,10 @@ function TournamentPage() {
           <div className="flex gap-2 justify-center">
             {([
               ["current", "📥 Inscrição"],
-              ["last", "🥇 Última Copa"],
+              ["last", "📺 Assistir Copa"],
               ["leaderboard", "👑 Campeões"],
             ] as const).map(([k, label]) => (
+
               <button
                 key={k}
                 onClick={() => setTab(k)}
@@ -278,9 +280,12 @@ function TournamentPage() {
                   </div>
 
                   <div className="mt-4 rounded-xl bg-white/5 p-3 text-xs space-y-1">
-                    <div>🥇 <b>Campeão</b> ganha: 🥇 1 Baú de Ouro</div>
+                    <div>💎 <b>Inscrição:</b> 1 diamante</div>
+                    <div>🥇 <b>Campeão</b> ganha: 1 Baú de Ouro</div>
                     <div>⚔️ Chaveamento sorteado: oitavas → quartas → semis → final, tudo MD3</div>
+                    <div>📺 Acabou sua partida? Vá em <b>Assistir Copa</b> e acompanhe as outras chaves até o fim</div>
                   </div>
+
 
                 </>
               )}
@@ -314,18 +319,20 @@ function TournamentPage() {
                             <div className="space-y-2" style={{ paddingTop: `${(Math.pow(2, r - 1) - 1) * 18}px` }}>
                               {(lastBracket[r] ?? []).map((m) => {
                                 const w = m.winner_id;
+                                const mine = userId && (m.p1_id === userId || m.p2_id === userId);
                                 return (
-                                  <div key={m.id} className="rounded-lg bg-white/10 border border-white/20 p-1.5 text-[10px] space-y-0.5" style={{ marginBottom: `${(Math.pow(2, r) - 1) * 16}px` }}>
+                                  <div key={m.id} className={`rounded-lg p-1.5 text-[10px] space-y-0.5 border ${mine ? "bg-yellow-400/20 border-yellow-300/70 ring-1 ring-yellow-300/60" : "bg-white/10 border-white/20"}`} style={{ marginBottom: `${(Math.pow(2, r) - 1) * 16}px` }}>
                                     <div className={`flex justify-between gap-1 px-1 py-0.5 rounded ${w === m.p1_id ? "bg-emerald-500/30 font-extrabold" : "opacity-70"}`}>
-                                      <span className="truncate">{pName(m.p1_id)}{pIsBot(m.p1_id) && " 🤖"}</span>
+                                      <span className="truncate">{m.p1_id === userId ? "👤 " : ""}{pName(m.p1_id)}{pIsBot(m.p1_id) && " 🤖"}</span>
                                     </div>
                                     <div className={`flex justify-between gap-1 px-1 py-0.5 rounded ${w === m.p2_id ? "bg-emerald-500/30 font-extrabold" : "opacity-70"}`}>
-                                      <span className="truncate">{pName(m.p2_id)}{pIsBot(m.p2_id) && " 🤖"}</span>
+                                      <span className="truncate">{m.p2_id === userId ? "👤 " : ""}{pName(m.p2_id)}{pIsBot(m.p2_id) && " 🤖"}</span>
                                     </div>
                                     <div className="text-center text-[9px] opacity-70">{m.score}</div>
                                   </div>
                                 );
                               })}
+
                             </div>
                           </div>
                         ))}
