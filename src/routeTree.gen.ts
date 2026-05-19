@@ -14,6 +14,7 @@ import { Route as TournamentRouteImport } from './routes/tournament'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as RankingRouteImport } from './routes/ranking'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as PreviewChestRouteImport } from './routes/preview-chest'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HistoryRouteImport } from './routes/history'
 import { Route as ForgeRouteImport } from './routes/forge'
@@ -47,6 +48,11 @@ const RankingRoute = RankingRouteImport.update({
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PreviewChestRoute = PreviewChestRouteImport.update({
+  id: '/preview-chest',
+  path: '/preview-chest',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -104,6 +110,7 @@ export interface FileRoutesByFullPath {
   '/forge': typeof ForgeRoute
   '/history': typeof HistoryRoute
   '/login': typeof LoginRoute
+  '/preview-chest': typeof PreviewChestRoute
   '/profile': typeof ProfileRoute
   '/ranking': typeof RankingRoute
   '/shop': typeof ShopRoute
@@ -120,6 +127,7 @@ export interface FileRoutesByTo {
   '/forge': typeof ForgeRoute
   '/history': typeof HistoryRoute
   '/login': typeof LoginRoute
+  '/preview-chest': typeof PreviewChestRoute
   '/profile': typeof ProfileRoute
   '/ranking': typeof RankingRoute
   '/shop': typeof ShopRoute
@@ -137,6 +145,7 @@ export interface FileRoutesById {
   '/forge': typeof ForgeRoute
   '/history': typeof HistoryRoute
   '/login': typeof LoginRoute
+  '/preview-chest': typeof PreviewChestRoute
   '/profile': typeof ProfileRoute
   '/ranking': typeof RankingRoute
   '/shop': typeof ShopRoute
@@ -155,6 +164,7 @@ export interface FileRouteTypes {
     | '/forge'
     | '/history'
     | '/login'
+    | '/preview-chest'
     | '/profile'
     | '/ranking'
     | '/shop'
@@ -171,6 +181,7 @@ export interface FileRouteTypes {
     | '/forge'
     | '/history'
     | '/login'
+    | '/preview-chest'
     | '/profile'
     | '/ranking'
     | '/shop'
@@ -187,6 +198,7 @@ export interface FileRouteTypes {
     | '/forge'
     | '/history'
     | '/login'
+    | '/preview-chest'
     | '/profile'
     | '/ranking'
     | '/shop'
@@ -204,6 +216,7 @@ export interface RootRouteChildren {
   ForgeRoute: typeof ForgeRoute
   HistoryRoute: typeof HistoryRoute
   LoginRoute: typeof LoginRoute
+  PreviewChestRoute: typeof PreviewChestRoute
   ProfileRoute: typeof ProfileRoute
   RankingRoute: typeof RankingRoute
   ShopRoute: typeof ShopRoute
@@ -247,6 +260,13 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/preview-chest': {
+      id: '/preview-chest'
+      path: '/preview-chest'
+      fullPath: '/preview-chest'
+      preLoaderRoute: typeof PreviewChestRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -324,6 +344,7 @@ const rootRouteChildren: RootRouteChildren = {
   ForgeRoute: ForgeRoute,
   HistoryRoute: HistoryRoute,
   LoginRoute: LoginRoute,
+  PreviewChestRoute: PreviewChestRoute,
   ProfileRoute: ProfileRoute,
   RankingRoute: RankingRoute,
   ShopRoute: ShopRoute,
