@@ -484,6 +484,18 @@ function ArenaLineup({
                 🛡️+{fx.shieldGain}
               </div>
             )}
+            {fx.miss && fx.miss.key === key && (
+              <div
+                key={`arena-miss-${fx.actor}-${key}-${fx.miss.kind}`}
+                className="absolute -top-6 left-1/2 font-black text-2xl pointer-events-none z-30 text-sky-200 italic animate-battle-float"
+                style={{
+                  textShadow: "0 0 10px rgba(125,211,252,.95), 0 2px 4px rgba(0,0,0,.95)",
+                  WebkitTextStroke: "1px rgba(0,0,0,0.7)",
+                }}
+              >
+                {fx.miss.kind === "dodge" ? "💨 ESQUIVOU!" : "😵‍💫 ERROU!"}
+              </div>
+            )}
           </div>
         );
       })}
