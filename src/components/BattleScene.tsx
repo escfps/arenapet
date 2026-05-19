@@ -800,6 +800,16 @@ function SideColumn({
                   {st?.has("silence") && <span className="px-1 rounded bg-violet-500/80 animate-pulse" title="Silenciado">🤐</span>}
                   {st?.has("rage") && <span className="px-1 rounded bg-red-600/80 animate-pulse" title="Em fúria">😡</span>}
                   {st?.has("shield") && <span className="px-1 rounded bg-cyan-500/80 animate-pulse" title="Buff de DEF">✨</span>}
+                  {negraHpBonusPct > 0 && (
+                    <span className="px-1 rounded bg-purple-700/80 animate-pulse" title={`Fênix Negra: +${negraHpBonusPct}% HP máx acumulado`}>
+                      🌑 +{negraHpBonusPct}% HP
+                    </span>
+                  )}
+                  {vermelhaAtkBonusPct > 0 && (
+                    <span className="px-1 rounded bg-red-700/80 animate-pulse" title={`Fênix Vermelha: +${vermelhaAtkBonusPct}% ATK pelo HP perdido`}>
+                      🔥 +{vermelhaAtkBonusPct}% ATK
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
