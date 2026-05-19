@@ -422,6 +422,30 @@ function PatioPage() {
                   ))}
                 </div>
               </div>
+              <div className="space-y-1">
+                <div className="text-white/70 text-[10px] font-extrabold uppercase tracking-wider px-1">Classe</div>
+                <div className="flex flex-wrap gap-1.5">
+                  <button
+                    onClick={() => setRoleFilter("all")}
+                    className={`px-3 py-1 rounded-full text-[11px] font-extrabold transition ${
+                      roleFilter === "all" ? "bg-yellow-400 text-yellow-950" : "bg-white/10 text-white hover:bg-white/20"
+                    }`}
+                  >
+                    Todas
+                  </button>
+                  {ALL_ROLES.map((r) => (
+                    <button
+                      key={r}
+                      onClick={() => setRoleFilter(r)}
+                      className={`px-3 py-1 rounded-full text-[11px] font-extrabold text-white transition ${
+                        roleFilter === r ? `${ROLE_INFO[r].color} ring-2 ring-white` : "bg-white/10 hover:bg-white/20"
+                      }`}
+                    >
+                      {ROLE_INFO[r].emoji} {ROLE_INFO[r].name}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </section>
 
             <section>
