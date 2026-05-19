@@ -25,6 +25,8 @@ type BattleRow = {
   xp_reward: number;
   created_at: string;
   log: unknown;
+  attacker_points_delta?: number | null;
+  defender_points_delta?: number | null;
 };
 
 type OpponentMap = Record<string, { username: string; level: number }>;
