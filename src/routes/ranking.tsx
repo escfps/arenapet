@@ -1,9 +1,12 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
-import { getTier, nextTierProgress, SPECIES, RARITY_INFO, skinFilter } from "@/lib/game-data";
+import { getTier, nextTierProgress, SPECIES, RARITY_INFO, skinFilter, ARENA_WIN_POINTS, ARENA_LOSS_POINTS } from "@/lib/game-data";
+import { getPlayerBattles } from "@/lib/battles.functions";
+import { BattleDetailModal, type BattleRow } from "@/components/BattleDetailModal";
 import arenaBg from "@/assets/arena-bg.jpg";
 
 export const Route = createFileRoute("/ranking")({
