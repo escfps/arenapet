@@ -764,7 +764,7 @@ export function rankStars(rank: number): string {
 
 // Multiplicador global de HP base — aumenta durabilidade pra evitar one-shots
 // quando bots de alto rank encontram pets squishy.
-export const HP_BASE_MULT = 1.6;
+export const HP_BASE_MULT = 2.56;
 
 export function totalStats(species: string, rank = 1, bonus = { hp: 0, atk: 0, def: 0, spd: 0, int: 0 }) {
   const s = SPECIES[species];
