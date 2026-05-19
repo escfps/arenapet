@@ -51,7 +51,7 @@ function LoginPage() {
     setBusy(true);
     try {
       if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email, password,
           options: {
             emailRedirectTo: window.location.origin,
@@ -62,7 +62,14 @@ function LoginPage() {
         if (remember) {
           localStorage.setItem(REMEMBER_KEY, JSON.stringify({ email, password }));
         }
-        toast.success("Conta criada! Verifique seu email para confirmar.");
+        // Se não logou direto (confirmação pendente), tenta login imediato
+        if (!data.session) {
+          const { error: signInErr } = await supabase.auth.signInWithPassword({ email, password });
+          if (signInErr) throw signInErr;
+        }
+        toast.success("Conta criada! Bem-vindo à arena! 🎉");
+        navigate({ to: "/" });
+        return;
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
