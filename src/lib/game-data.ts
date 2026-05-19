@@ -762,6 +762,10 @@ export function rankStars(rank: number): string {
   return "✦".repeat(Math.min(Math.max(rank, 1), MAX_RANK));
 }
 
+// Multiplicador global de HP base — aumenta durabilidade pra evitar one-shots
+// quando bots de alto rank encontram pets squishy.
+export const HP_BASE_MULT = 1.6;
+
 export function totalStats(species: string, rank = 1, bonus = { hp: 0, atk: 0, def: 0, spd: 0, int: 0 }) {
   const s = SPECIES[species];
   if (!s) return { hp: 0, atk: 0, def: 0, spd: 0, int: 0 };
@@ -769,7 +773,7 @@ export function totalStats(species: string, rank = 1, bonus = { hp: 0, atk: 0, d
   const exactBase = species === "borboleta_sonifera" || species === "urso_polar" || species === "lobo_lua_sangrenta";
   if (exactBase) {
     return {
-      hp: Math.round(s.base.hp * r) + (bonus.hp ?? 0),
+      hp: Math.round(s.base.hp * r * HP_BASE_MULT) + (bonus.hp ?? 0),
       atk: Math.round(s.base.atk * r) + (bonus.atk ?? 0),
       def: Math.round(s.base.def * r) + (bonus.def ?? 0),
       spd: Math.round(s.base.spd * r) + (bonus.spd ?? 0),
@@ -778,7 +782,7 @@ export function totalStats(species: string, rank = 1, bonus = { hp: 0, atk: 0, d
   }
   const mult = RARITY_INFO[s.rarity].statMult * r;
   return {
-    hp: Math.round(s.base.hp * mult) + (bonus.hp ?? 0),
+    hp: Math.round(s.base.hp * mult * HP_BASE_MULT) + (bonus.hp ?? 0),
     atk: Math.round(s.base.atk * mult) + (bonus.atk ?? 0),
     def: Math.round(s.base.def * mult) + (bonus.def ?? 0),
     spd: Math.round(s.base.spd * mult) + (bonus.spd ?? 0),
