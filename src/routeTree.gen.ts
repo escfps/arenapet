@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TradeRouteImport } from './routes/trade'
+import { Route as TournamentRouteImport } from './routes/tournament'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as RankingRouteImport } from './routes/ranking'
 import { Route as ProfileRouteImport } from './routes/profile'
@@ -26,6 +27,11 @@ import { Route as MonsterIdRouteImport } from './routes/monster.$id'
 const TradeRoute = TradeRouteImport.update({
   id: '/trade',
   path: '/trade',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TournamentRoute = TournamentRouteImport.update({
+  id: '/tournament',
+  path: '/tournament',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ShopRoute = ShopRouteImport.update({
@@ -101,6 +107,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof ProfileRoute
   '/ranking': typeof RankingRoute
   '/shop': typeof ShopRoute
+  '/tournament': typeof TournamentRoute
   '/trade': typeof TradeRoute
   '/monster/$id': typeof MonsterIdRoute
 }
@@ -116,6 +123,7 @@ export interface FileRoutesByTo {
   '/profile': typeof ProfileRoute
   '/ranking': typeof RankingRoute
   '/shop': typeof ShopRoute
+  '/tournament': typeof TournamentRoute
   '/trade': typeof TradeRoute
   '/monster/$id': typeof MonsterIdRoute
 }
@@ -132,6 +140,7 @@ export interface FileRoutesById {
   '/profile': typeof ProfileRoute
   '/ranking': typeof RankingRoute
   '/shop': typeof ShopRoute
+  '/tournament': typeof TournamentRoute
   '/trade': typeof TradeRoute
   '/monster/$id': typeof MonsterIdRoute
 }
@@ -149,6 +158,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/ranking'
     | '/shop'
+    | '/tournament'
     | '/trade'
     | '/monster/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -164,6 +174,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/ranking'
     | '/shop'
+    | '/tournament'
     | '/trade'
     | '/monster/$id'
   id:
@@ -179,6 +190,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/ranking'
     | '/shop'
+    | '/tournament'
     | '/trade'
     | '/monster/$id'
   fileRoutesById: FileRoutesById
@@ -195,6 +207,7 @@ export interface RootRouteChildren {
   ProfileRoute: typeof ProfileRoute
   RankingRoute: typeof RankingRoute
   ShopRoute: typeof ShopRoute
+  TournamentRoute: typeof TournamentRoute
   TradeRoute: typeof TradeRoute
   MonsterIdRoute: typeof MonsterIdRoute
 }
@@ -206,6 +219,13 @@ declare module '@tanstack/react-router' {
       path: '/trade'
       fullPath: '/trade'
       preLoaderRoute: typeof TradeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tournament': {
+      id: '/tournament'
+      path: '/tournament'
+      fullPath: '/tournament'
+      preLoaderRoute: typeof TournamentRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/shop': {
@@ -307,9 +327,20 @@ const rootRouteChildren: RootRouteChildren = {
   ProfileRoute: ProfileRoute,
   RankingRoute: RankingRoute,
   ShopRoute: ShopRoute,
+  TournamentRoute: TournamentRoute,
   TradeRoute: TradeRoute,
   MonsterIdRoute: MonsterIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
