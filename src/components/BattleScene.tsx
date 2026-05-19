@@ -9,7 +9,8 @@ type Team = (MonsterRow & { owner_id: string })[];
 type HpMap = Map<string, { cur: number; max: number }>;
 type ShieldMap = Map<string, number>;
 type SkillFxKind = "heal" | "bite" | "explosion" | "lightning" | "fire" | "shield" | "slash" | "skull" | "fury" | "silence" | "magic" | "revive" | "true";
-type Fx = { actor: string | null; target: string | null; dmg: number | null; shieldGain: number | null; crit: boolean; skillFx: SkillFxKind | null; targets: string[] };
+type MissLabel = { key: string; kind: "dodge" | "miss" } | null;
+type Fx = { actor: string | null; target: string | null; dmg: number | null; shieldGain: number | null; crit: boolean; skillFx: SkillFxKind | null; targets: string[]; miss: MissLabel };
 type StatusKind = "burn" | "poison" | "bleed" | "blind" | "sleep" | "freeze" | "silence" | "rage" | "shield";
 type StatusMap = Map<string, Set<StatusKind>>;
 type EffectBanner = {
@@ -111,14 +112,14 @@ export function BattleScene({
 
   const [hp, setHp] = useState<HpMap>(initialHp);
   const [shields, setShields] = useState<ShieldMap>(new Map());
-  const [fx, setFx] = useState<Fx>({ actor: null, target: null, dmg: null, shieldGain: null, crit: false, skillFx: null, targets: [] });
+  const [fx, setFx] = useState<Fx>({ actor: null, target: null, dmg: null, shieldGain: null, crit: false, skillFx: null, targets: [], miss: null });
   const [banner, setBanner] = useState<EffectBanner>(null);
   const [statuses, setStatuses] = useState<StatusMap>(new Map());
 
   useEffect(() => {
     setHp(new Map(initialHp));
     setShields(new Map());
-    setFx({ actor: null, target: null, dmg: null, shieldGain: null, crit: false, skillFx: null, targets: [] });
+    setFx({ actor: null, target: null, dmg: null, shieldGain: null, crit: false, skillFx: null, targets: [], miss: null });
     setBanner(null);
     setStatuses(new Map());
   }, [initialHp]);
@@ -229,7 +230,16 @@ export function BattleScene({
     const shieldGain = shieldMatch ? parseInt(shieldMatch[1], 10) : null;
 
     const effectiveTarget = targetKey ?? (shieldGain ? actorKey : null);
-    setFx({ actor: actorKey, target: effectiveTarget, dmg: entry.damage, shieldGain, crit: entry.crit, skillFx, targets });
+
+    // ===== Detecta esquiva / erro de ataque =====
+    let miss: MissLabel = null;
+    if (msg.includes("esquivou") && targetKey) {
+      miss = { key: targetKey, kind: "dodge" };
+    } else if (msg.includes("errou o ataque")) {
+      miss = { key: actorKey, kind: "miss" };
+    }
+
+    setFx({ actor: actorKey, target: effectiveTarget, dmg: entry.damage, shieldGain, crit: entry.crit, skillFx, targets, miss });
 
     // ===== Sound FX =====
     if (entry.damage < 0) {
@@ -278,7 +288,7 @@ export function BattleScene({
     }
 
     const t = setTimeout(
-      () => setFx({ actor: null, target: null, dmg: null, shieldGain: null, crit: false, skillFx: null, targets: [] }),
+      () => setFx({ actor: null, target: null, dmg: null, shieldGain: null, crit: false, skillFx: null, targets: [], miss: null }),
       1400
     );
     const tb = setTimeout(() => setBanner(null), 1100);
@@ -472,6 +482,18 @@ function ArenaLineup({
                 }}
               >
                 🛡️+{fx.shieldGain}
+              </div>
+            )}
+            {fx.miss && fx.miss.key === key && (
+              <div
+                key={`arena-miss-${fx.actor}-${key}-${fx.miss.kind}`}
+                className="absolute -top-6 left-1/2 font-black text-2xl pointer-events-none z-30 text-sky-200 italic animate-battle-float"
+                style={{
+                  textShadow: "0 0 10px rgba(125,211,252,.95), 0 2px 4px rgba(0,0,0,.95)",
+                  WebkitTextStroke: "1px rgba(0,0,0,0.7)",
+                }}
+              >
+                {fx.miss.kind === "dodge" ? "💨 ESQUIVOU!" : "😵‍💫 ERROU!"}
               </div>
             )}
           </div>
@@ -916,6 +938,18 @@ function SideColumn({
                 }}
               >
                 🛡️+{fx.shieldGain}
+              </div>
+            )}
+            {fx.miss && fx.miss.key === key && (
+              <div
+                key={`miss-${fx.actor}-${key}-${fx.miss.kind}`}
+                className="absolute -top-4 left-1/2 font-black text-xl pointer-events-none z-30 text-sky-200 italic animate-battle-float"
+                style={{
+                  textShadow: "0 0 10px rgba(125,211,252,.95), 0 2px 4px rgba(0,0,0,.95)",
+                  WebkitTextStroke: "1px rgba(0,0,0,0.7)",
+                }}
+              >
+                {fx.miss.kind === "dodge" ? "💨 ESQUIVOU!" : "😵‍💫 ERROU!"}
               </div>
             )}
           </div>
