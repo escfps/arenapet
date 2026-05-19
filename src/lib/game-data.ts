@@ -637,6 +637,7 @@ export const CHESTS: Record<ChestTier, Chest> = {
     id: "legendary", name: "Baú Lendário", emoji: "👑",
     description: "Recompensa suprema: épicos, lendários e até míticos!",
     priceGems: 300,
+    priceCoins: 100000,
     coins: [4000, 10000],
     rations: [12, 24],
     gemChance: 1, gems: [80, 150],
