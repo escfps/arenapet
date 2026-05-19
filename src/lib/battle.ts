@@ -229,6 +229,16 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
       // quando alguma skill usa `continue` no meio (substituído por `return`).
       ((): void => {
       if (attacker.current <= 0) return;
+      // tick sleep — dormindo pula o turno inteiro (não age, mas tampouco sofre DoTs novos)
+      if (attacker.sleepTurns > 0) {
+        log.push({
+          turn, actor: side, actorName: attacker.name, targetName: attacker.name,
+          damage: 0, crit: false, effective: 1, remainingHp: attacker.current,
+          message: `💤 ${attacker.name} está dormindo... zzz`,
+        });
+        attacker.sleepTurns -= 1;
+        return;
+      }
       // tick taunt
       if (attacker.tauntTurns > 0) {
         attacker.tauntTurns -= 1;
