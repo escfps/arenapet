@@ -276,9 +276,17 @@ function BattleDetailModal({ battle, userId, onClose }: { battle: BattleRow; use
               <div className="text-xs opacity-80">{new Date(battle.created_at).toLocaleString("pt-BR")} • {turns} turno{turns !== 1 ? "s" : ""}</div>
             </div>
             <div className="text-right text-sm font-bold">
-              <div className={won ? "text-emerald-300" : "text-rose-300"}>
-                {won ? `+${ARENA_WIN_POINTS}` : `-${ARENA_LOSS_POINTS}`} 🏆 pts
-              </div>
+              {(() => {
+                const myDelta = battle.attacker_id === userId
+                  ? (battle.attacker_points_delta ?? (won ? ARENA_WIN_POINTS : -ARENA_LOSS_POINTS))
+                  : (battle.defender_points_delta ?? (won ? ARENA_WIN_POINTS : -ARENA_LOSS_POINTS));
+                const s = myDelta >= 0 ? `+${myDelta}` : `${myDelta}`;
+                return (
+                  <div className={myDelta >= 0 ? "text-emerald-300" : "text-rose-300"}>
+                    {s} 🏆 pts
+                  </div>
+                );
+              })()}
               {won && (
                 <>
                   <div className="text-yellow-300">+{battle.coins_reward} 🪙</div>
