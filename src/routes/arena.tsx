@@ -660,9 +660,9 @@ function ArenaPage() {
                   log={battleLog}
                   step={shownLog.length}
                   playerAName={profile.username}
-                  playerATier={getTier(profile.arena_points ?? 0).name}
+                  playerATier={getTier(profile.arena_points ?? 0).short}
                   playerBName={opponent.ownerName}
-                  playerBTier={getTier(opponent.arenaPoints).name}
+                  playerBTier={getTier(opponent.arenaPoints).short}
                 />
                 {shownLog.length === battleLog.length && winner && (
                   <div className="absolute inset-0 z-30 flex items-center justify-center animate-fade-in">
