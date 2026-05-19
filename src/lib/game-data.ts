@@ -34,6 +34,7 @@ import cobraSangrentaImg from "@/assets/monsters/cobra_sangrenta.png";
 import aguiaCegaImg from "@/assets/monsters/aguia_cega.png";
 import fenixVermelhaImg from "@/assets/monsters/fenix_vermelha.png";
 import fenixNegraImg from "@/assets/monsters/fenix_negra.png";
+import borboletaSoniferaImg from "@/assets/monsters/borboleta_sonifera.png";
 
 export type Element = "fire" | "water" | "grass" | "electric" | "shadow" | "earth";
 export type Role = "tank" | "dps" | "assassin" | "mage" | "healer";
@@ -89,6 +90,7 @@ export type SkillKind =
   | "revive_ally"       // healer — ressuscita um aliado com 30% HP (Zilean)
   | "bleed_dot"         // dps — sangramento físico escala com ATK (Darius)
   | "blind_debuff"      // mago — cega TODOS inimigos: 50% miss em ataques básicos por 3 turnos
+  | "sleep_strike"      // super raro — dano + 50% chance de adormecer alvo / PASSIVA: ataque básico 50% chance de adormecer
   | "true_damage_nuke"  // mítico — dano puro ignora DEF e elemento (Vayne ult)
   | "phoenix_rage"      // mítico — PASSIVA: quanto mais HP perde, mais ATK ganha (até +120%)
   | "phoenix_growth";   // mítico — PASSIVA: cada dano causado vira HP máx + cura temporária na batalha
@@ -345,6 +347,13 @@ export const SPECIES: Record<string, Species> = {
     description: "Víbora ancestral de presas afiadas. Sua mordida provoca hemorragia turno após turno.",
     base: { hp: 50, atk: 15, def: 9, spd: 13, int: 8 },
     skill: { name: "Presa Dilacerante", emoji: "🩸", kind: "bleed_dot", cooldown: 3, description: "Crava as presas no alvo: dano físico agora + sangramento (ATK×0.35) por 3 turnos." },
+  },
+  borboleta_sonifera: {
+    id: "borboleta_sonifera", name: "Borboleta Sonífera", element: "shadow", secondaryElement: "grass", role: "mage", rarity: "super_rare",
+    emoji: "🦋💤", image: borboletaSoniferaImg,
+    description: "Borboleta onírica de asas hipnóticas. Espalha pó do sono que faz qualquer inimigo cair em sono profundo no meio da batalha.",
+    base: { hp: 52, atk: 11, def: 9, spd: 16, int: 22 },
+    skill: { name: "Pó do Sono", emoji: "💤", kind: "sleep_strike", cooldown: 4, description: "PASSIVA: ataque básico tem 50% de chance de adormecer o alvo por 2 turnos. ATIVA: dano mágico no alvo com 80% de chance de adormecê-lo por 2 turnos." },
   },
 
   // ===== ÉPICOS =====
