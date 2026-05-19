@@ -345,7 +345,12 @@ export function BattleScene({
               </div>
             )}
           </div>
-          <div className="text-white font-black text-lg drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">VS</div>
+          <div className="flex flex-col items-center gap-1">
+            <div className="text-white font-black text-lg drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">VS</div>
+            <div className="px-2 py-0.5 rounded-full bg-black/70 border border-white/30 text-white text-[10px] font-extrabold tracking-wider shadow">
+              TURNO {currentTurn}
+            </div>
+          </div>
           <div className="flex flex-col items-end">
             <div className="px-3 py-1 rounded-full bg-black/60 backdrop-blur-sm border border-white/20 text-white font-extrabold text-sm shadow-lg truncate max-w-full">
               {playerBName ?? "Oponente"}
