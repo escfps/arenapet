@@ -756,13 +756,14 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
       const variance = 0.85 + rand() * 0.3;
       const damage = Math.max(1, Math.round(base * eff * variance * (crit ? 1.7 : 1)));
       applyDamage(target, damage);
-      phoenixOnDamageDealt(attacker, damage);
+      const phoenixGrow = phoenixOnDamageDealt(attacker, damage);
 
       let msg = `${attacker.name} atacou ${target.name} causando ${damage} de dano`;
       if (crit) msg += " (CRÍTICO!)";
       if (attacker.role === "mage") msg += " 🔮";
       if (eff > 1) msg += " (super eficaz!)";
       else if (eff < 1) msg += " (pouco eficaz...)";
+      if (phoenixGrow > 0) msg += ` 🌑 (+${phoenixGrow} HP máx)`;
 
       log.push({
         turn, actor: side, actorName: attacker.name, targetName: target.name,
