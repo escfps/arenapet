@@ -405,10 +405,13 @@ function TournamentPage() {
 
                   <div className="rounded-xl bg-white/5 p-3 text-xs space-y-1">
                     <div>💎 <b>Inscrição:</b> 1 diamante</div>
-                    <div>🥇 <b>Campeão</b> ganha: 1 Baú de Ouro</div>
-                    <div>⏱️ <b>90 segundos</b> por rodada — quem não jogar perde por W.O.</div>
+                    <div className="pt-1 font-extrabold text-yellow-200">🏆 Campeão leva:</div>
+                    <div>🪙 1.500 ~ 4.000 moedas • 💎 25 ~ 50 • 🍖 6 ~ 12 rações</div>
+                    <div>🎁 70% de chance de um pet bônus (comum a épico)</div>
+                    <div className="pt-1">⏱️ <b>90 segundos</b> por rodada — quem não jogar perde por W.O.</div>
                     <div>📺 Terminou sua partida? Assista as outras enquanto a rodada não fecha</div>
                   </div>
+
                 </>
               ) : activeT.status === "in_progress" ? (
                 <>
@@ -418,6 +421,16 @@ function TournamentPage() {
                       ⏱️ {fmtCountdown(Math.max(0, roundTimeLeft))}
                     </div>
                   </div>
+
+                  <div className="rounded-xl bg-gradient-to-r from-yellow-500/20 via-amber-400/20 to-yellow-500/20 border border-yellow-300/50 p-3 text-xs space-y-1">
+                    <div className="text-center font-extrabold text-yellow-200 mb-1">🏆 Recompensas do Campeão</div>
+                    <div>🪙 <b>1.500 ~ 4.000</b> moedas</div>
+                    <div>💎 <b>25 ~ 50</b> diamantes</div>
+                    <div>🍖 <b>6 ~ 12</b> rações</div>
+                    <div>🎁 <b>70%</b> de chance de ganhar um pet bônus (comum a épico)</div>
+                  </div>
+
+
 
                   {myCurrentMatch ? (
                     myCurrentMatch.status === "pending" ? (
