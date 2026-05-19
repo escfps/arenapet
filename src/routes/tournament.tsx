@@ -258,16 +258,6 @@ function TournamentPage() {
                     )}
                   </div>
 
-                  <div className="mt-4 grid grid-cols-2 gap-3 text-center">
-                    <div className="rounded-xl bg-white/10 p-3">
-                      <div className="text-2xl font-extrabold">{openEntries.filter((e) => !e.is_bot).length}</div>
-                      <div className="text-[10px] opacity-80">jogadores inscritos</div>
-                    </div>
-                    <div className="rounded-xl bg-white/10 p-3">
-                      <div className="text-2xl font-extrabold">{32 - openEntries.length}</div>
-                      <div className="text-[10px] opacity-80">vagas (preenchidas por bots)</div>
-                    </div>
-                  </div>
 
                   <div className="mt-4 text-center">
                     {myEntry ? (
@@ -288,10 +278,10 @@ function TournamentPage() {
                   </div>
 
                   <div className="mt-4 rounded-xl bg-white/5 p-3 text-xs space-y-1">
-                    <div>🥇 <b>Campeão</b> ganha: 🪙 5.000 + 💎 80 + 🍖 10 rações + 🎁 1 pet raro/super raro/épico</div>
-                    <div>🤖 Bots completam os 32 grátis assim que as inscrições fecham</div>
+                    <div>🥇 <b>Campeão</b> ganha: 🥇 1 Baú de Ouro</div>
                     <div>⚔️ Chaveamento sorteado: oitavas → quartas → semis → final, tudo MD3</div>
                   </div>
+
                 </>
               )}
             </section>
