@@ -616,6 +616,7 @@ function ArenaPage() {
       style={{ backgroundImage: `linear-gradient(rgba(20,5,50,0.6),rgba(20,5,50,0.8)),url(${arenaBg})` }}
     >
       <Toaster position="top-center" richColors />
+      <ChestRewardPopup queue={chestQueue} onConsume={(id) => setChestQueue((q) => q.filter((c) => c.id !== id))} />
       <HUD profile={profile} />
 
       <div className="max-w-4xl mx-auto px-4 mt-4 space-y-4">
