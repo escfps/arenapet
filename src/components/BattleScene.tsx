@@ -279,7 +279,7 @@ export function BattleScene({
 
     const t = setTimeout(
       () => setFx({ actor: null, target: null, dmg: null, shieldGain: null, crit: false, skillFx: null, targets: [] }),
-      900
+      1400
     );
     const tb = setTimeout(() => setBanner(null), 1100);
     return () => {
