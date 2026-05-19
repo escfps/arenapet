@@ -248,7 +248,7 @@ function ShopPage() {
                           onClick={() => openChest(c.id, "coins")}
                           className="w-full py-2 rounded-xl bg-gradient-to-b from-yellow-400 to-amber-500 text-yellow-950 font-extrabold hover:scale-105 transition"
                         >
-                          Abrir por 🪙 {c.priceCoins}
+                          Abrir por 🪙 {c.priceCoins.toLocaleString("pt-BR")}
                         </button>
                       )}
                       {c.priceGems != null && (
@@ -256,7 +256,7 @@ function ShopPage() {
                           onClick={() => openChest(c.id, "gems")}
                           className="w-full py-2 rounded-xl bg-gradient-to-b from-fuchsia-400 to-violet-500 text-white font-extrabold hover:scale-105 transition"
                         >
-                          Abrir por 💎 {c.priceGems}
+                          Abrir por 💎 {c.priceGems.toLocaleString("pt-BR")}
                         </button>
                       )}
                     </div>
