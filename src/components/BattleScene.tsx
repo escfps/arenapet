@@ -304,8 +304,8 @@ export function BattleScene({
       {/* === Cards (status) em cima === */}
       <div className="relative px-4 pt-3 pb-2 bg-gradient-to-b from-black/50 to-transparent">
         <div className="grid grid-cols-2 gap-3">
-          <SideColumn team={teamA} side="a" hp={hp} shields={shields} fx={fx} statuses={statuses} />
-          <SideColumn team={teamB} side="b" hp={hp} shields={shields} fx={fx} statuses={statuses} mirrored />
+          <SideColumn team={teamA} side="a" hp={hp} baseHp={initialHp} shields={shields} fx={fx} statuses={statuses} />
+          <SideColumn team={teamB} side="b" hp={hp} baseHp={initialHp} shields={shields} fx={fx} statuses={statuses} mirrored />
         </div>
       </div>
 
