@@ -406,7 +406,7 @@ function TournamentPage() {
                   <div className="rounded-xl bg-white/5 p-3 text-xs space-y-1">
                     <div>💎 <b>Inscrição:</b> 1 diamante</div>
                     <div className="pt-1 font-extrabold text-yellow-200">🏆 Campeão leva:</div>
-                    <div>🪙 1.500 ~ 4.000 moedas • 💎 25 ~ 50 • 🍖 6 ~ 12 rações</div>
+                    <div>🪙 1.500 ~ 4.000 moedas • 💎 10 ~ 25 • 🍖 6 ~ 12 rações</div>
                     <div>🎁 70% de chance de um pet bônus (comum a épico)</div>
                     <div className="pt-1">⏱️ <b>90 segundos</b> por rodada — quem não jogar perde por W.O.</div>
                     <div>📺 Terminou sua partida? Assista as outras enquanto a rodada não fecha</div>
