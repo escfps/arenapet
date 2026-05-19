@@ -11,6 +11,7 @@ import { BattleStats } from "@/components/BattleStats";
 import { toast, Toaster } from "sonner";
 import arenaBg from "@/assets/arena-bg.jpg";
 import { playSfx, startMusic, stopMusic } from "@/lib/sound";
+import { ChestRewardPopup, type PendingChest } from "@/components/ChestRewardPopup";
 
 export const Route = createFileRoute("/arena")({
   component: ArenaPage,
