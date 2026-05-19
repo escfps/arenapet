@@ -612,36 +612,37 @@ export const CHESTS: Record<ChestTier, Chest> = {
   },
   silver: {
     id: "silver", name: "Baú de Prata", emoji: "🥈",
-    description: "Bom equilíbrio de recursos. Pet comum garantido.",
+    description: "Bom equilíbrio de recursos. Chance de pet raro.",
     priceGems: 30,
     coins: [500, 1500],
     rations: [3, 6],
     gemChance: 1, gems: [5, 15],
     petChance: 1,
-    petRarityWeights: { common: 100 },
+    petRarityWeights: { common: 80, rare: 20 },
   },
   gold: {
     id: "gold", name: "Baú de Ouro", emoji: "🥇",
-    description: "Recursos fortes e pet garantido (chance de raro).",
+    description: "Pets fortes garantidos: raros, super raros e épicos.",
     priceGems: 100,
     priceCoins: 5000,
     coins: [1500, 4000],
     rations: [6, 12],
     gemChance: 1, gems: [3, 5],
     petChance: 1,
-    petRarityWeights: { common: 80, rare: 20 },
+    petRarityWeights: { rare: 55, super_rare: 35, epic: 10 },
   },
 
   legendary: {
     id: "legendary", name: "Baú Lendário", emoji: "👑",
-    description: "Recompensa suprema. Pet garantido, pode cair até mítico!",
+    description: "Recompensa suprema: épicos, lendários e até míticos!",
     priceGems: 300,
     coins: [4000, 10000],
     rations: [12, 24],
     gemChance: 1, gems: [80, 150],
     petChance: 1,
-    petRarityWeights: { rare: 40, super_rare: 35, epic: 18, legendary: 6, mythic: 1 },
+    petRarityWeights: { epic: 30, legendary: 55, mythic: 15 },
   },
+
 
 };
 
