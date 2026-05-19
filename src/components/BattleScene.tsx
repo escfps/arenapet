@@ -35,6 +35,8 @@ function detectEffect(entry: BattleLogEntry): EffectBanner {
     return { id: mkId, emoji: "🔥", label: "QUEIMADURA", detail: "Dano por 3 turnos aplicado", color: "from-orange-500 to-red-700" };
   if (m.includes("sofreu") && m.includes("queimadura"))
     return { id: mkId, emoji: "🔥", label: "DoT", detail: `Queimadura: ${entry.damage} de dano`, color: "from-amber-500 to-orange-700" };
+  if (m.includes("adormeceu") || m.includes("Pó do Sono"))
+    return { id: mkId, emoji: "💤", label: "PÓ DO SONO", detail: "Alvo dormiu — pula o próximo turno", color: "from-indigo-500 to-purple-800" };
   if (m.includes("silenciou") || m.includes("silencia"))
     return { id: mkId, emoji: "🤐", label: "SILÊNCIO", detail: "Próxima skill do alvo anulada", color: "from-violet-600 to-purple-900" };
   if (m.includes("roubou"))
