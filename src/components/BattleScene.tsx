@@ -128,6 +128,10 @@ export function BattleScene({
     const targetKey =
       entry.targetName === "todos os aliados" ? null : `${targetSide}:${entry.targetName}`;
 
+    // Fênix Negra: parse "+X HP máx" para crescer o max do atacante
+    const growMatch = entry.message.match(/\+(\d+)\s*HP máx/);
+    const phoenixGrow = growMatch ? parseInt(growMatch[1], 10) : 0;
+
     setHp((prev) => {
       const next = new Map(prev);
       if (entry.targetName === "todos os aliados") {
@@ -146,6 +150,14 @@ export function BattleScene({
           } else if (entry.damage < 0) {
             next.set(targetKey, { ...cur, cur: Math.min(cur.max, cur.cur + -entry.damage) });
           }
+        }
+      }
+      // Aplica o crescimento da Fênix Negra ao atacante
+      if (phoenixGrow > 0) {
+        const a = next.get(actorKey);
+        if (a) {
+          const newMax = a.max + phoenixGrow;
+          next.set(actorKey, { cur: Math.min(newMax, a.cur + phoenixGrow), max: newMax });
         }
       }
       return next;
@@ -292,8 +304,8 @@ export function BattleScene({
       {/* === Cards (status) em cima === */}
       <div className="relative px-4 pt-3 pb-2 bg-gradient-to-b from-black/50 to-transparent">
         <div className="grid grid-cols-2 gap-3">
-          <SideColumn team={teamA} side="a" hp={hp} shields={shields} fx={fx} statuses={statuses} />
-          <SideColumn team={teamB} side="b" hp={hp} shields={shields} fx={fx} statuses={statuses} mirrored />
+          <SideColumn team={teamA} side="a" hp={hp} baseHp={initialHp} shields={shields} fx={fx} statuses={statuses} />
+          <SideColumn team={teamB} side="b" hp={hp} baseHp={initialHp} shields={shields} fx={fx} statuses={statuses} mirrored />
         </div>
       </div>
 
@@ -693,6 +705,7 @@ function SideColumn({
   team,
   side,
   hp,
+  baseHp,
   shields,
   fx,
   statuses,
@@ -701,6 +714,7 @@ function SideColumn({
   team: Team;
   side: "a" | "b";
   hp: HpMap;
+  baseHp: HpMap;
   shields: ShieldMap;
   fx: Fx;
   statuses: StatusMap;
@@ -714,6 +728,7 @@ function SideColumn({
         if (!sp) return null;
         const key = `${side}:${m.name}`;
         const h = hp.get(key) ?? { cur: 0, max: 1 };
+        const base = baseHp.get(key)?.max ?? h.max;
         const pct = Math.max(0, Math.min(100, (h.cur / h.max) * 100));
         const shield = shields.get(key) ?? 0;
         const shieldPct = Math.max(0, Math.min(100, (shield / h.max) * 100));
@@ -728,6 +743,13 @@ function SideColumn({
             ? "from-yellow-400 to-orange-500"
             : "from-red-500 to-rose-600";
         const st = statuses.get(key);
+        // Bônus passivos das Fênix
+        const negraHpBonusPct = m.species === "fenix_negra" && base > 0
+          ? Math.round(((h.max - base) / base) * 100)
+          : 0;
+        const vermelhaAtkBonusPct = m.species === "fenix_vermelha" && !dead && base > 0
+          ? Math.min(60, Math.round((1 - h.cur / base) * 60))
+          : 0;
         return (
           <div
             key={m.id}
@@ -778,6 +800,16 @@ function SideColumn({
                   {st?.has("silence") && <span className="px-1 rounded bg-violet-500/80 animate-pulse" title="Silenciado">🤐</span>}
                   {st?.has("rage") && <span className="px-1 rounded bg-red-600/80 animate-pulse" title="Em fúria">😡</span>}
                   {st?.has("shield") && <span className="px-1 rounded bg-cyan-500/80 animate-pulse" title="Buff de DEF">✨</span>}
+                  {negraHpBonusPct > 0 && (
+                    <span className="px-1 rounded bg-purple-700/80 animate-pulse" title={`Fênix Negra: +${negraHpBonusPct}% HP máx acumulado`}>
+                      🌑 +{negraHpBonusPct}% HP
+                    </span>
+                  )}
+                  {vermelhaAtkBonusPct > 0 && (
+                    <span className="px-1 rounded bg-red-700/80 animate-pulse" title={`Fênix Vermelha: +${vermelhaAtkBonusPct}% ATK pelo HP perdido`}>
+                      🔥 +{vermelhaAtkBonusPct}% ATK
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
