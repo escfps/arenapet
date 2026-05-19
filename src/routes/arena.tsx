@@ -65,6 +65,18 @@ function ArenaPage() {
   const [rewards, setRewards] = useState<{ coins: number; xp: number; points: number; oldPoints: number; newPoints: number; promoMsg?: string; promoBefore?: PromoSeries | null; promoAfter?: PromoSeries | null } | null>(null);
   const [shownLog, setShownLog] = useState<BattleLogEntry[]>([]);
   const [promo, setPromo] = useState<PromoSeries | null>(null);
+  const [autoRematch, setAutoRematch] = useState<number | null>(null);
+
+  // auto rematch: começa countdown de 10s quando a batalha termina
+  useEffect(() => {
+    if (!battleLog || !winner) return;
+    if (shownLog.length !== battleLog.length) return;
+    setAutoRematch(10);
+    const interval = setInterval(() => {
+      setAutoRematch((v) => (v === null ? null : v - 1));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [battleLog, winner, shownLog.length]);
 
   // load promo from localStorage
   useEffect(() => {
