@@ -836,6 +836,13 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
         frozenByPassive = true;
       }
 
+      // PASSIVA Lobo da Lua Sangrenta: cura 30% do dano causado a cada ataque básico
+      let lifestealHealed = 0;
+      if (attacker.species === "lobo_lua_sangrenta" && damage > 0) {
+        lifestealHealed = Math.round(damage * 0.3);
+        attacker.current = Math.min(attacker.maxHp, attacker.current + lifestealHealed);
+      }
+
       let msg = `${attacker.name} atacou ${target.name} causando ${damage} de dano`;
       if (crit) msg += " (CRÍTICO!)";
       if (attacker.role === "mage") msg += " 🔮";
@@ -844,6 +851,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
       if (phoenixGrow > 0) msg += ` 🌑 (+${phoenixGrow} HP máx)`;
       if (sleptByPassive) msg += ` 💤 ${target.name} adormeceu por 2 turnos!`;
       if (frozenByPassive) msg += ` ❄️ ${target.name} congelou por 2 turnos!`;
+      if (lifestealHealed > 0) msg += ` 🩸 (+${lifestealHealed} HP roubado)`;
 
       log.push({
         turn, actor: side, actorName: attacker.name, targetName: target.name,
