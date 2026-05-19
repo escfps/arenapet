@@ -611,7 +611,7 @@ function TournamentPage() {
 
         {celebrated && (
           <ChampionCelebration
-            championName={pName(celebrated.champion_id)}
+            championName={celebrated.champion_id === userId ? (profile?.username ?? "Você") : pName(celebrated.champion_id)}
             reward={celebrated.champion_reward}
             onClose={() => {
               if (typeof window !== "undefined") {
