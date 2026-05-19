@@ -468,29 +468,70 @@ function PatioPage() {
             </section>
       </div>
 
-      {slotPicker !== null && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in" onClick={() => setSlotPicker(null)}>
+      {slotPicker !== null && (() => {
+        const q = pickerSearch.trim().toLowerCase();
+        const available = monsters.filter((m) => !m.in_team).filter((m) => {
+          const sp = SPECIES[m.species];
+          if (!sp) return true;
+          if (pickerRarity !== "all" && sp.rarity !== pickerRarity) return false;
+          if (pickerElement !== "all" && sp.element !== pickerElement && sp.secondaryElement !== pickerElement) return false;
+          if (q && !m.name.toLowerCase().includes(q) && !sp.name.toLowerCase().includes(q)) return false;
+          return true;
+        });
+        const closePicker = () => { setSlotPicker(null); setPickerSearch(""); setPickerRarity("all"); setPickerElement("all"); };
+        return (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in" onClick={closePicker}>
           <div className="max-w-3xl w-full max-h-[85vh] overflow-y-auto rounded-3xl bg-gradient-to-br from-slate-900 to-slate-800 border-2 border-white/20 shadow-2xl p-5 text-white animate-in zoom-in" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-3">
               <h2 className="text-xl font-extrabold">⚔️ Pet pra {PILLS[slotPicker]}</h2>
-              <button onClick={() => setSlotPicker(null)} className="text-white/70 hover:text-white text-2xl leading-none">×</button>
+              <button onClick={closePicker} className="text-white/70 hover:text-white text-2xl leading-none">×</button>
             </div>
-            {monsters.filter((m) => !m.in_team).length === 0 ? (
-              <p className="text-center text-white/60 py-6 text-sm">Todos os seus pets já estão no time.</p>
+
+            <div className="space-y-2 mb-4">
+              <input
+                type="text"
+                value={pickerSearch}
+                onChange={(e) => setPickerSearch(e.target.value)}
+                placeholder="🔍 Buscar pelo nome..."
+                className="w-full px-4 py-2 rounded-full bg-white/10 text-white placeholder-white/50 text-sm font-bold border border-white/20 focus:outline-none focus:border-yellow-400"
+              />
+              <div className="flex flex-wrap gap-1.5">
+                <button onClick={() => setPickerRarity("all")} className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold transition ${pickerRarity === "all" ? "bg-yellow-400 text-yellow-950" : "bg-white/10 text-white hover:bg-white/20"}`}>Todas</button>
+                {ALL_RARITIES.map((r) => (
+                  <button key={r} onClick={() => setPickerRarity(r)} className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold transition ${pickerRarity === r ? `${RARITY_INFO[r].color} ring-2 ${RARITY_INFO[r].ringColor}` : "bg-white/10 text-white hover:bg-white/20"}`}>
+                    {RARITY_INFO[r].emoji} {RARITY_INFO[r].name}
+                  </button>
+                ))}
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                <button onClick={() => setPickerElement("all")} className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold transition ${pickerElement === "all" ? "bg-yellow-400 text-yellow-950" : "bg-white/10 text-white hover:bg-white/20"}`}>Todos</button>
+                {ALL_ELEMENTS.map((el) => (
+                  <button key={el} onClick={() => setPickerElement(el)} className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold text-white transition bg-gradient-to-r ${ELEMENT_COLORS[el]} ${pickerElement === el ? "ring-2 ring-white" : "opacity-60 hover:opacity-100"}`}>
+                    {ELEMENT_NAMES[el]}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {available.length === 0 ? (
+              <p className="text-center text-white/60 py-6 text-sm">
+                {monsters.filter((m) => !m.in_team).length === 0 ? "Todos os seus pets já estão no time." : "Nenhum pet encontrado com esses filtros."}
+              </p>
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                {monsters.filter((m) => !m.in_team).map((m) => (
+                {available.map((m) => (
                   <MonsterCard
                     key={m.id}
                     monster={m}
-                    onClick={async () => { await setSlot(m, slotPicker); setSlotPicker(null); }}
+                    onClick={async () => { await setSlot(m, slotPicker); closePicker(); }}
                   />
                 ))}
               </div>
             )}
           </div>
         </div>
-      )}
+        );
+      })()}
 
       {groupModal && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in" onClick={() => setGroupModal(null)}>
