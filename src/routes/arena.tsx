@@ -291,9 +291,9 @@ function ArenaPage() {
       return;
     }
     const chosen = ownerList[Math.floor(Math.random() * ownerList.length)];
-    // grava nos recentes (mantém últimos 70 — evita cair no mesmo oponente por ~70 partidas)
+    // grava nos recentes (mantém últimos 75 — evita cair no mesmo oponente por ~75 partidas)
     try {
-      const updated = [chosen, ...recent.filter((id) => id !== chosen)].slice(0, 70);
+      const updated = [chosen, ...recent.filter((id) => id !== chosen)].slice(0, 75);
       localStorage.setItem(recentKey, JSON.stringify(updated));
     } catch { /* ignore */ }
     const chosenOpp = { ownerId: chosen, ownerName: byOwner[chosen].username, arenaPoints: byOwner[chosen].arenaPoints, team: byOwner[chosen].team.slice(0, 3) };
