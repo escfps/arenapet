@@ -389,6 +389,13 @@ export const SPECIES: Record<string, Species> = {
     base: { hp: 55, atk: 18, def: 9, spd: 22, int: 10 },
     skill: { name: "Visão Ofuscante", emoji: "😵‍💫", kind: "blind_debuff", cooldown: 4, description: "Mergulha solta um clarão dourado: dano agora + cega TODOS os inimigos por 3 turnos (50% de chance de errar ataques básicos)." },
   },
+  lobo_lua_sangrenta: {
+    id: "lobo_lua_sangrenta", name: "Lobo da Lua Sangrenta", element: "shadow", secondaryElement: "fire", role: "assassin", rarity: "epic",
+    emoji: "🐺", image: loboLuaSangrentaImg,
+    description: "Predador noturno banhado pela lua escarlate. Cada mordida drena a essência vital do inimigo.",
+    base: { hp: 75, atk: 25, def: 15, spd: 22, int: 15 },
+    skill: { name: "Mordida da Lua Sangrenta", emoji: "🩸", kind: "lifesteal_strike", cooldown: 3, description: "PASSIVA: todo ataque básico cura o lobo em 30% do dano causado. ATIVA: mordida brutal (2× dano) que cura 50% do dano causado." },
+  },
 
 
   // ===== MÍTICOS =====
