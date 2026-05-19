@@ -230,7 +230,16 @@ export function BattleScene({
     const shieldGain = shieldMatch ? parseInt(shieldMatch[1], 10) : null;
 
     const effectiveTarget = targetKey ?? (shieldGain ? actorKey : null);
-    setFx({ actor: actorKey, target: effectiveTarget, dmg: entry.damage, shieldGain, crit: entry.crit, skillFx, targets });
+
+    // ===== Detecta esquiva / erro de ataque =====
+    let miss: MissLabel = null;
+    if (msg.includes("esquivou") && targetKey) {
+      miss = { key: targetKey, kind: "dodge" };
+    } else if (msg.includes("errou o ataque")) {
+      miss = { key: actorKey, kind: "miss" };
+    }
+
+    setFx({ actor: actorKey, target: effectiveTarget, dmg: entry.damage, shieldGain, crit: entry.crit, skillFx, targets, miss });
 
     // ===== Sound FX =====
     if (entry.damage < 0) {
