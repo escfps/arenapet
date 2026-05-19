@@ -540,6 +540,14 @@ function PatioPage() {
                   </button>
                 ))}
               </div>
+              <div className="flex flex-wrap gap-1.5">
+                <button onClick={() => setPickerRole("all")} className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold transition ${pickerRole === "all" ? "bg-yellow-400 text-yellow-950" : "bg-white/10 text-white hover:bg-white/20"}`}>Todas</button>
+                {ALL_ROLES.map((r) => (
+                  <button key={r} onClick={() => setPickerRole(r)} className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold text-white transition ${pickerRole === r ? `${ROLE_INFO[r].color} ring-2 ring-white` : "bg-white/10 hover:bg-white/20"}`}>
+                    {ROLE_INFO[r].emoji} {ROLE_INFO[r].name}
+                  </button>
+                ))}
+              </div>
             </div>
 
             {available.length === 0 ? (
