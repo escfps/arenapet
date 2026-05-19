@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
+import { ARENA_WIN_POINTS, ARENA_LOSS_POINTS } from "@/lib/game-data";
 import arenaBg from "@/assets/arena-bg.jpg";
 
 export const Route = createFileRoute("/history")({
@@ -151,13 +152,16 @@ function HistoryPage() {
                     <div className="text-[11px] opacity-80">{role} • {timeAgo(b.created_at)}</div>
                   </div>
                   <div className="text-right text-xs font-bold text-white">
+                    <div className={won ? "text-emerald-300" : "text-rose-300"}>
+                      {won ? `+${ARENA_WIN_POINTS}` : `-${ARENA_LOSS_POINTS}`} 🏆
+                    </div>
                     {won ? (
                       <>
                         <div className="text-yellow-300">+{b.coins_reward} 🪙</div>
                         <div className="text-cyan-300">+{b.xp_reward} XP</div>
                       </>
                     ) : (
-                      <div className="text-white/60">—</div>
+                      <div className="text-white/50">—</div>
                     )}
                   </div>
                 </button>
@@ -263,12 +267,17 @@ function BattleDetailModal({ battle, userId, onClose }: { battle: BattleRow; use
               <div className="text-2xl font-black">{won ? "🏆 Vitória" : "💀 Derrota"}</div>
               <div className="text-xs opacity-80">{new Date(battle.created_at).toLocaleString("pt-BR")} • {turns} turno{turns !== 1 ? "s" : ""}</div>
             </div>
-            {won && (
-              <div className="text-right text-sm font-bold">
-                <div className="text-yellow-300">+{battle.coins_reward} 🪙</div>
-                <div className="text-cyan-300">+{battle.xp_reward} XP</div>
+            <div className="text-right text-sm font-bold">
+              <div className={won ? "text-emerald-300" : "text-rose-300"}>
+                {won ? `+${ARENA_WIN_POINTS}` : `-${ARENA_LOSS_POINTS}`} 🏆 pts
               </div>
-            )}
+              {won && (
+                <>
+                  <div className="text-yellow-300">+{battle.coins_reward} 🪙</div>
+                  <div className="text-cyan-300">+{battle.xp_reward} XP</div>
+                </>
+              )}
+            </div>
           </div>
           <div className="grid grid-cols-3 gap-2 mt-3 text-center">
             <div className="bg-black/40 rounded-lg py-1.5">
