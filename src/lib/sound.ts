@@ -185,6 +185,7 @@ const CHORDS: number[][] = [
 function playChord(freqs: number[], duration: number) {
   const c = ensureCtx();
   if (!c || !musicGain) return;
+  const mg = musicGain;
   const now = c.currentTime;
   freqs.forEach((f, i) => {
     const osc = c.createOscillator();
@@ -196,11 +197,10 @@ function playChord(freqs: number[], duration: number) {
     g.gain.linearRampToValueAtTime(0.14, now + duration - 0.6);
     g.gain.linearRampToValueAtTime(0, now + duration);
     osc.connect(g);
-    g.connect(musicGain);
+    g.connect(mg);
     osc.start(now);
     osc.stop(now + duration + 0.05);
   });
-  // melodia simples por cima
   const lead = c.createOscillator();
   const lg = c.createGain();
   lead.type = "sine";
@@ -209,7 +209,7 @@ function playChord(freqs: number[], duration: number) {
   lg.gain.linearRampToValueAtTime(0.06, now + 0.4);
   lg.gain.linearRampToValueAtTime(0, now + duration);
   lead.connect(lg);
-  lg.connect(musicGain);
+  lg.connect(mg);
   lead.start(now + 0.2);
   lead.stop(now + duration);
 }
