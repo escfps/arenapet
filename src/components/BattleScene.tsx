@@ -428,10 +428,23 @@ function ArenaLineup({
             {isTarget && fx.dmg !== null && fx.dmg !== 0 && (
               <div
                 key={`arena-${fx.actor}-${fx.target}-${fx.dmg}`}
-                className={`absolute -top-3 left-1/2 -translate-x-1/2 font-extrabold text-2xl pointer-events-none animate-battle-float ${
-                  fx.dmg < 0 ? "text-green-300" : fx.crit ? "text-yellow-300" : "text-red-300"
+                className={`absolute -top-6 left-1/2 font-black pointer-events-none z-30 ${
+                  fx.crit ? "text-4xl animate-battle-float-crit" : "text-3xl animate-battle-float"
+                } ${
+                  fx.dmg < 0
+                    ? "text-emerald-300"
+                    : fx.crit
+                    ? "text-yellow-300"
+                    : "text-red-400"
                 }`}
-                style={{ textShadow: "0 2px 4px rgba(0,0,0,0.9)" }}
+                style={{
+                  textShadow: fx.dmg < 0
+                    ? "0 0 8px rgba(16,185,129,.9), 0 2px 4px rgba(0,0,0,.95)"
+                    : fx.crit
+                    ? "0 0 10px rgba(250,204,21,1), 0 0 18px rgba(239,68,68,.8), 0 2px 4px rgba(0,0,0,.95)"
+                    : "0 0 8px rgba(239,68,68,.9), 0 2px 4px rgba(0,0,0,.95)",
+                  WebkitTextStroke: "1px rgba(0,0,0,0.7)",
+                }}
               >
                 {fx.dmg < 0 ? `+${-fx.dmg}` : `-${fx.dmg}`}
                 {fx.crit ? "!" : ""}
