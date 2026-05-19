@@ -36,6 +36,7 @@ function RankingPage() {
   const { profile, loading } = useProfile();
   const [rows, setRows] = useState<Row[]>([]);
   const [myRank, setMyRank] = useState<number | null>(null);
+  const [historyOf, setHistoryOf] = useState<Row | null>(null);
 
   useEffect(() => {
     async function load() {
