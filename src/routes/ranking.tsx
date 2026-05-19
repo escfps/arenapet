@@ -85,6 +85,9 @@ function RankingPage() {
         <button onClick={() => navigate({ to: "/" })} className="text-white/80 hover:text-white text-sm font-bold">← Home</button>
 
         <header className="text-center text-white">
+          <div className="inline-flex items-center gap-2 px-3 py-1 mb-2 rounded-full bg-gradient-to-r from-fuchsia-500 via-pink-500 to-orange-400 text-white text-xs font-extrabold shadow-lg uppercase tracking-wider">
+            ⭐ Season #1 ⭐
+          </div>
           <h1 className="text-4xl font-extrabold drop-shadow-lg">🏆 Ranking</h1>
           <p className="opacity-80 text-sm">Top 100 jogadores da arena</p>
         </header>
