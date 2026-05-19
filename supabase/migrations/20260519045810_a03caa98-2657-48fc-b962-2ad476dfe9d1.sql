@@ -1,0 +1,1 @@
+UPDATE public.tournaments SET slot_at = now() + interval '30 seconds' WHERE status='open';
