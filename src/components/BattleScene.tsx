@@ -940,6 +940,18 @@ function SideColumn({
                 🛡️+{fx.shieldGain}
               </div>
             )}
+            {fx.miss && fx.miss.key === key && (
+              <div
+                key={`miss-${fx.actor}-${key}-${fx.miss.kind}`}
+                className="absolute -top-4 left-1/2 font-black text-xl pointer-events-none z-30 text-sky-200 italic animate-battle-float"
+                style={{
+                  textShadow: "0 0 10px rgba(125,211,252,.95), 0 2px 4px rgba(0,0,0,.95)",
+                  WebkitTextStroke: "1px rgba(0,0,0,0.7)",
+                }}
+              >
+                {fx.miss.kind === "dodge" ? "💨 ESQUIVOU!" : "😵‍💫 ERROU!"}
+              </div>
+            )}
           </div>
         );
       })}
