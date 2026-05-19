@@ -450,22 +450,14 @@ function ArenaPage() {
         await patch(updates);
       }
 
-      const opponentDelta = won ? -ARENA_LOSS_POINTS : ARENA_WIN_POINTS;
-      const { data: oppProfile } = await supabase
-        .from("profiles")
-        .select("arena_points, wins, losses")
-        .eq("id", opp.ownerId)
-        .maybeSingle();
-      if (oppProfile) {
-        await supabase
-          .from("profiles")
-          .update({
-            arena_points: Math.max(0, (oppProfile.arena_points ?? 0) + opponentDelta),
-            wins: (oppProfile.wins ?? 0) + (won ? 0 : 1),
-            losses: (oppProfile.losses ?? 0) + (won ? 1 : 0),
-          })
-          .eq("id", opp.ownerId);
-      }
+      // Atualiza pontos/wins/losses do defensor via RPC SECURITY DEFINER
+      // (RLS impede o atacante de dar UPDATE direto no profile do defensor).
+      await supabase.rpc("apply_arena_defender_result", {
+        p_defender_id: opp.ownerId,
+        p_attacker_won: won,
+        p_win_pts: ARENA_WIN_POINTS,
+        p_loss_pts: ARENA_LOSS_POINTS,
+      });
 
       await supabase.from("battles").insert({
         attacker_id: userId,
