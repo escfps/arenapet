@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { ChestRewardPopup, type PendingChest } from "@/components/ChestRewardPopup";
-import { rollChestReward, type ChestTier } from "@/lib/game-data";
+import { rollChest, type ChestTier } from "@/lib/game-data";
 
 export const Route = createFileRoute("/preview-chest")({
   component: PreviewChest,
