@@ -13,16 +13,16 @@ function PreviewChest() {
   function add(tier: ChestTier, label: string) {
     setQueue((q) => [
       ...q,
-      { id: crypto.randomUUID(), tier, label, reward: rollChestReward(tier) },
+      { id: crypto.randomUUID(), tier, label, reward: rollChest(tier) },
     ]);
   }
 
   function addAll() {
     const list: PendingChest[] = [
-      { id: crypto.randomUUID(), tier: "wood", label: "Level 5", reward: rollChestReward("wood") },
-      { id: crypto.randomUUID(), tier: "silver", label: "Level 10", reward: rollChestReward("silver") },
-      { id: crypto.randomUUID(), tier: "gold", label: "Promoção pra Ouro III", reward: rollChestReward("gold") },
-      { id: crypto.randomUUID(), tier: "legendary", label: "Level 50", reward: rollChestReward("legendary") },
+      { id: crypto.randomUUID(), tier: "wood", label: "Level 5", reward: rollChest("wood") },
+      { id: crypto.randomUUID(), tier: "silver", label: "Level 10", reward: rollChest("silver") },
+      { id: crypto.randomUUID(), tier: "gold", label: "Promoção pra Ouro III", reward: rollChest("gold") },
+      { id: crypto.randomUUID(), tier: "legendary", label: "Level 50", reward: rollChest("legendary") },
     ];
     setQueue(list);
   }
