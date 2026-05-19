@@ -295,6 +295,14 @@ function TournamentPage() {
               <div className="text-lg font-extrabold text-yellow-100 drop-shadow">
                 {pName(lastT.champion_id)}
               </div>
+              {lastT.champion_id === userId && (
+                <button
+                  onClick={() => setCelebrated(lastT)}
+                  className="mt-2 px-3 py-1 rounded-full bg-yellow-400 text-yellow-950 text-[11px] font-extrabold hover:scale-105 transition"
+                >
+                  👁 Ver minha vitória
+                </button>
+              )}
             </div>
           )}
 
