@@ -122,16 +122,14 @@ function ArenaPage() {
   const [searchCountdown, setSearchCountdown] = useState(0);
   const [battleTimer, setBattleTimer] = useState(120);
 
-  // Timer regressivo de 2min durante a batalha
+  // Timer regressivo de 2min durante a batalha (pausa quando termina/empate)
   useEffect(() => {
     if (!battleLog) { setBattleTimer(120); return; }
-    setBattleTimer(120);
     const done = shownLog.length >= battleLog.length;
-    if (done) return;
+    if (done) return; // pausa quando a animação termina
     const id = setInterval(() => {
       setBattleTimer((t) => {
         if (t <= 1) {
-          // Tempo esgotado: pula direto pro fim da animação pra concluir a batalha
           setShownLog(battleLog);
           clearInterval(id);
           return 0;
@@ -140,6 +138,11 @@ function ArenaPage() {
       });
     }, 1000);
     return () => clearInterval(id);
+  }, [battleLog, shownLog.length]);
+
+  // Reseta o timer ao iniciar uma nova batalha
+  useEffect(() => {
+    if (battleLog) setBattleTimer(120);
   }, [battleLog]);
 
   useEffect(() => {
