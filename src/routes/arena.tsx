@@ -68,6 +68,7 @@ function ArenaPage() {
   const [shownLog, setShownLog] = useState<BattleLogEntry[]>([]);
   const [promo, setPromo] = useState<PromoSeries | null>(null);
   const [autoRematch, setAutoRematch] = useState<number | null>(null);
+  const [chestQueue, setChestQueue] = useState<PendingChest[]>([]);
 
   // auto rematch: começa countdown de 10s quando a batalha termina
   useEffect(() => {
