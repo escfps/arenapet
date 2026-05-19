@@ -161,6 +161,14 @@ function PatioPage() {
     if (!profile) return;
     // If another monster occupies that slot, swap
     const occupant = monsters.find((x) => x.in_team && x.team_position === slot && x.id !== m.id);
+    // 🚫 Bloquear espécie duplicada no time (ignora o ocupante do slot, que vai sair)
+    const duplicate = monsters.find(
+      (x) => x.in_team && x.id !== m.id && x.id !== occupant?.id && x.species === m.species,
+    );
+    if (duplicate) {
+      toast.error(`Você já tem um ${m.name || m.species} no time. Só 1 de cada espécie!`);
+      return;
+    }
     // 🛡️ Se m ainda não está no time e o slot está vazio, verificar limite
     if (!m.in_team && !occupant) {
       const currentTeam = monsters.filter((x) => x.in_team).length;
@@ -198,6 +206,11 @@ function PatioPage() {
         toast.error(`Time cheio (${TEAM_MAX}).`);
         return;
       }
+      // 🚫 Bloquear espécie duplicada no time
+      if (teamMembers.some((x) => x.species === m.species)) {
+        toast.error(`Você já tem um ${m.name || m.species} no time. Só 1 de cada espécie!`);
+        return;
+      }
       const used = new Set(teamMembers.map((x) => x.team_position ?? 0));
       let slot = 0;
       while (slot < TEAM_MAX && used.has(slot)) slot += 1;
@@ -207,6 +220,7 @@ function PatioPage() {
     setMonsters(monsters.map((x) => x.id === m.id ? { ...x, in_team: false } : x));
     await supabase.from("monsters").update({ in_team: false }).eq("id", m.id);
   }
+
 
   async function swapPositions(slotA: number, slotB: number) {
     const a = monsters.find((x) => x.in_team && (x.team_position ?? 0) === slotA);
