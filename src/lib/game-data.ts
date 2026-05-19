@@ -379,7 +379,7 @@ export const SPECIES: Record<string, Species> = {
     id: "gorila_titan", name: "Gorila Titã", element: "earth", role: "tank", rarity: "epic",
     emoji: "🦍", image: gorilaTitanImg,
     description: "Titã das montanhas com cristais místicos. Tank brutal que provoca e contra-ataca.",
-    base: { hp: 70, atk: 13, def: 14, spd: 8, int: 9 },
+    base: { hp: 64, atk: 13, def: 14, spd: 8, int: 9 },
     skill: { name: "Fúria Titânica", emoji: "🦍", kind: "berserker_rage", cooldown: 5, description: "Bate no peito: +70% ATK por 3 turnos (perde 30% DEF). Pra trocar dano." },
   },
   aguia_cega: {
