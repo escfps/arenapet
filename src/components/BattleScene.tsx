@@ -705,6 +705,7 @@ function SideColumn({
   team,
   side,
   hp,
+  baseHp,
   shields,
   fx,
   statuses,
@@ -713,6 +714,7 @@ function SideColumn({
   team: Team;
   side: "a" | "b";
   hp: HpMap;
+  baseHp: HpMap;
   shields: ShieldMap;
   fx: Fx;
   statuses: StatusMap;
@@ -726,6 +728,7 @@ function SideColumn({
         if (!sp) return null;
         const key = `${side}:${m.name}`;
         const h = hp.get(key) ?? { cur: 0, max: 1 };
+        const base = baseHp.get(key)?.max ?? h.max;
         const pct = Math.max(0, Math.min(100, (h.cur / h.max) * 100));
         const shield = shields.get(key) ?? 0;
         const shieldPct = Math.max(0, Math.min(100, (shield / h.max) * 100));
@@ -740,6 +743,13 @@ function SideColumn({
             ? "from-yellow-400 to-orange-500"
             : "from-red-500 to-rose-600";
         const st = statuses.get(key);
+        // Bônus passivos das Fênix
+        const negraHpBonusPct = m.species === "fenix_negra" && base > 0
+          ? Math.round(((h.max - base) / base) * 100)
+          : 0;
+        const vermelhaAtkBonusPct = m.species === "fenix_vermelha" && !dead && base > 0
+          ? Math.min(60, Math.round((1 - h.cur / base) * 60))
+          : 0;
         return (
           <div
             key={m.id}
