@@ -358,6 +358,15 @@ function ArenaPage() {
     // Arena points + promo series logic
     const oldPoints = profile.arena_points ?? 0;
     const promoBefore = promo;
+    // Pontos rolados pra esta partida (variam por tier — quanto mais alto, mais difícil subir)
+    const myRoll = rollArenaPoints(oldPoints);
+    const oppRoll = rollArenaPoints(opp.arenaPoints);
+    // Quanto o atacante (você) ganha/perde nessa partida
+    const myWinPts = myRoll.win;
+    const myLossPts = myRoll.loss;
+    // Quanto o defensor (opp) ganha/perde nessa partida
+    const oppWinPts = oppRoll.win;
+    const oppLossPts = oppRoll.loss;
     let newPoints = oldPoints;
     let delta = 0;
     let promoMsg: string | undefined;
@@ -388,7 +397,7 @@ function ArenaPage() {
           promoMsg = `Série ${promo.type.toUpperCase()}: ${updated.wins}V ${updated.losses}D`;
         }
       } else {
-        delta = won ? ARENA_WIN_POINTS : -ARENA_LOSS_POINTS;
+        delta = won ? myWinPts : -myLossPts;
         newPoints = Math.max(0, oldPoints + delta);
         const b = divisionBounds(oldPoints);
         if (b && newPoints >= b.end) {
