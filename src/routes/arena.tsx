@@ -171,6 +171,7 @@ function ArenaPage() {
     setBattleLog(null);
     setWinner(null);
     setRewards(null);
+    setAutoRematch(null);
 
     // Temporizador aleatório 1–13s pra simular a busca (evita ficar dando scout)
     const waitMs = (1 + Math.floor(Math.random() * 13)) * 1000;
