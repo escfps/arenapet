@@ -12,6 +12,13 @@ export const Route = createFileRoute("/tournament")({
   component: TournamentPage,
 });
 
+type ChampionReward = {
+  coins: number;
+  gems: number;
+  rations: number;
+  bonus_pet: { species: string; name: string; rarity: string } | null;
+} | null;
+
 type Tournament = {
   id: string;
   slot_at: string;
@@ -21,6 +28,7 @@ type Tournament = {
   current_round: number;
   round_started_at: string | null;
   round_duration_seconds: number;
+  champion_reward: ChampionReward;
 };
 
 type Entry = {
