@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
 import { TournamentBattle } from "@/components/TournamentBattle";
+import { ChampionCelebration } from "@/components/ChampionCelebration";
 import type { BattleLogEntry } from "@/lib/battle";
 import arenaBg from "@/assets/arena-bg.jpg";
 
