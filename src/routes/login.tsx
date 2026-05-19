@@ -9,17 +9,40 @@ export const Route = createFileRoute("/login")({
   head: () => ({ meta: [{ title: "Entrar — Arena Pet" }] }),
 });
 
+const REMEMBER_KEY = "arenapet:remember";
+
 function LoginPage() {
   const navigate = useNavigate();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
+  const [remember, setRemember] = useState(true);
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/" });
+      if (data.session) {
+        navigate({ to: "/" });
+        return;
+      }
+      // Pré-preencher e tentar auto-login se houver credenciais salvas
+      try {
+        const raw = localStorage.getItem(REMEMBER_KEY);
+        if (!raw) return;
+        const saved = JSON.parse(raw) as { email?: string; password?: string };
+        if (!saved.email || !saved.password) return;
+        setEmail(saved.email);
+        setPassword(saved.password);
+        setBusy(true);
+        supabase.auth
+          .signInWithPassword({ email: saved.email, password: saved.password })
+          .then(({ error }) => {
+            if (!error) navigate({ to: "/" });
+            else localStorage.removeItem(REMEMBER_KEY);
+          })
+          .finally(() => setBusy(false));
+      } catch {}
     });
   }, [navigate]);
 
@@ -36,10 +59,18 @@ function LoginPage() {
           },
         });
         if (error) throw error;
+        if (remember) {
+          localStorage.setItem(REMEMBER_KEY, JSON.stringify({ email, password }));
+        }
         toast.success("Conta criada! Verifique seu email para confirmar.");
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
+        if (remember) {
+          localStorage.setItem(REMEMBER_KEY, JSON.stringify({ email, password }));
+        } else {
+          localStorage.removeItem(REMEMBER_KEY);
+        }
         navigate({ to: "/" });
       }
     } catch (err) {
