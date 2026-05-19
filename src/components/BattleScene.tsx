@@ -228,7 +228,8 @@ export function BattleScene({
     const shieldMatch = msg.match(/\+?(\d+)\s*(?:de\s+)?escudo/i);
     const shieldGain = shieldMatch ? parseInt(shieldMatch[1], 10) : null;
 
-    setFx({ actor: actorKey, target: targetKey ?? actorKey, dmg: entry.damage, shieldGain, crit: entry.crit, skillFx, targets });
+    const effectiveTarget = targetKey ?? (shieldGain ? actorKey : null);
+    setFx({ actor: actorKey, target: effectiveTarget, dmg: entry.damage, shieldGain, crit: entry.crit, skillFx, targets });
 
     // ===== Sound FX =====
     if (entry.damage < 0) {
