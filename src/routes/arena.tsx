@@ -122,16 +122,14 @@ function ArenaPage() {
   const [searchCountdown, setSearchCountdown] = useState(0);
   const [battleTimer, setBattleTimer] = useState(120);
 
-  // Timer regressivo de 2min durante a batalha
+  // Timer regressivo de 2min durante a batalha (pausa quando termina/empate)
   useEffect(() => {
     if (!battleLog) { setBattleTimer(120); return; }
-    setBattleTimer(120);
     const done = shownLog.length >= battleLog.length;
-    if (done) return;
+    if (done) return; // pausa quando a animação termina
     const id = setInterval(() => {
       setBattleTimer((t) => {
         if (t <= 1) {
-          // Tempo esgotado: pula direto pro fim da animação pra concluir a batalha
           setShownLog(battleLog);
           clearInterval(id);
           return 0;
@@ -140,6 +138,11 @@ function ArenaPage() {
       });
     }, 1000);
     return () => clearInterval(id);
+  }, [battleLog, shownLog.length]);
+
+  // Reseta o timer ao iniciar uma nova batalha
+  useEffect(() => {
+    if (battleLog) setBattleTimer(120);
   }, [battleLog]);
 
   useEffect(() => {
@@ -648,6 +651,28 @@ function ArenaPage() {
                   playerBName={opponent.ownerName}
                   playerBTier={getTier(opponent.arenaPoints).name}
                 />
+                {shownLog.length === battleLog.length && winner && (
+                  <div className="absolute inset-0 z-30 flex items-center justify-center pointer-events-none animate-fade-in">
+                    <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+                    <div
+                      className={`relative px-10 py-6 rounded-3xl border-4 shadow-2xl text-center animate-scale-in ${
+                        winner === "team_a"
+                          ? "bg-gradient-to-br from-yellow-400 to-amber-600 border-yellow-200 text-yellow-950"
+                          : winner === "draw"
+                          ? "bg-gradient-to-br from-slate-300 to-slate-500 border-white text-slate-900"
+                          : "bg-gradient-to-br from-red-600 to-rose-900 border-red-300 text-white"
+                      }`}
+                      style={{ textShadow: "0 2px 6px rgba(0,0,0,0.4)" }}
+                    >
+                      <div className="text-6xl leading-none mb-1">
+                        {winner === "team_a" ? "🏆" : winner === "draw" ? "🤝" : "💀"}
+                      </div>
+                      <div className="text-4xl sm:text-5xl font-black tracking-widest">
+                        {winner === "team_a" ? "VITÓRIA!" : winner === "draw" ? "EMPATE!" : "DERROTA"}
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
