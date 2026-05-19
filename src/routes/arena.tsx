@@ -78,6 +78,15 @@ function ArenaPage() {
     return () => clearInterval(interval);
   }, [battleLog, winner, shownLog.length]);
 
+  // dispara próxima batalha quando o contador zerar
+  useEffect(() => {
+    if (autoRematch === null) return;
+    if (autoRematch <= 0) {
+      setAutoRematch(null);
+      findOpponent();
+    }
+  }, [autoRematch]);
+
   // load promo from localStorage
   useEffect(() => {
     if (!userId) return;
