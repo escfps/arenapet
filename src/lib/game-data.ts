@@ -758,6 +758,16 @@ export function totalStats(species: string, rank = 1, bonus = { hp: 0, atk: 0, d
   const s = SPECIES[species];
   if (!s) return { hp: 0, atk: 0, def: 0, spd: 0, int: 0 };
   const r = RANK_MULT[Math.min(Math.max(rank, 1), MAX_RANK)] ?? 1;
+  const exactBase = species === "borboleta_sonifera" || species === "urso_polar";
+  if (exactBase) {
+    return {
+      hp: Math.round(s.base.hp * r) + (bonus.hp ?? 0),
+      atk: Math.round(s.base.atk * r) + (bonus.atk ?? 0),
+      def: Math.round(s.base.def * r) + (bonus.def ?? 0),
+      spd: Math.round(s.base.spd * r) + (bonus.spd ?? 0),
+      int: Math.round(s.base.int * r) + (bonus.int ?? 0),
+    };
+  }
   const mult = RARITY_INFO[s.rarity].statMult * r;
   return {
     hp: Math.round(s.base.hp * mult) + (bonus.hp ?? 0),
@@ -770,6 +780,9 @@ export function totalStats(species: string, rank = 1, bonus = { hp: 0, atk: 0, d
 
 export function starterMonsterStats(speciesId: string) {
   const sp = SPECIES[speciesId];
+  if (speciesId === "borboleta_sonifera" || speciesId === "urso_polar") {
+    return { hp: 0, atk: 0, def: 0, spd: 0, int: 0 };
+  }
   return {
     hp: sp?.id === "fenix_vermelha" || sp?.id === "fenix_negra" ? 0 : sp?.base.hp ?? 0,
     atk: sp?.base.atk ?? 0,
