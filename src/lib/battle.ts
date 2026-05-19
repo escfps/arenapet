@@ -116,6 +116,7 @@ type Live = BattleMonster & {
   bleedDmg: number;      // dano físico por turno enquanto bleedTurns > 0
   bleedTurns: number;
   blindTurns: number;    // se >0, ataques básicos têm chance de errar
+  sleepTurns: number;    // se >0, pula o turno (dormindo zzz)
   silenceTurns: number;  // se >0, próxima skill é anulada
   rageTurns: number;     // berserker: +rageAtkMult e -rageDefDrop
   rageAtkMult: number;
@@ -163,7 +164,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
     ...m, current: m.hp, maxHp: m.hp,
     healCd: 0, skillCd: 1, shield: 0,
     tauntTargetId: null, tauntTurns: 0,
-    burnDmg: 0, burnTurns: 0, bleedDmg: 0, bleedTurns: 0, blindTurns: 0, silenceTurns: 0,
+    burnDmg: 0, burnTurns: 0, bleedDmg: 0, bleedTurns: 0, blindTurns: 0, sleepTurns: 0, silenceTurns: 0,
     rageTurns: 0, rageAtkMult: 0, rageDefDrop: 0,
     defBuffTurns: 0, defBuffPct: 0, lastFallenAt: 0,
   });
@@ -228,6 +229,16 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
       // quando alguma skill usa `continue` no meio (substituído por `return`).
       ((): void => {
       if (attacker.current <= 0) return;
+      // tick sleep — dormindo pula o turno inteiro (não age, mas tampouco sofre DoTs novos)
+      if (attacker.sleepTurns > 0) {
+        log.push({
+          turn, actor: side, actorName: attacker.name, targetName: attacker.name,
+          damage: 0, crit: false, effective: 1, remainingHp: attacker.current,
+          message: `💤 ${attacker.name} está dormindo... zzz`,
+        });
+        attacker.sleepTurns -= 1;
+        return;
+      }
       // tick taunt
       if (attacker.tauntTurns > 0) {
         attacker.tauntTurns -= 1;
@@ -501,7 +512,27 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           return;
         }
 
-
+        if (skill.kind === "sleep_strike") {
+          // Dano mágico no alvo + 80% chance de adormecer por 2 turnos
+          const target = pickTarget(attacker, enemies);
+          if (target) {
+            const eff = defensiveMultiplier(getElement(attacker.species), target.species);
+            const dmg = Math.max(1, Math.round((effInt * 1.8 - tgtEffDef(target) * 0.4) * eff * skillMult));
+            applyDamage(target, dmg);
+            const slept = rand() < 0.8 && target.current > 0;
+            if (slept) target.sleepTurns = Math.max(target.sleepTurns, 2);
+            log.push({
+              turn, actor: side, actorName: attacker.name, targetName: target.name,
+              damage: dmg, crit: false, effective: eff, remainingHp: target.current, targetShield: target.shield,
+              message: `${skill.emoji} ${attacker.name} usou ${skill.name}: ${dmg} de dano${slept ? ` + 💤 ${target.name} adormeceu por 2 turnos!` : ""}`,
+            });
+            if (target.current <= 0) {
+              target.lastFallenAt = turn;
+              log.push({ turn, actor: side, actorName: attacker.name, targetName: target.name, damage: 0, crit: false, effective: 1, remainingHp: 0, message: `💀 ${target.name} foi derrotado!` });
+            }
+          }
+          return;
+        }
 
 
         if (skill.kind === "double_strike") {
@@ -605,7 +636,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           if (fallen) {
             fallen.current = Math.round(fallen.maxHp * 0.40);
             fallen.shield = 0;
-            fallen.burnTurns = 0; fallen.bleedTurns = 0; fallen.blindTurns = 0; fallen.silenceTurns = 0;
+            fallen.burnTurns = 0; fallen.bleedTurns = 0; fallen.blindTurns = 0; fallen.sleepTurns = 0; fallen.silenceTurns = 0;
             log.push({
               turn, actor: side, actorName: attacker.name, targetName: fallen.name,
               damage: -fallen.current, crit: false, effective: 1, remainingHp: fallen.current,
@@ -758,12 +789,20 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
       applyDamage(target, damage);
       const phoenixGrow = phoenixOnDamageDealt(attacker, damage);
 
+      // PASSIVA Borboleta Sonífera: 50% de chance de adormecer o alvo por 2 turnos
+      let sleptByPassive = false;
+      if (attacker.species === "borboleta_sonifera" && target.current > 0 && rand() < 0.5) {
+        target.sleepTurns = Math.max(target.sleepTurns, 2);
+        sleptByPassive = true;
+      }
+
       let msg = `${attacker.name} atacou ${target.name} causando ${damage} de dano`;
       if (crit) msg += " (CRÍTICO!)";
       if (attacker.role === "mage") msg += " 🔮";
       if (eff > 1) msg += " (super eficaz!)";
       else if (eff < 1) msg += " (pouco eficaz...)";
       if (phoenixGrow > 0) msg += ` 🌑 (+${phoenixGrow} HP máx)`;
+      if (sleptByPassive) msg += ` 💤 ${target.name} adormeceu por 2 turnos!`;
 
       log.push({
         turn, actor: side, actorName: attacker.name, targetName: target.name,

@@ -9,7 +9,7 @@ type HpMap = Map<string, { cur: number; max: number }>;
 type ShieldMap = Map<string, number>;
 type SkillFxKind = "heal" | "bite" | "explosion" | "lightning" | "fire" | "shield" | "slash" | "skull" | "fury" | "silence" | "magic" | "revive" | "true";
 type Fx = { actor: string | null; target: string | null; dmg: number | null; crit: boolean; skillFx: SkillFxKind | null; targets: string[] };
-type StatusKind = "burn" | "poison" | "bleed" | "blind" | "silence" | "rage" | "shield";
+type StatusKind = "burn" | "poison" | "bleed" | "blind" | "sleep" | "silence" | "rage" | "shield";
 type StatusMap = Map<string, Set<StatusKind>>;
 type EffectBanner = {
   id: number;
@@ -35,6 +35,8 @@ function detectEffect(entry: BattleLogEntry): EffectBanner {
     return { id: mkId, emoji: "🔥", label: "QUEIMADURA", detail: "Dano por 3 turnos aplicado", color: "from-orange-500 to-red-700" };
   if (m.includes("sofreu") && m.includes("queimadura"))
     return { id: mkId, emoji: "🔥", label: "DoT", detail: `Queimadura: ${entry.damage} de dano`, color: "from-amber-500 to-orange-700" };
+  if (m.includes("adormeceu") || m.includes("Pó do Sono"))
+    return { id: mkId, emoji: "💤", label: "PÓ DO SONO", detail: "Alvo dormiu — pula o próximo turno", color: "from-indigo-500 to-purple-800" };
   if (m.includes("silenciou") || m.includes("silencia"))
     return { id: mkId, emoji: "🤐", label: "SILÊNCIO", detail: "Próxima skill do alvo anulada", color: "from-violet-600 to-purple-900" };
   if (m.includes("roubou"))
@@ -63,6 +65,7 @@ function statusFromMessage(msg: string): StatusKind | null {
     return "burn";
   }
   if (msg.includes("cegou") || msg.includes("cegueira")) return "blind";
+  if (msg.includes("adormeceu") || msg.includes("dormindo") || msg.includes("💤")) return "sleep";
   if (msg.includes("silenciou") || msg.includes("silencia próxima")) return "silence";
   if (msg.includes("fúria") || msg.includes("ATK por 3 turnos")) return "rage";
   if (msg.includes("DEF por") && msg.includes("escudo")) return "shield";
@@ -797,6 +800,7 @@ function SideColumn({
                   {st?.has("poison") && <span className="px-1 rounded bg-green-600/80 animate-pulse" title="Envenenado">☠️</span>}
                   {st?.has("bleed") && <span className="px-1 rounded bg-red-700/80 animate-pulse" title="Sangrando">🩸</span>}
                   {st?.has("blind") && <span className="px-1 rounded bg-yellow-500/80 animate-pulse" title="Cego (chance de errar)">😵‍💫</span>}
+                  {st?.has("sleep") && <span className="px-1 rounded bg-indigo-600/80 animate-pulse" title="Dormindo (pula o turno)">💤</span>}
                   {st?.has("silence") && <span className="px-1 rounded bg-violet-500/80 animate-pulse" title="Silenciado">🤐</span>}
                   {st?.has("rage") && <span className="px-1 rounded bg-red-600/80 animate-pulse" title="Em fúria">😡</span>}
                   {st?.has("shield") && <span className="px-1 rounded bg-cyan-500/80 animate-pulse" title="Buff de DEF">✨</span>}
