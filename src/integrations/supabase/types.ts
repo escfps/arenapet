@@ -375,6 +375,7 @@ export type Database = {
       tournaments: {
         Row: {
           champion_id: string | null
+          champion_reward: Json | null
           created_at: string
           current_round: number
           finished_at: string | null
@@ -386,6 +387,7 @@ export type Database = {
         }
         Insert: {
           champion_id?: string | null
+          champion_reward?: Json | null
           created_at?: string
           current_round?: number
           finished_at?: string | null
@@ -397,6 +399,7 @@ export type Database = {
         }
         Update: {
           champion_id?: string | null
+          champion_reward?: Json | null
           created_at?: string
           current_round?: number
           finished_at?: string | null
