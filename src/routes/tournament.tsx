@@ -217,9 +217,10 @@ function TournamentPage() {
           <div className="flex gap-2 justify-center">
             {([
               ["current", "📥 Inscrição"],
-              ["last", "🥇 Última Copa"],
+              ["last", "📺 Assistir Copa"],
               ["leaderboard", "👑 Campeões"],
             ] as const).map(([k, label]) => (
+
               <button
                 key={k}
                 onClick={() => setTab(k)}
