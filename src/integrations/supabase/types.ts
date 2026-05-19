@@ -260,6 +260,136 @@ export type Database = {
         }
         Relationships: []
       }
+      tournament_champions: {
+        Row: {
+          last_win_at: string | null
+          user_id: string
+          wins: number
+        }
+        Insert: {
+          last_win_at?: string | null
+          user_id: string
+          wins?: number
+        }
+        Update: {
+          last_win_at?: string | null
+          user_id?: string
+          wins?: number
+        }
+        Relationships: []
+      }
+      tournament_entries: {
+        Row: {
+          created_at: string
+          eliminated_round: number | null
+          id: string
+          is_bot: boolean
+          power: number | null
+          seed: number | null
+          tournament_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          eliminated_round?: number | null
+          id?: string
+          is_bot?: boolean
+          power?: number | null
+          seed?: number | null
+          tournament_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          eliminated_round?: number | null
+          id?: string
+          is_bot?: boolean
+          power?: number | null
+          seed?: number | null
+          tournament_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tournament_entries_tournament_id_fkey"
+            columns: ["tournament_id"]
+            isOneToOne: false
+            referencedRelation: "tournaments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tournament_matches: {
+        Row: {
+          created_at: string
+          id: string
+          p1_id: string | null
+          p2_id: string | null
+          round: number
+          score: string | null
+          slot: number
+          tournament_id: string
+          winner_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          p1_id?: string | null
+          p2_id?: string | null
+          round: number
+          score?: string | null
+          slot: number
+          tournament_id: string
+          winner_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          p1_id?: string | null
+          p2_id?: string | null
+          round?: number
+          score?: string | null
+          slot?: number
+          tournament_id?: string
+          winner_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tournament_matches_tournament_id_fkey"
+            columns: ["tournament_id"]
+            isOneToOne: false
+            referencedRelation: "tournaments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tournaments: {
+        Row: {
+          champion_id: string | null
+          created_at: string
+          finished_at: string | null
+          id: string
+          slot_at: string
+          status: string
+        }
+        Insert: {
+          champion_id?: string | null
+          created_at?: string
+          finished_at?: string | null
+          id?: string
+          slot_at: string
+          status?: string
+        }
+        Update: {
+          champion_id?: string | null
+          created_at?: string
+          finished_at?: string | null
+          id?: string
+          slot_at?: string
+          status?: string
+        }
+        Relationships: []
+      }
       trades: {
         Row: {
           completed_at: string | null
@@ -348,7 +478,14 @@ export type Database = {
         Returns: undefined
       }
       _bot_xp_for_next: { Args: { lvl: number }; Returns: number }
+      _tour_next_slot: { Args: never; Returns: string }
+      _tour_rank_mult: { Args: { r: number }; Returns: number }
+      _tour_team_power: { Args: { uid: string }; Returns: number }
+      ensure_tournament: { Args: { slot: string }; Returns: string }
+      join_tournament: { Args: { p_tournament_id: string }; Returns: Json }
+      run_tournament: { Args: { p_tournament_id: string }; Returns: undefined }
       simulate_bot_battles: { Args: never; Returns: undefined }
+      tournaments_tick: { Args: never; Returns: undefined }
       train_bot_pets: { Args: never; Returns: undefined }
     }
     Enums: {
