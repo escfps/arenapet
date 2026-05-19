@@ -263,7 +263,7 @@ function TournamentPage() {
         <main className="max-w-5xl mx-auto px-3 py-4 space-y-4">
           <div className="text-center text-white">
             <h1 className="text-3xl font-extrabold drop-shadow-lg">🏆 Copa Pet</h1>
-            <p className="text-sm opacity-80">Torneios de 32 a cada 10 minutos • MD3 ao vivo</p>
+            <p className="text-sm opacity-80">Torneios de 32 a cada 10 minutos • MD1 ao vivo</p>
           </div>
 
           {/* Trophy banner */}
