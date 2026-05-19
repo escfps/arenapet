@@ -112,9 +112,9 @@ export const adminUpdateProfile = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     assertAdmin(context.userId);
     const { userId, ...rest } = data;
-    const update: Record<string, unknown> = {};
+    const update: Partial<typeof rest> = {};
     for (const [k, v] of Object.entries(rest)) {
-      if (typeof v !== "undefined") update[k] = v;
+      if (typeof v !== "undefined") (update as Record<string, unknown>)[k] = v;
     }
     if (Object.keys(update).length === 0) return { ok: true, noop: true };
     const { error } = await supabaseAdmin
