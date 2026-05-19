@@ -447,10 +447,13 @@ function ArenaPage() {
           });
           await supabase.from("monsters").insert(rows);
         }
-        for (const lv of lvRew.levels) {
-          const tier = lv === 100 ? "👑 Baú LENDÁRIO" : lv === 50 ? "🥇 Baú de OURO" : lv % 10 === 0 ? "🥈 Baú de PRATA" : "📦 Baú de Madeira";
-          levelUpToasts.push(() => toast.success(`🎉 Level ${lv}! ${tier} aberto`, { duration: 4000 }));
-        }
+        const newChests: PendingChest[] = lvRew.chests.map((c, i) => ({
+          id: `lv-${Date.now()}-${i}`,
+          tier: c.tier,
+          label: `Level ${c.level}!`,
+          reward: c.reward,
+        }));
+        setChestQueue((q) => [...q, ...newChests]);
         const parts: string[] = [];
         if (lvRew.coins) parts.push(`🪙 ${lvRew.coins}`);
         if (lvRew.gems) parts.push(`💎 ${lvRew.gems}`);
