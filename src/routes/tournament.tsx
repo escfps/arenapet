@@ -278,10 +278,10 @@ function TournamentPage() {
                   </div>
 
                   <div className="mt-4 rounded-xl bg-white/5 p-3 text-xs space-y-1">
-                    <div>🥇 <b>Campeão</b> ganha: 🪙 5.000 + 💎 80 + 🍖 10 rações + 🎁 1 pet raro/super raro/épico</div>
-                    <div>🤖 Bots completam os 32 grátis assim que as inscrições fecham</div>
+                    <div>🥇 <b>Campeão</b> ganha: 🥇 1 Baú de Ouro</div>
                     <div>⚔️ Chaveamento sorteado: oitavas → quartas → semis → final, tudo MD3</div>
                   </div>
+
                 </>
               )}
             </section>
