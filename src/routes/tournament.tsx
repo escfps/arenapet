@@ -5,12 +5,20 @@ import { supabase } from "@/integrations/supabase/client";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
 import { TournamentBattle } from "@/components/TournamentBattle";
+import { ChampionCelebration } from "@/components/ChampionCelebration";
 import type { BattleLogEntry } from "@/lib/battle";
 import arenaBg from "@/assets/arena-bg.jpg";
 
 export const Route = createFileRoute("/tournament")({
   component: TournamentPage,
 });
+
+type ChampionReward = {
+  coins: number;
+  gems: number;
+  rations: number;
+  bonus_pet: { species: string; name: string; rarity: string } | null;
+} | null;
 
 type Tournament = {
   id: string;
@@ -21,6 +29,7 @@ type Tournament = {
   current_round: number;
   round_started_at: string | null;
   round_duration_seconds: number;
+  champion_reward: ChampionReward;
 };
 
 type Entry = {
@@ -75,6 +84,8 @@ function TournamentPage() {
   const [now, setNow] = useState(Date.now());
   const [tab, setTab] = useState<"current" | "last" | "leaderboard">("current");
   const [battleMatch, setBattleMatch] = useState<{ m: Match; mode: "play" | "watch" } | null>(null);
+  const [celebrated, setCelebrated] = useState<Tournament | null>(null);
+
 
   useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 500);
@@ -163,6 +174,16 @@ function TournamentPage() {
     const id = setInterval(refresh, 3000);
     return () => clearInterval(id);
   }, []);
+
+  // Pop the champion celebration when the user is the freshly crowned champion
+  useEffect(() => {
+    if (!userId || !lastT || lastT.champion_id !== userId) return;
+    const key = `champion_seen_${lastT.id}`;
+    if (typeof window === "undefined") return;
+    if (window.localStorage.getItem(key)) return;
+    setCelebrated(lastT);
+  }, [userId, lastT]);
+
 
   // Nudge the server tick when a round timer should have expired
   useEffect(() => {
@@ -274,6 +295,14 @@ function TournamentPage() {
               <div className="text-lg font-extrabold text-yellow-100 drop-shadow">
                 {pName(lastT.champion_id)}
               </div>
+              {lastT.champion_id === userId && (
+                <button
+                  onClick={() => setCelebrated(lastT)}
+                  className="mt-2 px-3 py-1 rounded-full bg-yellow-400 text-yellow-950 text-[11px] font-extrabold hover:scale-105 transition"
+                >
+                  👁 Ver minha vitória
+                </button>
+              )}
             </div>
           )}
 
@@ -554,6 +583,20 @@ function TournamentPage() {
             meId={userId}
             onFinished={() => { void refresh(); }}
             onClose={() => { setBattleMatch(null); void refresh(); }}
+          />
+        )}
+
+        {celebrated && (
+          <ChampionCelebration
+            championName={pName(celebrated.champion_id)}
+            reward={celebrated.champion_reward}
+            onClose={() => {
+              if (typeof window !== "undefined") {
+                window.localStorage.setItem(`champion_seen_${celebrated.id}`, "1");
+              }
+              setCelebrated(null);
+              void refresh();
+            }}
           />
         )}
       </div>
