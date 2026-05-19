@@ -242,12 +242,25 @@ function ShopPage() {
                       )}
                     </div>
 
-                    <button
-                      onClick={() => openChest(c.id)}
-                      className="w-full py-2 rounded-xl bg-gradient-to-b from-yellow-400 to-amber-500 text-yellow-950 font-extrabold hover:scale-105 transition"
-                    >
-                      Abrir por {c.priceCoins ? `🪙 ${c.priceCoins}` : `💎 ${c.priceGems}`}
-                    </button>
+                    <div className="space-y-2">
+                      {c.priceCoins != null && (
+                        <button
+                          onClick={() => openChest(c.id, "coins")}
+                          className="w-full py-2 rounded-xl bg-gradient-to-b from-yellow-400 to-amber-500 text-yellow-950 font-extrabold hover:scale-105 transition"
+                        >
+                          Abrir por 🪙 {c.priceCoins}
+                        </button>
+                      )}
+                      {c.priceGems != null && (
+                        <button
+                          onClick={() => openChest(c.id, "gems")}
+                          className="w-full py-2 rounded-xl bg-gradient-to-b from-fuchsia-400 to-violet-500 text-white font-extrabold hover:scale-105 transition"
+                        >
+                          Abrir por 💎 {c.priceGems}
+                        </button>
+                      )}
+                    </div>
+
                   </div>
                 );
               })}
