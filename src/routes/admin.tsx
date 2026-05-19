@@ -244,6 +244,42 @@ function AdminPage() {
                 </div>
               </div>
 
+              {edit && (
+                <div className="mt-4 rounded-lg bg-black/30 p-3 space-y-2">
+                  <div className="text-xs opacity-70 font-bold">✏️ Editar perfil (valores absolutos)</div>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    <label className="text-xs">Nick
+                      <input value={edit.username} onChange={(e) => setEdit({ ...edit, username: e.target.value })} className="w-full px-2 py-1 rounded bg-black/40 border border-white/10 text-sm" />
+                    </label>
+                    <label className="text-xs">Nível
+                      <input type="number" value={edit.level} onChange={(e) => setEdit({ ...edit, level: Number(e.target.value) })} className="w-full px-2 py-1 rounded bg-black/40 border border-white/10 text-sm" />
+                    </label>
+                    <label className="text-xs">XP
+                      <input type="number" value={edit.xp} onChange={(e) => setEdit({ ...edit, xp: Number(e.target.value) })} className="w-full px-2 py-1 rounded bg-black/40 border border-white/10 text-sm" />
+                    </label>
+                    <label className="text-xs">Arena pts
+                      <input type="number" value={edit.arena_points} onChange={(e) => setEdit({ ...edit, arena_points: Number(e.target.value) })} className="w-full px-2 py-1 rounded bg-black/40 border border-white/10 text-sm" />
+                    </label>
+                    <label className="text-xs">Vitórias
+                      <input type="number" value={edit.wins} onChange={(e) => setEdit({ ...edit, wins: Number(e.target.value) })} className="w-full px-2 py-1 rounded bg-black/40 border border-white/10 text-sm" />
+                    </label>
+                    <label className="text-xs">Derrotas
+                      <input type="number" value={edit.losses} onChange={(e) => setEdit({ ...edit, losses: Number(e.target.value) })} className="w-full px-2 py-1 rounded bg-black/40 border border-white/10 text-sm" />
+                    </label>
+                    <label className="text-xs">🪙 Moedas
+                      <input type="number" value={edit.coins} onChange={(e) => setEdit({ ...edit, coins: Number(e.target.value) })} className="w-full px-2 py-1 rounded bg-black/40 border border-white/10 text-sm" />
+                    </label>
+                    <label className="text-xs">💎 Gemas
+                      <input type="number" value={edit.gems} onChange={(e) => setEdit({ ...edit, gems: Number(e.target.value) })} className="w-full px-2 py-1 rounded bg-black/40 border border-white/10 text-sm" />
+                    </label>
+                  </div>
+                  <button disabled={busy} onClick={saveEdit} className="w-full py-1.5 rounded bg-blue-600 hover:bg-blue-500 font-bold text-sm">
+                    💾 Salvar alterações
+                  </button>
+                </div>
+              )}
+
+
               <div className="mt-4 grid sm:grid-cols-3 gap-3">
                 <div className="rounded-lg bg-black/30 p-3 space-y-2">
                   <label className="text-xs opacity-70">💎 Adicionar gemas</label>
