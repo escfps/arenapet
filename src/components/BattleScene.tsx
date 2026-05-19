@@ -112,14 +112,14 @@ export function BattleScene({
 
   const [hp, setHp] = useState<HpMap>(initialHp);
   const [shields, setShields] = useState<ShieldMap>(new Map());
-  const [fx, setFx] = useState<Fx>({ actor: null, target: null, dmg: null, shieldGain: null, crit: false, skillFx: null, targets: [] });
+  const [fx, setFx] = useState<Fx>({ actor: null, target: null, dmg: null, shieldGain: null, crit: false, skillFx: null, targets: [], miss: null });
   const [banner, setBanner] = useState<EffectBanner>(null);
   const [statuses, setStatuses] = useState<StatusMap>(new Map());
 
   useEffect(() => {
     setHp(new Map(initialHp));
     setShields(new Map());
-    setFx({ actor: null, target: null, dmg: null, shieldGain: null, crit: false, skillFx: null, targets: [] });
+    setFx({ actor: null, target: null, dmg: null, shieldGain: null, crit: false, skillFx: null, targets: [], miss: null });
     setBanner(null);
     setStatuses(new Map());
   }, [initialHp]);
@@ -279,7 +279,7 @@ export function BattleScene({
     }
 
     const t = setTimeout(
-      () => setFx({ actor: null, target: null, dmg: null, shieldGain: null, crit: false, skillFx: null, targets: [] }),
+      () => setFx({ actor: null, target: null, dmg: null, shieldGain: null, crit: false, skillFx: null, targets: [], miss: null }),
       1400
     );
     const tb = setTimeout(() => setBanner(null), 1100);
