@@ -184,6 +184,29 @@ function TournamentPage() {
     setCelebrated(lastT);
   }, [userId, lastT]);
 
+  // Preview mode: visit /tournament#preview-win to see the champion celebration
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (window.location.hash !== "#preview-win") return;
+    setCelebrated({
+      id: "preview",
+      slot_at: new Date().toISOString(),
+      status: "finished",
+      champion_id: userId ?? "preview-user",
+      finished_at: new Date().toISOString(),
+      current_round: 4,
+      round_started_at: null,
+      round_duration_seconds: 90,
+      champion_reward: {
+        coins: 3250,
+        gems: 42,
+        rations: 9,
+        bonus_pet: { species: "dragon", name: "Dragão de Fogo", rarity: "epic" },
+      },
+    });
+  }, [userId]);
+
+
 
   // Nudge the server tick when a round timer should have expired
   useEffect(() => {
