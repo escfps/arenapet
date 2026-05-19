@@ -115,6 +115,10 @@ export function BattleScene({
   const [fx, setFx] = useState<Fx>({ actor: null, target: null, dmg: null, shieldGain: null, crit: false, skillFx: null, targets: [], miss: null });
   const [banner, setBanner] = useState<EffectBanner>(null);
   const [statuses, setStatuses] = useState<StatusMap>(new Map());
+  const [turnFlash, setTurnFlash] = useState<{ id: number; turn: number } | null>(null);
+
+  // Turno atual derivado da última entrada exibida
+  const currentTurn = step > 0 && step <= log.length ? log[step - 1].turn : 1;
 
   useEffect(() => {
     setHp(new Map(initialHp));
@@ -122,7 +126,20 @@ export function BattleScene({
     setFx({ actor: null, target: null, dmg: null, shieldGain: null, crit: false, skillFx: null, targets: [], miss: null });
     setBanner(null);
     setStatuses(new Map());
+    setTurnFlash(null);
   }, [initialHp]);
+
+  // Detecta troca de turno e mostra flash "TURNO X"
+  useEffect(() => {
+    if (step <= 0 || step > log.length) return;
+    const cur = log[step - 1];
+    const prev = step >= 2 ? log[step - 2] : null;
+    if (!prev || cur.turn !== prev.turn) {
+      setTurnFlash({ id: Date.now(), turn: cur.turn });
+      const t = setTimeout(() => setTurnFlash(null), 1300);
+      return () => clearTimeout(t);
+    }
+  }, [step, log]);
 
   useEffect(() => {
     if (step <= 0 || step > log.length) return;
@@ -328,7 +345,12 @@ export function BattleScene({
               </div>
             )}
           </div>
-          <div className="text-white font-black text-lg drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">VS</div>
+          <div className="flex flex-col items-center gap-1">
+            <div className="text-white font-black text-lg drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">VS</div>
+            <div className="px-2 py-0.5 rounded-full bg-black/70 border border-white/30 text-white text-[10px] font-extrabold tracking-wider shadow">
+              TURNO {currentTurn}
+            </div>
+          </div>
           <div className="flex flex-col items-end">
             <div className="px-3 py-1 rounded-full bg-black/60 backdrop-blur-sm border border-white/20 text-white font-extrabold text-sm shadow-lg truncate max-w-full">
               {playerBName ?? "Oponente"}
@@ -372,7 +394,23 @@ export function BattleScene({
             <div className="text-base font-extrabold tracking-wide mt-1">{banner.label}</div>
             {banner.detail && (
               <div className="text-[10px] opacity-90 font-semibold mt-0.5 max-w-[200px]">{banner.detail}</div>
-            )}
+      )}
+
+      {/* Flash centralizado quando muda de turno */}
+      {turnFlash && (
+        <div
+          key={turnFlash.id}
+          className="pointer-events-none absolute inset-0 flex items-center justify-center z-40 animate-fade-in"
+        >
+          <div
+            className="px-8 py-4 rounded-2xl bg-gradient-to-br from-indigo-600 via-purple-600 to-fuchsia-600 border-4 border-white/60 shadow-2xl text-white text-center animate-scale-in"
+            style={{ textShadow: "0 2px 8px rgba(0,0,0,0.8)" }}
+          >
+            <div className="text-xs font-extrabold tracking-[0.3em] opacity-90">TURNO</div>
+            <div className="text-5xl font-black leading-none mt-1">{turnFlash.turn}</div>
+          </div>
+        </div>
+      )}
           </div>
         </div>
       )}
