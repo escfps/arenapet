@@ -354,14 +354,14 @@ export const SPECIES: Record<string, Species> = {
     id: "borboleta_sonifera", name: "Borboleta Sonífera", element: "shadow", secondaryElement: "grass", role: "mage", rarity: "super_rare",
     emoji: "🦋💤", image: borboletaSoniferaImg,
     description: "Borboleta onírica de asas hipnóticas. Espalha pó do sono que faz qualquer inimigo cair em sono profundo no meio da batalha.",
-    base: { hp: 52, atk: 11, def: 9, spd: 16, int: 22 },
+    base: { hp: 58, atk: 15, def: 12, spd: 20, int: 20 },
     skill: { name: "Pó do Sono", emoji: "💤", kind: "sleep_strike", cooldown: 4, description: "PASSIVA: ataque básico tem 50% de chance de adormecer o alvo por 2 turnos. ATIVA: dano mágico no alvo com 80% de chance de adormecê-lo por 2 turnos." },
   },
   urso_polar: {
     id: "urso_polar", name: "Urso Polar", element: "water", role: "tank", rarity: "super_rare",
     emoji: "🐻‍❄️❄️", image: ursoPolarImg,
     description: "Urso ártico de pelagem nevada. Cada pata congelada paralisa o inimigo no meio do golpe.",
-    base: { hp: 68, atk: 14, def: 13, spd: 9, int: 12 },
+    base: { hp: 71, atk: 25, def: 12, spd: 13, int: 10 },
     skill: { name: "Toque Glacial", emoji: "❄️", kind: "freeze_strike", cooldown: 4, description: "PASSIVA: ataque básico tem 50% de chance de congelar o alvo por 2 turnos. ATIVA: golpe gélido + 80% de chance de congelar o alvo por 2 turnos." },
   },
 
