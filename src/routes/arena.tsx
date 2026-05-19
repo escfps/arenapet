@@ -65,6 +65,27 @@ function ArenaPage() {
   const [rewards, setRewards] = useState<{ coins: number; xp: number; points: number; oldPoints: number; newPoints: number; promoMsg?: string; promoBefore?: PromoSeries | null; promoAfter?: PromoSeries | null } | null>(null);
   const [shownLog, setShownLog] = useState<BattleLogEntry[]>([]);
   const [promo, setPromo] = useState<PromoSeries | null>(null);
+  const [autoRematch, setAutoRematch] = useState<number | null>(null);
+
+  // auto rematch: começa countdown de 10s quando a batalha termina
+  useEffect(() => {
+    if (!battleLog || !winner) return;
+    if (shownLog.length !== battleLog.length) return;
+    setAutoRematch(10);
+    const interval = setInterval(() => {
+      setAutoRematch((v) => (v === null ? null : v - 1));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [battleLog, winner, shownLog.length]);
+
+  // dispara próxima batalha quando o contador zerar
+  useEffect(() => {
+    if (autoRematch === null) return;
+    if (autoRematch <= 0) {
+      setAutoRematch(null);
+      if (canFight) findOpponent();
+    }
+  }, [autoRematch]);
 
   // load promo from localStorage
   useEffect(() => {
@@ -159,6 +180,7 @@ function ArenaPage() {
     setBattleLog(null);
     setWinner(null);
     setRewards(null);
+    setAutoRematch(null);
 
     // Temporizador aleatório 1–13s pra simular a busca (evita ficar dando scout)
     const waitMs = (1 + Math.floor(Math.random() * 13)) * 1000;
@@ -689,15 +711,31 @@ function ArenaPage() {
                           disabled={searching || !canFight}
                           className="px-5 py-2.5 rounded-xl bg-black/80 text-white font-extrabold text-sm shadow-lg hover:scale-105 transition disabled:opacity-50 disabled:cursor-not-allowed border-2 border-white/40"
                         >
-                          🎯 Próxima partida
+                          🎯 Próxima partida{autoRematch !== null && canFight ? ` (${autoRematch}s)` : ""}
                         </button>
                         <button
-                          onClick={() => navigate({ to: "/" })}
+                          onClick={() => { setAutoRematch(null); navigate({ to: "/" }); }}
                           className="px-5 py-2.5 rounded-xl bg-white/90 text-slate-900 font-extrabold text-sm shadow-lg hover:scale-105 transition border-2 border-white/40"
                         >
                           🏠 Voltar pro pátio
                         </button>
                       </div>
+                      {autoRematch !== null && canFight && (
+                        <div className="mt-2 text-xs font-bold opacity-90">
+                          ⏳ Buscando próximo adversário automaticamente em {autoRematch}s…
+                          <button
+                            onClick={() => setAutoRematch(null)}
+                            className="ml-2 underline opacity-80 hover:opacity-100"
+                          >
+                            cancelar
+                          </button>
+                        </div>
+                      )}
+                      {autoRematch !== null && !canFight && (
+                        <div className="mt-2 text-xs font-bold opacity-90">
+                          ⚡ Sem energia de batalha — auto-busca pausada.
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}
