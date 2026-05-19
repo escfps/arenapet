@@ -227,21 +227,36 @@ function ArenaPage() {
     });
     const poolBase = allOwnersCapped.length > 0 ? allOwnersCapped : allOwnersFull;
     const allOwners = poolBase.filter((id) => !recent.includes(id));
+    const isReal = (id: string) => profById.get(id)?.is_bot === false;
+    // Janelas progressivas — primeiro tenta achar JOGADORES REAIS, depois mistura com bots
     const windows = [100, 200, 400, 800];
     let ownerList: string[] = [];
+    // 1) Prioriza jogadores reais (offline ou não) nas janelas
     for (const w of windows) {
-      ownerList = allOwners.filter((id) => Math.abs(byOwner[id].arenaPoints - myPts) <= w);
-      if (ownerList.length > 0) break;
+      const reals = allOwners.filter((id) => isReal(id) && Math.abs(byOwner[id].arenaPoints - myPts) <= w);
+      if (reals.length > 0) { ownerList = reals; break; }
+    }
+    // 2) Cai pra bots/mistos nas janelas se não achou real
+    if (ownerList.length === 0) {
+      for (const w of windows) {
+        ownerList = allOwners.filter((id) => Math.abs(byOwner[id].arenaPoints - myPts) <= w);
+        if (ownerList.length > 0) break;
+      }
     }
     if (ownerList.length === 0 && allOwners.length > 0) {
-      ownerList = allOwners
+      // ainda prefere reais no fallback aproximado
+      const reals = allOwners.filter(isReal);
+      const base = reals.length > 0 ? reals : allOwners;
+      ownerList = base
         .slice()
         .sort((a, b) => Math.abs(byOwner[a].arenaPoints - myPts) - Math.abs(byOwner[b].arenaPoints - myPts))
         .slice(0, 5);
     }
     // fallback: se sobrou ninguém após excluir recentes, libera os recentes (respeitando o cap se possível)
     if (ownerList.length === 0 && poolBase.length > 0) {
-      ownerList = poolBase
+      const reals = poolBase.filter(isReal);
+      const base = reals.length > 0 ? reals : poolBase;
+      ownerList = base
         .slice()
         .sort((a, b) => Math.abs(byOwner[a].arenaPoints - myPts) - Math.abs(byOwner[b].arenaPoints - myPts))
         .slice(0, 5);
