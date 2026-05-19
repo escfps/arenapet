@@ -145,7 +145,11 @@ function ArenaPage() {
       i += 1;
       setShownLog(battleLog!.slice(0, i));
       if (i >= battleLog!.length) return;
-      setTimeout(tick, delayFor(battleLog![i]));
+      // Pausa extra quando muda de turno (round break)
+      const prev = battleLog![i - 1];
+      const next = battleLog![i];
+      const turnChange = prev && next && prev.turn !== next.turn ? 1200 : 0;
+      setTimeout(tick, delayFor(next) + turnChange);
     }
     const initial = setTimeout(tick, delayFor(battleLog[0]));
     return () => { cancelled = true; clearTimeout(initial); };
