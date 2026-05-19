@@ -83,7 +83,7 @@ function ArenaPage() {
     if (autoRematch === null) return;
     if (autoRematch <= 0) {
       setAutoRematch(null);
-      findOpponent();
+      if (canFight) findOpponent();
     }
   }, [autoRematch]);
 
