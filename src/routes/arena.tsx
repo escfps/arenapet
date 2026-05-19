@@ -586,7 +586,7 @@ function ArenaPage() {
       }
     }
 
-    setRewards({ ...rew, points: delta, oldPoints, newPoints, promoMsg, promoBefore, promoAfter: nextPromo });
+    setRewards({ ...rew, gems: gemWin, points: delta, oldPoints, newPoints, promoMsg, promoBefore, promoAfter: nextPromo });
     setBattleLog(result.log);
     setWinner(result.winner);
     levelUpToasts.forEach((fn) => fn());
