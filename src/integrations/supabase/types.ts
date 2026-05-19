@@ -323,33 +323,42 @@ export type Database = {
         Row: {
           created_at: string
           id: string
+          log: Json | null
           p1_id: string | null
           p2_id: string | null
+          played_at: string | null
           round: number
           score: string | null
           slot: number
+          status: string
           tournament_id: string
           winner_id: string | null
         }
         Insert: {
           created_at?: string
           id?: string
+          log?: Json | null
           p1_id?: string | null
           p2_id?: string | null
+          played_at?: string | null
           round: number
           score?: string | null
           slot: number
+          status?: string
           tournament_id: string
           winner_id?: string | null
         }
         Update: {
           created_at?: string
           id?: string
+          log?: Json | null
           p1_id?: string | null
           p2_id?: string | null
+          played_at?: string | null
           round?: number
           score?: string | null
           slot?: number
+          status?: string
           tournament_id?: string
           winner_id?: string | null
         }
@@ -367,24 +376,33 @@ export type Database = {
         Row: {
           champion_id: string | null
           created_at: string
+          current_round: number
           finished_at: string | null
           id: string
+          round_duration_seconds: number
+          round_started_at: string | null
           slot_at: string
           status: string
         }
         Insert: {
           champion_id?: string | null
           created_at?: string
+          current_round?: number
           finished_at?: string | null
           id?: string
+          round_duration_seconds?: number
+          round_started_at?: string | null
           slot_at: string
           status?: string
         }
         Update: {
           champion_id?: string | null
           created_at?: string
+          current_round?: number
           finished_at?: string | null
           id?: string
+          round_duration_seconds?: number
+          round_started_at?: string | null
           slot_at?: string
           status?: string
         }
@@ -479,11 +497,26 @@ export type Database = {
       }
       _bot_xp_for_next: { Args: { lvl: number }; Returns: number }
       _tour_next_slot: { Args: never; Returns: string }
+      _tour_pick_winner: {
+        Args: { p1: string; p2: string; pw1: number; pw2: number }
+        Returns: string
+      }
       _tour_rank_mult: { Args: { r: number }; Returns: number }
       _tour_team_power: { Args: { uid: string }; Returns: number }
+      advance_tournament_round: {
+        Args: { p_tournament_id: string }
+        Returns: undefined
+      }
+      close_tournament_registration: {
+        Args: { p_tournament_id: string }
+        Returns: undefined
+      }
       ensure_tournament: { Args: { slot: string }; Returns: string }
       join_tournament: { Args: { p_tournament_id: string }; Returns: Json }
-      run_tournament: { Args: { p_tournament_id: string }; Returns: undefined }
+      report_match_result: {
+        Args: { p_log: Json; p_match_id: string; p_winner_id: string }
+        Returns: undefined
+      }
       simulate_bot_battles: { Args: never; Returns: undefined }
       tournaments_tick: { Args: never; Returns: undefined }
       train_bot_pets: { Args: never; Returns: undefined }
