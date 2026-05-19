@@ -394,7 +394,7 @@ export const SPECIES: Record<string, Species> = {
     emoji: "🐺", image: loboLuaSangrentaImg,
     description: "Predador noturno banhado pela lua escarlate. Cada mordida drena a essência vital do inimigo.",
     base: { hp: 75, atk: 25, def: 15, spd: 22, int: 15 },
-    skill: { name: "Mordida da Lua Sangrenta", emoji: "🩸", kind: "lifesteal_strike", cooldown: 3, description: "PASSIVA: todo ataque básico cura o lobo em 30% do dano causado. ATIVA: mordida brutal (2× dano) que cura 50% do dano causado." },
+    skill: { name: "Mordida da Lua Sangrenta", emoji: "🩸", kind: "lifesteal_strike", cooldown: 3, description: "PASSIVA: todo ataque básico cura o lobo em 40% do dano causado. ATIVA: mordida brutal (2× dano) que cura 50% do dano causado." },
   },
 
 
