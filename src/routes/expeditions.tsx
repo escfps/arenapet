@@ -106,9 +106,14 @@ function ExpeditionsPage() {
       toast.success(`Recompensa: ${parts.join(" • ")}`);
       if (r.levelUp) {
         const lu = r.levelUp;
-        for (let lv = lu.fromLevel + 1; lv <= lu.toLevel; lv++) {
-          const tier = lv === 100 ? "👑 Baú LENDÁRIO" : lv === 50 ? "🥇 Baú de OURO" : lv % 10 === 0 ? "🥈 Baú de PRATA" : "📦 Baú de Madeira";
-          toast.success(`🎉 Level ${lv}! ${tier} aberto`, { duration: 4000 });
+        if (lu.chests && lu.chests.length > 0) {
+          const newChests: PendingChest[] = lu.chests.map((c, i) => ({
+            id: `exp-${Date.now()}-${i}`,
+            tier: c.tier,
+            label: `Level ${c.level}!`,
+            reward: c.reward,
+          }));
+          setChestQueue((q) => [...q, ...newChests]);
         }
         const lp: string[] = [];
         if (lu.coins) lp.push(`🪙 ${lu.coins}`);
