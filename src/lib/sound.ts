@@ -171,47 +171,121 @@ export function playSfx(kind: SoundKind) {
   }
 }
 
-// --- Música ambiente: progressão de pads em loop ---
+// --- Trilha épica de batalha: tambores graves + baixo + lead heroico ---
 let musicStarted = false;
 let musicTimer: number | null = null;
 
-const CHORDS: number[][] = [
-  [220.00, 261.63, 329.63], // Am
-  [196.00, 246.94, 293.66], // G
-  [174.61, 220.00, 261.63], // F
-  [261.63, 329.63, 392.00], // C
+// Progressão em Lá menor — épica/marcial
+// Cada compasso: [tônica do baixo, notas do lead]
+const BARS: { bass: number; lead: number[] }[] = [
+  { bass: 110.00, lead: [440.00, 523.25, 659.25, 523.25] }, // Am
+  { bass: 87.31,  lead: [392.00, 523.25, 587.33, 523.25] }, // F
+  { bass: 98.00,  lead: [392.00, 493.88, 587.33, 493.88] }, // G
+  { bass: 110.00, lead: [440.00, 523.25, 659.25, 880.00] }, // Am
 ];
 
-function playChord(freqs: number[], duration: number) {
+const BEAT = 0.42; // ~143 BPM
+const BAR_DURATION = BEAT * 4;
+
+function kick(time: number) {
+  const c = ctx!;
+  const mg = musicGain!;
+  const osc = c.createOscillator();
+  const g = c.createGain();
+  osc.type = "sine";
+  osc.frequency.setValueAtTime(140, time);
+  osc.frequency.exponentialRampToValueAtTime(40, time + 0.15);
+  g.gain.setValueAtTime(0, time);
+  g.gain.linearRampToValueAtTime(0.6, time + 0.005);
+  g.gain.exponentialRampToValueAtTime(0.001, time + 0.25);
+  osc.connect(g);
+  g.connect(mg);
+  osc.start(time);
+  osc.stop(time + 0.3);
+}
+
+function snare(time: number) {
+  const c = ctx!;
+  const mg = musicGain!;
+  const bufferSize = Math.floor(c.sampleRate * 0.2);
+  const buffer = c.createBuffer(1, bufferSize, c.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize);
+  const src = c.createBufferSource();
+  src.buffer = buffer;
+  const filter = c.createBiquadFilter();
+  filter.type = "highpass";
+  filter.frequency.value = 1200;
+  const g = c.createGain();
+  g.gain.value = 0.3;
+  src.connect(filter);
+  filter.connect(g);
+  g.connect(mg);
+  src.start(time);
+}
+
+function bassNote(time: number, freq: number, duration: number) {
+  const c = ctx!;
+  const mg = musicGain!;
+  const osc = c.createOscillator();
+  const g = c.createGain();
+  osc.type = "sawtooth";
+  osc.frequency.value = freq;
+  const filter = c.createBiquadFilter();
+  filter.type = "lowpass";
+  filter.frequency.value = 500;
+  g.gain.setValueAtTime(0, time);
+  g.gain.linearRampToValueAtTime(0.28, time + 0.02);
+  g.gain.linearRampToValueAtTime(0.2, time + duration - 0.05);
+  g.gain.linearRampToValueAtTime(0, time + duration);
+  osc.connect(filter);
+  filter.connect(g);
+  g.connect(mg);
+  osc.start(time);
+  osc.stop(time + duration + 0.05);
+}
+
+function leadNote(time: number, freq: number, duration: number) {
+  const c = ctx!;
+  const mg = musicGain!;
+  const osc = c.createOscillator();
+  const osc2 = c.createOscillator();
+  const g = c.createGain();
+  osc.type = "square";
+  osc2.type = "triangle";
+  osc.frequency.value = freq;
+  osc2.frequency.value = freq * 1.005; // leve detune épico
+  g.gain.setValueAtTime(0, time);
+  g.gain.linearRampToValueAtTime(0.14, time + 0.05);
+  g.gain.linearRampToValueAtTime(0.1, time + duration - 0.08);
+  g.gain.linearRampToValueAtTime(0, time + duration);
+  osc.connect(g);
+  osc2.connect(g);
+  g.connect(mg);
+  osc.start(time);
+  osc2.start(time);
+  osc.stop(time + duration + 0.05);
+  osc2.stop(time + duration + 0.05);
+}
+
+function playBar(bar: { bass: number; lead: number[] }) {
   const c = ensureCtx();
   if (!c || !musicGain) return;
-  const mg = musicGain;
-  const now = c.currentTime;
-  freqs.forEach((f, i) => {
-    const osc = c.createOscillator();
-    const g = c.createGain();
-    osc.type = i === 0 ? "triangle" : "sine";
-    osc.frequency.value = f;
-    g.gain.setValueAtTime(0, now);
-    g.gain.linearRampToValueAtTime(0.18, now + 0.6);
-    g.gain.linearRampToValueAtTime(0.14, now + duration - 0.6);
-    g.gain.linearRampToValueAtTime(0, now + duration);
-    osc.connect(g);
-    g.connect(mg);
-    osc.start(now);
-    osc.stop(now + duration + 0.05);
+  const now = c.currentTime + 0.05;
+  // Tambores: kick em 1 e 3, snare em 2 e 4
+  kick(now);
+  snare(now + BEAT);
+  kick(now + BEAT * 2);
+  snare(now + BEAT * 3);
+  // Kick extra de "build" na metade
+  kick(now + BEAT * 3.5);
+  // Baixo segurando o compasso
+  bassNote(now, bar.bass, BAR_DURATION * 0.95);
+  bassNote(now, bar.bass * 0.5, BAR_DURATION * 0.95);
+  // Lead heroico — uma nota por beat
+  bar.lead.forEach((f, i) => {
+    leadNote(now + BEAT * i, f, BEAT * 0.9);
   });
-  const lead = c.createOscillator();
-  const lg = c.createGain();
-  lead.type = "sine";
-  lead.frequency.value = freqs[2] * 2;
-  lg.gain.setValueAtTime(0, now);
-  lg.gain.linearRampToValueAtTime(0.06, now + 0.4);
-  lg.gain.linearRampToValueAtTime(0, now + duration);
-  lead.connect(lg);
-  lg.connect(mg);
-  lead.start(now + 0.2);
-  lead.stop(now + duration);
 }
 
 export function startMusic() {
@@ -222,9 +296,9 @@ export function startMusic() {
   let i = 0;
   const step = () => {
     if (!musicStarted) return;
-    if (!settings.musicMuted) playChord(CHORDS[i % CHORDS.length], 3.6);
+    if (!settings.musicMuted) playBar(BARS[i % BARS.length]);
     i++;
-    musicTimer = window.setTimeout(step, 3500);
+    musicTimer = window.setTimeout(step, BAR_DURATION * 1000);
   };
   step();
 }
