@@ -592,13 +592,37 @@ function TournamentPage() {
                 <div className="text-center text-sm opacity-80 py-8">Ninguém venceu uma copa ainda. Pode ser você!</div>
               ) : (
                 <ol className="space-y-1">
-                  {champs.map((c, i) => (
-                    <li key={c.user_id} className={`flex items-center gap-2 px-3 py-2 rounded-xl ${i === 0 ? "bg-yellow-500/30 border border-yellow-400/60" : i === 1 ? "bg-gray-300/20" : i === 2 ? "bg-amber-700/30" : "bg-white/5"}`}>
-                      <span className="w-8 text-center font-extrabold">{i + 1}º</span>
-                      <span className="flex-1 truncate font-bold">{i === 0 ? "👑 " : ""}{c.username}</span>
-                      <span className="text-sm font-extrabold">{c.wins} 🏆</span>
-                    </li>
-                  ))}
+                  {champs.map((c, i) => {
+                    const team = champTeams[c.user_id] ?? [];
+                    return (
+                      <li key={c.user_id} className={`flex items-center gap-2 px-3 py-2 rounded-xl ${i === 0 ? "bg-yellow-500/30 border border-yellow-400/60" : i === 1 ? "bg-gray-300/20" : i === 2 ? "bg-amber-700/30" : "bg-white/5"}`}>
+                        <span className="w-8 text-center font-extrabold">{i + 1}º</span>
+                        <span className="flex-1 truncate font-bold">{i === 0 ? "👑 " : ""}{c.username}</span>
+                        <div className="flex items-center gap-1">
+                          {team.slice(0, 3).map((p, idx) => {
+                            const sp = SPECIES[p.species];
+                            return (
+                              <div
+                                key={idx}
+                                title={sp?.name ?? p.species}
+                                className="w-9 h-9 rounded-full overflow-hidden bg-black/30 border border-white/30 flex items-center justify-center"
+                              >
+                                {sp?.image ? (
+                                  <img src={sp.image} alt={sp.name} className="w-full h-full object-cover" />
+                                ) : (
+                                  <span className="text-xs opacity-60">?</span>
+                                )}
+                              </div>
+                            );
+                          })}
+                          {team.length === 0 && (
+                            <span className="text-[10px] opacity-50 italic">sem time</span>
+                          )}
+                        </div>
+                        <span className="text-sm font-extrabold w-12 text-right">{c.wins} 🏆</span>
+                      </li>
+                    );
+                  })}
                 </ol>
               )}
             </section>
