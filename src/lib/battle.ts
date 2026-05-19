@@ -829,6 +829,12 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
         target.sleepTurns = Math.max(target.sleepTurns, 2);
         sleptByPassive = true;
       }
+      // PASSIVA Urso Polar: 50% de chance de congelar o alvo por 2 turnos
+      let frozenByPassive = false;
+      if (attacker.species === "urso_polar" && target.current > 0 && rand() < 0.5) {
+        target.freezeTurns = Math.max(target.freezeTurns, 2);
+        frozenByPassive = true;
+      }
 
       let msg = `${attacker.name} atacou ${target.name} causando ${damage} de dano`;
       if (crit) msg += " (CRÍTICO!)";
@@ -837,6 +843,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
       else if (eff < 1) msg += " (pouco eficaz...)";
       if (phoenixGrow > 0) msg += ` 🌑 (+${phoenixGrow} HP máx)`;
       if (sleptByPassive) msg += ` 💤 ${target.name} adormeceu por 2 turnos!`;
+      if (frozenByPassive) msg += ` ❄️ ${target.name} congelou por 2 turnos!`;
 
       log.push({
         turn, actor: side, actorName: attacker.name, targetName: target.name,
