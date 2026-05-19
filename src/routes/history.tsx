@@ -25,6 +25,8 @@ type BattleRow = {
   xp_reward: number;
   created_at: string;
   log: unknown;
+  attacker_points_delta?: number | null;
+  defender_points_delta?: number | null;
 };
 
 type OpponentMap = Record<string, { username: string; level: number }>;
@@ -130,6 +132,12 @@ function HistoryPage() {
               const oppId = b.attacker_id === userId ? b.defender_id : b.attacker_id;
               const opp = opponents[oppId];
               const role = b.attacker_id === userId ? "Atacou" : "Defendeu";
+              // Pega o delta de pontos certo pro lado em que você jogou.
+              // Para batalhas antigas (sem coluna), cai no fallback dos constants.
+              const myDelta = b.attacker_id === userId
+                ? (b.attacker_points_delta ?? (won ? ARENA_WIN_POINTS : -ARENA_LOSS_POINTS))
+                : (b.defender_points_delta ?? (won ? ARENA_WIN_POINTS : -ARENA_LOSS_POINTS));
+              const deltaStr = myDelta >= 0 ? `+${myDelta}` : `${myDelta}`;
               return (
                 <button
                   key={b.id}
@@ -152,8 +160,8 @@ function HistoryPage() {
                     <div className="text-[11px] opacity-80">{role} • {timeAgo(b.created_at)}</div>
                   </div>
                   <div className="text-right text-xs font-bold text-white">
-                    <div className={won ? "text-emerald-300" : "text-rose-300"}>
-                      {won ? `+${ARENA_WIN_POINTS}` : `-${ARENA_LOSS_POINTS}`} 🏆
+                    <div className={myDelta >= 0 ? "text-emerald-300" : "text-rose-300"}>
+                      {deltaStr} 🏆
                     </div>
                     {won ? (
                       <>
@@ -268,9 +276,17 @@ function BattleDetailModal({ battle, userId, onClose }: { battle: BattleRow; use
               <div className="text-xs opacity-80">{new Date(battle.created_at).toLocaleString("pt-BR")} • {turns} turno{turns !== 1 ? "s" : ""}</div>
             </div>
             <div className="text-right text-sm font-bold">
-              <div className={won ? "text-emerald-300" : "text-rose-300"}>
-                {won ? `+${ARENA_WIN_POINTS}` : `-${ARENA_LOSS_POINTS}`} 🏆 pts
-              </div>
+              {(() => {
+                const myDelta = battle.attacker_id === userId
+                  ? (battle.attacker_points_delta ?? (won ? ARENA_WIN_POINTS : -ARENA_LOSS_POINTS))
+                  : (battle.defender_points_delta ?? (won ? ARENA_WIN_POINTS : -ARENA_LOSS_POINTS));
+                const s = myDelta >= 0 ? `+${myDelta}` : `${myDelta}`;
+                return (
+                  <div className={myDelta >= 0 ? "text-emerald-300" : "text-rose-300"}>
+                    {s} 🏆 pts
+                  </div>
+                );
+              })()}
               {won && (
                 <>
                   <div className="text-yellow-300">+{battle.coins_reward} 🪙</div>

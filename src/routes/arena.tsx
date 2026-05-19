@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { SPECIES, ELEMENT_COLORS, ROLE_INFO, RARITY_INFO, MAX_RANK, skinFilter, isVip, xpForNextLevel, rankStars, totalStats, ARENA_WIN_POINTS, ARENA_LOSS_POINTS, getTier, divisionBounds, promoNeeded, type PromoSeries, computeBattleEnergy, MAX_BATTLE_ENERGY, hungerMultiplier, rollLevelUpRewards, tierPromotionChests, rollChest, CHESTS, tierRankIndex, starterMonsterStats } from "@/lib/game-data";
+import { SPECIES, ELEMENT_COLORS, ROLE_INFO, RARITY_INFO, MAX_RANK, skinFilter, isVip, xpForNextLevel, rankStars, totalStats, ARENA_WIN_POINTS, ARENA_LOSS_POINTS, rollArenaPoints, getTier, divisionBounds, promoNeeded, type PromoSeries, computeBattleEnergy, MAX_BATTLE_ENERGY, hungerMultiplier, rollLevelUpRewards, tierPromotionChests, rollChest, CHESTS, tierRankIndex, starterMonsterStats } from "@/lib/game-data";
 import type { MonsterRow } from "@/components/MonsterCard";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
@@ -358,6 +358,15 @@ function ArenaPage() {
     // Arena points + promo series logic
     const oldPoints = profile.arena_points ?? 0;
     const promoBefore = promo;
+    // Pontos rolados pra esta partida (variam por tier — quanto mais alto, mais difícil subir)
+    const myRoll = rollArenaPoints(oldPoints);
+    const oppRoll = rollArenaPoints(opp.arenaPoints);
+    // Quanto o atacante (você) ganha/perde nessa partida
+    const myWinPts = myRoll.win;
+    const myLossPts = myRoll.loss;
+    // Quanto o defensor (opp) ganha/perde nessa partida
+    const oppWinPts = oppRoll.win;
+    const oppLossPts = oppRoll.loss;
     let newPoints = oldPoints;
     let delta = 0;
     let promoMsg: string | undefined;
@@ -388,7 +397,7 @@ function ArenaPage() {
           promoMsg = `Série ${promo.type.toUpperCase()}: ${updated.wins}V ${updated.losses}D`;
         }
       } else {
-        delta = won ? ARENA_WIN_POINTS : -ARENA_LOSS_POINTS;
+        delta = won ? myWinPts : -myLossPts;
         newPoints = Math.max(0, oldPoints + delta);
         const b = divisionBounds(oldPoints);
         if (b && newPoints >= b.end) {
@@ -455,9 +464,12 @@ function ArenaPage() {
       await supabase.rpc("apply_arena_defender_result", {
         p_defender_id: opp.ownerId,
         p_attacker_won: won,
-        p_win_pts: ARENA_WIN_POINTS,
-        p_loss_pts: ARENA_LOSS_POINTS,
+        p_win_pts: oppWinPts,
+        p_loss_pts: oppLossPts,
       });
+
+      // Delta real aplicado ao defensor (pode bater no piso 0)
+      const defenderDelta = won ? -Math.min(oppLossPts, opp.arenaPoints) : oppWinPts;
 
       await supabase.from("battles").insert({
         attacker_id: userId,
@@ -466,6 +478,8 @@ function ArenaPage() {
         log: JSON.parse(JSON.stringify(result.log)),
         coins_reward: rew.coins,
         xp_reward: rew.xp,
+        attacker_points_delta: delta,
+        defender_points_delta: defenderDelta,
       });
 
       if (won && Math.random() < 0.70) {

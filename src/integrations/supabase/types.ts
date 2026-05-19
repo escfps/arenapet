@@ -17,9 +17,11 @@ export type Database = {
       battles: {
         Row: {
           attacker_id: string
+          attacker_points_delta: number
           coins_reward: number
           created_at: string
           defender_id: string
+          defender_points_delta: number
           id: string
           log: Json
           winner_id: string
@@ -27,9 +29,11 @@ export type Database = {
         }
         Insert: {
           attacker_id: string
+          attacker_points_delta?: number
           coins_reward?: number
           created_at?: string
           defender_id: string
+          defender_points_delta?: number
           id?: string
           log?: Json
           winner_id: string
@@ -37,9 +41,11 @@ export type Database = {
         }
         Update: {
           attacker_id?: string
+          attacker_points_delta?: number
           coins_reward?: number
           created_at?: string
           defender_id?: string
+          defender_points_delta?: number
           id?: string
           log?: Json
           winner_id?: string
