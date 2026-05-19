@@ -258,16 +258,6 @@ function TournamentPage() {
                     )}
                   </div>
 
-                  <div className="mt-4 grid grid-cols-2 gap-3 text-center">
-                    <div className="rounded-xl bg-white/10 p-3">
-                      <div className="text-2xl font-extrabold">{openEntries.filter((e) => !e.is_bot).length}</div>
-                      <div className="text-[10px] opacity-80">jogadores inscritos</div>
-                    </div>
-                    <div className="rounded-xl bg-white/10 p-3">
-                      <div className="text-2xl font-extrabold">{32 - openEntries.length}</div>
-                      <div className="text-[10px] opacity-80">vagas (preenchidas por bots)</div>
-                    </div>
-                  </div>
 
                   <div className="mt-4 text-center">
                     {myEntry ? (
