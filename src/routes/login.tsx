@@ -49,8 +49,15 @@ function LoginPage() {
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
+    // Safety: nunca deixar o botão preso no AGUARDE
+    const watchdog = setTimeout(() => {
+      setBusy(false);
+      toast.error("A operação demorou muito. Tente novamente.");
+    }, 20000);
     try {
       if (mode === "signup") {
+        // Garante que não há sessão antiga interferindo no signup
+        try { await supabase.auth.signOut(); } catch {}
         const { data, error } = await supabase.auth.signUp({
           email, password,
           options: {
@@ -59,6 +66,11 @@ function LoginPage() {
           },
         });
         if (error) throw error;
+        // Email já cadastrado: Supabase devolve user com identities=[] e sem sessão
+        const identities = (data.user as { identities?: unknown[] } | null)?.identities;
+        if (data.user && Array.isArray(identities) && identities.length === 0) {
+          throw new Error("Este email já está cadastrado. Faça login.");
+        }
         if (remember) {
           localStorage.setItem(REMEMBER_KEY, JSON.stringify({ email, password }));
         }
@@ -81,8 +93,10 @@ function LoginPage() {
         navigate({ to: "/" });
       }
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Erro");
+      console.error("[auth submit]", err);
+      toast.error(err instanceof Error ? err.message : "Erro ao processar");
     } finally {
+      clearTimeout(watchdog);
       setBusy(false);
     }
   }
