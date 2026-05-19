@@ -251,30 +251,46 @@ function ShopPage() {
             </div>
 
             {chestResult && (
-              <div className="rounded-2xl p-6 text-center text-white bg-gradient-to-br from-amber-500 to-yellow-700 animate-in fade-in zoom-in">
-                <div className="text-sm opacity-90">VOCÊ ABRIU {CHESTS[chestResult.tier].name.toUpperCase()}</div>
-                <div className="text-6xl my-2">{CHESTS[chestResult.tier].emoji}</div>
-                <div className="space-y-1 text-sm font-bold">
-                  {chestResult.reward.coins > 0 && <div>+🪙 {chestResult.reward.coins} moedas</div>}
-                  {chestResult.reward.gems > 0 && <div>+💎 {chestResult.reward.gems} gemas</div>}
-                  {chestResult.reward.rations > 0 && <div>+🍖 {chestResult.reward.rations} rações</div>}
-                  {chestResult.reward.petSpecies && (
-                    <div className="mt-3 pt-3 border-t border-white/30">
-                      <div className="text-xs opacity-90">🎉 BICHINHO RARO!</div>
-                      <img src={SPECIES[chestResult.reward.petSpecies].image} alt="" className="h-32 mx-auto drop-shadow-2xl" />
-                      <div className="text-xl font-extrabold">
-                        {SPECIES[chestResult.reward.petSpecies].emoji} {SPECIES[chestResult.reward.petSpecies].name}
+              <div
+                className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in"
+                onClick={() => setChestResult(null)}
+              >
+                <div
+                  className="relative w-full max-w-sm rounded-3xl p-6 text-center text-white bg-gradient-to-br from-amber-500 via-yellow-600 to-amber-700 shadow-2xl border-4 border-yellow-300/60 animate-in zoom-in-50 duration-500"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className="absolute inset-0 rounded-3xl overflow-hidden pointer-events-none">
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,200,0.5),transparent_60%)] animate-pulse" />
+                  </div>
+                  <div className="relative">
+                    <div className="text-xs opacity-90 tracking-widest">VOCÊ ABRIU</div>
+                    <div className="text-lg font-extrabold">{CHESTS[chestResult.tier].name.toUpperCase()}</div>
+                    <div className="text-7xl my-3 drop-shadow-lg animate-bounce">{CHESTS[chestResult.tier].emoji}</div>
+                    {chestResult.reward.petSpecies && (
+                      <div className="mb-3 pb-3 border-b border-white/30">
+                        <div className="text-xs opacity-90">🎉 BICHINHO RARO!</div>
+                        <img src={SPECIES[chestResult.reward.petSpecies].image} alt="" className="h-36 mx-auto drop-shadow-2xl animate-in zoom-in duration-700" />
+                        <div className="text-xl font-extrabold">
+                          {SPECIES[chestResult.reward.petSpecies].emoji} {SPECIES[chestResult.reward.petSpecies].name}
+                        </div>
+                        <span className={`inline-block mt-1 px-2 py-0.5 rounded-full ${RARITY_INFO[SPECIES[chestResult.reward.petSpecies].rarity].color} text-[10px] font-extrabold`}>
+                          {RARITY_INFO[SPECIES[chestResult.reward.petSpecies].rarity].emoji} {RARITY_INFO[SPECIES[chestResult.reward.petSpecies].rarity].name}
+                        </span>
                       </div>
-                      <span className={`inline-block mt-1 px-2 py-0.5 rounded-full ${RARITY_INFO[SPECIES[chestResult.reward.petSpecies].rarity].color} text-[10px] font-extrabold`}>
-                        {RARITY_INFO[SPECIES[chestResult.reward.petSpecies].rarity].emoji} {RARITY_INFO[SPECIES[chestResult.reward.petSpecies].rarity].name}
-                      </span>
+                    )}
+                    <div className="space-y-1 text-base font-bold">
+                      {chestResult.reward.coins > 0 && <div>+🪙 {chestResult.reward.coins} moedas</div>}
+                      {chestResult.reward.gems > 0 && <div>+💎 {chestResult.reward.gems} gemas</div>}
+                      {chestResult.reward.rations > 0 && <div>+🍖 {chestResult.reward.rations} rações</div>}
+                      {!chestResult.reward.petSpecies && (
+                        <div className="mt-2 text-xs opacity-80">(sem pet desta vez — boa sorte na próxima!)</div>
+                      )}
                     </div>
-                  )}
-                  {!chestResult.reward.petSpecies && (
-                    <div className="mt-2 text-xs opacity-80">(sem pet desta vez — boa sorte na próxima!)</div>
-                  )}
+                    <button onClick={() => setChestResult(null)} className="mt-5 w-full px-4 py-2.5 rounded-xl bg-white/25 hover:bg-white/35 text-sm font-extrabold tracking-wide">
+                      CONTINUAR
+                    </button>
+                  </div>
                 </div>
-                <button onClick={() => setChestResult(null)} className="mt-3 px-4 py-1.5 rounded-lg bg-white/30 hover:bg-white/40 text-sm font-bold">Fechar</button>
               </div>
             )}
           </>
