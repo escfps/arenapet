@@ -78,7 +78,7 @@ function RankingPage() {
     >
       <HUD profile={profile} />
       <div className="max-w-3xl mx-auto px-4 mt-4 space-y-4">
-        <button onClick={() => navigate({ to: "/" })} className="text-white/80 hover:text-white text-sm font-bold">← Pátio</button>
+        <button onClick={() => navigate({ to: "/" })} className="text-white/80 hover:text-white text-sm font-bold">← Home</button>
 
         <header className="text-center text-white">
           <h1 className="text-4xl font-extrabold drop-shadow-lg">🏆 Ranking</h1>
