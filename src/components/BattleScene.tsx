@@ -128,6 +128,10 @@ export function BattleScene({
     const targetKey =
       entry.targetName === "todos os aliados" ? null : `${targetSide}:${entry.targetName}`;
 
+    // Fênix Negra: parse "+X HP máx" para crescer o max do atacante
+    const growMatch = entry.message.match(/\+(\d+)\s*HP máx/);
+    const phoenixGrow = growMatch ? parseInt(growMatch[1], 10) : 0;
+
     setHp((prev) => {
       const next = new Map(prev);
       if (entry.targetName === "todos os aliados") {
@@ -146,6 +150,14 @@ export function BattleScene({
           } else if (entry.damage < 0) {
             next.set(targetKey, { ...cur, cur: Math.min(cur.max, cur.cur + -entry.damage) });
           }
+        }
+      }
+      // Aplica o crescimento da Fênix Negra ao atacante
+      if (phoenixGrow > 0) {
+        const a = next.get(actorKey);
+        if (a) {
+          const newMax = a.max + phoenixGrow;
+          next.set(actorKey, { cur: Math.min(newMax, a.cur + phoenixGrow), max: newMax });
         }
       }
       return next;
