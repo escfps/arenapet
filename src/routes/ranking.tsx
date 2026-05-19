@@ -135,9 +135,6 @@ function RankingPage() {
               </li>
             ))}
           </ul>
-          <div className="px-4 py-2 text-[10px] text-white/60 border-t border-white/10">
-            Ganho por vitória: <span className="text-green-300 font-bold">19–25</span> · Perda por derrota: <span className="text-red-300 font-bold">17–23</span>. Quanto mais alto o elo, mais difícil tirar o máximo de ganho e mais fácil levar a perda máxima.
-          </div>
         </details>
 
         {/* Leaderboard */}
