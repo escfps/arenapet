@@ -133,11 +133,21 @@
   }
   .animate-battle-shake { animation: battleShake 0.35s ease-in-out; }
   @keyframes battleFloat {
-    0% { transform: translateY(0) scale(0.8); opacity: 0; }
-    20% { transform: translateY(-6px) scale(1.2); opacity: 1; }
-    100% { transform: translateY(-36px) scale(1); opacity: 0; }
+    0% { transform: translate(-50%, 0) scale(0.4); opacity: 0; }
+    15% { transform: translate(-50%, -14px) scale(1.5); opacity: 1; }
+    35% { transform: translate(-50%, -28px) scale(1.15); opacity: 1; }
+    80% { transform: translate(-50%, -56px) scale(1.05); opacity: 1; }
+    100% { transform: translate(-50%, -78px) scale(0.95); opacity: 0; }
   }
-  .animate-battle-float { animation: battleFloat 0.65s ease-out forwards; }
+  .animate-battle-float { animation: battleFloat 1.2s cubic-bezier(.22,.9,.3,1) forwards; }
+  @keyframes battleFloatCrit {
+    0% { transform: translate(-50%, 0) scale(0.4) rotate(-8deg); opacity: 0; }
+    15% { transform: translate(-50%, -18px) scale(1.9) rotate(4deg); opacity: 1; }
+    40% { transform: translate(-50%, -34px) scale(1.4) rotate(-2deg); opacity: 1; }
+    80% { transform: translate(-50%, -66px) scale(1.2) rotate(0); opacity: 1; }
+    100% { transform: translate(-50%, -90px) scale(1); opacity: 0; }
+  }
+  .animate-battle-float-crit { animation: battleFloatCrit 1.35s cubic-bezier(.22,.9,.3,1) forwards; }
 
   /* === Skill FX === */
   @keyframes skillPop {
