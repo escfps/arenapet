@@ -510,6 +510,15 @@ export type Database = {
         Args: { p_tournament_id: string }
         Returns: undefined
       }
+      apply_arena_defender_result: {
+        Args: {
+          p_attacker_won: boolean
+          p_defender_id: string
+          p_loss_pts: number
+          p_win_pts: number
+        }
+        Returns: undefined
+      }
       close_tournament_registration: {
         Args: { p_tournament_id: string }
         Returns: undefined
