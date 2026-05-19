@@ -80,14 +80,17 @@ function MonsterPage() {
   const TRAIN_ENERGY_COST = 2;
   const PLAY_ENERGY_COST = 1;
 
+  const TRAIN_GEM_COST = 2;
+
   async function train(stat: "atk" | "def" | "spd" | "hp" | "int") {
     if (!profile || !monster) return;
     const cost = 20 + (monster.rank ?? 1) * 10;
     if (profile.coins < cost) { toast.error("Moedas insuficientes!"); return; }
+    if ((profile.gems ?? 0) < TRAIN_GEM_COST) { toast.error(`Faltam 💎 ${TRAIN_GEM_COST} diamantes!`); return; }
     const e = computeBattleEnergy(monster.battle_energy, monster.battle_energy_at);
     if (e.energy < TRAIN_ENERGY_COST) { toast.error("Sem energia! Dê um energético ou espere regenerar."); return; }
     if (monster.hunger < 20) { toast.error("Está com fome! Alimente primeiro."); return; }
-    await patch({ coins: profile.coins - cost });
+    await patch({ coins: profile.coins - cost, gems: (profile.gems ?? 0) - TRAIN_GEM_COST });
     const gain = stat === "hp" ? 3 + Math.floor(Math.random() * 3) : 1 + Math.floor(Math.random() * 2);
     const updates: Partial<MonsterRow> = {
       battle_energy: e.energy - TRAIN_ENERGY_COST,
@@ -98,6 +101,7 @@ function MonsterPage() {
     await patchMonster(updates);
     toast.success(`+${gain} ${stat.toUpperCase()}!`);
   }
+
 
   async function play() {
     if (!monster) return;
@@ -388,8 +392,9 @@ function MonsterPage() {
                 <div className="text-3xl mb-1">{emoji}</div>
                 <div>Treinar {s.toUpperCase()}</div>
                 <div className="text-xs font-normal opacity-90 mt-1">
-                  🪙 {20 + monster.rank * 10} • -{TRAIN_ENERGY_COST} energia • {gain} {s.toUpperCase()}
+                  🪙 {20 + monster.rank * 10} • 💎 {TRAIN_GEM_COST} • -{TRAIN_ENERGY_COST} energia • {gain} {s.toUpperCase()}
                 </div>
+
               </button>
             ))}
           </div>
