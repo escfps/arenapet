@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { SPECIES, ELEMENT_COLORS, ELEMENT_NAMES, RARITY_INFO, rollWelcomeChest, starterMonsterStats, type Rarity, type Element } from "@/lib/game-data";
+import { SPECIES, ELEMENT_COLORS, ELEMENT_NAMES, RARITY_INFO, ROLE_INFO, rollWelcomeChest, starterMonsterStats, type Rarity, type Element, type Role } from "@/lib/game-data";
 import { MonsterCard, type MonsterRow } from "@/components/MonsterCard";
 import { HUD } from "@/components/HUD";
 import { TutorialOverlay } from "@/components/TutorialOverlay";
@@ -22,6 +22,7 @@ export const Route = createFileRoute("/")({
 const TEAM_MAX = 3;
 const ALL_RARITIES: Rarity[] = ["common", "rare", "super_rare", "epic", "legendary", "mythic"];
 const ALL_ELEMENTS: Element[] = ["fire", "water", "grass", "electric", "shadow", "earth"];
+const ALL_ROLES: Role[] = ["tank", "dps", "assassin", "mage", "healer"];
 
 function PatioPage() {
   const navigate = useNavigate();
@@ -32,11 +33,13 @@ function PatioPage() {
   const [search, setSearch] = useState("");
   const [rarityFilter, setRarityFilter] = useState<Rarity | "all">("all");
   const [elementFilter, setElementFilter] = useState<Element | "all">("all");
+  const [roleFilter, setRoleFilter] = useState<Role | "all">("all");
   const [groupModal, setGroupModal] = useState<string | null>(null);
   const [slotPicker, setSlotPicker] = useState<number | null>(null);
   const [pickerSearch, setPickerSearch] = useState("");
   const [pickerRarity, setPickerRarity] = useState<Rarity | "all">("all");
   const [pickerElement, setPickerElement] = useState<Element | "all">("all");
+  const [pickerRole, setPickerRole] = useState<Role | "all">("all");
   const [showTutorial, setShowTutorial] = useState(false);
 
   // Mostra tutorial após o baú ser aberto (uma vez por conta)
@@ -93,13 +96,14 @@ function PatioPage() {
       if (!sp) return true;
       if (rarityFilter !== "all" && sp.rarity !== rarityFilter) return false;
       if (elementFilter !== "all" && sp.element !== elementFilter && sp.secondaryElement !== elementFilter) return false;
+      if (roleFilter !== "all" && sp.role !== roleFilter) return false;
       if (q) {
         const hay = `${m.name ?? ""} ${sp.name}`.toLowerCase();
         if (!hay.includes(q)) return false;
       }
       return true;
     });
-  }, [monsters, search, rarityFilter, elementFilter]);
+  }, [monsters, search, rarityFilter, elementFilter, roleFilter]);
 
   const groupedSpecies = useMemo(() => {
     const map = new Map<string, MonsterRow[]>();
@@ -418,6 +422,30 @@ function PatioPage() {
                   ))}
                 </div>
               </div>
+              <div className="space-y-1">
+                <div className="text-white/70 text-[10px] font-extrabold uppercase tracking-wider px-1">Classe</div>
+                <div className="flex flex-wrap gap-1.5">
+                  <button
+                    onClick={() => setRoleFilter("all")}
+                    className={`px-3 py-1 rounded-full text-[11px] font-extrabold transition ${
+                      roleFilter === "all" ? "bg-yellow-400 text-yellow-950" : "bg-white/10 text-white hover:bg-white/20"
+                    }`}
+                  >
+                    Todas
+                  </button>
+                  {ALL_ROLES.map((r) => (
+                    <button
+                      key={r}
+                      onClick={() => setRoleFilter(r)}
+                      className={`px-3 py-1 rounded-full text-[11px] font-extrabold text-white transition ${
+                        roleFilter === r ? `${ROLE_INFO[r].color} ring-2 ring-white` : "bg-white/10 hover:bg-white/20"
+                      }`}
+                    >
+                      {ROLE_INFO[r].emoji} {ROLE_INFO[r].name}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </section>
 
             <section>
@@ -475,10 +503,11 @@ function PatioPage() {
           if (!sp) return true;
           if (pickerRarity !== "all" && sp.rarity !== pickerRarity) return false;
           if (pickerElement !== "all" && sp.element !== pickerElement && sp.secondaryElement !== pickerElement) return false;
+          if (pickerRole !== "all" && sp.role !== pickerRole) return false;
           if (q && !m.name.toLowerCase().includes(q) && !sp.name.toLowerCase().includes(q)) return false;
           return true;
         });
-        const closePicker = () => { setSlotPicker(null); setPickerSearch(""); setPickerRarity("all"); setPickerElement("all"); };
+        const closePicker = () => { setSlotPicker(null); setPickerSearch(""); setPickerRarity("all"); setPickerElement("all"); setPickerRole("all"); };
         return (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in" onClick={closePicker}>
           <div className="max-w-3xl w-full max-h-[85vh] overflow-y-auto rounded-3xl bg-gradient-to-br from-slate-900 to-slate-800 border-2 border-white/20 shadow-2xl p-5 text-white animate-in zoom-in" onClick={(e) => e.stopPropagation()}>
@@ -508,6 +537,14 @@ function PatioPage() {
                 {ALL_ELEMENTS.map((el) => (
                   <button key={el} onClick={() => setPickerElement(el)} className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold text-white transition bg-gradient-to-r ${ELEMENT_COLORS[el]} ${pickerElement === el ? "ring-2 ring-white" : "opacity-60 hover:opacity-100"}`}>
                     {ELEMENT_NAMES[el]}
+                  </button>
+                ))}
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                <button onClick={() => setPickerRole("all")} className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold transition ${pickerRole === "all" ? "bg-yellow-400 text-yellow-950" : "bg-white/10 text-white hover:bg-white/20"}`}>Todas</button>
+                {ALL_ROLES.map((r) => (
+                  <button key={r} onClick={() => setPickerRole(r)} className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold text-white transition ${pickerRole === r ? `${ROLE_INFO[r].color} ring-2 ring-white` : "bg-white/10 hover:bg-white/20"}`}>
+                    {ROLE_INFO[r].emoji} {ROLE_INFO[r].name}
                   </button>
                 ))}
               </div>
