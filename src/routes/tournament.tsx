@@ -197,11 +197,15 @@ function TournamentPage() {
   const pName = (id?: string | null) => (id ? profs[id]?.username ?? "…" : "—");
   const pIsBot = (id?: string | null) => (id ? profs[id]?.is_bot ?? false : false);
 
+  if (!profile) {
+    return <div className="min-h-screen flex items-center justify-center text-white">Carregando…</div>;
+  }
+
   return (
     <div className="min-h-screen relative" style={{ backgroundImage: `url(${arenaBg})`, backgroundSize: "cover", backgroundPosition: "center" }}>
       <div className="absolute inset-0 bg-gradient-to-b from-purple-950/85 via-indigo-950/85 to-slate-950/90" />
       <div className="relative">
-        <HUD profile={profile!} />
+        <HUD profile={profile} />
         <main className="max-w-5xl mx-auto px-3 py-4 space-y-4">
           <div className="text-center text-white">
             <h1 className="text-3xl font-extrabold drop-shadow-lg">🏆 Copa Pet</h1>
