@@ -129,13 +129,16 @@ function ArenaPage() {
       setSearchCountdown(Math.min(Math.ceil(waitMs / 1000), Math.max(1, Math.ceil(elapsed / 1000))));
     }, 250);
 
-    // Busca os candidatos em paralelo com a espera
+    // Busca os candidatos em paralelo com a espera.
+    // Ordena por rank asc pra garantir que contas novas (rankCap baixo) sempre
+    // encontrem oponentes fracos no pool, mesmo com 1000+ bots no banco.
     const monsPromise = supabase
       .from("monsters")
       .select("*")
       .neq("owner_id", userId)
       .eq("in_team", true)
-      .limit(200);
+      .order("rank", { ascending: true })
+      .limit(900);
 
     await new Promise((r) => setTimeout(r, waitMs));
     window.clearInterval(tickId);
