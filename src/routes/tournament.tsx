@@ -272,7 +272,7 @@ function TournamentPage() {
               <div className="text-3xl">🏆</div>
               <div className="text-xs opacity-90">Campeão da última copa</div>
               <div className="text-lg font-extrabold text-yellow-100 drop-shadow">
-                {pName(lastT.champion_id)} {pIsBot(lastT.champion_id) && <span className="text-[10px] opacity-70">(bot)</span>}
+                {pName(lastT.champion_id)}
               </div>
             </div>
           )}
@@ -482,7 +482,7 @@ function TournamentPage() {
                     {lastT.champion_id ? (
                       <div className="mt-1 text-xl font-extrabold">
                         🏆 Campeão: <span className="text-yellow-300">{pName(lastT.champion_id)}</span>
-                        {pIsBot(lastT.champion_id) && <span className="ml-1 text-[10px] opacity-70">(bot)</span>}
+                        
                       </div>
                     ) : (
                       <div className="mt-1 text-sm opacity-70">Sem campeão</div>
