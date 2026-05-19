@@ -3,6 +3,7 @@ import type { BattleLogEntry } from "@/lib/battle";
 import { SPECIES, ELEMENT_COLORS, RARITY_INFO, MAX_RANK, skinFilter, totalStats, getSkill } from "@/lib/game-data";
 import type { MonsterRow } from "./MonsterCard";
 import grassBg from "@/assets/battle-grass-bg.jpg";
+import { playSfx } from "@/lib/sound";
 
 type Team = (MonsterRow & { owner_id: string })[];
 type HpMap = Map<string, { cur: number; max: number }>;
