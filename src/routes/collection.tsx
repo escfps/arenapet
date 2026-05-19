@@ -78,7 +78,7 @@ function CollectionPage() {
 
       <div className="max-w-5xl mx-auto px-4 mt-4 space-y-4">
         <button onClick={() => navigate({ to: "/" })} className="text-white/80 hover:text-white text-sm font-bold">
-          ← Pátio
+          ← Home
         </button>
 
         <header className="text-center text-white">

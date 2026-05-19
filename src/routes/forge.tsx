@@ -109,7 +109,7 @@ function ForgePage() {
         <Toaster position="top-center" richColors />
         <main className="max-w-5xl mx-auto p-4 space-y-6">
           <div className="text-center">
-            <h1 className="text-3xl font-extrabold text-white drop-shadow">🔨 Forja de Fusão</h1>
+            <h1 className="text-3xl font-extrabold text-white drop-shadow">🔨 Elevar Pets</h1>
             <p className="text-purple-100/90 text-sm mt-1">
               Junte 2 bichinhos iguais no mesmo ✦ para subir 1 rank. Máximo ✦{MAX_RANK}.
             </p>

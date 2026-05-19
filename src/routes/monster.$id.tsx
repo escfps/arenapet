@@ -137,7 +137,7 @@ function MonsterPage() {
       <HUD profile={profile} />
 
       <div className="max-w-3xl mx-auto px-4 mt-4 space-y-4">
-        <button onClick={() => navigate({ to: "/" })} className="text-white/80 hover:text-white text-sm font-bold">← Pátio</button>
+        <button onClick={() => navigate({ to: "/" })} className="text-white/80 hover:text-white text-sm font-bold">← Home</button>
 
         {/* Hero */}
         <div className={`rounded-3xl overflow-hidden border-2 border-white/30 shadow-2xl bg-gradient-to-br ${ELEMENT_COLORS[sp.element]}`}>
