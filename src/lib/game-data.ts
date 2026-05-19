@@ -35,6 +35,7 @@ import aguiaCegaImg from "@/assets/monsters/aguia_cega.png";
 import fenixVermelhaImg from "@/assets/monsters/fenix_vermelha.png";
 import fenixNegraImg from "@/assets/monsters/fenix_negra.png";
 import borboletaSoniferaImg from "@/assets/monsters/borboleta_sonifera.png";
+import ursoPolarImg from "@/assets/monsters/urso_polar.png";
 
 export type Element = "fire" | "water" | "grass" | "electric" | "shadow" | "earth";
 export type Role = "tank" | "dps" | "assassin" | "mage" | "healer";
@@ -91,6 +92,7 @@ export type SkillKind =
   | "bleed_dot"         // dps — sangramento físico escala com ATK (Darius)
   | "blind_debuff"      // mago — cega TODOS inimigos: 50% miss em ataques básicos por 3 turnos
   | "sleep_strike"      // super raro — dano + 50% chance de adormecer alvo / PASSIVA: ataque básico 50% chance de adormecer
+  | "freeze_strike"     // super raro — dano gélido + chance de congelar / PASSIVA: ataque básico 50% chance de congelar
   | "true_damage_nuke"  // mítico — dano puro ignora DEF e elemento (Vayne ult)
   | "phoenix_rage"      // mítico — PASSIVA: quanto mais HP perde, mais ATK ganha (até +120%)
   | "phoenix_growth";   // mítico — PASSIVA: cada dano causado vira HP máx + cura temporária na batalha
