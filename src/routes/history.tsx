@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
+import { ARENA_WIN_POINTS, ARENA_LOSS_POINTS } from "@/lib/game-data";
 import arenaBg from "@/assets/arena-bg.jpg";
 
 export const Route = createFileRoute("/history")({
