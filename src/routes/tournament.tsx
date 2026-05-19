@@ -425,7 +425,7 @@ function TournamentPage() {
                   <div className="rounded-xl bg-gradient-to-r from-yellow-500/20 via-amber-400/20 to-yellow-500/20 border border-yellow-300/50 p-3 text-xs space-y-1">
                     <div className="text-center font-extrabold text-yellow-200 mb-1">🏆 Recompensas do Campeão</div>
                     <div>🪙 <b>1.500 ~ 4.000</b> moedas</div>
-                    <div>💎 <b>25 ~ 50</b> diamantes</div>
+                    <div>💎 <b>10 ~ 25</b> diamantes</div>
                     <div>🍖 <b>6 ~ 12</b> rações</div>
                     <div>🎁 <b>70%</b> de chance de ganhar um pet bônus (comum a épico)</div>
                   </div>
