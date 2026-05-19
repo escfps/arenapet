@@ -487,6 +487,10 @@ export type Database = {
         Args: { bot_id: string; xp_amount: number }
         Returns: undefined
       }
+      _bot_build_battle_log: {
+        Args: { p_a: string; p_b: string; p_winner: string }
+        Returns: Json
+      }
       _bot_pick_chest_rarity: {
         Args: { p_arena_points: number }
         Returns: string
