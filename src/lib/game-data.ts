@@ -766,7 +766,7 @@ export function totalStats(species: string, rank = 1, bonus = { hp: 0, atk: 0, d
   const s = SPECIES[species];
   if (!s) return { hp: 0, atk: 0, def: 0, spd: 0, int: 0 };
   const r = RANK_MULT[Math.min(Math.max(rank, 1), MAX_RANK)] ?? 1;
-  const exactBase = species === "borboleta_sonifera" || species === "urso_polar";
+  const exactBase = species === "borboleta_sonifera" || species === "urso_polar" || species === "lobo_lua_sangrenta";
   if (exactBase) {
     return {
       hp: Math.round(s.base.hp * r) + (bonus.hp ?? 0),
