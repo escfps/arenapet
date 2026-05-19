@@ -545,6 +545,29 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           return;
         }
 
+        if (skill.kind === "freeze_strike") {
+          // Dano gélido no alvo + 80% chance de congelar por 2 turnos
+          const target = pickTarget(attacker, enemies);
+          if (target) {
+            const eff = defensiveMultiplier(getElement(attacker.species), target.species);
+            const dmg = Math.max(1, Math.round((effAtk * 1.6 - tgtEffDef(target) * 0.5) * eff * skillMult));
+            applyDamage(target, dmg);
+            const frozen = rand() < 0.8 && target.current > 0;
+            if (frozen) target.freezeTurns = Math.max(target.freezeTurns, 2);
+            log.push({
+              turn, actor: side, actorName: attacker.name, targetName: target.name,
+              damage: dmg, crit: false, effective: eff, remainingHp: target.current, targetShield: target.shield,
+              message: `${skill.emoji} ${attacker.name} usou ${skill.name}: ${dmg} de dano${frozen ? ` + ❄️ ${target.name} congelou por 2 turnos!` : ""}`,
+            });
+            if (target.current <= 0) {
+              target.lastFallenAt = turn;
+              log.push({ turn, actor: side, actorName: attacker.name, targetName: target.name, damage: 0, crit: false, effective: 1, remainingHp: 0, message: `💀 ${target.name} foi derrotado!` });
+            }
+          }
+          return;
+        }
+
+
 
         if (skill.kind === "double_strike") {
           const alive = enemies.filter((e) => e.current > 0);
