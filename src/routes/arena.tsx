@@ -17,6 +17,43 @@ export const Route = createFileRoute("/arena")({
 
 type FullMonster = MonsterRow & { owner_id: string };
 
+async function fetchOpponentMonsters(userId: string) {
+  const chunks: FullMonster[] = [];
+  const pageSize = 1000;
+
+  for (let from = 0; from < 3000; from += pageSize) {
+    const { data, error } = await supabase
+      .from("monsters")
+      .select("*")
+      .neq("owner_id", userId)
+      .eq("in_team", true)
+      .order("rank", { ascending: true })
+      .range(from, from + pageSize - 1);
+
+    if (error || !data || data.length === 0) break;
+    chunks.push(...(data as FullMonster[]));
+    if (data.length < pageSize) break;
+  }
+
+  return chunks;
+}
+
+async function fetchOpponentProfiles(ownerIds: string[]) {
+  const rows: Array<{ id: string; username: string; level: number; vip_until: string | null; arena_points: number | null; is_bot: boolean }> = [];
+  const chunkSize = 200;
+
+  for (let i = 0; i < ownerIds.length; i += chunkSize) {
+    const { data } = await supabase
+      .from("profiles")
+      .select("id, username, level, vip_until, arena_points, is_bot")
+      .in("id", ownerIds.slice(i, i + chunkSize));
+
+    if (data) rows.push(...data);
+  }
+
+  return rows;
+}
+
 function ArenaPage() {
   const navigate = useNavigate();
   const { userId, profile, patch, loading } = useProfile();
@@ -129,24 +166,15 @@ function ArenaPage() {
       setSearchCountdown(Math.min(Math.ceil(waitMs / 1000), Math.max(1, Math.ceil(elapsed / 1000))));
     }, 250);
 
-    // Busca os candidatos em paralelo com a espera.
-    // Ordena por rank asc pra garantir que contas novas (rankCap baixo) sempre
-    // encontrem oponentes fracos no pool, mesmo com 1000+ bots no banco.
-    const monsPromise = supabase
-      .from("monsters")
-      .select("*")
-      .neq("owner_id", userId)
-      .eq("in_team", true)
-      .order("rank", { ascending: true })
-      .limit(900);
+    // Busca em páginas grandes para não depender do limite padrão de 1000 linhas.
+    // Assim contas novas também acham times completos entre todos os bots.
+    const monsPromise = fetchOpponentMonsters(userId);
 
     await new Promise((r) => setTimeout(r, waitMs));
     window.clearInterval(tickId);
     setSearchCountdown(0);
 
-    const { data: mons } = await monsPromise;
-
-    const allMons = (mons ?? []) as FullMonster[];
+    const allMons = await monsPromise;
     if (allMons.length === 0) {
       setSearching(false);
       toast("Ninguém disponível ainda. Convide amigos! 🎯", { icon: "👀" });
@@ -154,11 +182,8 @@ function ArenaPage() {
     }
 
     const ownerIds = Array.from(new Set(allMons.map((m) => m.owner_id)));
-    const { data: profs } = await supabase
-      .from("profiles")
-      .select("id, username, level, vip_until, arena_points, is_bot")
-      .in("id", ownerIds);
-    const profById = new Map((profs ?? []).map((p) => [p.id as string, p]));
+    const profs = await fetchOpponentProfiles(ownerIds);
+    const profById = new Map(profs.map((p) => [p.id as string, p]));
 
     const byOwner: Record<string, { team: FullMonster[]; username: string; level: number; arenaPoints: number }> = {};
     for (const m of allMons) {
