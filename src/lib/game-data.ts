@@ -614,6 +614,7 @@ export const CHESTS: Record<ChestTier, Chest> = {
     id: "silver", name: "Baú de Prata", emoji: "🥈",
     description: "Bom equilíbrio de recursos. Chance de pet raro.",
     priceGems: 30,
+    priceCoins: 5000,
     coins: [500, 1500],
     rations: [3, 6],
     gemChance: 1, gems: [5, 15],
