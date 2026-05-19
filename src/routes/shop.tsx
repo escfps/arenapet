@@ -87,19 +87,22 @@ function ShopPage() {
     }
   }
 
-  async function openChest(tier: ChestTier) {
+  async function openChest(tier: ChestTier, payWith: "coins" | "gems" = "gems") {
     if (!profile || !userId) return;
     const c = CHESTS[tier];
-    if (c.priceCoins && profile.coins < c.priceCoins) { toast.error("Moedas insuficientes!"); return; }
-    if (c.priceGems && profile.gems < c.priceGems) { toast.error("Gemas insuficientes!"); return; }
+    const useCoins = payWith === "coins" && c.priceCoins != null;
+    const useGems = !useCoins && c.priceGems != null;
+    if (useCoins && profile.coins < (c.priceCoins ?? 0)) { toast.error("Moedas insuficientes!"); return; }
+    if (useGems && profile.gems < (c.priceGems ?? 0)) { toast.error("Gemas insuficientes!"); return; }
 
     const reward = rollChest(tier);
 
     // debita preço + credita moedas/gemas
     await patch({
-      coins: profile.coins - (c.priceCoins ?? 0) + reward.coins,
-      gems: profile.gems - (c.priceGems ?? 0) + reward.gems,
+      coins: profile.coins - (useCoins ? (c.priceCoins ?? 0) : 0) + reward.coins,
+      gems: profile.gems - (useGems ? (c.priceGems ?? 0) : 0) + reward.gems,
     });
+
 
     // rações no inventário (upsert somando)
     if (reward.rations > 0) {
