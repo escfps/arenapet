@@ -711,15 +711,31 @@ function ArenaPage() {
                           disabled={searching || !canFight}
                           className="px-5 py-2.5 rounded-xl bg-black/80 text-white font-extrabold text-sm shadow-lg hover:scale-105 transition disabled:opacity-50 disabled:cursor-not-allowed border-2 border-white/40"
                         >
-                          🎯 Próxima partida
+                          🎯 Próxima partida{autoRematch !== null && canFight ? ` (${autoRematch}s)` : ""}
                         </button>
                         <button
-                          onClick={() => navigate({ to: "/" })}
+                          onClick={() => { setAutoRematch(null); navigate({ to: "/" }); }}
                           className="px-5 py-2.5 rounded-xl bg-white/90 text-slate-900 font-extrabold text-sm shadow-lg hover:scale-105 transition border-2 border-white/40"
                         >
                           🏠 Voltar pro pátio
                         </button>
                       </div>
+                      {autoRematch !== null && canFight && (
+                        <div className="mt-2 text-xs font-bold opacity-90">
+                          ⏳ Buscando próximo adversário automaticamente em {autoRematch}s…
+                          <button
+                            onClick={() => setAutoRematch(null)}
+                            className="ml-2 underline opacity-80 hover:opacity-100"
+                          >
+                            cancelar
+                          </button>
+                        </div>
+                      )}
+                      {autoRematch !== null && !canFight && (
+                        <div className="mt-2 text-xs font-bold opacity-90">
+                          ⚡ Sem energia de batalha — auto-busca pausada.
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}
