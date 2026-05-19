@@ -228,38 +228,33 @@ function ArenaPage() {
     const poolBase = allOwnersCapped.length > 0 ? allOwnersCapped : allOwnersFull;
     const allOwners = poolBase.filter((id) => !recent.includes(id));
     const isReal = (id: string) => profById.get(id)?.is_bot === false;
-    // Janelas progressivas — primeiro tenta achar JOGADORES REAIS, depois mistura com bots
+    // Janelas progressivas — tenta ter pelo menos 3 candidatos REAIS antes de focar só neles
     const windows = [100, 200, 400, 800];
     let ownerList: string[] = [];
-    // 1) Prioriza jogadores reais (offline ou não) nas janelas
+    // 1) Prioriza jogadores reais APENAS se tiver variedade (>=3), senão mistura com bots pra rotacionar
     for (const w of windows) {
       const reals = allOwners.filter((id) => isReal(id) && Math.abs(byOwner[id].arenaPoints - myPts) <= w);
-      if (reals.length > 0) { ownerList = reals; break; }
+      if (reals.length >= 3) { ownerList = reals; break; }
     }
-    // 2) Cai pra bots/mistos nas janelas se não achou real
+    // 2) Se não achou 3+ reais, monta pool mista (reais + bots) na janela
     if (ownerList.length === 0) {
       for (const w of windows) {
         ownerList = allOwners.filter((id) => Math.abs(byOwner[id].arenaPoints - myPts) <= w);
-        if (ownerList.length > 0) break;
+        if (ownerList.length >= 3) break;
       }
     }
     if (ownerList.length === 0 && allOwners.length > 0) {
-      // ainda prefere reais no fallback aproximado
-      const reals = allOwners.filter(isReal);
-      const base = reals.length > 0 ? reals : allOwners;
-      ownerList = base
+      ownerList = allOwners
         .slice()
         .sort((a, b) => Math.abs(byOwner[a].arenaPoints - myPts) - Math.abs(byOwner[b].arenaPoints - myPts))
-        .slice(0, 5);
+        .slice(0, 8);
     }
     // fallback: se sobrou ninguém após excluir recentes, libera os recentes (respeitando o cap se possível)
     if (ownerList.length === 0 && poolBase.length > 0) {
-      const reals = poolBase.filter(isReal);
-      const base = reals.length > 0 ? reals : poolBase;
-      ownerList = base
+      ownerList = poolBase
         .slice()
         .sort((a, b) => Math.abs(byOwner[a].arenaPoints - myPts) - Math.abs(byOwner[b].arenaPoints - myPts))
-        .slice(0, 5);
+        .slice(0, 8);
     }
     if (ownerList.length === 0) {
       setSearching(false);
@@ -267,9 +262,9 @@ function ArenaPage() {
       return;
     }
     const chosen = ownerList[Math.floor(Math.random() * ownerList.length)];
-    // grava nos recentes (mantém últimos 15 — evita cair na mesma conta por ~10+ partidas)
+    // grava nos recentes (mantém últimos 25 — evita cair no mesmo oponente por ~20+ partidas)
     try {
-      const updated = [chosen, ...recent.filter((id) => id !== chosen)].slice(0, 15);
+      const updated = [chosen, ...recent.filter((id) => id !== chosen)].slice(0, 25);
       localStorage.setItem(recentKey, JSON.stringify(updated));
     } catch { /* ignore */ }
     const chosenOpp = { ownerId: chosen, ownerName: byOwner[chosen].username, arenaPoints: byOwner[chosen].arenaPoints, team: byOwner[chosen].team.slice(0, 3) };
