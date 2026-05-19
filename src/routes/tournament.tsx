@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
@@ -201,7 +201,7 @@ function TournamentPage() {
     <div className="min-h-screen relative" style={{ backgroundImage: `url(${arenaBg})`, backgroundSize: "cover", backgroundPosition: "center" }}>
       <div className="absolute inset-0 bg-gradient-to-b from-purple-950/85 via-indigo-950/85 to-slate-950/90" />
       <div className="relative">
-        <HUD />
+        <HUD profile={profile!} />
         <main className="max-w-5xl mx-auto px-3 py-4 space-y-4">
           <div className="text-center text-white">
             <h1 className="text-3xl font-extrabold drop-shadow-lg">🏆 Copa Pet</h1>
