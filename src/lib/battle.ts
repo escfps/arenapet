@@ -860,6 +860,16 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
         targetShield: target.shield, message: msg,
       });
 
+      // Empurra evento de cura pro atacante pra atualizar a barra de vida na cena
+      if (lifestealHealed > 0) {
+        log.push({
+          turn, actor: side, actorName: attacker.name, targetName: attacker.name,
+          damage: -lifestealHealed, crit: false, effective: 1, remainingHp: attacker.current,
+          message: `🩸 ${attacker.name} recuperou ${lifestealHealed} HP (Roubo de Vida)`,
+        });
+      }
+
+
       if (target.current <= 0) {
         log.push({
           turn, actor: side, actorName: attacker.name, targetName: target.name,
