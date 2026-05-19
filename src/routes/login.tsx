@@ -9,17 +9,40 @@ export const Route = createFileRoute("/login")({
   head: () => ({ meta: [{ title: "Entrar — Arena Pet" }] }),
 });
 
+const REMEMBER_KEY = "arenapet:remember";
+
 function LoginPage() {
   const navigate = useNavigate();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
+  const [remember, setRemember] = useState(true);
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/" });
+      if (data.session) {
+        navigate({ to: "/" });
+        return;
+      }
+      // Pré-preencher e tentar auto-login se houver credenciais salvas
+      try {
+        const raw = localStorage.getItem(REMEMBER_KEY);
+        if (!raw) return;
+        const saved = JSON.parse(raw) as { email?: string; password?: string };
+        if (!saved.email || !saved.password) return;
+        setEmail(saved.email);
+        setPassword(saved.password);
+        setBusy(true);
+        supabase.auth
+          .signInWithPassword({ email: saved.email, password: saved.password })
+          .then(({ error }) => {
+            if (!error) navigate({ to: "/" });
+            else localStorage.removeItem(REMEMBER_KEY);
+          })
+          .finally(() => setBusy(false));
+      } catch {}
     });
   }, [navigate]);
 
@@ -36,10 +59,18 @@ function LoginPage() {
           },
         });
         if (error) throw error;
+        if (remember) {
+          localStorage.setItem(REMEMBER_KEY, JSON.stringify({ email, password }));
+        }
         toast.success("Conta criada! Verifique seu email para confirmar.");
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
+        if (remember) {
+          localStorage.setItem(REMEMBER_KEY, JSON.stringify({ email, password }));
+        } else {
+          localStorage.removeItem(REMEMBER_KEY);
+        }
         navigate({ to: "/" });
       }
     } catch (err) {
@@ -141,6 +172,15 @@ function LoginPage() {
                   className="w-full pl-10 pr-4 py-3 rounded-xl bg-black/40 border-2 border-white/10 text-white placeholder:text-white/40 focus:border-fuchsia-400 focus:bg-black/60 outline-none transition"
                 />
               </div>
+              <label className="flex items-center gap-2 mt-1 text-white/70 text-xs cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={remember}
+                  onChange={(e) => setRemember(e.target.checked)}
+                  className="w-4 h-4 accent-fuchsia-500"
+                />
+                Lembrar de mim (entrar automático)
+              </label>
               <button
                 type="submit" disabled={busy}
                 className="w-full py-3.5 mt-2 rounded-xl bg-gradient-to-b from-fuchsia-500 via-purple-600 to-indigo-700 text-white font-black tracking-wide text-base shadow-[0_6px_0_oklch(0.35_0.18_290)] hover:translate-y-[2px] hover:shadow-[0_4px_0_oklch(0.35_0.18_290)] active:translate-y-[6px] active:shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"

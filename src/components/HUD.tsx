@@ -24,6 +24,7 @@ export function HUD({ profile }: { profile: ProfileRow }) {
   const tier = getTier(profile.arena_points ?? 0);
 
   async function logout() {
+    try { localStorage.removeItem("arenapet:remember"); } catch {}
     await supabase.auth.signOut();
     navigate({ to: "/login" });
   }
