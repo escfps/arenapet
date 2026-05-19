@@ -228,18 +228,22 @@ function ArenaPage() {
     const poolBase = allOwnersCapped.length > 0 ? allOwnersCapped : allOwnersFull;
     const allOwners = poolBase.filter((id) => !recent.includes(id));
     const isReal = (id: string) => profById.get(id)?.is_bot === false;
-    // Janelas progressivas — tenta ter pelo menos 3 candidatos REAIS antes de focar só neles
+    const REAL_ONLY_MIN_POOL = 8;
+    // Janelas progressivas — só foca em players reais quando existe bastante variedade.
+    // Com poucos players, mistura bots pra evitar cair sempre nas mesmas contas.
     const windows = [100, 200, 400, 800];
     let ownerList: string[] = [];
-    // 1) Prioriza jogadores reais APENAS se tiver variedade (>=3), senão mistura com bots pra rotacionar
+    // 1) Prioriza jogadores reais APENAS se tiver variedade alta, senão mantém pool mista.
     for (const w of windows) {
       const reals = allOwners.filter((id) => isReal(id) && Math.abs(byOwner[id].arenaPoints - myPts) <= w);
-      if (reals.length >= 3) { ownerList = reals; break; }
+      if (reals.length >= REAL_ONLY_MIN_POOL) { ownerList = reals; break; }
     }
-    // 2) Se não achou 3+ reais, monta pool mista (reais + bots) na janela
+    // 2) Se não achou variedade real suficiente, monta pool mista (reais + bots) na janela.
     if (ownerList.length === 0) {
       for (const w of windows) {
-        ownerList = allOwners.filter((id) => Math.abs(byOwner[id].arenaPoints - myPts) <= w);
+        const mixed = allOwners.filter((id) => Math.abs(byOwner[id].arenaPoints - myPts) <= w);
+        const bots = mixed.filter((id) => !isReal(id));
+        ownerList = bots.length > 0 ? mixed : [];
         if (ownerList.length >= 3) break;
       }
     }
