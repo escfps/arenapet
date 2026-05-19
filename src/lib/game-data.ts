@@ -1052,3 +1052,32 @@ export function tierPromotionChests(newTierName: string): { silver: number; gold
 export const ARENA_WIN_POINTS = 25;
 export const ARENA_LOSS_POINTS = 15;
 
+// Faixas de pontos por tier — quanto mais alto o elo, menos se ganha e mais se perde.
+// Estilo LoL: random dentro do range pra dar variedade.
+const ARENA_POINT_RANGES: Array<{ name: string; win: [number, number]; loss: [number, number] }> = [
+  { name: "Ferro",       win: [24, 30], loss: [10, 14] },
+  { name: "Bronze",      win: [22, 28], loss: [12, 16] },
+  { name: "Prata",       win: [20, 26], loss: [14, 18] },
+  { name: "Ouro",        win: [18, 24], loss: [16, 20] },
+  { name: "Platina",     win: [16, 22], loss: [18, 22] },
+  { name: "Diamante",    win: [15, 20], loss: [20, 24] },
+  { name: "Mestre",      win: [13, 18], loss: [22, 26] },
+  { name: "Grão-Mestre", win: [11, 16], loss: [24, 28] },
+  { name: "Lendário",    win: [10, 14], loss: [26, 30] },
+];
+
+function randInt(min: number, max: number) {
+  return min + Math.floor(Math.random() * (max - min + 1));
+}
+
+// Sorteia os pontos de ganho/perda para uma partida com base nos pontos atuais.
+export function rollArenaPoints(currentPoints: number): { win: number; loss: number } {
+  const tier = getTier(currentPoints);
+  const range = ARENA_POINT_RANGES.find((r) => r.name === tier.name) ?? ARENA_POINT_RANGES[0];
+  return {
+    win: randInt(range.win[0], range.win[1]),
+    loss: randInt(range.loss[0], range.loss[1]),
+  };
+}
+
+
