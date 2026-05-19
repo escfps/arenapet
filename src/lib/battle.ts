@@ -85,13 +85,14 @@ function phoenixAtkBonus(attacker: Live): number {
   return 1 + hpLostPct * 0.6;
 }
 // Fênix Negra: 4% do dano causado vira HP máx + cura (SÓ NA BATALHA, máx +50% do HP base)
-function phoenixOnDamageDealt(attacker: Live, dmg: number) {
-  if (attacker.species !== "fenix_negra" || dmg <= 0) return;
+function phoenixOnDamageDealt(attacker: Live, dmg: number): number {
+  if (attacker.species !== "fenix_negra" || dmg <= 0) return 0;
   const cap = Math.round(attacker.hp * 1.5); // hp = base inicial; cap = 150% do base
-  if (attacker.maxHp >= cap) return;
+  if (attacker.maxHp >= cap) return 0;
   const grow = Math.min(cap - attacker.maxHp, Math.max(1, Math.round(dmg * 0.04)));
   attacker.maxHp += grow;
   attacker.current = Math.min(attacker.maxHp, attacker.current + grow);
+  return grow;
 }
 
 function rng(seed: number) {
@@ -755,13 +756,14 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
       const variance = 0.85 + rand() * 0.3;
       const damage = Math.max(1, Math.round(base * eff * variance * (crit ? 1.7 : 1)));
       applyDamage(target, damage);
-      phoenixOnDamageDealt(attacker, damage);
+      const phoenixGrow = phoenixOnDamageDealt(attacker, damage);
 
       let msg = `${attacker.name} atacou ${target.name} causando ${damage} de dano`;
       if (crit) msg += " (CRÍTICO!)";
       if (attacker.role === "mage") msg += " 🔮";
       if (eff > 1) msg += " (super eficaz!)";
       else if (eff < 1) msg += " (pouco eficaz...)";
+      if (phoenixGrow > 0) msg += ` 🌑 (+${phoenixGrow} HP máx)`;
 
       log.push({
         turn, actor: side, actorName: attacker.name, targetName: target.name,
