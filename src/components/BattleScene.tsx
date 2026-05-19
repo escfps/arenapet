@@ -115,6 +115,10 @@ export function BattleScene({
   const [fx, setFx] = useState<Fx>({ actor: null, target: null, dmg: null, shieldGain: null, crit: false, skillFx: null, targets: [], miss: null });
   const [banner, setBanner] = useState<EffectBanner>(null);
   const [statuses, setStatuses] = useState<StatusMap>(new Map());
+  const [turnFlash, setTurnFlash] = useState<{ id: number; turn: number } | null>(null);
+
+  // Turno atual derivado da última entrada exibida
+  const currentTurn = step > 0 && step <= log.length ? log[step - 1].turn : 1;
 
   useEffect(() => {
     setHp(new Map(initialHp));
@@ -122,7 +126,20 @@ export function BattleScene({
     setFx({ actor: null, target: null, dmg: null, shieldGain: null, crit: false, skillFx: null, targets: [], miss: null });
     setBanner(null);
     setStatuses(new Map());
+    setTurnFlash(null);
   }, [initialHp]);
+
+  // Detecta troca de turno e mostra flash "TURNO X"
+  useEffect(() => {
+    if (step <= 0 || step > log.length) return;
+    const cur = log[step - 1];
+    const prev = step >= 2 ? log[step - 2] : null;
+    if (!prev || cur.turn !== prev.turn) {
+      setTurnFlash({ id: Date.now(), turn: cur.turn });
+      const t = setTimeout(() => setTurnFlash(null), 1300);
+      return () => clearTimeout(t);
+    }
+  }, [step, log]);
 
   useEffect(() => {
     if (step <= 0 || step > log.length) return;
