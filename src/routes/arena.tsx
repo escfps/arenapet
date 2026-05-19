@@ -435,7 +435,7 @@ function ArenaPage() {
       if (newLevel > profile.level) {
         const lvRew = rollLevelUpRewards(profile.level, newLevel);
         updates.coins = (updates.coins ?? profile.coins) + lvRew.coins;
-        updates.gems = (profile.gems ?? 0) + lvRew.gems;
+        updates.gems = (updates.gems ?? (profile.gems ?? 0)) + lvRew.gems;
         await patch(updates);
         if (lvRew.rations > 0) {
           const { data: rRow } = await supabase.from("inventory").select("quantity").eq("user_id", userId).eq("item_type", "ration").maybeSingle();
