@@ -416,11 +416,13 @@ function ArenaPage() {
 
       const updates: Partial<typeof profile> = {
         coins: profile.coins + rew.coins,
+        gems: (profile.gems ?? 0) + gemWin,
         xp: profile.xp + rew.xp,
         wins: profile.wins + (won ? 1 : 0),
         losses: profile.losses + (won ? 0 : 1),
         arena_points: newPoints,
       };
+
       let newXp = updates.xp!;
       let newLevel = profile.level;
       while (newXp >= xpForNextLevel(newLevel)) {
