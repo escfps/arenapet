@@ -357,6 +357,14 @@ export const SPECIES: Record<string, Species> = {
     base: { hp: 52, atk: 11, def: 9, spd: 16, int: 22 },
     skill: { name: "Pó do Sono", emoji: "💤", kind: "sleep_strike", cooldown: 4, description: "PASSIVA: ataque básico tem 50% de chance de adormecer o alvo por 2 turnos. ATIVA: dano mágico no alvo com 80% de chance de adormecê-lo por 2 turnos." },
   },
+  urso_polar: {
+    id: "urso_polar", name: "Urso Polar", element: "water", role: "tank", rarity: "super_rare",
+    emoji: "🐻‍❄️❄️", image: ursoPolarImg,
+    description: "Urso ártico de pelagem nevada. Cada pata congelada paralisa o inimigo no meio do golpe.",
+    base: { hp: 68, atk: 14, def: 13, spd: 9, int: 12 },
+    skill: { name: "Toque Glacial", emoji: "❄️", kind: "freeze_strike", cooldown: 4, description: "PASSIVA: ataque básico tem 50% de chance de congelar o alvo por 2 turnos. ATIVA: golpe gélido + 80% de chance de congelar o alvo por 2 turnos." },
+  },
+
 
   // ===== ÉPICOS =====
   jacare_ancestral: {
