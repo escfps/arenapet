@@ -252,7 +252,7 @@ function PatioPage() {
             <section className="rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 p-4 text-white">
               <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
                 <div>
-                  <h2 className="text-xl font-extrabold">🏠 Seu Pátio</h2>
+                  <h2 className="text-xl font-extrabold">🏠 Sua Home</h2>
                   <p className="text-xs opacity-80">
                     {monsters.length} monstro{monsters.length > 1 ? "s" : ""} • Time: {monsters.filter((m) => m.in_team).length}/{TEAM_MAX}
                   </p>
