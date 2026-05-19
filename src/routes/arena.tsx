@@ -464,9 +464,12 @@ function ArenaPage() {
       await supabase.rpc("apply_arena_defender_result", {
         p_defender_id: opp.ownerId,
         p_attacker_won: won,
-        p_win_pts: ARENA_WIN_POINTS,
-        p_loss_pts: ARENA_LOSS_POINTS,
+        p_win_pts: oppWinPts,
+        p_loss_pts: oppLossPts,
       });
+
+      // Delta real aplicado ao defensor (pode bater no piso 0)
+      const defenderDelta = won ? -Math.min(oppLossPts, opp.arenaPoints) : oppWinPts;
 
       await supabase.from("battles").insert({
         attacker_id: userId,
@@ -475,6 +478,8 @@ function ArenaPage() {
         log: JSON.parse(JSON.stringify(result.log)),
         coins_reward: rew.coins,
         xp_reward: rew.xp,
+        attacker_points_delta: delta,
+        defender_points_delta: defenderDelta,
       });
 
       if (won && Math.random() < 0.70) {
