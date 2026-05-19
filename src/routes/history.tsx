@@ -132,6 +132,12 @@ function HistoryPage() {
               const oppId = b.attacker_id === userId ? b.defender_id : b.attacker_id;
               const opp = opponents[oppId];
               const role = b.attacker_id === userId ? "Atacou" : "Defendeu";
+              // Pega o delta de pontos certo pro lado em que você jogou.
+              // Para batalhas antigas (sem coluna), cai no fallback dos constants.
+              const myDelta = b.attacker_id === userId
+                ? (b.attacker_points_delta ?? (won ? ARENA_WIN_POINTS : -ARENA_LOSS_POINTS))
+                : (b.defender_points_delta ?? (won ? ARENA_WIN_POINTS : -ARENA_LOSS_POINTS));
+              const deltaStr = myDelta >= 0 ? `+${myDelta}` : `${myDelta}`;
               return (
                 <button
                   key={b.id}
@@ -154,8 +160,8 @@ function HistoryPage() {
                     <div className="text-[11px] opacity-80">{role} • {timeAgo(b.created_at)}</div>
                   </div>
                   <div className="text-right text-xs font-bold text-white">
-                    <div className={won ? "text-emerald-300" : "text-rose-300"}>
-                      {won ? `+${ARENA_WIN_POINTS}` : `-${ARENA_LOSS_POINTS}`} 🏆
+                    <div className={myDelta >= 0 ? "text-emerald-300" : "text-rose-300"}>
+                      {deltaStr} 🏆
                     </div>
                     {won ? (
                       <>
