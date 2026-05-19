@@ -512,7 +512,27 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           return;
         }
 
-
+        if (skill.kind === "sleep_strike") {
+          // Dano mágico no alvo + 80% chance de adormecer por 2 turnos
+          const target = pickTarget(attacker, enemies);
+          if (target) {
+            const eff = defensiveMultiplier(getElement(attacker.species), target.species);
+            const dmg = Math.max(1, Math.round((effInt * 1.8 - tgtEffDef(target) * 0.4) * eff * skillMult));
+            applyDamage(target, dmg);
+            const slept = rand() < 0.8 && target.current > 0;
+            if (slept) target.sleepTurns = Math.max(target.sleepTurns, 2);
+            log.push({
+              turn, actor: side, actorName: attacker.name, targetName: target.name,
+              damage: dmg, crit: false, effective: eff, remainingHp: target.current, targetShield: target.shield,
+              message: `${skill.emoji} ${attacker.name} usou ${skill.name}: ${dmg} de dano${slept ? ` + 💤 ${target.name} adormeceu por 2 turnos!` : ""}`,
+            });
+            if (target.current <= 0) {
+              target.lastFallenAt = turn;
+              log.push({ turn, actor: side, actorName: attacker.name, targetName: target.name, damage: 0, crit: false, effective: 1, remainingHp: 0, message: `💀 ${target.name} foi derrotado!` });
+            }
+          }
+          return;
+        }
 
 
         if (skill.kind === "double_strike") {
