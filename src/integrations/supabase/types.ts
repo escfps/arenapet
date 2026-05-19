@@ -487,6 +487,7 @@ export type Database = {
         Args: { bot_id: string; xp_amount: number }
         Returns: undefined
       }
+      _bot_max_rank_for_rarity: { Args: { r: string }; Returns: number }
       _bot_random_species: { Args: { rarity: string }; Returns: string }
       _bot_rarity_weight: { Args: { r: string }; Returns: number }
       _bot_species_name: { Args: { sp: string }; Returns: string }
