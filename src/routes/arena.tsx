@@ -522,13 +522,21 @@ function ArenaPage() {
         if (tiersToRoll.length > 0) {
           let bonusCoins = 0, bonusGems = 0, bonusRations = 0;
           const bonusPets: string[] = [];
+          const tierChests: PendingChest[] = [];
           for (const tk of tiersToRoll) {
             const r = rollChest(tk);
             bonusCoins += r.coins;
             bonusGems += r.gems;
             bonusRations += r.rations;
             if (r.petSpecies) bonusPets.push(r.petSpecies);
+            tierChests.push({
+              id: `tier-${Date.now()}-${tierChests.length}`,
+              tier: tk,
+              label: `Promoção pra ${newTierName}!`,
+              reward: r,
+            });
           }
+          setChestQueue((q) => [...q, ...tierChests]);
 
           // Aplica no DB
           const { data: freshProfile } = await supabase
