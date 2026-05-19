@@ -36,6 +36,7 @@ import fenixVermelhaImg from "@/assets/monsters/fenix_vermelha.png";
 import fenixNegraImg from "@/assets/monsters/fenix_negra.png";
 import borboletaSoniferaImg from "@/assets/monsters/borboleta_sonifera.png";
 import ursoPolarImg from "@/assets/monsters/urso_polar.png";
+import loboLuaSangrentaImg from "@/assets/monsters/lobo_lua_sangrenta.png";
 
 export type Element = "fire" | "water" | "grass" | "electric" | "shadow" | "earth";
 export type Role = "tank" | "dps" | "assassin" | "mage" | "healer";
