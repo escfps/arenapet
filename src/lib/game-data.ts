@@ -35,6 +35,7 @@ import aguiaCegaImg from "@/assets/monsters/aguia_cega.png";
 import fenixVermelhaImg from "@/assets/monsters/fenix_vermelha.png";
 import fenixNegraImg from "@/assets/monsters/fenix_negra.png";
 import borboletaSoniferaImg from "@/assets/monsters/borboleta_sonifera.png";
+import ursoPolarImg from "@/assets/monsters/urso_polar.png";
 
 export type Element = "fire" | "water" | "grass" | "electric" | "shadow" | "earth";
 export type Role = "tank" | "dps" | "assassin" | "mage" | "healer";
@@ -91,6 +92,7 @@ export type SkillKind =
   | "bleed_dot"         // dps — sangramento físico escala com ATK (Darius)
   | "blind_debuff"      // mago — cega TODOS inimigos: 50% miss em ataques básicos por 3 turnos
   | "sleep_strike"      // super raro — dano + 50% chance de adormecer alvo / PASSIVA: ataque básico 50% chance de adormecer
+  | "freeze_strike"     // super raro — dano gélido + chance de congelar / PASSIVA: ataque básico 50% chance de congelar
   | "true_damage_nuke"  // mítico — dano puro ignora DEF e elemento (Vayne ult)
   | "phoenix_rage"      // mítico — PASSIVA: quanto mais HP perde, mais ATK ganha (até +120%)
   | "phoenix_growth";   // mítico — PASSIVA: cada dano causado vira HP máx + cura temporária na batalha
@@ -355,6 +357,14 @@ export const SPECIES: Record<string, Species> = {
     base: { hp: 52, atk: 11, def: 9, spd: 16, int: 22 },
     skill: { name: "Pó do Sono", emoji: "💤", kind: "sleep_strike", cooldown: 4, description: "PASSIVA: ataque básico tem 50% de chance de adormecer o alvo por 2 turnos. ATIVA: dano mágico no alvo com 80% de chance de adormecê-lo por 2 turnos." },
   },
+  urso_polar: {
+    id: "urso_polar", name: "Urso Polar", element: "water", role: "tank", rarity: "super_rare",
+    emoji: "🐻‍❄️❄️", image: ursoPolarImg,
+    description: "Urso ártico de pelagem nevada. Cada pata congelada paralisa o inimigo no meio do golpe.",
+    base: { hp: 68, atk: 14, def: 13, spd: 9, int: 12 },
+    skill: { name: "Toque Glacial", emoji: "❄️", kind: "freeze_strike", cooldown: 4, description: "PASSIVA: ataque básico tem 50% de chance de congelar o alvo por 2 turnos. ATIVA: golpe gélido + 80% de chance de congelar o alvo por 2 turnos." },
+  },
+
 
   // ===== ÉPICOS =====
   jacare_ancestral: {
