@@ -10,6 +10,8 @@ type SoundKind =
   | "debuff"
   | "victory"
   | "defeat"
+  | "dodge"
+  | "miss"
   | "click";
 
 const SETTINGS_KEY = "arenapet:sound";
