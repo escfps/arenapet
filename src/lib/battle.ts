@@ -117,6 +117,7 @@ type Live = BattleMonster & {
   bleedTurns: number;
   blindTurns: number;    // se >0, ataques básicos têm chance de errar
   sleepTurns: number;    // se >0, pula o turno (dormindo zzz)
+  freezeTurns: number;   // se >0, pula o turno (congelado ❄️)
   silenceTurns: number;  // se >0, próxima skill é anulada
   rageTurns: number;     // berserker: +rageAtkMult e -rageDefDrop
   rageAtkMult: number;
@@ -164,7 +165,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
     ...m, current: m.hp, maxHp: m.hp,
     healCd: 0, skillCd: 1, shield: 0,
     tauntTargetId: null, tauntTurns: 0,
-    burnDmg: 0, burnTurns: 0, bleedDmg: 0, bleedTurns: 0, blindTurns: 0, sleepTurns: 0, silenceTurns: 0,
+    burnDmg: 0, burnTurns: 0, bleedDmg: 0, bleedTurns: 0, blindTurns: 0, sleepTurns: 0, freezeTurns: 0, silenceTurns: 0,
     rageTurns: 0, rageAtkMult: 0, rageDefDrop: 0,
     defBuffTurns: 0, defBuffPct: 0, lastFallenAt: 0,
   });
@@ -237,6 +238,16 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           message: `💤 ${attacker.name} está dormindo... zzz`,
         });
         attacker.sleepTurns -= 1;
+        return;
+      }
+      // tick freeze — congelado pula o turno
+      if (attacker.freezeTurns > 0) {
+        log.push({
+          turn, actor: side, actorName: attacker.name, targetName: attacker.name,
+          damage: 0, crit: false, effective: 1, remainingHp: attacker.current,
+          message: `❄️ ${attacker.name} está congelado e não pode agir!`,
+        });
+        attacker.freezeTurns -= 1;
         return;
       }
       // tick taunt
@@ -636,7 +647,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           if (fallen) {
             fallen.current = Math.round(fallen.maxHp * 0.40);
             fallen.shield = 0;
-            fallen.burnTurns = 0; fallen.bleedTurns = 0; fallen.blindTurns = 0; fallen.sleepTurns = 0; fallen.silenceTurns = 0;
+            fallen.burnTurns = 0; fallen.bleedTurns = 0; fallen.blindTurns = 0; fallen.sleepTurns = 0; fallen.freezeTurns = 0; fallen.silenceTurns = 0;
             log.push({
               turn, actor: side, actorName: attacker.name, targetName: fallen.name,
               damage: -fallen.current, crit: false, effective: 1, remainingHp: fallen.current,
