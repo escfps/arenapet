@@ -175,6 +175,16 @@ function TournamentPage() {
     return () => clearInterval(id);
   }, []);
 
+  // Pop the champion celebration when the user is the freshly crowned champion
+  useEffect(() => {
+    if (!userId || !lastT || lastT.champion_id !== userId) return;
+    const key = `champion_seen_${lastT.id}`;
+    if (typeof window === "undefined") return;
+    if (window.localStorage.getItem(key)) return;
+    setCelebrated(lastT);
+  }, [userId, lastT]);
+
+
   // Nudge the server tick when a round timer should have expired
   useEffect(() => {
     if (!activeT) return;
