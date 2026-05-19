@@ -172,10 +172,6 @@ function TournamentPage() {
     if (now > expires) {
       supabase.rpc("tournaments_tick").then(() => refresh());
     }
-    if (activeT.status === "open") {
-      const closes = new Date(activeT.slot_at).getTime() + 60_000;
-      if (now > closes) supabase.rpc("tournaments_tick").then(() => refresh());
-    }
   }, [activeT, now]);
 
   // Also nudge when registration window of open tournament closes
