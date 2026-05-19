@@ -154,7 +154,8 @@ function RankingPage() {
                 return (
                   <li
                     key={r.id}
-                    className={`flex items-center gap-3 p-3 ${isMe ? "bg-yellow-400/20" : "hover:bg-white/5"}`}
+                    onClick={() => setHistoryOf(r)}
+                    className={`flex items-center gap-3 p-3 cursor-pointer ${isMe ? "bg-yellow-400/20 hover:bg-yellow-400/30" : "hover:bg-white/5"}`}
                   >
                     <div className={`w-10 text-center font-extrabold ${
                       rank === 1 ? "text-yellow-300 text-xl" :
