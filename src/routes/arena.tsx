@@ -652,10 +652,10 @@ function ArenaPage() {
                   playerBTier={getTier(opponent.arenaPoints).name}
                 />
                 {shownLog.length === battleLog.length && winner && (
-                  <div className="absolute inset-0 z-30 flex items-center justify-center pointer-events-none animate-fade-in">
+                  <div className="absolute inset-0 z-30 flex items-center justify-center animate-fade-in">
                     <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
                     <div
-                      className={`relative px-10 py-6 rounded-3xl border-4 shadow-2xl text-center animate-scale-in ${
+                      className={`relative px-8 py-6 rounded-3xl border-4 shadow-2xl text-center animate-scale-in ${
                         winner === "team_a"
                           ? "bg-gradient-to-br from-yellow-400 to-amber-600 border-yellow-200 text-yellow-950"
                           : winner === "draw"
@@ -670,9 +670,25 @@ function ArenaPage() {
                       <div className="text-4xl sm:text-5xl font-black tracking-widest">
                         {winner === "team_a" ? "VITÓRIA!" : winner === "draw" ? "EMPATE!" : "DERROTA"}
                       </div>
+                      <div className="mt-4 flex flex-col sm:flex-row gap-2 justify-center">
+                        <button
+                          onClick={findOpponent}
+                          disabled={searching || !canFight}
+                          className="px-5 py-2.5 rounded-xl bg-black/80 text-white font-extrabold text-sm shadow-lg hover:scale-105 transition disabled:opacity-50 disabled:cursor-not-allowed border-2 border-white/40"
+                        >
+                          🎯 Próxima partida
+                        </button>
+                        <button
+                          onClick={() => navigate({ to: "/" })}
+                          className="px-5 py-2.5 rounded-xl bg-white/90 text-slate-900 font-extrabold text-sm shadow-lg hover:scale-105 transition border-2 border-white/40"
+                        >
+                          🏠 Voltar pro pátio
+                        </button>
+                      </div>
                     </div>
                   </div>
                 )}
+
               </div>
             )}
 
