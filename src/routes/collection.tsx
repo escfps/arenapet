@@ -9,6 +9,7 @@ import {
   RARITY_INFO,
   getSpeciesCategories,
   CATEGORY_INFO,
+  totalStats,
   type Rarity,
   type Element,
 } from "@/lib/game-data";
@@ -322,14 +323,19 @@ function DexCard({ sp, owned }: { sp: (typeof SPECIES)[string]; owned: boolean }
           </div>
         )}
 
-        {/* Stats base */}
-        <div className="grid grid-cols-5 gap-0.5 text-center text-[9px] font-bold">
-          <Stat label="HP" value={sp.base.hp} color="text-rose-500" />
-          <Stat label="ATK" value={Math.round(sp.base.atk)} color="text-orange-500" />
-          <Stat label="DEF" value={Math.round(sp.base.def)} color="text-sky-500" />
-          <Stat label="SPD" value={sp.base.spd} color="text-emerald-500" />
-          <Stat label="INT" value={sp.base.int} color="text-violet-500" />
-        </div>
+        {/* Stats reais (rank 1, com multiplicadores atuais) */}
+        {(() => {
+          const st = totalStats(sp.id, 1);
+          return (
+            <div className="grid grid-cols-5 gap-0.5 text-center text-[9px] font-bold">
+              <Stat label="HP" value={st.hp} color="text-rose-500" />
+              <Stat label="ATK" value={st.atk} color="text-orange-500" />
+              <Stat label="DEF" value={st.def} color="text-sky-500" />
+              <Stat label="SPD" value={st.spd} color="text-emerald-500" />
+              <Stat label="INT" value={st.int} color="text-violet-500" />
+            </div>
+          );
+        })()}
 
         {/* Skill */}
         {sp.skill && (
