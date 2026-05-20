@@ -1092,3 +1092,103 @@ export function rollArenaPoints(currentPoints: number): { win: number; loss: num
 }
 
 
+
+// ===== SINERGIA POR CATEGORIA =====
+export type Category =
+  | "fogo" | "floresta" | "sombras" | "felinos" | "repteis"
+  | "abyssal" | "dragoes" | "gelo" | "aves" | "pedra" | "relampago";
+
+export type SynergyStat = "hp" | "atk" | "def" | "spd" | "int" | "crit";
+
+export const CATEGORY_INFO: Record<Category, { name: string; emoji: string; stat: SynergyStat; statLabel: string }> = {
+  floresta:  { name: "Floresta",  emoji: "🌿", stat: "hp",   statLabel: "HP" },
+  sombras:   { name: "Sombras",   emoji: "🌑", stat: "atk",  statLabel: "ATK" },
+  felinos:   { name: "Felinos",   emoji: "🐱", stat: "crit", statLabel: "CRIT" },
+  repteis:   { name: "Répteis",   emoji: "🦎", stat: "def",  statLabel: "DEF" },
+  abyssal:   { name: "Abyssal",   emoji: "🌊", stat: "int",  statLabel: "INT" },
+  dragoes:   { name: "Dragões",   emoji: "🐉", stat: "atk",  statLabel: "ATK" },
+  gelo:      { name: "Gelo",      emoji: "❄️", stat: "def",  statLabel: "DEF" },
+  aves:      { name: "Aves",      emoji: "🦅", stat: "spd",  statLabel: "SPD" },
+  fogo:      { name: "Fogo",      emoji: "🔥", stat: "atk",  statLabel: "ATK" },
+  pedra:     { name: "Pedra",     emoji: "🪨", stat: "def",  statLabel: "DEF" },
+  relampago: { name: "Relâmpago", emoji: "⚡", stat: "spd",  statLabel: "SPD" },
+};
+
+export const SPECIES_CATEGORIES: Record<string, Category[]> = {
+  steamcub: ["fogo"],
+  emberleaf: ["floresta", "fogo"],
+  sparkpup: ["fogo", "relampago"],
+  cinderwisp: ["fogo", "sombras"],
+  mossfin: ["floresta", "abyssal"],
+  stormtad: ["abyssal", "relampago"],
+  tidewraith: ["abyssal", "sombras"],
+  voltsprout: ["floresta", "relampago"],
+  nightbloom: ["floresta", "sombras"],
+  voidspark: ["sombras", "relampago"],
+  magmaboulder: ["fogo", "pedra"],
+  mudpaw: ["pedra"],
+  crystalsprite: ["pedra", "relampago"],
+  flarepup: ["fogo"],
+  aquakitty: ["felinos", "abyssal"],
+  leafox: ["floresta"],
+  voltbun: ["relampago"],
+  shadepup: ["sombras"],
+  rockpup: ["pedra"],
+  rato_bomba: ["fogo"],
+  macaco_prego: ["floresta"],
+  tubarao_abissal: ["abyssal"],
+  polvo_venenoso: ["abyssal", "sombras"],
+  cobra_sangrenta: ["repteis", "sombras"],
+  borboleta_sonifera: ["aves", "floresta"],
+  urso_polar: ["abyssal", "gelo"],
+  jacare_ancestral: ["repteis", "abyssal"],
+  gorila_titan: ["floresta"],
+  aguia_cega: ["aves", "relampago"],
+  lobo_lua_sangrenta: ["sombras", "fogo"],
+  onca_sombria: ["felinos", "sombras"],
+  leao_dourado: ["felinos", "pedra"],
+  tigre_infernal: ["felinos", "fogo"],
+  pantera_negra: ["felinos", "sombras"],
+  pantera_aurea: ["felinos", "sombras"],
+  dragao_branco: ["dragoes", "abyssal"],
+  dragao_negro: ["dragoes", "sombras"],
+  fenix_vermelha: ["dragoes", "aves", "fogo"],
+  fenix_negra: ["dragoes", "aves", "sombras"],
+};
+
+export function getSpeciesCategories(speciesId: string): Category[] {
+  return SPECIES_CATEGORIES[speciesId] ?? [];
+}
+
+export type SynergyEntry = { category: Category; count: number; bonusPct: number; active: boolean };
+
+/** Conta categorias de uma lista de espécies e retorna todas as que aparecem (1+).
+ *  bonusPct: 5 quando count==2, 10 quando count>=3, 0 quando count<2.
+ *  active: count >= 2 */
+export function computeSynergies(speciesIds: string[]): SynergyEntry[] {
+  const counts = new Map<Category, number>();
+  for (const sid of speciesIds) {
+    for (const cat of getSpeciesCategories(sid)) {
+      counts.set(cat, (counts.get(cat) ?? 0) + 1);
+    }
+  }
+  const out: SynergyEntry[] = [];
+  for (const [category, count] of counts.entries()) {
+    const bonusPct = count >= 3 ? 10 : count >= 2 ? 5 : 0;
+    out.push({ category, count, bonusPct, active: count >= 2 });
+  }
+  // Ordena: ativos primeiro (maior bonus), depois inativos
+  out.sort((a, b) => (Number(b.active) - Number(a.active)) || (b.bonusPct - a.bonusPct) || a.category.localeCompare(b.category));
+  return out;
+}
+
+/** Soma dos bônus % por stat a partir de sinergias ATIVAS. */
+export function synergyStatBonuses(speciesIds: string[]): Record<SynergyStat, number> {
+  const acc: Record<SynergyStat, number> = { hp: 0, atk: 0, def: 0, spd: 0, int: 0, crit: 0 };
+  for (const s of computeSynergies(speciesIds)) {
+    if (!s.active) continue;
+    const stat = CATEGORY_INFO[s.category].stat;
+    acc[stat] += s.bonusPct;
+  }
+  return acc;
+}
