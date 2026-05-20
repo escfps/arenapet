@@ -7,6 +7,7 @@ import { useProfile } from "@/lib/use-profile";
 import { getTier, nextTierProgress, SPECIES, RARITY_INFO, skinFilter, ARENA_WIN_POINTS, ARENA_LOSS_POINTS, rankStars, MAX_RANK } from "@/lib/game-data";
 import { getPlayerBattles } from "@/lib/battles.functions";
 import { BattleDetailModal, type BattleRow } from "@/components/BattleDetailModal";
+import { SynergyBadges } from "@/components/SynergyBadges";
 import arenaBg from "@/assets/arena-bg.jpg";
 
 export const Route = createFileRoute("/ranking")({
