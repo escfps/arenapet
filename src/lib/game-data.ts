@@ -548,7 +548,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Investida de Chifres", emoji: "🦕", kind: "horn_charge", cooldown: 3, description: "Provoca todos os inimigos por 2 turnos e ganha escudo de 35% HP máx. PASSIVA: todo inimigo que atacar recebe 15% do dano de volta." },
   },
   fantasminha: {
-    id: "fantasminha", name: "Fantasminha Faminto", element: "shadow", role: "mage", rarity: "epic",
+    id: "fantasminha", name: "???", element: "shadow", role: "mage", rarity: "epic",
     emoji: "👻", image: fantasminhaImg,
     description: "Espectro travesso com fome insaciável. Devora a essência do mais fraco e, se o derrota, vai atrás do próximo.",
     base: { hp: 55, atk: 12, def: 9, spd: 14, int: 25 },
