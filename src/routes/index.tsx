@@ -5,6 +5,7 @@ import { SPECIES, ELEMENT_COLORS, ELEMENT_NAMES, RARITY_INFO, ROLE_INFO, rollWel
 import { MonsterCard, type MonsterRow } from "@/components/MonsterCard";
 import { HUD } from "@/components/HUD";
 import { TutorialOverlay } from "@/components/TutorialOverlay";
+import { SynergyBadges } from "@/components/SynergyBadges";
 import { useProfile } from "@/lib/use-profile";
 import { toast, Toaster } from "sonner";
 import arenaBg from "@/assets/arena-bg.jpg";
