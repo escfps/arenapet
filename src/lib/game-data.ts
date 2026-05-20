@@ -51,6 +51,7 @@ import trexImg from "@/assets/monsters/trex.png";
 import pterossauroImg from "@/assets/monsters/pterossauro.png";
 import triceratopsColossalImg from "@/assets/monsters/triceratops_colossal.png";
 import fantasminhaImg from "@/assets/monsters/fantasminha.png";
+import raposaEspectralImg from "@/assets/monsters/raposa_espectral.png";
 
 export type Element = "fire" | "water" | "grass" | "electric" | "shadow" | "earth";
 export type Role = "tank" | "dps" | "assassin" | "mage" | "healer";
