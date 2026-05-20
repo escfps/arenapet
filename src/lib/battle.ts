@@ -631,6 +631,29 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           return;
         }
 
+        if (skill.kind === "ash_breath") {
+          // Dano mágico no alvo + reduz DEF em 20% por 2 turnos
+          const target = pickTarget(attacker, enemies);
+          if (target) {
+            const eff = defensiveMultiplier(getElement(attacker.species), target.species);
+            const dmg = Math.max(1, Math.round((effInt * 1.5 - tgtEffDef(target) * 0.4) * eff * skillMult));
+            applyDamage(target, dmg);
+            if (target.current > 0) {
+              target.defDebuffPct = Math.max(target.defDebuffPct, 0.2);
+              target.defDebuffTurns = Math.max(target.defDebuffTurns, 2);
+            }
+            log.push({
+              turn, actor: side, actorName: attacker.name, targetName: target.name,
+              damage: dmg, crit: false, effective: eff, remainingHp: target.current, targetShield: target.shield,
+              message: `${skill.emoji} ${attacker.name} usou ${skill.name}: ${dmg} de dano${target.current > 0 ? ` + 🪨 DEF de ${target.name} -20% por 2 turnos` : ""}`,
+            });
+            if (target.current <= 0) {
+              target.lastFallenAt = turn;
+              log.push({ turn, actor: side, actorName: attacker.name, targetName: target.name, damage: 0, crit: false, effective: 1, remainingHp: 0, message: `💀 ${target.name} foi derrotado!` });
+            }
+          }
+          return;
+        }
 
 
         if (skill.kind === "double_strike") {
