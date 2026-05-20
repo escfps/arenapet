@@ -1250,19 +1250,6 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
         });
       }
       })();
-      // PASSIVA T-Rex: cada kill +15% ATK permanente na batalha
-      if (attacker.species === "trex" && attacker.current > 0) {
-        const remaining = enemies.filter((e) => e.current > 0).length;
-        const kills = Math.max(0, (attacker as Live & { _prevEnemyCount?: number })._prevEnemyCount === undefined ? 0 : ((attacker as Live & { _prevEnemyCount?: number })._prevEnemyCount! - remaining));
-        if (kills > 0) {
-          attacker.killStacks += kills;
-          log.push({
-            turn, actor: side, actorName: attacker.name, targetName: attacker.name,
-            damage: 0, crit: false, effective: 1, remainingHp: attacker.current,
-            message: `🦖 ${attacker.name} sente o rugido do rei: +${kills * 15}% ATK permanente (total +${attacker.killStacks * 15}%)`,
-          });
-        }
-      }
       // PASSIVA Rato Bomba: detona explosão APÓS cada ator (skill ou ataque)
       sweepDeathExplosions();
     }
