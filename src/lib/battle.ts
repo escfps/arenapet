@@ -126,6 +126,8 @@ type Live = BattleMonster & {
   defBuffPct: number;    // ex: 0.3 = +30% DEF
   defDebuffTurns: number; // redução de DEF temporária (ash_breath)
   defDebuffPct: number;   // ex: 0.2 = -20% DEF
+  atkDebuffTurns: number; // redução de ATK temporária (chill_heal)
+  atkDebuffPct: number;   // ex: 0.15 = -15% ATK
   lastFallenAt: number;  // turno em que morreu (pra revive_ally)
 };
 
@@ -169,7 +171,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
     tauntTargetId: null, tauntTurns: 0,
     burnDmg: 0, burnTurns: 0, bleedDmg: 0, bleedTurns: 0, blindTurns: 0, sleepTurns: 0, freezeTurns: 0, silenceTurns: 0,
     rageTurns: 0, rageAtkMult: 0, rageDefDrop: 0,
-    defBuffTurns: 0, defBuffPct: 0, defDebuffTurns: 0, defDebuffPct: 0, lastFallenAt: 0,
+    defBuffTurns: 0, defBuffPct: 0, defDebuffTurns: 0, defDebuffPct: 0, atkDebuffTurns: 0, atkDebuffPct: 0, lastFallenAt: 0,
   });
   const a: Live[] = teamA.map(mkLive);
   const b: Live[] = teamB.map(mkLive);
@@ -463,7 +465,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
         }
 
         // ===== NOVAS MECÂNICAS =====
-        const effAtk = attacker.atk * (1 + attacker.rageAtkMult) * phoenixAtkBonus(attacker);
+        const effAtk = attacker.atk * (1 + attacker.rageAtkMult) * phoenixAtkBonus(attacker) * Math.max(0, 1 - attacker.atkDebuffPct);
         const effInt = attacker.int;
         const tgtEffDef = (t: Live) => t.def * (1 + t.defBuffPct) * Math.max(0, 1 - t.defDebuffPct);
 
