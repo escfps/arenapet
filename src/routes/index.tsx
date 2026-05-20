@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { SPECIES, ELEMENT_COLORS, ELEMENT_NAMES, RARITY_INFO, ROLE_INFO, rollWelcomeChest, starterMonsterStats, type Rarity, type Element, type Role } from "@/lib/game-data";
+import { SPECIES, ELEMENT_COLORS, ELEMENT_NAMES, RARITY_INFO, ROLE_INFO, rollWelcomeChest, starterMonsterStats, getSpeciesCategories, CATEGORY_INFO, type Rarity, type Element, type Role } from "@/lib/game-data";
 import { MonsterCard, type MonsterRow } from "@/components/MonsterCard";
 import { HUD } from "@/components/HUD";
 import { TutorialOverlay } from "@/components/TutorialOverlay";
@@ -339,6 +339,17 @@ function PatioPage() {
                       </button>
                       <div className="absolute bottom-0 inset-x-0 bg-black/70 px-1 py-0.5 text-white text-[10px] font-extrabold truncate text-center pointer-events-none">
                         {m.name}
+                      </div>
+                      <div className="absolute top-7 left-1 z-10 flex flex-col gap-0.5 pointer-events-none">
+                        {getSpeciesCategories(m.species).map((cat) => (
+                          <span
+                            key={cat}
+                            title={`${CATEGORY_INFO[cat].name} • +${CATEGORY_INFO[cat].statLabel}`}
+                            className="w-5 h-5 rounded-full bg-black/65 border border-white/40 text-[10px] flex items-center justify-center shadow"
+                          >
+                            {CATEGORY_INFO[cat].emoji}
+                          </span>
+                        ))}
                       </div>
                       <button
                         onClick={() => toggleTeam(m)}

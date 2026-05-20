@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { SPECIES, ELEMENT_COLORS, ROLE_INFO, RARITY_INFO, MAX_RANK, skinFilter, isVip, xpForNextLevel, rankStars, totalStats, ARENA_WIN_POINTS, ARENA_LOSS_POINTS, rollArenaPoints, getTier, divisionBounds, promoNeeded, type PromoSeries, computeBattleEnergy, MAX_BATTLE_ENERGY, hungerMultiplier, rollLevelUpRewards, tierPromotionChests, rollChest, CHESTS, tierRankIndex, starterMonsterStats } from "@/lib/game-data";
+import { SPECIES, ELEMENT_COLORS, ROLE_INFO, RARITY_INFO, MAX_RANK, skinFilter, isVip, xpForNextLevel, rankStars, totalStats, ARENA_WIN_POINTS, ARENA_LOSS_POINTS, rollArenaPoints, getTier, divisionBounds, promoNeeded, type PromoSeries, computeBattleEnergy, MAX_BATTLE_ENERGY, hungerMultiplier, rollLevelUpRewards, tierPromotionChests, rollChest, CHESTS, tierRankIndex, starterMonsterStats, getSpeciesCategories, CATEGORY_INFO } from "@/lib/game-data";
 import type { MonsterRow } from "@/components/MonsterCard";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
@@ -895,6 +895,11 @@ function TeamPanel({ title, team, side, energies }: { title: string; team: FullM
                   <span className="px-1.5 py-0.5 rounded bg-black/50 text-[9px] font-extrabold">
                     {["🛡️ Frente","⚔️ Meio","🏹 Trás"][m.team_position ?? 0]}
                   </span>
+                  {getSpeciesCategories(m.species).map((cat) => (
+                    <span key={cat} title={`${CATEGORY_INFO[cat].name} • +${CATEGORY_INFO[cat].statLabel}`} className="px-1 py-0.5 rounded bg-black/50 text-[10px]">
+                      {CATEGORY_INFO[cat].emoji}
+                    </span>
+                  ))}
                 </div>
                 {(() => { const st = totalStats(m.species, m.rank ?? 1, { hp: m.hp ?? 0, atk: m.atk ?? 0, def: m.def ?? 0, spd: m.spd ?? 0, int: m.int ?? 0 }); return (
                   <div className="text-[10px] opacity-90">{rankStars(m.rank ?? 1)} • ❤️{st.hp} ⚔️{st.atk} 🛡️{st.def} 💨{st.spd} 🧠{st.int}</div>
