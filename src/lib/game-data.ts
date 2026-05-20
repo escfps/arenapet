@@ -24,6 +24,7 @@ import panteraNegraImg from "@/assets/monsters/pantera_negra.png";
 import panteraAureaImg from "@/assets/monsters/pantera_aurea.png";
 import dragaoBrancoImg from "@/assets/monsters/dragao_branco.png";
 import dragaoNegroImg from "@/assets/monsters/dragao_negro.png";
+import dragaoFogoImg from "@/assets/monsters/dragao_fogo.png";
 import jacareAncestralImg from "@/assets/monsters/jacare_ancestral.png";
 import gorilaTitanImg from "@/assets/monsters/gorila_titan.png";
 import ratoBombaImg from "@/assets/monsters/rato_bomba.png";
@@ -98,7 +99,8 @@ export type SkillKind =
   | "true_damage_nuke"  // mítico — dano puro ignora DEF e elemento (Vayne ult)
   | "phoenix_rage"      // mítico — PASSIVA: quanto mais HP perde, mais ATK ganha (até +120%)
   | "phoenix_growth"    // mítico — PASSIVA: cada dano causado vira HP máx + cura temporária na batalha
-  | "heal_lowest";      // healer — cura o aliado mais ferido (INT × 1.2)
+  | "heal_lowest"       // healer — cura o aliado mais ferido (INT × 1.2)
+  | "ash_breath";       // mago — dano mágico + reduz DEF do alvo em 20% por 2 turnos
 
 export type Skill = {
   name: string;
@@ -435,6 +437,13 @@ export const SPECIES: Record<string, Species> = {
     description: "Filhote de fênix de plumas azuis e chamas geladas. Cura aliados com brasas frias.",
     base: { hp: 52, atk: 8, def: 11, spd: 11, int: 20 },
     skill: { name: "Chama Gelada", emoji: "❄️", kind: "heal_lowest", cooldown: 3, description: "Cura o aliado mais ferido (~INT×1.2)." },
+  },
+  dragao_fogo: {
+    id: "dragao_fogo", name: "Dragão de Fogo", element: "fire", secondaryElement: "shadow", role: "mage", rarity: "common",
+    emoji: "🐲", image: dragaoFogoImg,
+    description: "Filhote de dragão de escamas em brasa. Cospe cinzas que corroem a armadura dos inimigos.",
+    base: { hp: 50, atk: 9, def: 10, spd: 11, int: 20 },
+    skill: { name: "Baforada de Cinzas", emoji: "🌋", kind: "ash_breath", cooldown: 3, description: "Dano mágico (~INT×1.5) e reduz a DEF do alvo em 20% por 2 turnos." },
   },
 };
 
@@ -1164,6 +1173,7 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   fenix_vermelha: ["dragoes", "aves", "fogo"],
   fenix_negra: ["dragoes", "aves", "sombras"],
   fenix_azul: ["dragoes", "aves"],
+  dragao_fogo: ["dragoes", "fogo"],
 };
 
 export function getSpeciesCategories(speciesId: string): Category[] {

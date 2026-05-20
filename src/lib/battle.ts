@@ -124,6 +124,8 @@ type Live = BattleMonster & {
   rageDefDrop: number;
   defBuffTurns: number;  // bônus de DEF temporário (shield_ally)
   defBuffPct: number;    // ex: 0.3 = +30% DEF
+  defDebuffTurns: number; // redução de DEF temporária (ash_breath)
+  defDebuffPct: number;   // ex: 0.2 = -20% DEF
   lastFallenAt: number;  // turno em que morreu (pra revive_ally)
 };
 
@@ -167,7 +169,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
     tauntTargetId: null, tauntTurns: 0,
     burnDmg: 0, burnTurns: 0, bleedDmg: 0, bleedTurns: 0, blindTurns: 0, sleepTurns: 0, freezeTurns: 0, silenceTurns: 0,
     rageTurns: 0, rageAtkMult: 0, rageDefDrop: 0,
-    defBuffTurns: 0, defBuffPct: 0, lastFallenAt: 0,
+    defBuffTurns: 0, defBuffPct: 0, defDebuffTurns: 0, defDebuffPct: 0, lastFallenAt: 0,
   });
   const a: Live[] = teamA.map(mkLive);
   const b: Live[] = teamB.map(mkLive);
@@ -336,6 +338,11 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
         attacker.defBuffTurns -= 1;
         if (attacker.defBuffTurns === 0) attacker.defBuffPct = 0;
       }
+      // tick def debuff
+      if (attacker.defDebuffTurns > 0) {
+        attacker.defDebuffTurns -= 1;
+        if (attacker.defDebuffTurns === 0) attacker.defDebuffPct = 0;
+      }
       const allies = side === "team_a" ? a : b;
       const enemies = side === "team_a" ? b : a;
       if (!enemies.some((e) => e.current > 0)) return;
@@ -458,7 +465,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
         // ===== NOVAS MECÂNICAS =====
         const effAtk = attacker.atk * (1 + attacker.rageAtkMult) * phoenixAtkBonus(attacker);
         const effInt = attacker.int;
-        const tgtEffDef = (t: Live) => t.def * (1 + t.defBuffPct);
+        const tgtEffDef = (t: Live) => t.def * (1 + t.defBuffPct) * Math.max(0, 1 - t.defDebuffPct);
 
         if (skill.kind === "lifesteal_strike") {
           const target = pickTarget(attacker, enemies);
@@ -624,6 +631,29 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           return;
         }
 
+        if (skill.kind === "ash_breath") {
+          // Dano mágico no alvo + reduz DEF em 20% por 2 turnos
+          const target = pickTarget(attacker, enemies);
+          if (target) {
+            const eff = defensiveMultiplier(getElement(attacker.species), target.species);
+            const dmg = Math.max(1, Math.round((effInt * 1.5 - tgtEffDef(target) * 0.4) * eff * skillMult));
+            applyDamage(target, dmg);
+            if (target.current > 0) {
+              target.defDebuffPct = Math.max(target.defDebuffPct, 0.2);
+              target.defDebuffTurns = Math.max(target.defDebuffTurns, 2);
+            }
+            log.push({
+              turn, actor: side, actorName: attacker.name, targetName: target.name,
+              damage: dmg, crit: false, effective: eff, remainingHp: target.current, targetShield: target.shield,
+              message: `${skill.emoji} ${attacker.name} usou ${skill.name}: ${dmg} de dano${target.current > 0 ? ` + 🪨 DEF de ${target.name} -20% por 2 turnos` : ""}`,
+            });
+            if (target.current <= 0) {
+              target.lastFallenAt = turn;
+              log.push({ turn, actor: side, actorName: attacker.name, targetName: target.name, damage: 0, crit: false, effective: 1, remainingHp: 0, message: `💀 ${target.name} foi derrotado!` });
+            }
+          }
+          return;
+        }
 
 
         if (skill.kind === "double_strike") {
