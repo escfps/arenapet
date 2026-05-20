@@ -355,6 +355,11 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
         attacker.atkDebuffTurns -= 1;
         if (attacker.atkDebuffTurns === 0) attacker.atkDebuffPct = 0;
       }
+      // tick dmg reduction
+      if (attacker.dmgReductionTurns > 0) {
+        attacker.dmgReductionTurns -= 1;
+        if (attacker.dmgReductionTurns === 0) attacker.dmgReductionPct = 0;
+      }
       const allies = side === "team_a" ? a : b;
       const enemies = side === "team_a" ? b : a;
       if (!enemies.some((e) => e.current > 0)) return;
