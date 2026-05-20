@@ -72,6 +72,18 @@ function ArenaPage() {
   const [promo, setPromo] = useState<PromoSeries | null>(null);
   const [autoRematch, setAutoRematch] = useState<number | null>(null);
   const [chestQueue, setChestQueue] = useState<PendingChest[]>([]);
+  const pendingApplyRef = useRef<null | (() => Promise<void>)>(null);
+
+  // Aplica resultado da batalha (HUD, recompensas, DB) somente quando a animação termina,
+  // pra não revelar o vencedor pelas atualizações de vitórias/derrotas no topo.
+  useEffect(() => {
+    if (!battleLog) return;
+    if (shownLog.length < battleLog.length) return;
+    const apply = pendingApplyRef.current;
+    if (!apply) return;
+    pendingApplyRef.current = null;
+    void apply();
+  }, [battleLog, shownLog.length]);
 
   // auto rematch: começa countdown de 10s quando a batalha termina
   useEffect(() => {
