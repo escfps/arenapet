@@ -34,6 +34,7 @@ import cobraSangrentaImg from "@/assets/monsters/cobra_sangrenta.png";
 import aguiaCegaImg from "@/assets/monsters/aguia_cega.png";
 import fenixVermelhaImg from "@/assets/monsters/fenix_vermelha.png";
 import fenixNegraImg from "@/assets/monsters/fenix_negra.png";
+import fenixAzulImg from "@/assets/monsters/fenix_azul.png";
 import borboletaSoniferaImg from "@/assets/monsters/borboleta_sonifera.png";
 import ursoPolarImg from "@/assets/monsters/urso_polar.png";
 import loboLuaSangrentaImg from "@/assets/monsters/lobo_lua_sangrenta.png";
@@ -96,7 +97,8 @@ export type SkillKind =
   | "freeze_strike"     // super raro — dano gélido + chance de congelar / PASSIVA: ataque básico 50% chance de congelar
   | "true_damage_nuke"  // mítico — dano puro ignora DEF e elemento (Vayne ult)
   | "phoenix_rage"      // mítico — PASSIVA: quanto mais HP perde, mais ATK ganha (até +120%)
-  | "phoenix_growth";   // mítico — PASSIVA: cada dano causado vira HP máx + cura temporária na batalha
+  | "phoenix_growth"    // mítico — PASSIVA: cada dano causado vira HP máx + cura temporária na batalha
+  | "heal_lowest";      // healer — cura o aliado mais ferido (INT × 1.2)
 
 export type Skill = {
   name: string;
@@ -426,6 +428,13 @@ export const SPECIES: Record<string, Species> = {
     description: "Fênix obsidiana de chamas violetas. Devora a essência dos inimigos e cresce sem fim.",
     base: { hp: 78, atk: 25.72, def: 13.14, spd: 14, int: 14 },
     skill: { name: "Comunhão Sombria", emoji: "🌑", kind: "phoenix_growth", cooldown: 4, description: "PASSIVA: cada dano causado vira +4% HP máx e cura na batalha (cap +50%). ATIVA: golpe sombrio (2× dano)." },
+  },
+  fenix_azul: {
+    id: "fenix_azul", name: "Fênix Azul", element: "water", secondaryElement: "fire", role: "healer", rarity: "common",
+    emoji: "🔵🦅", image: fenixAzulImg,
+    description: "Filhote de fênix de plumas azuis e chamas geladas. Cura aliados com brasas frias.",
+    base: { hp: 52, atk: 8, def: 11, spd: 11, int: 20 },
+    skill: { name: "Chama Gelada", emoji: "❄️", kind: "heal_lowest", cooldown: 3, description: "Cura o aliado mais ferido (~INT×1.2)." },
   },
 };
 
@@ -1154,6 +1163,7 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   dragao_negro: ["dragoes", "sombras"],
   fenix_vermelha: ["dragoes", "aves", "fogo"],
   fenix_negra: ["dragoes", "aves", "sombras"],
+  fenix_azul: ["dragoes", "aves"],
 };
 
 export function getSpeciesCategories(speciesId: string): Category[] {

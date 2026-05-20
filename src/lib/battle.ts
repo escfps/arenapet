@@ -364,6 +364,20 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           return;
         }
 
+        if (skill.kind === "heal_lowest") {
+          const alive = allies.filter((m) => m.current > 0);
+          const target = alive.slice().sort((a, b) => (a.current / a.maxHp) - (b.current / b.maxHp))[0] ?? attacker;
+          const heal = Math.round(attacker.int * 1.2 * skillMult);
+          target.current = Math.min(target.maxHp, target.current + heal);
+          log.push({
+            turn, actor: side, actorName: attacker.name, targetName: target.name,
+            damage: -heal, crit: false, effective: 1, remainingHp: target.current,
+            message: `${skill.emoji} ${attacker.name} usou ${skill.name}! Curou ${target.name} em ${heal} HP`,
+          });
+          return;
+        }
+
+
         if (skill.kind === "shield_taunt") {
           const shield = Math.round(attacker.maxHp * 0.30 * skillMult);
           attacker.shield += shield;
