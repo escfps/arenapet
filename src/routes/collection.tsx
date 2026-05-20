@@ -332,12 +332,14 @@ function DexCard({ sp, owned }: { sp: (typeof SPECIES)[string]; owned: boolean }
         </div>
 
         {/* Skill */}
-        <div className="rounded-md bg-muted/60 px-1.5 py-1 text-[9px] leading-tight">
-          <div className="font-extrabold truncate">
-            {sp.skill.emoji} {sp.skill.name} <span className="opacity-60 font-normal">• CD {sp.skill.cooldown}</span>
+        {sp.skill && (
+          <div className="rounded-md bg-muted/60 px-1.5 py-1 text-[9px] leading-tight">
+            <div className="font-extrabold truncate">
+              {sp.skill.emoji} {sp.skill.name} <span className="opacity-60 font-normal">• CD {sp.skill.cooldown}</span>
+            </div>
+            <div className="text-muted-foreground line-clamp-2">{sp.skill.description}</div>
           </div>
-          <div className="text-muted-foreground line-clamp-2">{sp.skill.description}</div>
-        </div>
+        )}
       </div>
     </div>
   );
