@@ -210,6 +210,11 @@ function RankingPage() {
                           })
                         )}
                       </div>
+                      {r.team.length >= 2 && (
+                        <div className="mt-1">
+                          <SynergyBadges speciesIds={r.team.map((m) => m.species)} onlyActive compact />
+                        </div>
+                      )}
                     </div>
                     <span className={`px-2 py-1 rounded text-xs font-extrabold ${tier.color}`}>
                       {tier.emoji} {tier.short}
