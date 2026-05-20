@@ -101,13 +101,14 @@ function PatioPage() {
       if (rarityFilter !== "all" && sp.rarity !== rarityFilter) return false;
       if (elementFilter !== "all" && sp.element !== elementFilter && sp.secondaryElement !== elementFilter) return false;
       if (roleFilter !== "all" && sp.role !== roleFilter) return false;
+      if (categoryFilter !== "all" && !getSpeciesCategories(m.species).includes(categoryFilter)) return false;
       if (q) {
         const hay = `${m.name ?? ""} ${sp.name}`.toLowerCase();
         if (!hay.includes(q)) return false;
       }
       return true;
     });
-  }, [monsters, search, rarityFilter, elementFilter, roleFilter]);
+  }, [monsters, search, rarityFilter, elementFilter, roleFilter, categoryFilter]);
 
   const groupedSpecies = useMemo(() => {
     const map = new Map<string, MonsterRow[]>();
