@@ -128,6 +128,8 @@ type Live = BattleMonster & {
   defDebuffPct: number;   // ex: 0.2 = -20% DEF
   atkDebuffTurns: number; // redução de ATK temporária (chill_heal)
   atkDebuffPct: number;   // ex: 0.15 = -15% ATK
+  dmgReductionTurns: number; // reduz todo dano recebido por X turnos (turtle_shell)
+  dmgReductionPct: number;   // ex: 0.2 = -20% de dano recebido
   lastFallenAt: number;  // turno em que morreu (pra revive_ally)
 };
 
@@ -154,6 +156,9 @@ function pickTarget(attacker: Live, enemies: Live[]): Live | null {
 
 function applyDamage(target: Live, raw: number): number {
   let dmg = raw;
+  if (target.dmgReductionPct > 0) {
+    dmg = Math.max(1, Math.round(dmg * (1 - target.dmgReductionPct)));
+  }
   if (target.shield > 0) {
     const absorbed = Math.min(target.shield, dmg);
     target.shield -= absorbed;
@@ -171,7 +176,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
     tauntTargetId: null, tauntTurns: 0,
     burnDmg: 0, burnTurns: 0, bleedDmg: 0, bleedTurns: 0, blindTurns: 0, sleepTurns: 0, freezeTurns: 0, silenceTurns: 0,
     rageTurns: 0, rageAtkMult: 0, rageDefDrop: 0,
-    defBuffTurns: 0, defBuffPct: 0, defDebuffTurns: 0, defDebuffPct: 0, atkDebuffTurns: 0, atkDebuffPct: 0, lastFallenAt: 0,
+    defBuffTurns: 0, defBuffPct: 0, defDebuffTurns: 0, defDebuffPct: 0, atkDebuffTurns: 0, atkDebuffPct: 0, dmgReductionTurns: 0, dmgReductionPct: 0, lastFallenAt: 0,
   });
   const a: Live[] = teamA.map(mkLive);
   const b: Live[] = teamB.map(mkLive);
@@ -349,6 +354,11 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
       if (attacker.atkDebuffTurns > 0) {
         attacker.atkDebuffTurns -= 1;
         if (attacker.atkDebuffTurns === 0) attacker.atkDebuffPct = 0;
+      }
+      // tick dmg reduction
+      if (attacker.dmgReductionTurns > 0) {
+        attacker.dmgReductionTurns -= 1;
+        if (attacker.dmgReductionTurns === 0) attacker.dmgReductionPct = 0;
       }
       const allies = side === "team_a" ? a : b;
       const enemies = side === "team_a" ? b : a;
@@ -712,6 +722,39 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           }
           return;
         }
+
+        if (skill.kind === "turtle_shell") {
+          // Escudo (30% HP máx) + reduz dano recebido em 20% por 2 turnos
+          const shieldAmt = Math.round(attacker.maxHp * 0.3 * skillMult);
+          attacker.shield = Math.max(attacker.shield, shieldAmt);
+          attacker.dmgReductionPct = Math.max(attacker.dmgReductionPct, 0.2);
+          attacker.dmgReductionTurns = Math.max(attacker.dmgReductionTurns, 2);
+          log.push({
+            turn, actor: side, actorName: attacker.name, targetName: attacker.name,
+            damage: 0, crit: false, effective: 1, remainingHp: attacker.current, targetShield: attacker.shield,
+            message: `${skill.emoji} ${attacker.name} usou ${skill.name}: 🛡️ +${shieldAmt} escudo e -20% dano recebido por 2 turnos`,
+          });
+          return;
+        }
+
+        if (skill.kind === "doom_curse") {
+          // Maldição no inimigo com mais HP atual: -20% ATK e -20% DEF por 3 turnos
+          const aliveEnemies = enemies.filter((e) => e.current > 0);
+          const target = aliveEnemies.length ? aliveEnemies.reduce((x, y) => (x.current > y.current ? x : y)) : null;
+          if (target) {
+            target.atkDebuffPct = Math.max(target.atkDebuffPct, 0.2);
+            target.atkDebuffTurns = Math.max(target.atkDebuffTurns, 3);
+            target.defDebuffPct = Math.max(target.defDebuffPct, 0.2);
+            target.defDebuffTurns = Math.max(target.defDebuffTurns, 3);
+            log.push({
+              turn, actor: side, actorName: attacker.name, targetName: target.name,
+              damage: 0, crit: false, effective: 1, remainingHp: target.current,
+              message: `${skill.emoji} ${attacker.name} usou ${skill.name}: 🪶 ${target.name} amaldiçoado (-20% ATK e DEF por 3 turnos)`,
+            });
+          }
+          return;
+        }
+
 
 
 

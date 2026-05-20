@@ -27,6 +27,8 @@ import dragaoNegroImg from "@/assets/monsters/dragao_negro.png";
 import dragaoFogoImg from "@/assets/monsters/dragao_fogo.png";
 import focaGlacialImg from "@/assets/monsters/foca_glacial.png";
 import loboArticoImg from "@/assets/monsters/lobo_artico.png";
+import tartarugaAncestralImg from "@/assets/monsters/tartaruga_ancestral.png";
+import corvoSombrasImg from "@/assets/monsters/corvo_sombras.png";
 import jacareAncestralImg from "@/assets/monsters/jacare_ancestral.png";
 import gorilaTitanImg from "@/assets/monsters/gorila_titan.png";
 import ratoBombaImg from "@/assets/monsters/rato_bomba.png";
@@ -104,7 +106,9 @@ export type SkillKind =
   | "heal_lowest"       // healer — cura o aliado mais ferido (INT × 1.2)
   | "ash_breath"        // mago — dano mágico + reduz DEF do alvo em 20% por 2 turnos
   | "chill_heal"        // healer — cura o mais ferido (INT×1.3) + reduz ATK do inimigo mais forte
-  | "frost_pounce";     // assassin — crit garantido no mais fraco + chance de congelar
+  | "frost_pounce"      // assassin — crit garantido no mais fraco + chance de congelar
+  | "turtle_shell"      // tank — escudo (30% HP máx) + reduz dano recebido em 20% por 2 turnos
+  | "doom_curse";       // mago — reduz ATK e DEF do inimigo com mais HP em 20% por 3 turnos
 
 export type Skill = {
   name: string;
@@ -462,6 +466,20 @@ export const SPECIES: Record<string, Species> = {
     description: "Lobo de pelagem branca e olhos de gelo. Caça os mais fracos com um bote gelado e implacável.",
     base: { hp: 56, atk: 19, def: 10, spd: 19, int: 9 },
     skill: { name: "Bote Gelado", emoji: "🥶", kind: "frost_pounce", cooldown: 3, description: "Crítico GARANTIDO no inimigo mais fraco + 40% de chance de congelar por 1 turno." },
+  },
+  tartaruga_ancestral: {
+    id: "tartaruga_ancestral", name: "Tartaruga Ancestral", element: "water", secondaryElement: "earth", role: "tank", rarity: "rare",
+    emoji: "🐢", image: tartarugaAncestralImg,
+    description: "Tartaruga milenar de carapaça rúnica. Encolhe na carapaça e se torna quase indestrutível.",
+    base: { hp: 95, atk: 9, def: 22, spd: 7, int: 10 },
+    skill: { name: "Carapaça Milenar", emoji: "🛡️", kind: "turtle_shell", cooldown: 3, description: "Ganha escudo de 30% do HP máx e reduz todo dano recebido em 20% por 2 turnos." },
+  },
+  corvo_sombras: {
+    id: "corvo_sombras", name: "Corvo das Sombras", element: "shadow", role: "mage", rarity: "rare",
+    emoji: "🐦‍⬛", image: corvoSombrasImg,
+    description: "Corvo de penas violeta. Seu grasnido é um agouro que enfraquece os mais imponentes.",
+    base: { hp: 55, atk: 11, def: 10, spd: 14, int: 23 },
+    skill: { name: "Grasnido Agouro", emoji: "🪶", kind: "doom_curse", cooldown: 4, description: "Maldição no inimigo com mais HP: reduz ATK e DEF dele em 20% por 3 turnos." },
   },
 };
 
@@ -1194,6 +1212,8 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   dragao_fogo: ["dragoes", "fogo"],
   foca_glacial: ["gelo", "abyssal"],
   lobo_artico: ["gelo"],
+  tartaruga_ancestral: ["repteis", "abyssal"],
+  corvo_sombras: ["aves", "sombras"],
 };
 
 export function getSpeciesCategories(speciesId: string): Category[] {
