@@ -1302,6 +1302,7 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   pterossauro: ["repteis", "aves"],
   triceratops_colossal: ["repteis", "pedra"],
   fantasminha: ["sombras"],
+  raposa_espectral: ["felinos", "sombras"],
 };
 
 export function getSpeciesCategories(speciesId: string): Category[] {
