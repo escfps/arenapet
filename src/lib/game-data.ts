@@ -97,7 +97,8 @@ export type SkillKind =
   | "freeze_strike"     // super raro — dano gélido + chance de congelar / PASSIVA: ataque básico 50% chance de congelar
   | "true_damage_nuke"  // mítico — dano puro ignora DEF e elemento (Vayne ult)
   | "phoenix_rage"      // mítico — PASSIVA: quanto mais HP perde, mais ATK ganha (até +120%)
-  | "phoenix_growth";   // mítico — PASSIVA: cada dano causado vira HP máx + cura temporária na batalha
+  | "phoenix_growth"    // mítico — PASSIVA: cada dano causado vira HP máx + cura temporária na batalha
+  | "heal_lowest";      // healer — cura o aliado mais ferido (INT × 1.2)
 
 export type Skill = {
   name: string;
