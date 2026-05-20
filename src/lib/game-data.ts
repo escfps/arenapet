@@ -25,6 +25,8 @@ import panteraAureaImg from "@/assets/monsters/pantera_aurea.png";
 import dragaoBrancoImg from "@/assets/monsters/dragao_branco.png";
 import dragaoNegroImg from "@/assets/monsters/dragao_negro.png";
 import dragaoFogoImg from "@/assets/monsters/dragao_fogo.png";
+import focaGlacialImg from "@/assets/monsters/foca_glacial.png";
+import loboArticoImg from "@/assets/monsters/lobo_artico.png";
 import jacareAncestralImg from "@/assets/monsters/jacare_ancestral.png";
 import gorilaTitanImg from "@/assets/monsters/gorila_titan.png";
 import ratoBombaImg from "@/assets/monsters/rato_bomba.png";
