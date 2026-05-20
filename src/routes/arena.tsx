@@ -8,6 +8,7 @@ import { useProfile } from "@/lib/use-profile";
 import { simulateBattle, computeRewards, toBattleMonster, type BattleLogEntry } from "@/lib/battle";
 import { BattleScene } from "@/components/BattleScene";
 import { BattleStats } from "@/components/BattleStats";
+import { SynergyBadges } from "@/components/SynergyBadges";
 import { toast, Toaster } from "sonner";
 import arenaBg from "@/assets/arena-bg.jpg";
 import { playSfx, startMusic, stopMusic } from "@/lib/sound";
