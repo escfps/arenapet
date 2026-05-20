@@ -173,7 +173,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
     tauntTargetId: null, tauntTurns: 0,
     burnDmg: 0, burnTurns: 0, bleedDmg: 0, bleedTurns: 0, blindTurns: 0, sleepTurns: 0, freezeTurns: 0, silenceTurns: 0,
     rageTurns: 0, rageAtkMult: 0, rageDefDrop: 0,
-    defBuffTurns: 0, defBuffPct: 0, defDebuffTurns: 0, defDebuffPct: 0, atkDebuffTurns: 0, atkDebuffPct: 0, lastFallenAt: 0,
+    defBuffTurns: 0, defBuffPct: 0, defDebuffTurns: 0, defDebuffPct: 0, atkDebuffTurns: 0, atkDebuffPct: 0, dmgReductionTurns: 0, dmgReductionPct: 0, lastFallenAt: 0,
   });
   const a: Live[] = teamA.map(mkLive);
   const b: Live[] = teamB.map(mkLive);
