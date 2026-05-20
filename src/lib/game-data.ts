@@ -34,6 +34,7 @@ import cobraSangrentaImg from "@/assets/monsters/cobra_sangrenta.png";
 import aguiaCegaImg from "@/assets/monsters/aguia_cega.png";
 import fenixVermelhaImg from "@/assets/monsters/fenix_vermelha.png";
 import fenixNegraImg from "@/assets/monsters/fenix_negra.png";
+import fenixAzulImg from "@/assets/monsters/fenix_azul.png";
 import borboletaSoniferaImg from "@/assets/monsters/borboleta_sonifera.png";
 import ursoPolarImg from "@/assets/monsters/urso_polar.png";
 import loboLuaSangrentaImg from "@/assets/monsters/lobo_lua_sangrenta.png";
