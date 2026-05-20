@@ -27,6 +27,8 @@ import dragaoNegroImg from "@/assets/monsters/dragao_negro.png";
 import dragaoFogoImg from "@/assets/monsters/dragao_fogo.png";
 import focaGlacialImg from "@/assets/monsters/foca_glacial.png";
 import loboArticoImg from "@/assets/monsters/lobo_artico.png";
+import tartarugaAncestralImg from "@/assets/monsters/tartaruga_ancestral.png";
+import corvoSombrasImg from "@/assets/monsters/corvo_sombras.png";
 import jacareAncestralImg from "@/assets/monsters/jacare_ancestral.png";
 import gorilaTitanImg from "@/assets/monsters/gorila_titan.png";
 import ratoBombaImg from "@/assets/monsters/rato_bomba.png";
@@ -104,7 +106,9 @@ export type SkillKind =
   | "heal_lowest"       // healer — cura o aliado mais ferido (INT × 1.2)
   | "ash_breath"        // mago — dano mágico + reduz DEF do alvo em 20% por 2 turnos
   | "chill_heal"        // healer — cura o mais ferido (INT×1.3) + reduz ATK do inimigo mais forte
-  | "frost_pounce";     // assassin — crit garantido no mais fraco + chance de congelar
+  | "frost_pounce"      // assassin — crit garantido no mais fraco + chance de congelar
+  | "turtle_shell"      // tank — escudo (30% HP máx) + reduz dano recebido em 20% por 2 turnos
+  | "doom_curse";       // mago — reduz ATK e DEF do inimigo com mais HP em 20% por 3 turnos
 
 export type Skill = {
   name: string;
