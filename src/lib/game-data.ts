@@ -1192,6 +1192,8 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   fenix_negra: ["dragoes", "aves", "sombras"],
   fenix_azul: ["dragoes", "aves"],
   dragao_fogo: ["dragoes", "fogo"],
+  foca_glacial: ["gelo", "abyssal"],
+  lobo_artico: ["gelo"],
 };
 
 export function getSpeciesCategories(speciesId: string): Category[] {
