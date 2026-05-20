@@ -36,12 +36,14 @@ function PatioPage() {
   const [rarityFilter, setRarityFilter] = useState<Rarity | "all">("all");
   const [elementFilter, setElementFilter] = useState<Element | "all">("all");
   const [roleFilter, setRoleFilter] = useState<Role | "all">("all");
+  const [categoryFilter, setCategoryFilter] = useState<Category | "all">("all");
   const [groupModal, setGroupModal] = useState<string | null>(null);
   const [slotPicker, setSlotPicker] = useState<number | null>(null);
   const [pickerSearch, setPickerSearch] = useState("");
   const [pickerRarity, setPickerRarity] = useState<Rarity | "all">("all");
   const [pickerElement, setPickerElement] = useState<Element | "all">("all");
   const [pickerRole, setPickerRole] = useState<Role | "all">("all");
+  const [pickerCategory, setPickerCategory] = useState<Category | "all">("all");
   const [showTutorial, setShowTutorial] = useState(false);
 
   // Mostra tutorial após o baú ser aberto (uma vez por conta)
