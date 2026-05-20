@@ -9,6 +9,7 @@ import {
   RARITY_INFO,
   getSpeciesCategories,
   CATEGORY_INFO,
+  totalStats,
   type Rarity,
   type Element,
 } from "@/lib/game-data";
