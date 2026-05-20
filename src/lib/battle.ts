@@ -298,6 +298,16 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
         attacker.freezeTurns -= 1;
         return;
       }
+      // tick stun — atordoado pula o turno
+      if (attacker.stunTurns > 0) {
+        log.push({
+          turn, actor: side, actorName: attacker.name, targetName: attacker.name,
+          damage: 0, crit: false, effective: 1, remainingHp: attacker.current,
+          message: `⚡ ${attacker.name} está atordoado e não pode agir!`,
+        });
+        attacker.stunTurns -= 1;
+        return;
+      }
       // tick taunt
       if (attacker.tauntTurns > 0) {
         attacker.tauntTurns -= 1;
@@ -366,6 +376,25 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
       const allies = side === "team_a" ? a : b;
       const enemies = side === "team_a" ? b : a;
       if (!enemies.some((e) => e.current > 0)) return;
+
+      // PASSIVA Panda: cada turno cura o aliado com menos HP em INT × 0.8
+      if (attacker.species === "panda") {
+        const aliveAllies = allies.filter((m) => m.current > 0);
+        const wounded = aliveAllies.filter((m) => m.current < m.maxHp).sort((x, y) => x.current / x.maxHp - y.current / y.maxHp)[0];
+        if (wounded) {
+          const heal = Math.max(1, Math.round(attacker.int * 0.8 * RARITY_INFO[attacker.rarity].skillMult));
+          const before = wounded.current;
+          wounded.current = Math.min(wounded.maxHp, wounded.current + heal);
+          const actual = wounded.current - before;
+          if (actual > 0) {
+            log.push({
+              turn, actor: side, actorName: attacker.name, targetName: wounded.name,
+              damage: -actual, crit: false, effective: 1, remainingHp: wounded.current,
+              message: `🌿 ${attacker.name} (Equilíbrio): curou ${wounded.name} em ${actual} HP`,
+            });
+          }
+        }
+      }
 
       const skill = getSkill(attacker.species);
       const skillMult = RARITY_INFO[attacker.rarity].skillMult;
@@ -483,7 +512,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
         }
 
         // ===== NOVAS MECÂNICAS =====
-        const effAtk = attacker.atk * (1 + attacker.rageAtkMult) * phoenixAtkBonus(attacker) * Math.max(0, 1 - attacker.atkDebuffPct);
+        const effAtk = attacker.atk * (1 + attacker.rageAtkMult) * (1 + 0.15 * attacker.killStacks) * phoenixAtkBonus(attacker) * Math.max(0, 1 - attacker.atkDebuffPct);
         const effInt = attacker.int;
         const tgtEffDef = (t: Live) => t.def * (1 + t.defBuffPct) * Math.max(0, 1 - t.defDebuffPct);
 
