@@ -811,6 +811,27 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           return;
         }
 
+        if (skill.kind === "spectral_pounce") {
+          const aliveEnemies = enemies.filter((e) => e.current > 0);
+          const target = aliveEnemies.length ? aliveEnemies.reduce((x, y) => (x.current < y.current ? x : y)) : null;
+          if (target) {
+            const eff = defensiveMultiplier(getElement(attacker.species), target.species);
+            const base = Math.max(1, effAtk * 2 - tgtEffDef(target) * 0.4);
+            const dmg = Math.max(1, Math.round(base * eff * 2.0 * 1.7 * skillMult));
+            applyDamage(target, dmg);
+            log.push({
+              turn, actor: side, actorName: attacker.name, targetName: target.name,
+              damage: dmg, crit: true, effective: eff, remainingHp: target.current, targetShield: target.shield,
+              message: `${skill.emoji} ${attacker.name} usou ${skill.name}: ${dmg} CRÍTICO em ${target.name} (ignora 60% DEF)`,
+            });
+            if (target.current <= 0) {
+              target.lastFallenAt = turn;
+              log.push({ turn, actor: side, actorName: attacker.name, targetName: target.name, damage: 0, crit: false, effective: 1, remainingHp: 0, message: `💀 ${target.name} foi derrotado!` });
+            }
+          }
+          return;
+        }
+
         if (skill.kind === "lightning_charge") {
           const aliveEnemies = enemies.filter((e) => e.current > 0);
           const target = aliveEnemies.length ? aliveEnemies.reduce((x, y) => (x.atk > y.atk ? x : y)) : null;
