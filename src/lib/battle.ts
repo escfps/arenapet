@@ -128,6 +128,8 @@ type Live = BattleMonster & {
   defDebuffPct: number;   // ex: 0.2 = -20% DEF
   atkDebuffTurns: number; // redução de ATK temporária (chill_heal)
   atkDebuffPct: number;   // ex: 0.15 = -15% ATK
+  dmgReductionTurns: number; // reduz todo dano recebido por X turnos (turtle_shell)
+  dmgReductionPct: number;   // ex: 0.2 = -20% de dano recebido
   lastFallenAt: number;  // turno em que morreu (pra revive_ally)
 };
 
