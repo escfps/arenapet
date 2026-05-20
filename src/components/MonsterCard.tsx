@@ -1,4 +1,4 @@
-import { SPECIES, skinFilter, ELEMENT_COLORS, ELEMENT_NAMES, ROLE_INFO, RARITY_INFO, totalStats, rankStars, MAX_RANK } from "@/lib/game-data";
+import { SPECIES, skinFilter, ELEMENT_COLORS, ELEMENT_NAMES, ROLE_INFO, RARITY_INFO, totalStats, rankStars, MAX_RANK, getSpeciesCategories, CATEGORY_INFO } from "@/lib/game-data";
 
 export type MonsterRow = {
   id: string;
