@@ -1193,6 +1193,12 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
         target.freezeTurns = Math.max(target.freezeTurns, 2);
         frozenByPassive = true;
       }
+      // PASSIVA Leoa Trovão: 30% de chance de paralisar o alvo por 1 turno
+      let stunnedByPassive = false;
+      if (attacker.species === "leoa_trovao" && target.current > 0 && rand() < 0.3) {
+        target.stunTurns = Math.max(target.stunTurns, 1);
+        stunnedByPassive = true;
+      }
 
       // PASSIVA Lobo da Lua Sangrenta: cura 40% do dano causado a cada ataque básico
       let lifestealHealed = 0;
@@ -1201,6 +1207,12 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
         attacker.current = Math.min(attacker.maxHp, attacker.current + lifestealHealed);
       }
 
+      // PASSIVA Triceratops Colossal: reflete 15% do dano recebido em ataques básicos
+      let reflected = 0;
+      if (target.thornsPct > 0 && damage > 0 && attacker.current > 0 && attacker.species !== target.species) {
+        reflected = Math.max(1, Math.round(damage * target.thornsPct));
+        applyDamage(attacker, reflected);
+      }
 
       let msg = `${attacker.name} atacou ${target.name} causando ${damage} de dano`;
       if (crit) msg += " (CRÍTICO!)";
@@ -1210,7 +1222,9 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
       if (phoenixGrow > 0) msg += ` 🌑 (+${phoenixGrow} HP máx)`;
       if (sleptByPassive) msg += ` 💤 ${target.name} adormeceu por 2 turnos!`;
       if (frozenByPassive) msg += ` ❄️ ${target.name} congelou por 2 turnos!`;
+      if (stunnedByPassive) msg += ` ⚡ ${target.name} paralisou por 1 turno!`;
       if (lifestealHealed > 0) msg += ` 🩸 (+${lifestealHealed} HP roubado)`;
+      if (reflected > 0) msg += ` 🦕 (refletiu ${reflected})`;
 
       log.push({
         turn, actor: side, actorName: attacker.name, targetName: target.name,
@@ -1236,6 +1250,19 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
         });
       }
       })();
+      // PASSIVA T-Rex: cada kill +15% ATK permanente na batalha
+      if (attacker.species === "trex" && attacker.current > 0) {
+        const remaining = enemies.filter((e) => e.current > 0).length;
+        const kills = Math.max(0, (attacker as Live & { _prevEnemyCount?: number })._prevEnemyCount === undefined ? 0 : ((attacker as Live & { _prevEnemyCount?: number })._prevEnemyCount! - remaining));
+        if (kills > 0) {
+          attacker.killStacks += kills;
+          log.push({
+            turn, actor: side, actorName: attacker.name, targetName: attacker.name,
+            damage: 0, crit: false, effective: 1, remainingHp: attacker.current,
+            message: `🦖 ${attacker.name} sente o rugido do rei: +${kills * 15}% ATK permanente (total +${attacker.killStacks * 15}%)`,
+          });
+        }
+      }
       // PASSIVA Rato Bomba: detona explosão APÓS cada ator (skill ou ataque)
       sweepDeathExplosions();
     }
