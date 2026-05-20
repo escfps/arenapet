@@ -469,6 +469,31 @@ function PatioPage() {
                   ))}
                 </div>
               </div>
+              <div className="space-y-1">
+                <div className="text-white/70 text-[10px] font-extrabold uppercase tracking-wider px-1">Categoria</div>
+                <div className="flex flex-wrap gap-1.5">
+                  <button
+                    onClick={() => setCategoryFilter("all")}
+                    className={`px-3 py-1 rounded-full text-[11px] font-extrabold transition ${
+                      categoryFilter === "all" ? "bg-yellow-400 text-yellow-950" : "bg-white/10 text-white hover:bg-white/20"
+                    }`}
+                  >
+                    Todas
+                  </button>
+                  {ALL_CATEGORIES.map((c) => (
+                    <button
+                      key={c}
+                      onClick={() => setCategoryFilter(c)}
+                      className={`px-3 py-1 rounded-full text-[11px] font-extrabold transition ${
+                        categoryFilter === c ? "bg-emerald-500 text-white ring-2 ring-white" : "bg-white/10 text-white hover:bg-white/20"
+                      }`}
+                      title={`+${CATEGORY_INFO[c].statLabel} com sinergia`}
+                    >
+                      {CATEGORY_INFO[c].emoji} {CATEGORY_INFO[c].name}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </section>
 
             <section>
