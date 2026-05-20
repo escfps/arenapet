@@ -124,7 +124,8 @@ export type SkillKind =
   | "crystal_resonance" // healer — cura todos INT×1.2 + DEF time +15% por 2 turnos
   | "king_roar"         // assassin — mordida no mais forte (2.5× dano) / PASSIVA: cada kill +15% ATK permanente
   | "horn_charge"       // tank — provoca todos 2 turnos + escudo 35% / PASSIVA: refletir 15% do dano recebido
-  | "spectral_hunger";  // mage — dano mágico no mais fraco ignorando DEF / PASSIVA: se matar, ataca novamente o próximo (máx 2)
+  | "spectral_hunger"   // mage — dano mágico no mais fraco ignorando DEF / PASSIVA: se matar, ataca novamente o próximo (máx 2)
+  | "spectral_pounce";  // assassin — crítico garantido no mais fraco (2× dano) ignorando 60% DEF / PASSIVA: ataque básico 50% chance de critar
 
 export type Skill = {
   name: string;
