@@ -597,7 +597,16 @@ function PatioPage() {
                   </button>
                 ))}
               </div>
+              <div className="flex flex-wrap gap-1.5">
+                <button onClick={() => setPickerCategory("all")} className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold transition ${pickerCategory === "all" ? "bg-yellow-400 text-yellow-950" : "bg-white/10 text-white hover:bg-white/20"}`}>Todas</button>
+                {ALL_CATEGORIES.map((c) => (
+                  <button key={c} onClick={() => setPickerCategory(c)} title={`+${CATEGORY_INFO[c].statLabel} com sinergia`} className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold text-white transition ${pickerCategory === c ? "bg-emerald-500 ring-2 ring-white" : "bg-white/10 hover:bg-white/20"}`}>
+                    {CATEGORY_INFO[c].emoji} {CATEGORY_INFO[c].name}
+                  </button>
+                ))}
+              </div>
             </div>
+
 
             {available.length === 0 ? (
               <p className="text-center text-white/60 py-6 text-sm">
