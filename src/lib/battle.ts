@@ -130,6 +130,9 @@ type Live = BattleMonster & {
   atkDebuffPct: number;   // ex: 0.15 = -15% ATK
   dmgReductionTurns: number; // reduz todo dano recebido por X turnos (turtle_shell)
   dmgReductionPct: number;   // ex: 0.2 = -20% de dano recebido
+  stunTurns: number;     // se >0, pula o turno (atordoado ⚡)
+  thornsPct: number;     // refletir % do dano recebido em ataques básicos
+  killStacks: number;    // T-Rex: acumulador permanente de kills (+15% ATK por kill)
   lastFallenAt: number;  // turno em que morreu (pra revive_ally)
 };
 
@@ -176,7 +179,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
     tauntTargetId: null, tauntTurns: 0,
     burnDmg: 0, burnTurns: 0, bleedDmg: 0, bleedTurns: 0, blindTurns: 0, sleepTurns: 0, freezeTurns: 0, silenceTurns: 0,
     rageTurns: 0, rageAtkMult: 0, rageDefDrop: 0,
-    defBuffTurns: 0, defBuffPct: 0, defDebuffTurns: 0, defDebuffPct: 0, atkDebuffTurns: 0, atkDebuffPct: 0, dmgReductionTurns: 0, dmgReductionPct: 0, lastFallenAt: 0,
+    defBuffTurns: 0, defBuffPct: 0, defDebuffTurns: 0, defDebuffPct: 0, atkDebuffTurns: 0, atkDebuffPct: 0, dmgReductionTurns: 0, dmgReductionPct: 0, stunTurns: 0, thornsPct: m.species === "triceratops_colossal" ? 0.15 : 0, killStacks: 0, lastFallenAt: 0,
   });
   const a: Live[] = teamA.map(mkLive);
   const b: Live[] = teamB.map(mkLive);
