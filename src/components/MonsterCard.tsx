@@ -58,7 +58,18 @@ export function MonsterCard({ monster, onClick, compact, selected }: Props) {
       <span className={`absolute bottom-[3.5rem] left-2 z-10 px-2 py-0.5 rounded-full ${RARITY_INFO[sp.rarity].color} text-[10px] font-extrabold shadow-lg`}>
         {RARITY_INFO[sp.rarity].emoji} {RARITY_INFO[sp.rarity].name}
       </span>
-      <div className={`bg-gradient-to-br ${gradient} ${compact ? "p-2" : "p-3"}`}>
+      <div className={`bg-gradient-to-br ${gradient} ${compact ? "p-2" : "p-3"} relative`}>
+        <div className="absolute top-1 left-1 z-10 flex flex-col gap-1">
+          {getSpeciesCategories(monster.species).map((cat) => (
+            <span
+              key={cat}
+              title={`${CATEGORY_INFO[cat].name} • +${CATEGORY_INFO[cat].statLabel}`}
+              className="w-6 h-6 rounded-full bg-black/55 backdrop-blur-sm border border-white/40 text-[12px] flex items-center justify-center shadow"
+            >
+              {CATEGORY_INFO[cat].emoji}
+            </span>
+          ))}
+        </div>
         <div className={`flex items-center justify-center ${compact ? "h-20" : "h-32"}`}>
           <img
             src={sp.image}
@@ -73,6 +84,18 @@ export function MonsterCard({ monster, onClick, compact, selected }: Props) {
         <div className="font-extrabold text-sm truncate">{monster.name}</div>
         <div className="text-[10px] text-muted-foreground">
           {sp.emoji} {sp.name} • {ELEMENT_NAMES[sp.element]}{sp.secondaryElement ? ` / ${ELEMENT_NAMES[sp.secondaryElement]}` : ""}
+        </div>
+        <div className="mt-1 flex flex-wrap gap-1">
+          {getSpeciesCategories(monster.species).map((cat) => (
+            <span
+              key={cat}
+              className="px-1.5 py-0.5 rounded-full bg-muted text-[9px] font-bold flex items-center gap-0.5"
+              title={`+${CATEGORY_INFO[cat].statLabel} com sinergia`}
+            >
+              <span>{CATEGORY_INFO[cat].emoji}</span>
+              <span>{CATEGORY_INFO[cat].name}</span>
+            </span>
+          ))}
         </div>
         {!compact && (
           <div className="mt-1.5 grid grid-cols-5 gap-1 text-[10px] font-bold">
