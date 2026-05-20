@@ -1212,6 +1212,8 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   dragao_fogo: ["dragoes", "fogo"],
   foca_glacial: ["gelo", "abyssal"],
   lobo_artico: ["gelo"],
+  tartaruga_ancestral: ["repteis", "abyssal"],
+  corvo_sombras: ["aves", "sombras"],
 };
 
 export function getSpeciesCategories(speciesId: string): Category[] {
