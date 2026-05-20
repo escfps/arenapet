@@ -102,7 +102,9 @@ export type SkillKind =
   | "phoenix_rage"      // mítico — PASSIVA: quanto mais HP perde, mais ATK ganha (até +120%)
   | "phoenix_growth"    // mítico — PASSIVA: cada dano causado vira HP máx + cura temporária na batalha
   | "heal_lowest"       // healer — cura o aliado mais ferido (INT × 1.2)
-  | "ash_breath";       // mago — dano mágico + reduz DEF do alvo em 20% por 2 turnos
+  | "ash_breath"        // mago — dano mágico + reduz DEF do alvo em 20% por 2 turnos
+  | "chill_heal"        // healer — cura o mais ferido (INT×1.3) + reduz ATK do inimigo mais forte
+  | "frost_pounce";     // assassin — crit garantido no mais fraco + chance de congelar
 
 export type Skill = {
   name: string;
