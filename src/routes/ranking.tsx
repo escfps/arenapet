@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
-import { getTier, nextTierProgress, SPECIES, RARITY_INFO, skinFilter, ARENA_WIN_POINTS, ARENA_LOSS_POINTS } from "@/lib/game-data";
+import { getTier, nextTierProgress, SPECIES, RARITY_INFO, skinFilter, ARENA_WIN_POINTS, ARENA_LOSS_POINTS, rankStars, MAX_RANK } from "@/lib/game-data";
 import { getPlayerBattles } from "@/lib/battles.functions";
 import { BattleDetailModal, type BattleRow } from "@/components/BattleDetailModal";
 import arenaBg from "@/assets/arena-bg.jpg";
@@ -186,19 +186,24 @@ function RankingPage() {
                             return (
                               <div
                                 key={m.id}
-                                title={`${m.name}${sp ? ` (${sp.name})` : ""}`}
-                                className={`w-8 h-8 rounded-full bg-black/40 border ${rar ? rar.ringColor : "ring-white/20"} ring-1 overflow-hidden flex items-center justify-center`}
+                                title={`${m.name}${sp ? ` (${sp.name})` : ""} • ${rankStars(m.rank ?? 1)}`}
+                                className="flex flex-col items-center gap-0.5"
                               >
-                                {sp?.image ? (
-                                  <img
-                                    src={sp.image}
-                                    alt={m.name}
-                                    className="w-full h-full object-cover"
-                                    style={{ filter: skinFilter(m.skin) }}
-                                  />
-                                ) : (
-                                  <span className="text-lg leading-none">❓</span>
-                                )}
+                                <div className={`w-8 h-8 rounded-full bg-black/40 border ${rar ? rar.ringColor : "ring-white/20"} ring-1 overflow-hidden flex items-center justify-center ${(m.rank ?? 1) >= MAX_RANK ? "rank-max-glow" : ""}`}>
+                                  {sp?.image ? (
+                                    <img
+                                      src={sp.image}
+                                      alt={m.name}
+                                      className="w-full h-full object-cover"
+                                      style={{ filter: skinFilter(m.skin) }}
+                                    />
+                                  ) : (
+                                    <span className="text-lg leading-none">❓</span>
+                                  )}
+                                </div>
+                                <span className={`text-[8px] leading-none font-extrabold px-1 py-0.5 rounded ${(m.rank ?? 1) >= MAX_RANK ? "bg-gradient-to-r from-yellow-300 via-pink-400 to-violet-400 text-white" : "bg-amber-400/90 text-amber-950"}`}>
+                                  {rankStars(m.rank ?? 1)}
+                                </span>
                               </div>
                             );
                           })
