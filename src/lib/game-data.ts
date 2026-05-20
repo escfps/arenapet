@@ -429,6 +429,13 @@ export const SPECIES: Record<string, Species> = {
     base: { hp: 78, atk: 25.72, def: 13.14, spd: 14, int: 14 },
     skill: { name: "Comunhão Sombria", emoji: "🌑", kind: "phoenix_growth", cooldown: 4, description: "PASSIVA: cada dano causado vira +4% HP máx e cura na batalha (cap +50%). ATIVA: golpe sombrio (2× dano)." },
   },
+  fenix_azul: {
+    id: "fenix_azul", name: "Fênix Azul", element: "water", secondaryElement: "fire", role: "healer", rarity: "common",
+    emoji: "🔵🦅", image: fenixAzulImg,
+    description: "Filhote de fênix de plumas azuis e chamas geladas. Cura aliados com brasas frias.",
+    base: { hp: 52, atk: 8, def: 11, spd: 11, int: 20 },
+    skill: { name: "Chama Gelada", emoji: "❄️", kind: "heal_lowest", cooldown: 3, description: "Cura o aliado mais ferido (~INT×1.2)." },
+  },
 };
 
 export const ELEMENT_COLORS: Record<Element, string> = {
