@@ -23,13 +23,16 @@ async function fetchOpponentMonsters(userId: string) {
   const chunks: FullMonster[] = [];
   const pageSize = 1000;
 
-  for (let from = 0; from < 3000; from += pageSize) {
+  // Ordena por owner_id pra que todos os pets de um mesmo dono fiquem juntos
+  // e não sejam fragmentados pela paginação (senão muitos donos viram "time incompleto")
+  for (let from = 0; from < 12000; from += pageSize) {
     const { data, error } = await supabase
       .from("monsters")
       .select("*")
       .neq("owner_id", userId)
       .eq("in_team", true)
-      .order("rank", { ascending: true })
+      .order("owner_id", { ascending: true })
+      .order("team_position", { ascending: true })
       .range(from, from + pageSize - 1);
 
     if (error || !data || data.length === 0) break;
