@@ -152,6 +152,19 @@ function MonsterPage() {
             <div className="flex-1 text-white">
               <h1 className="text-3xl font-extrabold drop-shadow-md">{monster.name}</h1>
               <p className="text-sm opacity-90">{sp.emoji} {sp.name} • {"✦".repeat(monster.rank)}</p>
+              <div className="mt-1 flex flex-wrap gap-1">
+                {getSpeciesCategories(monster.species).map((cat) => (
+                  <span
+                    key={cat}
+                    title={`+${CATEGORY_INFO[cat].statLabel} com sinergia`}
+                    className="px-2 py-0.5 rounded-full bg-black/40 border border-white/30 text-[10px] font-extrabold flex items-center gap-1"
+                  >
+                    <span>{CATEGORY_INFO[cat].emoji}</span>
+                    <span>{CATEGORY_INFO[cat].name}</span>
+                    <span className="opacity-80">+{CATEGORY_INFO[cat].statLabel}</span>
+                  </span>
+                ))}
+              </div>
               {(() => {
                 const stats = totalStats(monster.species, monster.rank, {
                   hp: monster.hp ?? 0, atk: monster.atk ?? 0, def: monster.def ?? 0, spd: monster.spd ?? 0, int: monster.int ?? 0,
