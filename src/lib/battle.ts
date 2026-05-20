@@ -173,9 +173,45 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
   const b: Live[] = teamB.map(mkLive);
   const rand = rng(seed);
 
+  // ===== SINERGIA POR CATEGORIA (aplica buffs no início da batalha) =====
+  const bonusA = synergyStatBonuses(teamA.map((m) => m.species));
+  const bonusB = synergyStatBonuses(teamB.map((m) => m.species));
+  const applyTeamSynergy = (team: Live[], bonus: typeof bonusA) => {
+    for (const m of team) {
+      if (bonus.hp > 0) {
+        const newMax = Math.max(1, Math.round(m.maxHp * (1 + bonus.hp / 100)));
+        m.maxHp = newMax;
+        m.current = newMax;
+      }
+      if (bonus.atk > 0) m.atk = Math.max(1, Math.round(m.atk * (1 + bonus.atk / 100)));
+      if (bonus.def > 0) m.def = Math.max(1, Math.round(m.def * (1 + bonus.def / 100)));
+      if (bonus.spd > 0) m.spd = Math.max(1, Math.round(m.spd * (1 + bonus.spd / 100)));
+      if (bonus.int > 0) m.int = Math.max(1, Math.round(m.int * (1 + bonus.int / 100)));
+    }
+  };
+  applyTeamSynergy(a, bonusA);
+  applyTeamSynergy(b, bonusB);
+  const critBonusA = bonusA.crit / 100;
+  const critBonusB = bonusB.crit / 100;
+
+  // Log inicial das sinergias ativas
+  const logSynergies = (side: "team_a" | "team_b", speciesIds: string[]) => {
+    const active = computeSynergies(speciesIds).filter((s) => s.active);
+    if (active.length === 0) return;
+    const desc = active.map((s) => `${CATEGORY_INFO[s.category].emoji} ${CATEGORY_INFO[s.category].name} +${s.bonusPct}% ${CATEGORY_INFO[s.category].statLabel}`).join(" • ");
+    log.push({
+      turn: 0, actor: side, actorName: "—", targetName: "—",
+      damage: 0, crit: false, effective: 1, remainingHp: 0,
+      message: `✨ Sinergia ${side === "team_a" ? "aliada" : "inimiga"}: ${desc}`,
+    });
+  };
+  logSynergies("team_a", teamA.map((m) => m.species));
+  logSynergies("team_b", teamB.map((m) => m.species));
+
   let turn = 1;
   const MAX_TURNS = 30;
   const exploded = new Set<string>();
+
 
   // PASSIVA "Rato Bomba": ao morrer, explode e mata o inimigo com menos HP.
   // Chain-explosões são suportadas (se a vítima também for rato_bomba).
