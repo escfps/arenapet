@@ -853,7 +853,9 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
 
 
       const eff = defensiveMultiplier(getElement(attacker.species), target.species);
-      const critChance = attacker.role === "assassin" ? 0.35 : 0.12;
+      const synCrit = side === "team_a" ? critBonusA : critBonusB;
+      const baseCrit = attacker.role === "assassin" ? 0.35 : 0.12;
+      const critChance = Math.min(0.95, baseCrit + synCrit);
       const crit = rand() < critChance;
       const defUsed = attacker.role === "mage" ? target.def * 0.4 : target.def;
       const atkStat = attacker.role === "mage"
