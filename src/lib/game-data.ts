@@ -449,6 +449,20 @@ export const SPECIES: Record<string, Species> = {
     base: { hp: 50, atk: 9, def: 10, spd: 11, int: 20 },
     skill: { name: "Baforada de Cinzas", emoji: "🌋", kind: "ash_breath", cooldown: 3, description: "Dano mágico (~INT×1.5) e reduz a DEF do alvo em 20% por 2 turnos." },
   },
+  foca_glacial: {
+    id: "foca_glacial", name: "Foca Glacial", element: "water", role: "healer", rarity: "common",
+    emoji: "🦭", image: focaGlacialImg,
+    description: "Filhote de foca coberto de cristais de gelo. Cura aliados e enfraquece o inimigo mais forte com seu sopro ártico.",
+    base: { hp: 54, atk: 7, def: 11, spd: 10, int: 21 },
+    skill: { name: "Sopro Ártico", emoji: "🥶", kind: "chill_heal", cooldown: 4, description: "Cura o aliado mais ferido (~INT×1.3) e reduz ATK do inimigo mais forte em 15% por 2 turnos." },
+  },
+  lobo_artico: {
+    id: "lobo_artico", name: "Lobo Ártico", element: "water", role: "assassin", rarity: "rare",
+    emoji: "🐺", image: loboArticoImg,
+    description: "Lobo de pelagem branca e olhos de gelo. Caça os mais fracos com um bote gelado e implacável.",
+    base: { hp: 56, atk: 19, def: 10, spd: 19, int: 9 },
+    skill: { name: "Bote Gelado", emoji: "🥶", kind: "frost_pounce", cooldown: 3, description: "Crítico GARANTIDO no inimigo mais fraco + 40% de chance de congelar por 1 turno." },
+  },
 };
 
 export const ELEMENT_COLORS: Record<Element, string> = {
