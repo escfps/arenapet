@@ -552,10 +552,11 @@ function PatioPage() {
           if (pickerRarity !== "all" && sp.rarity !== pickerRarity) return false;
           if (pickerElement !== "all" && sp.element !== pickerElement && sp.secondaryElement !== pickerElement) return false;
           if (pickerRole !== "all" && sp.role !== pickerRole) return false;
+          if (pickerCategory !== "all" && !getSpeciesCategories(m.species).includes(pickerCategory)) return false;
           if (q && !m.name.toLowerCase().includes(q) && !sp.name.toLowerCase().includes(q)) return false;
           return true;
         });
-        const closePicker = () => { setSlotPicker(null); setPickerSearch(""); setPickerRarity("all"); setPickerElement("all"); setPickerRole("all"); };
+        const closePicker = () => { setSlotPicker(null); setPickerSearch(""); setPickerRarity("all"); setPickerElement("all"); setPickerRole("all"); setPickerCategory("all"); };
         return (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in" onClick={closePicker}>
           <div className="max-w-3xl w-full max-h-[85vh] overflow-y-auto rounded-3xl bg-gradient-to-br from-slate-900 to-slate-800 border-2 border-white/20 shadow-2xl p-5 text-white animate-in zoom-in" onClick={(e) => e.stopPropagation()}>
