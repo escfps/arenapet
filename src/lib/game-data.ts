@@ -554,6 +554,13 @@ export const SPECIES: Record<string, Species> = {
     base: { hp: 55, atk: 12, def: 9, spd: 14, int: 25 },
     skill: { name: "Fome Espectral", emoji: "👻", kind: "spectral_hunger", cooldown: 4, description: "Ataque mágico no inimigo mais fraco ignorando DEF. PASSIVA: se matar o alvo, ataca mais uma vez o próximo mais fraco (máx 2 ataques)." },
   },
+  raposa_espectral: {
+    id: "raposa_espectral", name: "Raposa Espectral", element: "shadow", role: "assassin", rarity: "epic",
+    emoji: "🦊", image: raposaEspectralImg,
+    description: "Caçadora silenciosa entre sombras. Cada bote é certeiro e atravessa qualquer guarda.",
+    base: { hp: 58, atk: 22, def: 9, spd: 21, int: 10 },
+    skill: { name: "Bote Certeiro", emoji: "🦊", kind: "spectral_pounce", cooldown: 3, description: "ATIVA: crítico garantido no inimigo mais fraco (2× dano) ignorando 60% da DEF. PASSIVA: todo ataque básico tem 50% de chance de critar." },
+  },
 };
 
 export const ELEMENT_COLORS: Record<Element, string> = {
