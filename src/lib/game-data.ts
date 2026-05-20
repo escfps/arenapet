@@ -51,6 +51,7 @@ import trexImg from "@/assets/monsters/trex.png";
 import pterossauroImg from "@/assets/monsters/pterossauro.png";
 import triceratopsColossalImg from "@/assets/monsters/triceratops_colossal.png";
 import fantasminhaImg from "@/assets/monsters/fantasminha.png";
+import raposaEspectralImg from "@/assets/monsters/raposa_espectral.png";
 
 export type Element = "fire" | "water" | "grass" | "electric" | "shadow" | "earth";
 export type Role = "tank" | "dps" | "assassin" | "mage" | "healer";
@@ -123,7 +124,8 @@ export type SkillKind =
   | "crystal_resonance" // healer — cura todos INT×1.2 + DEF time +15% por 2 turnos
   | "king_roar"         // assassin — mordida no mais forte (2.5× dano) / PASSIVA: cada kill +15% ATK permanente
   | "horn_charge"       // tank — provoca todos 2 turnos + escudo 35% / PASSIVA: refletir 15% do dano recebido
-  | "spectral_hunger";  // mage — dano mágico no mais fraco ignorando DEF / PASSIVA: se matar, ataca novamente o próximo (máx 2)
+  | "spectral_hunger"   // mage — dano mágico no mais fraco ignorando DEF / PASSIVA: se matar, ataca novamente o próximo (máx 2)
+  | "spectral_pounce";  // assassin — crítico garantido no mais fraco (2× dano) ignorando 60% DEF / PASSIVA: ataque básico 50% chance de critar
 
 export type Skill = {
   name: string;
@@ -551,6 +553,13 @@ export const SPECIES: Record<string, Species> = {
     description: "Espectro travesso com fome insaciável. Devora a essência do mais fraco e, se o derrota, vai atrás do próximo.",
     base: { hp: 55, atk: 12, def: 9, spd: 14, int: 25 },
     skill: { name: "Fome Espectral", emoji: "👻", kind: "spectral_hunger", cooldown: 4, description: "Ataque mágico no inimigo mais fraco ignorando DEF. PASSIVA: se matar o alvo, ataca mais uma vez o próximo mais fraco (máx 2 ataques)." },
+  },
+  raposa_espectral: {
+    id: "raposa_espectral", name: "Raposa Espectral", element: "shadow", role: "assassin", rarity: "epic",
+    emoji: "🦊", image: raposaEspectralImg,
+    description: "Caçadora silenciosa entre sombras. Cada bote é certeiro e atravessa qualquer guarda.",
+    base: { hp: 58, atk: 22, def: 9, spd: 21, int: 10 },
+    skill: { name: "Bote Certeiro", emoji: "🦊", kind: "spectral_pounce", cooldown: 3, description: "ATIVA: crítico garantido no inimigo mais fraco (2× dano) ignorando 60% da DEF. PASSIVA: todo ataque básico tem 50% de chance de critar." },
   },
 };
 
@@ -1293,6 +1302,7 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   pterossauro: ["repteis", "aves"],
   triceratops_colossal: ["repteis", "pedra"],
   fantasminha: ["sombras"],
+  raposa_espectral: ["felinos", "sombras"],
 };
 
 export function getSpeciesCategories(speciesId: string): Category[] {
