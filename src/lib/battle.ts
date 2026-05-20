@@ -156,6 +156,9 @@ function pickTarget(attacker: Live, enemies: Live[]): Live | null {
 
 function applyDamage(target: Live, raw: number): number {
   let dmg = raw;
+  if (target.dmgReductionPct > 0) {
+    dmg = Math.max(1, Math.round(dmg * (1 - target.dmgReductionPct)));
+  }
   if (target.shield > 0) {
     const absorbed = Math.min(target.shield, dmg);
     target.shield -= absorbed;
