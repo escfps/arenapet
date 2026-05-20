@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { SPECIES, ELEMENT_COLORS, ELEMENT_NAMES, RARITY_INFO, ROLE_INFO, rollWelcomeChest, starterMonsterStats, getSpeciesCategories, CATEGORY_INFO, type Rarity, type Element, type Role } from "@/lib/game-data";
+import { SPECIES, ELEMENT_COLORS, ELEMENT_NAMES, RARITY_INFO, ROLE_INFO, rollWelcomeChest, starterMonsterStats, getSpeciesCategories, CATEGORY_INFO, type Rarity, type Element, type Role, type Category } from "@/lib/game-data";
 import { MonsterCard, type MonsterRow } from "@/components/MonsterCard";
 import { HUD } from "@/components/HUD";
 import { TutorialOverlay } from "@/components/TutorialOverlay";
@@ -24,6 +24,7 @@ const TEAM_MAX = 3;
 const ALL_RARITIES: Rarity[] = ["common", "rare", "super_rare", "epic", "legendary", "mythic"];
 const ALL_ELEMENTS: Element[] = ["fire", "water", "grass", "electric", "shadow", "earth"];
 const ALL_ROLES: Role[] = ["tank", "dps", "assassin", "mage", "healer"];
+const ALL_CATEGORIES: Category[] = ["floresta","sombras","felinos","repteis","abyssal","dragoes","gelo","aves","fogo","pedra","relampago"];
 
 function PatioPage() {
   const navigate = useNavigate();
@@ -35,12 +36,14 @@ function PatioPage() {
   const [rarityFilter, setRarityFilter] = useState<Rarity | "all">("all");
   const [elementFilter, setElementFilter] = useState<Element | "all">("all");
   const [roleFilter, setRoleFilter] = useState<Role | "all">("all");
+  const [categoryFilter, setCategoryFilter] = useState<Category | "all">("all");
   const [groupModal, setGroupModal] = useState<string | null>(null);
   const [slotPicker, setSlotPicker] = useState<number | null>(null);
   const [pickerSearch, setPickerSearch] = useState("");
   const [pickerRarity, setPickerRarity] = useState<Rarity | "all">("all");
   const [pickerElement, setPickerElement] = useState<Element | "all">("all");
   const [pickerRole, setPickerRole] = useState<Role | "all">("all");
+  const [pickerCategory, setPickerCategory] = useState<Category | "all">("all");
   const [showTutorial, setShowTutorial] = useState(false);
 
   // Mostra tutorial após o baú ser aberto (uma vez por conta)
@@ -98,13 +101,14 @@ function PatioPage() {
       if (rarityFilter !== "all" && sp.rarity !== rarityFilter) return false;
       if (elementFilter !== "all" && sp.element !== elementFilter && sp.secondaryElement !== elementFilter) return false;
       if (roleFilter !== "all" && sp.role !== roleFilter) return false;
+      if (categoryFilter !== "all" && !getSpeciesCategories(m.species).includes(categoryFilter)) return false;
       if (q) {
         const hay = `${m.name ?? ""} ${sp.name}`.toLowerCase();
         if (!hay.includes(q)) return false;
       }
       return true;
     });
-  }, [monsters, search, rarityFilter, elementFilter, roleFilter]);
+  }, [monsters, search, rarityFilter, elementFilter, roleFilter, categoryFilter]);
 
   const groupedSpecies = useMemo(() => {
     const map = new Map<string, MonsterRow[]>();
@@ -465,6 +469,31 @@ function PatioPage() {
                   ))}
                 </div>
               </div>
+              <div className="space-y-1">
+                <div className="text-white/70 text-[10px] font-extrabold uppercase tracking-wider px-1">Categoria</div>
+                <div className="flex flex-wrap gap-1.5">
+                  <button
+                    onClick={() => setCategoryFilter("all")}
+                    className={`px-3 py-1 rounded-full text-[11px] font-extrabold transition ${
+                      categoryFilter === "all" ? "bg-yellow-400 text-yellow-950" : "bg-white/10 text-white hover:bg-white/20"
+                    }`}
+                  >
+                    Todas
+                  </button>
+                  {ALL_CATEGORIES.map((c) => (
+                    <button
+                      key={c}
+                      onClick={() => setCategoryFilter(c)}
+                      className={`px-3 py-1 rounded-full text-[11px] font-extrabold transition ${
+                        categoryFilter === c ? "bg-emerald-500 text-white ring-2 ring-white" : "bg-white/10 text-white hover:bg-white/20"
+                      }`}
+                      title={`+${CATEGORY_INFO[c].statLabel} com sinergia`}
+                    >
+                      {CATEGORY_INFO[c].emoji} {CATEGORY_INFO[c].name}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </section>
 
             <section>
@@ -523,10 +552,11 @@ function PatioPage() {
           if (pickerRarity !== "all" && sp.rarity !== pickerRarity) return false;
           if (pickerElement !== "all" && sp.element !== pickerElement && sp.secondaryElement !== pickerElement) return false;
           if (pickerRole !== "all" && sp.role !== pickerRole) return false;
+          if (pickerCategory !== "all" && !getSpeciesCategories(m.species).includes(pickerCategory)) return false;
           if (q && !m.name.toLowerCase().includes(q) && !sp.name.toLowerCase().includes(q)) return false;
           return true;
         });
-        const closePicker = () => { setSlotPicker(null); setPickerSearch(""); setPickerRarity("all"); setPickerElement("all"); setPickerRole("all"); };
+        const closePicker = () => { setSlotPicker(null); setPickerSearch(""); setPickerRarity("all"); setPickerElement("all"); setPickerRole("all"); setPickerCategory("all"); };
         return (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in" onClick={closePicker}>
           <div className="max-w-3xl w-full max-h-[85vh] overflow-y-auto rounded-3xl bg-gradient-to-br from-slate-900 to-slate-800 border-2 border-white/20 shadow-2xl p-5 text-white animate-in zoom-in" onClick={(e) => e.stopPropagation()}>
@@ -567,7 +597,16 @@ function PatioPage() {
                   </button>
                 ))}
               </div>
+              <div className="flex flex-wrap gap-1.5">
+                <button onClick={() => setPickerCategory("all")} className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold transition ${pickerCategory === "all" ? "bg-yellow-400 text-yellow-950" : "bg-white/10 text-white hover:bg-white/20"}`}>Todas</button>
+                {ALL_CATEGORIES.map((c) => (
+                  <button key={c} onClick={() => setPickerCategory(c)} title={`+${CATEGORY_INFO[c].statLabel} com sinergia`} className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold text-white transition ${pickerCategory === c ? "bg-emerald-500 ring-2 ring-white" : "bg-white/10 hover:bg-white/20"}`}>
+                    {CATEGORY_INFO[c].emoji} {CATEGORY_INFO[c].name}
+                  </button>
+                ))}
+              </div>
             </div>
+
 
             {available.length === 0 ? (
               <p className="text-center text-white/60 py-6 text-sm">
