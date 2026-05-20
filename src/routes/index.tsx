@@ -274,7 +274,14 @@ function PatioPage() {
               </div>
               <p className="text-[11px] opacity-80">Posicione mages/healers à <b>esquerda (Trás)</b>, DPS no <b>Meio</b> e tank à <b>direita (Frente)</b>. Arraste pra trocar ou use ◀ ▶.</p>
 
+              <SynergyBadges
+                className="mt-3"
+                title="✨ Sinergias do time (2 pets = +5% • 3 pets = +10%)"
+                speciesIds={monsters.filter((m) => m.in_team).map((m) => m.species)}
+              />
+
               <div className="mt-3 grid grid-cols-3 gap-2">
+
                 {[2, 1, 0].map((i) => {
                   const m = monsters.find((x) => x.in_team && (x.team_position ?? 0) === i);
                   if (!m) {
