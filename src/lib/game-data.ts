@@ -43,6 +43,14 @@ import fenixAzulImg from "@/assets/monsters/fenix_azul.png";
 import borboletaSoniferaImg from "@/assets/monsters/borboleta_sonifera.png";
 import ursoPolarImg from "@/assets/monsters/urso_polar.png";
 import loboLuaSangrentaImg from "@/assets/monsters/lobo_lua_sangrenta.png";
+import linceDouradoImg from "@/assets/monsters/lince_dourado.png";
+import leoaTrovaoImg from "@/assets/monsters/leoa_trovao.png";
+import pandaImg from "@/assets/monsters/panda.png";
+import golemPedraImg from "@/assets/monsters/golem_pedra.png";
+import trexImg from "@/assets/monsters/trex.png";
+import pterossauroImg from "@/assets/monsters/pterossauro.png";
+import triceratopsColossalImg from "@/assets/monsters/triceratops_colossal.png";
+import fantasminhaImg from "@/assets/monsters/fantasminha.png";
 
 export type Element = "fire" | "water" | "grass" | "electric" | "shadow" | "earth";
 export type Role = "tank" | "dps" | "assassin" | "mage" | "healer";
@@ -108,7 +116,14 @@ export type SkillKind =
   | "chill_heal"        // healer — cura o mais ferido (INT×1.3) + reduz ATK do inimigo mais forte
   | "frost_pounce"      // assassin — crit garantido no mais fraco + chance de congelar
   | "turtle_shell"      // tank — escudo (30% HP máx) + reduz dano recebido em 20% por 2 turnos
-  | "doom_curse";       // mago — reduz ATK e DEF do inimigo com mais HP em 20% por 3 turnos
+  | "doom_curse"        // mago — reduz ATK e DEF do inimigo com mais HP em 20% por 3 turnos
+  | "pounce_stun"       // assassin — crit garantido no mais fraco + chance de atordoar 1 turno
+  | "lightning_charge"  // assassin — investida elétrica no mais forte (2× dano) + 60% paralisar / PASSIVA: ataque básico 30% paralisar
+  | "forest_balance"    // healer — cura todos INT×1.5 + escudo 25% HP / PASSIVA: cada turno cura mais ferido INT×0.8
+  | "crystal_resonance" // healer — cura todos INT×1.2 + DEF time +15% por 2 turnos
+  | "king_roar"         // assassin — mordida no mais forte (2.5× dano) / PASSIVA: cada kill +15% ATK permanente
+  | "horn_charge"       // tank — provoca todos 2 turnos + escudo 35% / PASSIVA: refletir 15% do dano recebido
+  | "spectral_hunger";  // mage — dano mágico no mais fraco ignorando DEF / PASSIVA: se matar, ataca novamente o próximo (máx 2)
 
 export type Skill = {
   name: string;
@@ -480,6 +495,62 @@ export const SPECIES: Record<string, Species> = {
     description: "Corvo de penas violeta. Seu grasnido é um agouro que enfraquece os mais imponentes.",
     base: { hp: 55, atk: 11, def: 10, spd: 14, int: 23 },
     skill: { name: "Grasnido Agouro", emoji: "🪶", kind: "doom_curse", cooldown: 4, description: "Maldição no inimigo com mais HP: reduz ATK e DEF dele em 20% por 3 turnos." },
+  },
+  lince_dourado: {
+    id: "lince_dourado", name: "Lince Dourado", element: "electric", role: "assassin", rarity: "rare",
+    emoji: "🐈", image: linceDouradoImg,
+    description: "Felino dourado de pelos elétricos. Pula no inimigo mais fraco com garras crepitantes.",
+    base: { hp: 50, atk: 15, def: 8, spd: 19, int: 9 },
+    skill: { name: "Pounce Relâmpago", emoji: "⚡", kind: "pounce_stun", cooldown: 3, description: "Crítico GARANTIDO no inimigo mais fraco + 30% de chance de atordoar por 1 turno." },
+  },
+  leoa_trovao: {
+    id: "leoa_trovao", name: "Leoa Trovão", element: "electric", role: "assassin", rarity: "epic",
+    emoji: "⚡🦁", image: leoaTrovaoImg,
+    description: "Rainha elétrica de juba crepitante. Cada garra solta faíscas que paralisam a presa.",
+    base: { hp: 60, atk: 19, def: 11, spd: 18, int: 11 },
+    skill: { name: "Bote Relâmpago", emoji: "⚡", kind: "lightning_charge", cooldown: 3, description: "PASSIVA: ataque básico tem 30% de chance de paralisar o alvo por 1 turno. ATIVA: investida elétrica no inimigo mais forte (2× dano) + 60% de paralisar por 1 turno." },
+  },
+  panda: {
+    id: "panda", name: "Panda", element: "grass", role: "healer", rarity: "legendary",
+    emoji: "🐼", image: pandaImg,
+    description: "Guardião milenar do bambuzal. Equilíbrio absoluto entre força protetora e cura constante.",
+    base: { hp: 80, atk: 11, def: 16, spd: 9, int: 24 },
+    skill: { name: "Equilíbrio da Floresta", emoji: "🌿", kind: "forest_balance", cooldown: 4, description: "PASSIVA: a cada turno cura o aliado com menos HP (INT×0.8). ATIVA: cura todos os aliados (INT×1.5) e ganha escudo de 25% HP máx." },
+  },
+  golem_pedra: {
+    id: "golem_pedra", name: "Golem de Pedra", element: "earth", secondaryElement: "electric", role: "healer", rarity: "epic",
+    emoji: "💎", image: golemPedraImg,
+    description: "Gigante de pedra com cristais elétricos pulsantes. Cura aliados e reforça a defesa do time inteiro.",
+    base: { hp: 70, atk: 10, def: 18, spd: 8, int: 22 },
+    skill: { name: "Ressonância Cristalina", emoji: "💎", kind: "crystal_resonance", cooldown: 4, description: "Cura todos os aliados (INT×1.2) e aumenta a DEF de todo o time em 15% por 2 turnos." },
+  },
+  trex: {
+    id: "trex", name: "T-Rex", element: "fire", secondaryElement: "earth", role: "assassin", rarity: "legendary",
+    emoji: "🦖", image: trexImg,
+    description: "Rei dos dinossauros, predador supremo. Cada presa abatida o torna mais forte na batalha.",
+    base: { hp: 75, atk: 22, def: 13, spd: 13, int: 10 },
+    skill: { name: "Rugido do Rei", emoji: "🦖", kind: "king_roar", cooldown: 3, description: "PASSIVA: cada kill aumenta o ATK do T-Rex em 15% permanente na batalha. ATIVA: mordida devastadora no inimigo mais forte (2.5× dano)." },
+  },
+  pterossauro: {
+    id: "pterossauro", name: "Pterossauro", element: "electric", role: "assassin", rarity: "rare",
+    emoji: "🪶", image: pterossauroImg,
+    description: "Réptil voador das tempestades antigas. Mergulha em alta velocidade carregado de eletricidade.",
+    base: { hp: 50, atk: 15, def: 9, spd: 19, int: 9 },
+    skill: { name: "Mergulho Rasante", emoji: "🪶", kind: "pounce_stun", cooldown: 3, description: "Crítico GARANTIDO no inimigo mais fraco + 40% de chance de atordoar por 1 turno." },
+  },
+  triceratops_colossal: {
+    id: "triceratops_colossal", name: "Triceratops Colossal", element: "earth", role: "tank", rarity: "super_rare",
+    emoji: "🦕", image: triceratopsColossalImg,
+    description: "Couraça viva de chifres rúnicos. Quem ousar atacá-lo sente o impacto de volta.",
+    base: { hp: 100, atk: 11, def: 22, spd: 7, int: 9 },
+    skill: { name: "Investida de Chifres", emoji: "🦕", kind: "horn_charge", cooldown: 3, description: "Provoca todos os inimigos por 2 turnos e ganha escudo de 35% HP máx. PASSIVA: todo inimigo que atacar recebe 15% do dano de volta." },
+  },
+  fantasminha: {
+    id: "fantasminha", name: "Fantasminha Faminto", element: "shadow", role: "mage", rarity: "epic",
+    emoji: "👻", image: fantasminhaImg,
+    description: "Espectro travesso com fome insaciável. Devora a essência do mais fraco e, se o derrota, vai atrás do próximo.",
+    base: { hp: 55, atk: 12, def: 9, spd: 14, int: 25 },
+    skill: { name: "Fome Espectral", emoji: "👻", kind: "spectral_hunger", cooldown: 4, description: "Ataque mágico no inimigo mais fraco ignorando DEF. PASSIVA: se matar o alvo, ataca mais uma vez o próximo mais fraco (máx 2 ataques)." },
   },
 };
 
@@ -1214,6 +1285,14 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   lobo_artico: ["gelo"],
   tartaruga_ancestral: ["repteis", "abyssal"],
   corvo_sombras: ["aves", "sombras"],
+  lince_dourado: ["felinos", "relampago"],
+  leoa_trovao: ["relampago", "felinos"],
+  panda: ["floresta"],
+  golem_pedra: ["pedra", "relampago"],
+  trex: ["repteis", "fogo"],
+  pterossauro: ["repteis", "aves"],
+  triceratops_colossal: ["repteis", "pedra"],
+  fantasminha: ["sombras"],
 };
 
 export function getSpeciesCategories(speciesId: string): Category[] {
