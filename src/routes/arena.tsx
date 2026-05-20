@@ -363,7 +363,7 @@ function ArenaPage() {
     const rew = isDraw
       ? { coins: 0, xp: 0 }
       : computeRewards(profile.level, won, isVip(profile.vip_until));
-    const gemWin = won && !isDraw && Math.random() < 0.05 ? 1 : 0;
+    const gemWin = !isDraw && Math.random() < (won ? 0.5 : 0.25) ? 1 : 0;
 
 
     // Arena points + promo series logic
