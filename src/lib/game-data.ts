@@ -25,6 +25,8 @@ import panteraAureaImg from "@/assets/monsters/pantera_aurea.png";
 import dragaoBrancoImg from "@/assets/monsters/dragao_branco.png";
 import dragaoNegroImg from "@/assets/monsters/dragao_negro.png";
 import dragaoFogoImg from "@/assets/monsters/dragao_fogo.png";
+import focaGlacialImg from "@/assets/monsters/foca_glacial.png";
+import loboArticoImg from "@/assets/monsters/lobo_artico.png";
 import jacareAncestralImg from "@/assets/monsters/jacare_ancestral.png";
 import gorilaTitanImg from "@/assets/monsters/gorila_titan.png";
 import ratoBombaImg from "@/assets/monsters/rato_bomba.png";
@@ -100,7 +102,9 @@ export type SkillKind =
   | "phoenix_rage"      // mítico — PASSIVA: quanto mais HP perde, mais ATK ganha (até +120%)
   | "phoenix_growth"    // mítico — PASSIVA: cada dano causado vira HP máx + cura temporária na batalha
   | "heal_lowest"       // healer — cura o aliado mais ferido (INT × 1.2)
-  | "ash_breath";       // mago — dano mágico + reduz DEF do alvo em 20% por 2 turnos
+  | "ash_breath"        // mago — dano mágico + reduz DEF do alvo em 20% por 2 turnos
+  | "chill_heal"        // healer — cura o mais ferido (INT×1.3) + reduz ATK do inimigo mais forte
+  | "frost_pounce";     // assassin — crit garantido no mais fraco + chance de congelar
 
 export type Skill = {
   name: string;
@@ -444,6 +448,20 @@ export const SPECIES: Record<string, Species> = {
     description: "Filhote de dragão de escamas em brasa. Cospe cinzas que corroem a armadura dos inimigos.",
     base: { hp: 50, atk: 9, def: 10, spd: 11, int: 20 },
     skill: { name: "Baforada de Cinzas", emoji: "🌋", kind: "ash_breath", cooldown: 3, description: "Dano mágico (~INT×1.5) e reduz a DEF do alvo em 20% por 2 turnos." },
+  },
+  foca_glacial: {
+    id: "foca_glacial", name: "Foca Glacial", element: "water", role: "healer", rarity: "common",
+    emoji: "🦭", image: focaGlacialImg,
+    description: "Filhote de foca coberto de cristais de gelo. Cura aliados e enfraquece o inimigo mais forte com seu sopro ártico.",
+    base: { hp: 54, atk: 7, def: 11, spd: 10, int: 21 },
+    skill: { name: "Sopro Ártico", emoji: "🥶", kind: "chill_heal", cooldown: 4, description: "Cura o aliado mais ferido (~INT×1.3) e reduz ATK do inimigo mais forte em 15% por 2 turnos." },
+  },
+  lobo_artico: {
+    id: "lobo_artico", name: "Lobo Ártico", element: "water", role: "assassin", rarity: "rare",
+    emoji: "🐺", image: loboArticoImg,
+    description: "Lobo de pelagem branca e olhos de gelo. Caça os mais fracos com um bote gelado e implacável.",
+    base: { hp: 56, atk: 19, def: 10, spd: 19, int: 9 },
+    skill: { name: "Bote Gelado", emoji: "🥶", kind: "frost_pounce", cooldown: 3, description: "Crítico GARANTIDO no inimigo mais fraco + 40% de chance de congelar por 1 turno." },
   },
 };
 
@@ -1174,6 +1192,8 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   fenix_negra: ["dragoes", "aves", "sombras"],
   fenix_azul: ["dragoes", "aves"],
   dragao_fogo: ["dragoes", "fogo"],
+  foca_glacial: ["gelo", "abyssal"],
+  lobo_artico: ["gelo"],
 };
 
 export function getSpeciesCategories(speciesId: string): Category[] {

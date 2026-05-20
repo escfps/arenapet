@@ -126,6 +126,8 @@ type Live = BattleMonster & {
   defBuffPct: number;    // ex: 0.3 = +30% DEF
   defDebuffTurns: number; // redução de DEF temporária (ash_breath)
   defDebuffPct: number;   // ex: 0.2 = -20% DEF
+  atkDebuffTurns: number; // redução de ATK temporária (chill_heal)
+  atkDebuffPct: number;   // ex: 0.15 = -15% ATK
   lastFallenAt: number;  // turno em que morreu (pra revive_ally)
 };
 
@@ -169,7 +171,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
     tauntTargetId: null, tauntTurns: 0,
     burnDmg: 0, burnTurns: 0, bleedDmg: 0, bleedTurns: 0, blindTurns: 0, sleepTurns: 0, freezeTurns: 0, silenceTurns: 0,
     rageTurns: 0, rageAtkMult: 0, rageDefDrop: 0,
-    defBuffTurns: 0, defBuffPct: 0, defDebuffTurns: 0, defDebuffPct: 0, lastFallenAt: 0,
+    defBuffTurns: 0, defBuffPct: 0, defDebuffTurns: 0, defDebuffPct: 0, atkDebuffTurns: 0, atkDebuffPct: 0, lastFallenAt: 0,
   });
   const a: Live[] = teamA.map(mkLive);
   const b: Live[] = teamB.map(mkLive);
@@ -343,6 +345,11 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
         attacker.defDebuffTurns -= 1;
         if (attacker.defDebuffTurns === 0) attacker.defDebuffPct = 0;
       }
+      // tick atk debuff
+      if (attacker.atkDebuffTurns > 0) {
+        attacker.atkDebuffTurns -= 1;
+        if (attacker.atkDebuffTurns === 0) attacker.atkDebuffPct = 0;
+      }
       const allies = side === "team_a" ? a : b;
       const enemies = side === "team_a" ? b : a;
       if (!enemies.some((e) => e.current > 0)) return;
@@ -463,7 +470,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
         }
 
         // ===== NOVAS MECÂNICAS =====
-        const effAtk = attacker.atk * (1 + attacker.rageAtkMult) * phoenixAtkBonus(attacker);
+        const effAtk = attacker.atk * (1 + attacker.rageAtkMult) * phoenixAtkBonus(attacker) * Math.max(0, 1 - attacker.atkDebuffPct);
         const effInt = attacker.int;
         const tgtEffDef = (t: Live) => t.def * (1 + t.defBuffPct) * Math.max(0, 1 - t.defDebuffPct);
 
@@ -654,6 +661,59 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           }
           return;
         }
+
+        if (skill.kind === "chill_heal") {
+          // Cura o aliado mais ferido por INT*1.3 e reduz ATK do inimigo mais forte em 15% por 2 turnos
+          const aliveAllies = allies.filter((m) => m.current > 0);
+          const wounded = aliveAllies
+            .filter((m) => m.current < m.maxHp)
+            .sort((x, y) => x.current / x.maxHp - y.current / y.maxHp)[0] ?? aliveAllies[0];
+          const heal = Math.round(effInt * 1.3 * skillMult);
+          let healed = 0;
+          if (wounded) {
+            const before = wounded.current;
+            wounded.current = Math.min(wounded.maxHp, wounded.current + heal);
+            healed = wounded.current - before;
+          }
+          const aliveEnemies = enemies.filter((e) => e.current > 0);
+          const strongest = aliveEnemies.length ? aliveEnemies.reduce((x, y) => (x.atk > y.atk ? x : y)) : null;
+          if (strongest) {
+            strongest.atkDebuffPct = Math.max(strongest.atkDebuffPct, 0.15);
+            strongest.atkDebuffTurns = Math.max(strongest.atkDebuffTurns, 2);
+          }
+          log.push({
+            turn, actor: side, actorName: attacker.name, targetName: wounded?.name ?? attacker.name,
+            damage: 0, crit: false, effective: 1, remainingHp: wounded?.current ?? attacker.current,
+            message: `${skill.emoji} ${attacker.name} usou ${skill.name}: curou ${wounded?.name ?? "—"} em ${healed} HP${strongest ? ` + 🥶 ATK de ${strongest.name} -15% por 2 turnos` : ""}`,
+          });
+          return;
+        }
+
+        if (skill.kind === "frost_pounce") {
+          // Crit garantido no inimigo mais fraco (menor HP atual) + 40% chance de congelar 1 turno
+          const aliveEnemies = enemies.filter((e) => e.current > 0);
+          const target = aliveEnemies.length ? aliveEnemies.reduce((x, y) => (x.current < y.current ? x : y)) : null;
+          if (target) {
+            const eff = defensiveMultiplier(getElement(attacker.species), target.species);
+            const base = Math.max(1, effAtk * 2 - tgtEffDef(target) * 0.4);
+            const dmg = Math.max(1, Math.round(base * eff * 1.8 * 1.7 * skillMult));
+            applyDamage(target, dmg);
+            const frozen = rand() < 0.4 && target.current > 0;
+            if (frozen) target.freezeTurns = Math.max(target.freezeTurns, 1);
+            log.push({
+              turn, actor: side, actorName: attacker.name, targetName: target.name,
+              damage: dmg, crit: true, effective: eff, remainingHp: target.current, targetShield: target.shield,
+              message: `${skill.emoji} ${attacker.name} usou ${skill.name}: ${dmg} CRÍTICO em ${target.name}${frozen ? ` + ❄️ congelou por 1 turno!` : ""}`,
+            });
+            if (target.current <= 0) {
+              target.lastFallenAt = turn;
+              log.push({ turn, actor: side, actorName: attacker.name, targetName: target.name, damage: 0, crit: false, effective: 1, remainingHp: 0, message: `💀 ${target.name} foi derrotado!` });
+            }
+          }
+          return;
+        }
+
+
 
 
         if (skill.kind === "double_strike") {
