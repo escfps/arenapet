@@ -24,10 +24,8 @@ const PADDLE_PRICE_IDS: Record<string, string> = {
   legend: "gems_legend_price",
 };
 
-const WHATSAPP_NUMBER = "5554999999872";
-function whatsappUrl(message: string) {
-  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-}
+
+
 
 export const Route = createFileRoute("/shop")({
   component: ShopPage,
@@ -385,15 +383,8 @@ function ShopPage() {
                 ? `Renovar por 💎 ${VIP_PRICE_GEMS} (atual: ${new Date(profile.vip_until!).toLocaleDateString("pt-BR")})`
                 : `Ativar por 💎 ${VIP_PRICE_GEMS}`}
             </button>
-            <a
-              href={whatsappUrl(`Olá! Quero comprar o Passe VIP (${VIP_DURATION_DAYS} dias) no Arena Pet. Meu nick: ${profile.username}`)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-3 w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-green-600 text-white font-extrabold text-base hover:bg-green-700 transition shadow-lg"
-            >
-              💬 Comprar VIP via WhatsApp
-            </a>
           </div>
+
         )}
 
         {tab === "gems" && (
@@ -412,15 +403,8 @@ function ShopPage() {
                   >
                     💳 R$ {p.priceBRL.toFixed(2).replace(".", ",")}
                   </button>
-                  <a
-                    href={whatsappUrl(`Olá! Quero comprar o pacote de ${p.gems.toLocaleString("pt-BR")}${p.bonus > 0 ? ` (+${p.bonus} bônus)` : ""} 💎 por R$ ${p.priceBRL.toFixed(2).replace(".", ",")} no Arena Pet. Meu nick: ${profile.username}`)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-2 w-full flex items-center justify-center gap-2 py-1.5 rounded-lg bg-green-600/80 text-white text-xs font-bold hover:bg-green-700 transition"
-                  >
-                    💬 Pagar via WhatsApp
-                  </a>
                 </div>
+
               ))}
             </div>
           </div>
