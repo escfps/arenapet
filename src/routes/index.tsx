@@ -344,6 +344,7 @@ function PatioPage() {
                       <div className="absolute bottom-0 inset-x-0 bg-black/70 px-1 py-0.5 text-white text-[10px] font-extrabold truncate text-center pointer-events-none">
                         {m.name}
                       </div>
+
                       <div className="absolute top-7 left-1 z-10 flex flex-col gap-0.5 pointer-events-none">
                         {getSpeciesCategories(m.species).map((cat) => (
                           <span
@@ -362,24 +363,32 @@ function PatioPage() {
                       >
                         ×
                       </button>
-                      <div className="absolute inset-x-0 bottom-6 flex justify-between px-1 z-10">
+                      <div className="absolute inset-x-0 bottom-6 flex items-center justify-between px-1 z-10 gap-1">
                         {canMoveLeft ? (
                           <button
                             onClick={(e) => { e.stopPropagation(); swapPositions(i, i + 1); }}
-                            className="w-6 h-6 rounded-full bg-black/70 hover:bg-yellow-400 hover:text-yellow-950 text-white text-xs font-black flex items-center justify-center shadow"
+                            className="w-6 h-6 shrink-0 rounded-full bg-black/70 hover:bg-yellow-400 hover:text-yellow-950 text-white text-xs font-black flex items-center justify-center shadow"
                             title="Mover pra trás"
                           >◀</button>
-                        ) : <span />}
+                        ) : <span className="w-6 shrink-0" />}
+                        <button
+                          onClick={(e) => { e.stopPropagation(); navigate({ to: "/monster/$id", params: { id: m.id }, search: { tab: "train" } }); }}
+                          className="flex-1 min-w-0 py-0.5 rounded-md bg-gradient-to-b from-emerald-400 to-emerald-600 hover:from-emerald-300 hover:to-emerald-500 text-white text-[10px] font-black shadow-lg border border-emerald-300 truncate"
+                          title="Treinar este pet"
+                        >
+                          💪 Treinar
+                        </button>
                         {canMoveRight ? (
                           <button
                             onClick={(e) => { e.stopPropagation(); swapPositions(i, i - 1); }}
-                            className="w-6 h-6 rounded-full bg-black/70 hover:bg-yellow-400 hover:text-yellow-950 text-white text-xs font-black flex items-center justify-center shadow"
+                            className="w-6 h-6 shrink-0 rounded-full bg-black/70 hover:bg-yellow-400 hover:text-yellow-950 text-white text-xs font-black flex items-center justify-center shadow"
                             title="Mover pra frente"
                           >▶</button>
-                        ) : <span />}
+                        ) : <span className="w-6 shrink-0" />}
                       </div>
                     </div>
                   );
+
                 })}
               </div>
             </section>
@@ -518,16 +527,26 @@ function PatioPage() {
                           )}
                         </div>
                         {count === 1 ? (
-                          <button
-                            onClick={() => toggleTeam(g.rep)}
-                            className={`w-full text-[11px] font-bold rounded-lg py-1.5 transition ${
-                              g.rep.in_team
-                                ? "bg-yellow-400 text-yellow-950 hover:bg-yellow-300"
-                                : "bg-white/15 text-white hover:bg-white/25"
-                            }`}
-                          >
-                            {g.rep.in_team ? "✓ No time" : "+ Time"}
-                          </button>
+                          <div className="flex gap-1">
+                            <button
+                              onClick={() => toggleTeam(g.rep)}
+                              className={`flex-1 text-[11px] font-bold rounded-lg py-1.5 transition ${
+                                g.rep.in_team
+                                  ? "bg-yellow-400 text-yellow-950 hover:bg-yellow-300"
+                                  : "bg-white/15 text-white hover:bg-white/25"
+                              }`}
+                            >
+                              {g.rep.in_team ? "✓ No time" : "+ Time"}
+                            </button>
+                            <button
+                              onClick={() => navigate({ to: "/monster/$id", params: { id: g.rep.id }, search: { tab: "train" } })}
+                              className="flex-1 text-[11px] font-black rounded-lg py-1.5 transition bg-gradient-to-b from-emerald-400 to-emerald-600 hover:from-emerald-300 hover:to-emerald-500 text-white border border-emerald-300 shadow-lg"
+                              title="Treinar este pet"
+                            >
+                              💪 Treinar
+                            </button>
+                          </div>
+
                         ) : (
                           <button
                             onClick={() => setGroupModal(g.species)}
@@ -645,16 +664,26 @@ function PatioPage() {
                     monster={m}
                     onClick={() => { setGroupModal(null); navigate({ to: "/monster/$id", params: { id: m.id } }); }}
                   />
-                  <button
-                    onClick={() => toggleTeam(m)}
-                    className={`w-full text-[11px] font-bold rounded-lg py-1.5 transition ${
-                      m.in_team
-                        ? "bg-yellow-400 text-yellow-950 hover:bg-yellow-300"
-                        : "bg-white/15 text-white hover:bg-white/25"
-                    }`}
-                  >
-                    {m.in_team ? "✓ No time" : "+ Time"}
-                  </button>
+                  <div className="flex gap-1">
+                    <button
+                      onClick={() => toggleTeam(m)}
+                      className={`flex-1 text-[11px] font-bold rounded-lg py-1.5 transition ${
+                        m.in_team
+                          ? "bg-yellow-400 text-yellow-950 hover:bg-yellow-300"
+                          : "bg-white/15 text-white hover:bg-white/25"
+                      }`}
+                    >
+                      {m.in_team ? "✓ No time" : "+ Time"}
+                    </button>
+                    <button
+                      onClick={() => { setGroupModal(null); navigate({ to: "/monster/$id", params: { id: m.id }, search: { tab: "train" } }); }}
+                      className="flex-1 text-[11px] font-black rounded-lg py-1.5 transition bg-gradient-to-b from-emerald-400 to-emerald-600 hover:from-emerald-300 hover:to-emerald-500 text-white border border-emerald-300 shadow-lg"
+                      title="Treinar este pet"
+                    >
+                      💪 Treinar
+                    </button>
+                  </div>
+
                 </div>
               ))}
             </div>

@@ -9,17 +9,23 @@ import { toast, Toaster } from "sonner";
 import arenaBg from "@/assets/arena-bg.jpg";
 
 export const Route = createFileRoute("/monster/$id")({
+  validateSearch: (search: Record<string, unknown>): { tab?: "care" | "train" | "skin" } => {
+    const t = search.tab;
+    return t === "care" || t === "train" || t === "skin" ? { tab: t } : {};
+  },
   component: MonsterPage,
 });
 
 function MonsterPage() {
   const { id } = Route.useParams();
+  const { tab: initialTab } = Route.useSearch();
   const navigate = useNavigate();
   const { userId, profile, loading, patch } = useProfile();
   const [monster, setMonster] = useState<MonsterRow | null>(null);
   const [ownedSkins, setOwnedSkins] = useState<string[]>(["default"]);
   const [rations, setRations] = useState<number>(0);
-  const [tab, setTab] = useState<"care" | "train" | "skin">("care");
+  const [tab, setTab] = useState<"care" | "train" | "skin">(initialTab ?? "care");
+
 
   const load = useCallback(async () => {
     if (!userId) return;
