@@ -28,6 +28,13 @@ export function HUD({ profile }: { profile: ProfileRow }) {
   const vip = isVip(profile.vip_until);
   const tier = getTier(profile.arena_points ?? 0);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const beat = useServerFn(heartbeat);
+
+  useEffect(() => {
+    beat({}).catch(() => {});
+    const id = setInterval(() => { beat({}).catch(() => {}); }, 60_000);
+    return () => clearInterval(id);
+  }, [beat]);
 
   async function logout() {
     try { localStorage.removeItem("arenapet:remember"); } catch {}
