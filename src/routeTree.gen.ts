@@ -30,6 +30,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as MonsterIdRouteImport } from './routes/monster.$id'
 import { Route as FriendsFriendIdRouteImport } from './routes/friends.$friendId'
+import { Route as FriendBattleChallengeIdRouteImport } from './routes/friend-battle.$challengeId'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 
 const TradeRoute = TradeRouteImport.update({
@@ -137,6 +138,11 @@ const FriendsFriendIdRoute = FriendsFriendIdRouteImport.update({
   path: '/$friendId',
   getParentRoute: () => FriendsRoute,
 } as any)
+const FriendBattleChallengeIdRoute = FriendBattleChallengeIdRouteImport.update({
+  id: '/friend-battle/$challengeId',
+  path: '/friend-battle/$challengeId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicPaymentsWebhookRoute =
   ApiPublicPaymentsWebhookRouteImport.update({
     id: '/api/public/payments/webhook',
@@ -164,6 +170,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/tournament': typeof TournamentRoute
   '/trade': typeof TradeRoute
+  '/friend-battle/$challengeId': typeof FriendBattleChallengeIdRoute
   '/friends/$friendId': typeof FriendsFriendIdRoute
   '/monster/$id': typeof MonsterIdRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -188,6 +195,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/tournament': typeof TournamentRoute
   '/trade': typeof TradeRoute
+  '/friend-battle/$challengeId': typeof FriendBattleChallengeIdRoute
   '/friends/$friendId': typeof FriendsFriendIdRoute
   '/monster/$id': typeof MonsterIdRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -213,6 +221,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/tournament': typeof TournamentRoute
   '/trade': typeof TradeRoute
+  '/friend-battle/$challengeId': typeof FriendBattleChallengeIdRoute
   '/friends/$friendId': typeof FriendsFriendIdRoute
   '/monster/$id': typeof MonsterIdRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -239,6 +248,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/tournament'
     | '/trade'
+    | '/friend-battle/$challengeId'
     | '/friends/$friendId'
     | '/monster/$id'
     | '/api/public/payments/webhook'
@@ -263,6 +273,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/tournament'
     | '/trade'
+    | '/friend-battle/$challengeId'
     | '/friends/$friendId'
     | '/monster/$id'
     | '/api/public/payments/webhook'
@@ -287,6 +298,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/tournament'
     | '/trade'
+    | '/friend-battle/$challengeId'
     | '/friends/$friendId'
     | '/monster/$id'
     | '/api/public/payments/webhook'
@@ -312,6 +324,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   TournamentRoute: typeof TournamentRoute
   TradeRoute: typeof TradeRoute
+  FriendBattleChallengeIdRoute: typeof FriendBattleChallengeIdRoute
   MonsterIdRoute: typeof MonsterIdRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
@@ -465,6 +478,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FriendsFriendIdRouteImport
       parentRoute: typeof FriendsRoute
     }
+    '/friend-battle/$challengeId': {
+      id: '/friend-battle/$challengeId'
+      path: '/friend-battle/$challengeId'
+      fullPath: '/friend-battle/$challengeId'
+      preLoaderRoute: typeof FriendBattleChallengeIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/payments/webhook': {
       id: '/api/public/payments/webhook'
       path: '/api/public/payments/webhook'
@@ -506,9 +526,20 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   TournamentRoute: TournamentRoute,
   TradeRoute: TradeRoute,
+  FriendBattleChallengeIdRoute: FriendBattleChallengeIdRoute,
   MonsterIdRoute: MonsterIdRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
