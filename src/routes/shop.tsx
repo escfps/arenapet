@@ -201,8 +201,7 @@ function ShopPage() {
       const res = await claimBP();
       const chestMsg = res.chests.length ? ` + ${res.chests.map((c) => c.name).join(" + ")}` : "";
       toast.success(`Dia ${res.day}! +${res.gems} 💎 +${res.rations} 🍖${chestMsg}`);
-      // refresh
-      await patch({});
+      await reload();
     } catch (e: any) {
       toast.error(e?.message ?? "Erro ao reivindicar");
     }
