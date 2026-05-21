@@ -3,13 +3,15 @@ import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import {
   EGGS, SKINS, GEM_PACKS, SPECIES, ELEMENT_COLORS,
-  VIP_PRICE_GEMS, VIP_DURATION_DAYS,
+  BATTLE_PASS_PRICE_BRL,
   rollEgg, skinFilter, isVip,
   MAX_BATTLE_ENERGY, ENERGY_REFILL_GEM_COST, ENERGY_REFILL_ALL_GEM_COST, computeBattleEnergy,
   CHESTS, rollChest, RARITY_INFO, starterMonsterStats,
   CHEST_PITY, PITY_COLUMN,
   type ChestTier, type ChestReward, type Rarity,
 } from "@/lib/game-data";
+import { useServerFn } from "@tanstack/react-start";
+import { claimBattlePassDaily } from "@/lib/battle-pass.functions";
 import type { MonsterRow } from "@/components/MonsterCard";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
