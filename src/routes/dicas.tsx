@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import iceCompImg from "@/assets/ice-comp.png";
 
 export const Route = createFileRoute("/dicas")({
   component: DicasPage,
@@ -81,6 +82,14 @@ function DicasPage() {
 
         <Section title="⚔️ Seção 4 — Exemplo de Comp: Gelo ❄️">
           <p className="font-bold text-cyan-300">Urso Polar + Lobo Ártico + Foca Glacial</p>
+          <div className="rounded-xl overflow-hidden border-2 border-cyan-400/40 shadow-lg">
+            <img
+              src={iceCompImg}
+              alt="Trio de gelo: Foca Glacial, Lobo Ártico e Urso Polar"
+              className="w-full h-auto block"
+              loading="lazy"
+            />
+          </div>
           <p>
             <b>Objetivo:</b> Urso congela inimigos com 50% de chance em todo ataque,
             Lobo critica os mais fracos, Foca cura e reduz ATK do inimigo mais forte.
