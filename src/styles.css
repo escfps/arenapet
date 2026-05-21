@@ -326,3 +326,10 @@
 }
 
 
+
+/* Reserve space for mobile bottom navigation bar */
+@media (max-width: 767px) {
+  body {
+    padding-bottom: calc(64px + env(safe-area-inset-bottom));
+  }
+}
