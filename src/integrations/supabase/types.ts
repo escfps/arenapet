@@ -317,6 +317,39 @@ export type Database = {
         }
         Relationships: []
       }
+      redeem_codes: {
+        Row: {
+          code: string
+          created_at: string
+          created_by: string
+          id: string
+          reward_data: Json
+          reward_type: string
+          used_at: string | null
+          used_by: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          created_by: string
+          id?: string
+          reward_data?: Json
+          reward_type: string
+          used_at?: string | null
+          used_by?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          reward_data?: Json
+          reward_type?: string
+          used_at?: string | null
+          used_by?: string | null
+        }
+        Relationships: []
+      }
       skins_owned: {
         Row: {
           acquired_at: string
