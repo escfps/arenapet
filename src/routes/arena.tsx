@@ -926,7 +926,7 @@ function ArenaPage() {
               </div>
             )}
 
-            {battleLog && (
+            {battleLog && shownLog.length < battleLog.length && (
               <div className="rounded-2xl bg-black/60 backdrop-blur-md border border-white/30 p-4 text-white">
                 {shownLog.length === battleLog.length ? (
                   <details className="text-sm">
