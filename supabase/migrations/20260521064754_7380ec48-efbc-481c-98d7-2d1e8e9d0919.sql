@@ -1,0 +1,1 @@
+UPDATE public.monsters SET name = '???' WHERE species = 'fantasminha';
