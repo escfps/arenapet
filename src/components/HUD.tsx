@@ -72,6 +72,7 @@ export function HUD({ profile }: { profile: ProfileRow }) {
       </div>
     </header>
     <MobileNav open={drawerOpen} onClose={() => setDrawerOpen(false)} />
+    <ChallengeNotifier userId={profile.id} />
     </>
   );
 }
