@@ -13,8 +13,16 @@ export const Route = createFileRoute("/profile")({ component: ProfilePage });
 function ProfilePage() {
   const { profile, loading, reload } = useProfile();
   const changeNick = useServerFn(changeUsername);
+  const fetchTrophies = useServerFn(getUserTrophies);
   const [newName, setNewName] = useState("");
   const [busy, setBusy] = useState(false);
+  const [trophies, setTrophies] = useState<SeasonTrophy[]>([]);
+
+  useEffect(() => {
+    if (profile) {
+      fetchTrophies({ data: { userId: profile.id } }).then(setTrophies).catch(() => {});
+    }
+  }, [profile, fetchTrophies]);
 
   if (loading || !profile) {
     return <div className="p-8 text-center text-white">Carregando…</div>;
