@@ -21,6 +21,7 @@ import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PreviewChestRouteImport } from './routes/preview-chest'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HistoryRouteImport } from './routes/history'
+import { Route as FriendsRouteImport } from './routes/friends'
 import { Route as ForgeRouteImport } from './routes/forge'
 import { Route as ExpeditionsRouteImport } from './routes/expeditions'
 import { Route as CollectionRouteImport } from './routes/collection'
@@ -90,6 +91,11 @@ const HistoryRoute = HistoryRouteImport.update({
   path: '/history',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FriendsRoute = FriendsRouteImport.update({
+  id: '/friends',
+  path: '/friends',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ForgeRoute = ForgeRouteImport.update({
   id: '/forge',
   path: '/forge',
@@ -139,6 +145,7 @@ export interface FileRoutesByFullPath {
   '/collection': typeof CollectionRoute
   '/expeditions': typeof ExpeditionsRoute
   '/forge': typeof ForgeRoute
+  '/friends': typeof FriendsRoute
   '/history': typeof HistoryRoute
   '/login': typeof LoginRoute
   '/preview-chest': typeof PreviewChestRoute
@@ -161,6 +168,7 @@ export interface FileRoutesByTo {
   '/collection': typeof CollectionRoute
   '/expeditions': typeof ExpeditionsRoute
   '/forge': typeof ForgeRoute
+  '/friends': typeof FriendsRoute
   '/history': typeof HistoryRoute
   '/login': typeof LoginRoute
   '/preview-chest': typeof PreviewChestRoute
@@ -184,6 +192,7 @@ export interface FileRoutesById {
   '/collection': typeof CollectionRoute
   '/expeditions': typeof ExpeditionsRoute
   '/forge': typeof ForgeRoute
+  '/friends': typeof FriendsRoute
   '/history': typeof HistoryRoute
   '/login': typeof LoginRoute
   '/preview-chest': typeof PreviewChestRoute
@@ -208,6 +217,7 @@ export interface FileRouteTypes {
     | '/collection'
     | '/expeditions'
     | '/forge'
+    | '/friends'
     | '/history'
     | '/login'
     | '/preview-chest'
@@ -230,6 +240,7 @@ export interface FileRouteTypes {
     | '/collection'
     | '/expeditions'
     | '/forge'
+    | '/friends'
     | '/history'
     | '/login'
     | '/preview-chest'
@@ -252,6 +263,7 @@ export interface FileRouteTypes {
     | '/collection'
     | '/expeditions'
     | '/forge'
+    | '/friends'
     | '/history'
     | '/login'
     | '/preview-chest'
@@ -275,6 +287,7 @@ export interface RootRouteChildren {
   CollectionRoute: typeof CollectionRoute
   ExpeditionsRoute: typeof ExpeditionsRoute
   ForgeRoute: typeof ForgeRoute
+  FriendsRoute: typeof FriendsRoute
   HistoryRoute: typeof HistoryRoute
   LoginRoute: typeof LoginRoute
   PreviewChestRoute: typeof PreviewChestRoute
@@ -377,6 +390,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HistoryRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/friends': {
+      id: '/friends'
+      path: '/friends'
+      fullPath: '/friends'
+      preLoaderRoute: typeof FriendsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/forge': {
       id: '/forge'
       path: '/forge'
@@ -443,6 +463,7 @@ const rootRouteChildren: RootRouteChildren = {
   CollectionRoute: CollectionRoute,
   ExpeditionsRoute: ExpeditionsRoute,
   ForgeRoute: ForgeRoute,
+  FriendsRoute: FriendsRoute,
   HistoryRoute: HistoryRoute,
   LoginRoute: LoginRoute,
   PreviewChestRoute: PreviewChestRoute,
@@ -461,3 +482,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
