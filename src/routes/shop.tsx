@@ -7,6 +7,7 @@ import {
   rollEgg, skinFilter, isVip,
   MAX_BATTLE_ENERGY, ENERGY_REFILL_GEM_COST, ENERGY_REFILL_ALL_GEM_COST, computeBattleEnergy,
   CHESTS, rollChest, RARITY_INFO, starterMonsterStats,
+  CHEST_PITY, PITY_COLUMN,
   type ChestTier, type ChestReward, type Rarity,
 } from "@/lib/game-data";
 import type { MonsterRow } from "@/components/MonsterCard";
