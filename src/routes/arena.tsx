@@ -74,6 +74,26 @@ function ArenaPage() {
   const [autoRematch, setAutoRematch] = useState<number | null>(null);
   const [chestQueue, setChestQueue] = useState<PendingChest[]>([]);
   const pendingApplyRef = useRef<null | (() => Promise<void>)>(null);
+  const [ranks, setRanks] = useState<{ mine: number | null; opp: number | null }>({ mine: null, opp: null });
+
+  // Compute ranking positions (1-based) when fight starts
+  useEffect(() => {
+    if (!battleLog || !opponent || !profile) return;
+    let cancel = false;
+    (async () => {
+      const [mineRes, oppRes] = await Promise.all([
+        supabase.from("profiles").select("id", { count: "exact", head: true }).gt("arena_points", profile.arena_points ?? 0),
+        supabase.from("profiles").select("id", { count: "exact", head: true }).gt("arena_points", opponent.arenaPoints),
+      ]);
+      if (cancel) return;
+      setRanks({
+        mine: (mineRes.count ?? 0) + 1,
+        opp: (oppRes.count ?? 0) + 1,
+      });
+    })();
+    return () => { cancel = true; };
+  }, [battleLog, opponent?.ownerId, profile?.arena_points]);
+
 
   // Aplica resultado da batalha (HUD, recompensas, DB) somente quando a animação termina,
   // pra não revelar o vencedor pelas atualizações de vitórias/derrotas no topo.
@@ -753,8 +773,10 @@ function ArenaPage() {
                   step={shownLog.length}
                   playerAName={profile.username}
                   playerATier={getTier(profile.arena_points ?? 0).short}
+                  playerARank={ranks.mine ?? undefined}
                   playerBName={opponent.ownerName}
                   playerBTier={getTier(opponent.arenaPoints).short}
+                  playerBRank={ranks.opp ?? undefined}
                 />
 
                 {shownLog.length === battleLog.length && winner && (
