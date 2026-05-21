@@ -60,7 +60,7 @@ export function MobileNav({ open, onClose }: { open: boolean; onClose: () => voi
     <>
       {/* Bottom Navigation Bar (mobile only) */}
       <nav
-        className="md:hidden fixed bottom-0 inset-x-0 z-30 bg-purple-950/95 backdrop-blur-md border-t-2 border-purple-400/30 shadow-[0_-4px_20px_rgba(0,0,0,0.3)]"
+        className="fixed bottom-0 inset-x-0 z-30 bg-purple-950/95 backdrop-blur-md border-t-2 border-purple-400/30 shadow-[0_-4px_20px_rgba(0,0,0,0.3)]"
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
         <ul className="flex items-stretch justify-around">
