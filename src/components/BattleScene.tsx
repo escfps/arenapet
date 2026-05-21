@@ -479,12 +479,15 @@ export function BattleScene({
         return (
           <div
             key={sideKey}
-            className={`pointer-events-none absolute bottom-1 ${isLeft ? "left-1 items-start" : "right-1 items-end"} z-30 flex flex-col gap-0.5 max-w-[38%]`}
+            className={`pointer-events-none absolute bottom-1 ${isLeft ? "left-1 items-start" : "right-1 items-end"} z-30 flex flex-col gap-0.5 max-w-[49%]`}
           >
-            {items.map((a) => (
+            {items.map((a) => {
+              const longSkill = a.skillLabel.length > 14;
+              const veryLongSkill = a.skillLabel.length > 20;
+              return (
               <div
                 key={a.id}
-                className={`flex items-center gap-1.5 ${isLeft ? "pl-1 pr-2 flex-row" : "pr-1 pl-2 flex-row-reverse"} py-1 rounded-full bg-black/70 backdrop-blur-sm border ${
+                className={`flex items-center gap-1.5 max-w-full ${isLeft ? "pl-1 pr-2 flex-row" : "pr-1 pl-2 flex-row-reverse"} py-1 rounded-full bg-black/70 backdrop-blur-sm border ${
                   a.side === "a" ? "border-blue-400/60" : "border-red-400/60"
                 } shadow-lg animate-fade-in`}
                 style={{ animation: "fadeIn 0.2s ease-out" }}
@@ -496,12 +499,12 @@ export function BattleScene({
                 </div>
                 <div className={`flex flex-col min-w-0 leading-tight ${isLeft ? "" : "text-right"}`}>
                   <span className="text-white text-[10px] font-extrabold truncate drop-shadow">{a.actorName}</span>
-                  <span className="text-white/90 text-[10px] font-bold truncate">
+                  <span className={`text-white/90 font-bold truncate ${veryLongSkill ? "text-[8px]" : longSkill ? "text-[9px]" : "text-[10px]"}`}>
                     {a.skillEmoji} {a.skillLabel}
                   </span>
                 </div>
                 {a.damage > 0 && (
-                  <span className={`text-sm font-black drop-shadow ${
+                  <span className={`font-black drop-shadow shrink-0 ${longSkill ? "text-xs" : "text-sm"} ${
                     a.healing ? "text-emerald-300" : a.crit ? "text-yellow-300" : "text-orange-200"
                   }`}>
                     {a.healing ? "+" : "-"}{a.damage}{a.crit ? "!" : ""}
@@ -509,7 +512,8 @@ export function BattleScene({
                 )}
 
               </div>
-            ))}
+              );
+            })}
 
           </div>
         );
