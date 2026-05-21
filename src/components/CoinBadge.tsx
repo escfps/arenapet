@@ -5,10 +5,10 @@ export function CoinBadge({ amount }: { amount: number }) {
     <Link
       to="/shop"
       aria-label="Abrir loja"
-      className="coin-badge rounded-full px-3 py-1 flex items-center gap-1.5 font-extrabold text-amber-900 hover:scale-105 active:scale-95 transition"
+      className="rounded-full px-2 py-0.5 flex items-center gap-1 font-extrabold text-amber-100 bg-gradient-to-b from-amber-600 to-amber-800 border border-amber-900/60 hover:scale-105 active:scale-95 transition"
     >
-      <span className="text-base">🪙</span>
-      <span className="tabular-nums text-sm">{amount.toLocaleString("pt-BR")}</span>
+      <span className="text-sm">🪙</span>
+      <span className="tabular-nums text-xs">{amount.toLocaleString("pt-BR")}</span>
     </Link>
   );
 }
