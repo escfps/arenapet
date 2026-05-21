@@ -116,6 +116,18 @@ export function BattleScene({
   const [banner, setBanner] = useState<EffectBanner>(null);
   const [statuses, setStatuses] = useState<StatusMap>(new Map());
   const [turnFlash, setTurnFlash] = useState<{ id: number; turn: number } | null>(null);
+  const [actionFeed, setActionFeed] = useState<{
+    id: number;
+    side: "a" | "b";
+    image: string;
+    actorName: string;
+    skillEmoji: string;
+    skillLabel: string;
+    damage: number;
+    crit: boolean;
+    healing: boolean;
+  }[]>([]);
+
 
   // Turno atual derivado da última entrada exibida
   const currentTurn = step > 0 && step <= log.length ? log[step - 1].turn : 1;
