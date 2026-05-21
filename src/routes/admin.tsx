@@ -113,7 +113,12 @@ function AdminPage() {
   async function createCode() {
     setBusy(true);
     try {
-      let payload: Parameters<typeof createCodeFn>[0]["data"];
+      type CreatePayload =
+        | { reward_type: "pet"; species: string; rank: number }
+        | { reward_type: "chest"; chestTier: "wood" | "silver" | "gold" | "legendary" }
+        | { reward_type: "gems"; amount: number }
+        | { reward_type: "coins"; amount: number };
+      let payload: CreatePayload;
       if (codeType === "pet") payload = { reward_type: "pet", species: codeSpecies, rank: codeRank };
       else if (codeType === "chest") payload = { reward_type: "chest", chestTier: codeChest };
       else if (codeType === "gems") payload = { reward_type: "gems", amount: codeAmount };
