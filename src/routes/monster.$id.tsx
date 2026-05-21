@@ -40,7 +40,7 @@ function MonsterPage() {
   }
 
   const sp = SPECIES[monster.species];
-  const teamMax = profile.vip_until && new Date(profile.vip_until) > new Date() ? 4 : 3;
+  const teamMax = 3;
 
   async function patchMonster(updates: Partial<MonsterRow>) {
     if (!monster) return;
