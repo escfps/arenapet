@@ -27,7 +27,7 @@ export function MobileDrawerButton({ onOpen }: { onOpen: () => void }) {
     <button
       onClick={onOpen}
       aria-label="Abrir menu"
-      className="md:hidden p-2 rounded-lg text-white hover:bg-white/15 transition"
+      className="p-2 rounded-lg text-white hover:bg-white/15 transition"
     >
       <Menu className="w-5 h-5" />
     </button>
