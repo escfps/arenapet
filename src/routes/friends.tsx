@@ -13,6 +13,7 @@ import {
   removeFriend,
   listIncomingGifts,
   claimGift,
+  sendChallenge,
 } from "@/lib/friends.functions";
 
 export const Route = createFileRoute("/friends")({
