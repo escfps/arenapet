@@ -29,6 +29,7 @@ import { Route as ArenaRouteImport } from './routes/arena'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as MonsterIdRouteImport } from './routes/monster.$id'
+import { Route as FriendsFriendIdRouteImport } from './routes/friends.$friendId'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 
 const TradeRoute = TradeRouteImport.update({
@@ -131,6 +132,11 @@ const MonsterIdRoute = MonsterIdRouteImport.update({
   path: '/monster/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FriendsFriendIdRoute = FriendsFriendIdRouteImport.update({
+  id: '/$friendId',
+  path: '/$friendId',
+  getParentRoute: () => FriendsRoute,
+} as any)
 const ApiPublicPaymentsWebhookRoute =
   ApiPublicPaymentsWebhookRouteImport.update({
     id: '/api/public/payments/webhook',
@@ -145,7 +151,7 @@ export interface FileRoutesByFullPath {
   '/collection': typeof CollectionRoute
   '/expeditions': typeof ExpeditionsRoute
   '/forge': typeof ForgeRoute
-  '/friends': typeof FriendsRoute
+  '/friends': typeof FriendsRouteWithChildren
   '/history': typeof HistoryRoute
   '/login': typeof LoginRoute
   '/preview-chest': typeof PreviewChestRoute
@@ -158,6 +164,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/tournament': typeof TournamentRoute
   '/trade': typeof TradeRoute
+  '/friends/$friendId': typeof FriendsFriendIdRoute
   '/monster/$id': typeof MonsterIdRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -168,7 +175,7 @@ export interface FileRoutesByTo {
   '/collection': typeof CollectionRoute
   '/expeditions': typeof ExpeditionsRoute
   '/forge': typeof ForgeRoute
-  '/friends': typeof FriendsRoute
+  '/friends': typeof FriendsRouteWithChildren
   '/history': typeof HistoryRoute
   '/login': typeof LoginRoute
   '/preview-chest': typeof PreviewChestRoute
@@ -181,6 +188,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/tournament': typeof TournamentRoute
   '/trade': typeof TradeRoute
+  '/friends/$friendId': typeof FriendsFriendIdRoute
   '/monster/$id': typeof MonsterIdRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -192,7 +200,7 @@ export interface FileRoutesById {
   '/collection': typeof CollectionRoute
   '/expeditions': typeof ExpeditionsRoute
   '/forge': typeof ForgeRoute
-  '/friends': typeof FriendsRoute
+  '/friends': typeof FriendsRouteWithChildren
   '/history': typeof HistoryRoute
   '/login': typeof LoginRoute
   '/preview-chest': typeof PreviewChestRoute
@@ -205,6 +213,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/tournament': typeof TournamentRoute
   '/trade': typeof TradeRoute
+  '/friends/$friendId': typeof FriendsFriendIdRoute
   '/monster/$id': typeof MonsterIdRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -230,6 +239,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/tournament'
     | '/trade'
+    | '/friends/$friendId'
     | '/monster/$id'
     | '/api/public/payments/webhook'
   fileRoutesByTo: FileRoutesByTo
@@ -253,6 +263,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/tournament'
     | '/trade'
+    | '/friends/$friendId'
     | '/monster/$id'
     | '/api/public/payments/webhook'
   id:
@@ -276,6 +287,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/tournament'
     | '/trade'
+    | '/friends/$friendId'
     | '/monster/$id'
     | '/api/public/payments/webhook'
   fileRoutesById: FileRoutesById
@@ -287,7 +299,7 @@ export interface RootRouteChildren {
   CollectionRoute: typeof CollectionRoute
   ExpeditionsRoute: typeof ExpeditionsRoute
   ForgeRoute: typeof ForgeRoute
-  FriendsRoute: typeof FriendsRoute
+  FriendsRoute: typeof FriendsRouteWithChildren
   HistoryRoute: typeof HistoryRoute
   LoginRoute: typeof LoginRoute
   PreviewChestRoute: typeof PreviewChestRoute
@@ -446,6 +458,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MonsterIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/friends/$friendId': {
+      id: '/friends/$friendId'
+      path: '/$friendId'
+      fullPath: '/friends/$friendId'
+      preLoaderRoute: typeof FriendsFriendIdRouteImport
+      parentRoute: typeof FriendsRoute
+    }
     '/api/public/payments/webhook': {
       id: '/api/public/payments/webhook'
       path: '/api/public/payments/webhook'
@@ -456,6 +475,17 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface FriendsRouteChildren {
+  FriendsFriendIdRoute: typeof FriendsFriendIdRoute
+}
+
+const FriendsRouteChildren: FriendsRouteChildren = {
+  FriendsFriendIdRoute: FriendsFriendIdRoute,
+}
+
+const FriendsRouteWithChildren =
+  FriendsRoute._addFileChildren(FriendsRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
@@ -463,7 +493,7 @@ const rootRouteChildren: RootRouteChildren = {
   CollectionRoute: CollectionRoute,
   ExpeditionsRoute: ExpeditionsRoute,
   ForgeRoute: ForgeRoute,
-  FriendsRoute: FriendsRoute,
+  FriendsRoute: FriendsRouteWithChildren,
   HistoryRoute: HistoryRoute,
   LoginRoute: LoginRoute,
   PreviewChestRoute: PreviewChestRoute,
@@ -482,3 +512,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
