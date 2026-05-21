@@ -64,7 +64,7 @@ export function HUD({ profile }: { profile: ProfileRow }) {
             <span className={`px-1.5 py-0.5 rounded font-extrabold whitespace-nowrap ${tier.color}`}>{tier.emoji}&nbsp;{tier.short}</span>
           </div>
         </Link>
-        <div className="h-9 w-px bg-white/20 shrink-0" />
+        
         <div className="flex items-center gap-1.5 shrink-0">
           <CoinBadge amount={profile.coins} />
           <GemBadge amount={profile.gems} />
