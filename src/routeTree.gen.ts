@@ -21,6 +21,7 @@ import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PreviewChestRouteImport } from './routes/preview-chest'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HistoryRouteImport } from './routes/history'
+import { Route as FriendsRouteImport } from './routes/friends'
 import { Route as ForgeRouteImport } from './routes/forge'
 import { Route as ExpeditionsRouteImport } from './routes/expeditions'
 import { Route as CollectionRouteImport } from './routes/collection'
@@ -28,6 +29,8 @@ import { Route as ArenaRouteImport } from './routes/arena'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as MonsterIdRouteImport } from './routes/monster.$id'
+import { Route as FriendsFriendIdRouteImport } from './routes/friends.$friendId'
+import { Route as FriendBattleChallengeIdRouteImport } from './routes/friend-battle.$challengeId'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 
 const TradeRoute = TradeRouteImport.update({
@@ -90,6 +93,11 @@ const HistoryRoute = HistoryRouteImport.update({
   path: '/history',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FriendsRoute = FriendsRouteImport.update({
+  id: '/friends',
+  path: '/friends',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ForgeRoute = ForgeRouteImport.update({
   id: '/forge',
   path: '/forge',
@@ -125,6 +133,16 @@ const MonsterIdRoute = MonsterIdRouteImport.update({
   path: '/monster/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FriendsFriendIdRoute = FriendsFriendIdRouteImport.update({
+  id: '/$friendId',
+  path: '/$friendId',
+  getParentRoute: () => FriendsRoute,
+} as any)
+const FriendBattleChallengeIdRoute = FriendBattleChallengeIdRouteImport.update({
+  id: '/friend-battle/$challengeId',
+  path: '/friend-battle/$challengeId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicPaymentsWebhookRoute =
   ApiPublicPaymentsWebhookRouteImport.update({
     id: '/api/public/payments/webhook',
@@ -139,6 +157,7 @@ export interface FileRoutesByFullPath {
   '/collection': typeof CollectionRoute
   '/expeditions': typeof ExpeditionsRoute
   '/forge': typeof ForgeRoute
+  '/friends': typeof FriendsRouteWithChildren
   '/history': typeof HistoryRoute
   '/login': typeof LoginRoute
   '/preview-chest': typeof PreviewChestRoute
@@ -151,6 +170,8 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/tournament': typeof TournamentRoute
   '/trade': typeof TradeRoute
+  '/friend-battle/$challengeId': typeof FriendBattleChallengeIdRoute
+  '/friends/$friendId': typeof FriendsFriendIdRoute
   '/monster/$id': typeof MonsterIdRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -161,6 +182,7 @@ export interface FileRoutesByTo {
   '/collection': typeof CollectionRoute
   '/expeditions': typeof ExpeditionsRoute
   '/forge': typeof ForgeRoute
+  '/friends': typeof FriendsRouteWithChildren
   '/history': typeof HistoryRoute
   '/login': typeof LoginRoute
   '/preview-chest': typeof PreviewChestRoute
@@ -173,6 +195,8 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/tournament': typeof TournamentRoute
   '/trade': typeof TradeRoute
+  '/friend-battle/$challengeId': typeof FriendBattleChallengeIdRoute
+  '/friends/$friendId': typeof FriendsFriendIdRoute
   '/monster/$id': typeof MonsterIdRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -184,6 +208,7 @@ export interface FileRoutesById {
   '/collection': typeof CollectionRoute
   '/expeditions': typeof ExpeditionsRoute
   '/forge': typeof ForgeRoute
+  '/friends': typeof FriendsRouteWithChildren
   '/history': typeof HistoryRoute
   '/login': typeof LoginRoute
   '/preview-chest': typeof PreviewChestRoute
@@ -196,6 +221,8 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/tournament': typeof TournamentRoute
   '/trade': typeof TradeRoute
+  '/friend-battle/$challengeId': typeof FriendBattleChallengeIdRoute
+  '/friends/$friendId': typeof FriendsFriendIdRoute
   '/monster/$id': typeof MonsterIdRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
@@ -208,6 +235,7 @@ export interface FileRouteTypes {
     | '/collection'
     | '/expeditions'
     | '/forge'
+    | '/friends'
     | '/history'
     | '/login'
     | '/preview-chest'
@@ -220,6 +248,8 @@ export interface FileRouteTypes {
     | '/terms'
     | '/tournament'
     | '/trade'
+    | '/friend-battle/$challengeId'
+    | '/friends/$friendId'
     | '/monster/$id'
     | '/api/public/payments/webhook'
   fileRoutesByTo: FileRoutesByTo
@@ -230,6 +260,7 @@ export interface FileRouteTypes {
     | '/collection'
     | '/expeditions'
     | '/forge'
+    | '/friends'
     | '/history'
     | '/login'
     | '/preview-chest'
@@ -242,6 +273,8 @@ export interface FileRouteTypes {
     | '/terms'
     | '/tournament'
     | '/trade'
+    | '/friend-battle/$challengeId'
+    | '/friends/$friendId'
     | '/monster/$id'
     | '/api/public/payments/webhook'
   id:
@@ -252,6 +285,7 @@ export interface FileRouteTypes {
     | '/collection'
     | '/expeditions'
     | '/forge'
+    | '/friends'
     | '/history'
     | '/login'
     | '/preview-chest'
@@ -264,6 +298,8 @@ export interface FileRouteTypes {
     | '/terms'
     | '/tournament'
     | '/trade'
+    | '/friend-battle/$challengeId'
+    | '/friends/$friendId'
     | '/monster/$id'
     | '/api/public/payments/webhook'
   fileRoutesById: FileRoutesById
@@ -275,6 +311,7 @@ export interface RootRouteChildren {
   CollectionRoute: typeof CollectionRoute
   ExpeditionsRoute: typeof ExpeditionsRoute
   ForgeRoute: typeof ForgeRoute
+  FriendsRoute: typeof FriendsRouteWithChildren
   HistoryRoute: typeof HistoryRoute
   LoginRoute: typeof LoginRoute
   PreviewChestRoute: typeof PreviewChestRoute
@@ -287,6 +324,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   TournamentRoute: typeof TournamentRoute
   TradeRoute: typeof TradeRoute
+  FriendBattleChallengeIdRoute: typeof FriendBattleChallengeIdRoute
   MonsterIdRoute: typeof MonsterIdRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
@@ -377,6 +415,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HistoryRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/friends': {
+      id: '/friends'
+      path: '/friends'
+      fullPath: '/friends'
+      preLoaderRoute: typeof FriendsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/forge': {
       id: '/forge'
       path: '/forge'
@@ -426,6 +471,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MonsterIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/friends/$friendId': {
+      id: '/friends/$friendId'
+      path: '/$friendId'
+      fullPath: '/friends/$friendId'
+      preLoaderRoute: typeof FriendsFriendIdRouteImport
+      parentRoute: typeof FriendsRoute
+    }
+    '/friend-battle/$challengeId': {
+      id: '/friend-battle/$challengeId'
+      path: '/friend-battle/$challengeId'
+      fullPath: '/friend-battle/$challengeId'
+      preLoaderRoute: typeof FriendBattleChallengeIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/payments/webhook': {
       id: '/api/public/payments/webhook'
       path: '/api/public/payments/webhook'
@@ -436,6 +495,17 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface FriendsRouteChildren {
+  FriendsFriendIdRoute: typeof FriendsFriendIdRoute
+}
+
+const FriendsRouteChildren: FriendsRouteChildren = {
+  FriendsFriendIdRoute: FriendsFriendIdRoute,
+}
+
+const FriendsRouteWithChildren =
+  FriendsRoute._addFileChildren(FriendsRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
@@ -443,6 +513,7 @@ const rootRouteChildren: RootRouteChildren = {
   CollectionRoute: CollectionRoute,
   ExpeditionsRoute: ExpeditionsRoute,
   ForgeRoute: ForgeRoute,
+  FriendsRoute: FriendsRouteWithChildren,
   HistoryRoute: HistoryRoute,
   LoginRoute: LoginRoute,
   PreviewChestRoute: PreviewChestRoute,
@@ -455,6 +526,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   TournamentRoute: TournamentRoute,
   TradeRoute: TradeRoute,
+  FriendBattleChallengeIdRoute: FriendBattleChallengeIdRoute,
   MonsterIdRoute: MonsterIdRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }

@@ -1,10 +1,12 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { CoinBadge, GemBadge, VipBadge } from "./CoinBadge";
 import { SoundControl } from "./SoundControl";
 import { MobileNav, MobileDrawerButton } from "./MobileNav";
 import { isVip, getTier } from "@/lib/game-data";
 import { supabase } from "@/integrations/supabase/client";
+import { heartbeat } from "@/lib/friends.functions";
 
 export type ProfileRow = {
   id: string;
@@ -26,6 +28,13 @@ export function HUD({ profile }: { profile: ProfileRow }) {
   const vip = isVip(profile.vip_until);
   const tier = getTier(profile.arena_points ?? 0);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const beat = useServerFn(heartbeat);
+
+  useEffect(() => {
+    beat({}).catch(() => {});
+    const id = setInterval(() => { beat({}).catch(() => {}); }, 60_000);
+    return () => clearInterval(id);
+  }, [beat]);
 
   async function logout() {
     try { localStorage.removeItem("arenapet:remember"); } catch {}

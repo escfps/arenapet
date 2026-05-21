@@ -101,6 +101,132 @@ export type Database = {
         }
         Relationships: []
       }
+      friend_challenges: {
+        Row: {
+          battle_id: string | null
+          battle_log: Json | null
+          challenger_id: string
+          created_at: string
+          id: string
+          responded_at: string | null
+          status: string
+          target_id: string
+          winner_id: string | null
+        }
+        Insert: {
+          battle_id?: string | null
+          battle_log?: Json | null
+          challenger_id: string
+          created_at?: string
+          id?: string
+          responded_at?: string | null
+          status?: string
+          target_id: string
+          winner_id?: string | null
+        }
+        Update: {
+          battle_id?: string | null
+          battle_log?: Json | null
+          challenger_id?: string
+          created_at?: string
+          id?: string
+          responded_at?: string | null
+          status?: string
+          target_id?: string
+          winner_id?: string | null
+        }
+        Relationships: []
+      }
+      friend_gifts: {
+        Row: {
+          amount: number
+          claimed_at: string | null
+          created_at: string
+          gift_type: string
+          id: string
+          receiver_id: string
+          sender_id: string
+          sent_date: string
+        }
+        Insert: {
+          amount?: number
+          claimed_at?: string | null
+          created_at?: string
+          gift_type: string
+          id?: string
+          receiver_id: string
+          sender_id: string
+          sent_date?: string
+        }
+        Update: {
+          amount?: number
+          claimed_at?: string | null
+          created_at?: string
+          gift_type?: string
+          id?: string
+          receiver_id?: string
+          sender_id?: string
+          sent_date?: string
+        }
+        Relationships: []
+      }
+      friend_messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          read_at: string | null
+          receiver_id: string
+          sender_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          receiver_id: string
+          sender_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          receiver_id?: string
+          sender_id?: string
+        }
+        Relationships: []
+      }
+      friendships: {
+        Row: {
+          accepted_at: string | null
+          created_at: string
+          id: string
+          requester_id: string
+          status: string
+          user_a: string
+          user_b: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          created_at?: string
+          id?: string
+          requester_id: string
+          status?: string
+          user_a: string
+          user_b: string
+        }
+        Update: {
+          accepted_at?: string | null
+          created_at?: string
+          id?: string
+          requester_id?: string
+          status?: string
+          user_a?: string
+          user_b?: string
+        }
+        Relationships: []
+      }
       gem_purchases: {
         Row: {
           amount_brl: number
@@ -242,6 +368,7 @@ export type Database = {
           highest_tier_rank: number
           id: string
           is_bot: boolean
+          last_seen_at: string | null
           level: number
           losses: number
           nick_changes: number
@@ -272,6 +399,7 @@ export type Database = {
           highest_tier_rank?: number
           id: string
           is_bot?: boolean
+          last_seen_at?: string | null
           level?: number
           losses?: number
           nick_changes?: number
@@ -302,6 +430,7 @@ export type Database = {
           highest_tier_rank?: number
           id?: string
           is_bot?: boolean
+          last_seen_at?: string | null
           level?: number
           losses?: number
           nick_changes?: number
