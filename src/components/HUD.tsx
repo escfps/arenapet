@@ -45,24 +45,30 @@ export function HUD({ profile }: { profile: ProfileRow }) {
   return (
     <>
     <header className="sticky top-0 z-20 backdrop-blur-md bg-purple-950/70 border-b-2 border-purple-400/30 shadow-lg">
-      <div className="max-w-6xl mx-auto px-2 py-1.5 flex items-center gap-1.5 md:gap-2 md:flex-wrap md:px-3 md:py-2">
+      <div className="max-w-6xl mx-auto px-2 py-1.5 flex items-center gap-1.5">
         <MobileDrawerButton onOpen={() => setDrawerOpen(true)} />
-        <Link to="/" className="hidden md:flex font-extrabold text-white items-center gap-1.5 hover:scale-105 transition">
+        <Link to="/" className="font-extrabold text-white items-center gap-1.5 hover:scale-105 transition hidden sm:flex">
           <span className="text-xl">🐲</span>
           <span className="text-sm">ARENA PET</span>
         </Link>
-        <nav className="hidden md:flex items-center gap-1 ml-2">
-          <NavLink to="/" label="Home" emoji="🏠" />
-          <NavLink to="/arena" label="Arena" emoji="⚔️" />
-          <NavLink to="/tournament" label="Copa" emoji="🏆" />
-          <NavLink to="/ranking" label="Ranking" emoji="📊" />
-          <NavLink to="/history" label="Histórico" emoji="📜" />
-          <NavLink to="/forge" label="Elevar" emoji="⭐" />
-          <NavLink to="/trade" label="Trocas" emoji="🔄" />
-          <NavLink to="/expeditions" label="Expedições" emoji="🗺️" />
-          <NavLink to="/collection" label="Coleção" emoji="📖" />
-          <NavLink to="/shop" label="Loja" emoji="🛒" />
-        </nav>
+        <Link to="/profile" className="text-white hover:scale-105 transition min-w-0 flex-1">
+          <div className="text-base font-extrabold flex items-center gap-1.5 hover:underline leading-tight">
+            <span className="truncate">{profile.username}</span>
+          </div>
+          <div className="text-[10px] opacity-90 flex items-center gap-1 whitespace-nowrap mt-0.5">
+            {vip && <VipBadge />}
+            {vip && <span className="text-white/40">•</span>}
+            <span className={`px-1.5 py-0.5 rounded font-extrabold whitespace-nowrap ${tier.color}`}>{tier.emoji}&nbsp;{tier.short}</span>
+          </div>
+        </Link>
+        
+        <div className="flex items-center gap-1.5 shrink-0">
+          <CoinBadge amount={profile.coins} />
+          <GemBadge amount={profile.gems} />
+          <SoundControl />
+        </div>
+
+      </div>
         <Link to="/profile" className="text-white hover:scale-105 transition min-w-0 flex-1 md:flex-none md:text-right md:ml-auto">
           <div className="text-base md:text-sm font-extrabold flex items-center gap-1.5 md:justify-end hover:underline leading-tight">
             <span className="truncate">{profile.username}</span>
