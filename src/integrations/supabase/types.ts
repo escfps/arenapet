@@ -101,6 +101,39 @@ export type Database = {
         }
         Relationships: []
       }
+      gem_purchases: {
+        Row: {
+          amount_brl: number
+          created_at: string
+          environment: string
+          gems_credited: number
+          id: string
+          paddle_transaction_id: string
+          price_id: string
+          user_id: string
+        }
+        Insert: {
+          amount_brl: number
+          created_at?: string
+          environment?: string
+          gems_credited: number
+          id?: string
+          paddle_transaction_id: string
+          price_id: string
+          user_id: string
+        }
+        Update: {
+          amount_brl?: number
+          created_at?: string
+          environment?: string
+          gems_credited?: number
+          id?: string
+          paddle_transaction_id?: string
+          price_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       inventory: {
         Row: {
           item_type: string
