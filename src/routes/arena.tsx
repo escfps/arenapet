@@ -720,6 +720,8 @@ function ArenaPage() {
                 </div>
               </div>
             )}
+            </>)}
+
 
             {battleLog && opponent && (
               <div className="relative">
