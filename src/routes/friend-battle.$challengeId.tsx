@@ -163,8 +163,10 @@ function FriendBattlePage() {
 
         {loaded && (
           <div className="relative">
-            <div className="absolute top-2 left-1/2 -translate-x-1/2 z-20 px-4 py-1.5 rounded-full bg-black/70 backdrop-blur border border-white/30 text-white font-mono font-bold text-lg shadow-lg">
-              ⏱️ {Math.floor(battleTimer / 60)}:{String(battleTimer % 60).padStart(2, "0")}
+            <div className="flex justify-center mb-2">
+              <div className="px-4 py-1.5 rounded-full bg-black/70 backdrop-blur border border-white/30 text-white font-mono font-bold text-lg shadow-lg">
+                ⏱️ {Math.floor(battleTimer / 60)}:{String(battleTimer % 60).padStart(2, "0")}
+              </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2 text-white">
               <div className="rounded-xl bg-blue-500/15 border border-blue-300/30 p-2">
