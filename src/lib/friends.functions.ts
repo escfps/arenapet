@@ -484,3 +484,47 @@ export const listIncomingChallenges = createServerFn({ method: "POST" })
       })),
     };
   });
+
+export const saveChallengeResult = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) =>
+    z
+      .object({
+        challengeId: z.string().uuid(),
+        winnerId: z.string().uuid(),
+        log: z.any(),
+      })
+      .parse(input)
+  )
+  .handler(async ({ data, context }) => {
+    const { data: c } = await supabaseAdmin
+      .from("friend_challenges")
+      .select("id, challenger_id, target_id, status, winner_id")
+      .eq("id", data.challengeId)
+      .maybeSingle();
+    if (!c) throw new Error("Desafio inválido");
+    if (c.challenger_id !== context.userId && c.target_id !== context.userId)
+      throw new Error("Sem permissão");
+    if (c.winner_id) return { ok: true, alreadySet: true };
+    await supabaseAdmin
+      .from("friend_challenges")
+      .update({ winner_id: data.winnerId, battle_log: data.log, status: "accepted" })
+      .eq("id", c.id)
+      .is("winner_id", null);
+    return { ok: true };
+  });
+
+export const getChallenge = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) => z.object({ challengeId: z.string().uuid() }).parse(input))
+  .handler(async ({ data, context }) => {
+    const { data: c } = await supabaseAdmin
+      .from("friend_challenges")
+      .select("id, challenger_id, target_id, status, winner_id, battle_log, created_at")
+      .eq("id", data.challengeId)
+      .maybeSingle();
+    if (!c) throw new Error("Desafio não encontrado");
+    if (c.challenger_id !== context.userId && c.target_id !== context.userId)
+      throw new Error("Sem permissão");
+    return c;
+  });
