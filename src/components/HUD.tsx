@@ -38,9 +38,9 @@ export function HUD({ profile }: { profile: ProfileRow }) {
     <header className="sticky top-0 z-20 backdrop-blur-md bg-purple-950/70 border-b-2 border-purple-400/30 shadow-lg">
       <div className="max-w-6xl mx-auto px-3 py-2 flex items-center gap-2 flex-wrap">
         <MobileDrawerButton onOpen={() => setDrawerOpen(true)} />
-        <Link to="/" className="font-extrabold text-white flex items-center gap-1.5 hover:scale-105 transition">
+        <Link to="/" className="hidden md:flex font-extrabold text-white items-center gap-1.5 hover:scale-105 transition">
           <span className="text-xl">🐲</span>
-          <span className="hidden sm:inline text-sm">ARENA PET</span>
+          <span className="text-sm">ARENA PET</span>
         </Link>
         <nav className="hidden md:flex items-center gap-1 ml-2">
           <NavLink to="/" label="Home" emoji="🏠" />
