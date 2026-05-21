@@ -422,31 +422,59 @@ function ShopPage() {
           </div>
         )}
 
-        {tab === "vip" && (
-          <div className="rounded-3xl bg-gradient-to-br from-yellow-400 via-amber-300 to-yellow-500 border-4 border-yellow-700 p-6 shadow-2xl text-yellow-950">
-            <div className="text-center">
-              <div className="text-6xl mb-2">👑</div>
-              <h2 className="text-3xl font-black">PASSE VIP</h2>
-              <p className="font-bold opacity-90">{VIP_DURATION_DAYS} dias de regalias</p>
+        {tab === "vip" && (() => {
+          const bpActive = isVip(profile.vip_until);
+          const today = new Date().toISOString().slice(0, 10);
+          const claimedToday = (profile as any).bp_last_claim_date === today;
+          const days = (profile as any).bp_days_claimed ?? 0;
+          const nextSilverIn = 7 - (days % 7 || 7);
+          const daysUntilMonthly = Math.max(0, 30 - days);
+          return (
+            <div className="space-y-3">
+              <PaymentTestModeBanner />
+              <div className="rounded-3xl bg-gradient-to-br from-yellow-400 via-amber-300 to-yellow-500 border-4 border-yellow-700 p-6 shadow-2xl text-yellow-950">
+                <div className="text-center">
+                  <div className="text-6xl mb-2">🎟️</div>
+                  <h2 className="text-3xl font-black">PASSE DE BATALHA</h2>
+                  <p className="font-bold opacity-90">R$ {BATTLE_PASS_PRICE_BRL.toFixed(2).replace(".", ",")} / mês</p>
+                </div>
+                <ul className="mt-4 space-y-1.5 text-sm font-bold">
+                  <li>📅 Login diário: +5 💎 e +1 🍖</li>
+                  <li>📦 A cada 7 dias: 1 Baú de Prata</li>
+                  <li>🏆 Ao completar 30 dias: 1 Baú de Ouro + 1 Lendário</li>
+                  <li>✨ +50% de recompensas em batalha (🪙 e XP)</li>
+                  <li>👥 +1 slot no time (4 pets)</li>
+                  <li>🎨 Skin exclusiva Arco-íris</li>
+                </ul>
+                <div className="mt-3 text-xs bg-yellow-100/60 rounded-lg p-2">
+                  <b>Total do mês fazendo login todo dia:</b> 150 💎 · 30 🍖 · 4 Baús Prata · 1 Ouro · 1 Lendário
+                </div>
+                {bpActive ? (
+                  <div className="mt-4 space-y-2">
+                    <div className="bg-yellow-950/10 rounded-lg p-3 text-sm">
+                      <div>✅ Ativo até <b>{new Date(profile.vip_until!).toLocaleDateString("pt-BR")}</b></div>
+                      <div>📅 Dia {days}/30 do ciclo · Próximo Baú de Prata em {nextSilverIn} dia(s) · Marco mensal em {daysUntilMonthly} dia(s)</div>
+                    </div>
+                    <button
+                      onClick={claimDailyBP}
+                      disabled={claimedToday}
+                      className="w-full py-3 rounded-xl bg-emerald-600 text-white font-extrabold text-lg hover:bg-emerald-700 transition shadow-lg disabled:bg-stone-400 disabled:cursor-not-allowed"
+                    >
+                      {claimedToday ? "✓ Já reivindicado hoje — volte amanhã!" : "🎁 Reivindicar recompensa diária"}
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={subscribeBattlePass}
+                    className="mt-5 w-full py-3 rounded-xl bg-yellow-950 text-yellow-300 font-extrabold text-lg hover:bg-yellow-900 transition shadow-lg"
+                  >
+                    💳 Assinar por R$ {BATTLE_PASS_PRICE_BRL.toFixed(2).replace(".", ",")} / mês
+                  </button>
+                )}
+              </div>
             </div>
-            <ul className="mt-4 space-y-2 text-sm font-bold">
-              <li>✨ +50% de recompensas em batalha (🪙 e XP)</li>
-              
-              <li>🎨 Skin exclusiva Arco-íris</li>
-              <li>👑 Badge dourado no nome</li>
-              <li>🥚 Desconto em ovos raros (em breve)</li>
-            </ul>
-            <button
-              onClick={buyVip}
-              className="mt-5 w-full py-3 rounded-xl bg-yellow-950 text-yellow-300 font-extrabold text-lg hover:bg-yellow-900 transition shadow-lg"
-            >
-            {isVip(profile.vip_until)
-                ? `Renovar por 💎 ${VIP_PRICE_GEMS} (atual: ${new Date(profile.vip_until!).toLocaleDateString("pt-BR")})`
-                : `Ativar por 💎 ${VIP_PRICE_GEMS}`}
-            </button>
-          </div>
-
-        )}
+          );
+        })()}
 
         {tab === "gems" && (
           <div className="space-y-3">
