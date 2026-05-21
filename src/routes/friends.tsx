@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast, Toaster } from "sonner";
 import { HUD } from "@/components/HUD";
@@ -14,6 +14,8 @@ import {
   listIncomingGifts,
   claimGift,
   sendChallenge,
+  listMessages,
+  sendMessage,
 } from "@/lib/friends.functions";
 
 export const Route = createFileRoute("/friends")({
@@ -33,6 +35,14 @@ type Friend = {
   hasGift: boolean;
 };
 
+type ChatMessage = {
+  id: string;
+  sender_id: string;
+  receiver_id: string;
+  content: string;
+  created_at: string;
+};
+
 function isOnline(lastSeen: string | null) {
   if (!lastSeen) return false;
   return Date.now() - new Date(lastSeen).getTime() < 2 * 60 * 1000;
@@ -49,6 +59,8 @@ function FriendsPage() {
   const challenge = useServerFn(sendChallenge);
   const incomingGifts = useServerFn(listIncomingGifts);
   const claim = useServerFn(claimGift);
+  const loadMsgs = useServerFn(listMessages);
+  const sendMsg = useServerFn(sendMessage);
 
   const [tab, setTab] = useState<"friends" | "requests" | "search" | "gifts">("friends");
   const [friends, setFriends] = useState<Friend[]>([]);
@@ -58,6 +70,21 @@ function FriendsPage() {
   const [results, setResults] = useState<{ id: string; username: string; level: number; last_seen_at: string | null }[]>([]);
   const [gifts, setGifts] = useState<{ id: string; sender_id: string; sender_name: string; gift_type: string; amount: number }[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeChat, setActiveChat] = useState<Friend | null>(null);
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+  const [chatText, setChatText] = useState("");
+  const [chatLoading, setChatLoading] = useState(false);
+  const chatScrollerRef = useRef<HTMLDivElement>(null);
+  const chatInputRef = useRef<HTMLInputElement>(null);
+
+  async function reloadChatMessages(friendId = activeChat?.id) {
+    if (!friendId) return;
+    const r = await loadMsgs({ data: { friendId } });
+    setChatMessages(r.messages as ChatMessage[]);
+    setTimeout(() => {
+      if (chatScrollerRef.current) chatScrollerRef.current.scrollTop = chatScrollerRef.current.scrollHeight;
+    }, 50);
+  }
 
   async function reload() {
     const r = await list();
@@ -94,6 +121,27 @@ function FriendsPage() {
       supabase.removeChannel(chan);
     };
   }, [profile?.id]);
+
+  useEffect(() => {
+    if (!profile || !activeChat) return;
+    const chan = supabase
+      .channel(`friend-chat-modal-${profile.id}-${activeChat.id}`)
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "friend_messages" },
+        (payload) => {
+          const m = payload.new as ChatMessage;
+          const betweenActiveFriend =
+            (m.sender_id === profile.id && m.receiver_id === activeChat.id) ||
+            (m.sender_id === activeChat.id && m.receiver_id === profile.id);
+          if (betweenActiveFriend) reloadChatMessages(activeChat.id);
+        }
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(chan);
+    };
+  }, [profile?.id, activeChat?.id]);
 
   async function doSearch() {
     if (q.trim().length < 2) return;
@@ -146,6 +194,35 @@ function FriendsPage() {
       const r = await claim({ data: { giftId } });
       toast.success(`Recebido: ${r.amount} ${r.type === "ration" ? "🍖" : "🪙"}`);
       reload();
+    } catch (e) {
+      toast.error((e as Error).message);
+    }
+  }
+
+  async function openChat(friend: Friend) {
+    setActiveChat(friend);
+    setChatMessages([]);
+    setChatText("");
+    setChatLoading(true);
+    try {
+      await reloadChatMessages(friend.id);
+      setTimeout(() => chatInputRef.current?.focus(), 150);
+      reload();
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setChatLoading(false);
+    }
+  }
+
+  async function sendChatMessage() {
+    if (!activeChat) return;
+    const v = chatText.trim();
+    if (!v) return;
+    setChatText("");
+    try {
+      await sendMsg({ data: { friendId: activeChat.id, content: v } });
+      await reloadChatMessages(activeChat.id);
     } catch (e) {
       toast.error((e as Error).message);
     }
@@ -204,7 +281,7 @@ function FriendsPage() {
                     )}
                   </button>
                   <button
-                    onClick={() => navigate({ to: "/friends/$friendId", params: { friendId: f.id } })}
+                    onClick={() => openChat(f)}
                     className="p-2 rounded-lg bg-purple-500 hover:bg-purple-600 text-white text-sm font-bold"
                     title="Mensagem"
                   >
@@ -312,6 +389,47 @@ function FriendsPage() {
           </div>
         )}
       </div>
+
+      {activeChat && (
+        <div className="fixed inset-0 z-50 bg-black/70 flex items-end sm:items-center justify-center p-3">
+          <div className="w-full max-w-md h-[78vh] bg-purple-950 border-2 border-purple-400/60 rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+            <div className="p-3 border-b border-white/10 flex items-center gap-2">
+              <span className="text-xl">💬</span>
+              <div className="flex-1 min-w-0">
+                <div className="text-white font-extrabold truncate">Chat com {activeChat.username}</div>
+                <div className="text-xs text-white/60">{isOnline(activeChat.last_seen_at) ? "🟢 Online" : "⚫ Offline"}</div>
+              </div>
+              <button onClick={() => setActiveChat(null)} className="px-3 py-1.5 rounded-lg bg-white/10 text-white font-bold">✕</button>
+            </div>
+            <div ref={chatScrollerRef} className="flex-1 overflow-y-auto p-3 space-y-2">
+              {chatLoading && <div className="text-white/60 text-sm">Carregando mensagens…</div>}
+              {!chatLoading && chatMessages.length === 0 && <div className="text-white/50 text-sm">Diga oi!</div>}
+              {chatMessages.map((m) => {
+                const mine = m.sender_id === profile.id;
+                return (
+                  <div key={m.id} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
+                    <div className={`max-w-[78%] px-3 py-2 rounded-2xl text-sm ${mine ? "bg-purple-500 text-white rounded-br-sm" : "bg-white/15 text-white rounded-bl-sm"}`}>
+                      {m.content}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="p-3 border-t border-white/10 flex gap-2 bg-purple-950">
+              <input
+                ref={chatInputRef}
+                value={chatText}
+                onChange={(e) => setChatText(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && sendChatMessage()}
+                maxLength={500}
+                placeholder="Digite uma mensagem…"
+                className="flex-1 min-w-0 px-3 py-2 rounded-lg bg-white/10 text-white placeholder:text-white/40 border border-white/20 text-sm"
+              />
+              <button onClick={sendChatMessage} className="px-3 py-2 rounded-lg bg-purple-500 text-white font-extrabold text-sm">Enviar</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
