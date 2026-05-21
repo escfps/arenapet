@@ -24,6 +24,7 @@ export type ProfileRow = {
 export function HUD({ profile }: { profile: ProfileRow }) {
   const navigate = useNavigate();
   const vip = isVip(profile.vip_until);
+  const tier = getTier(profile.arena_points ?? 0);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   async function logout() {
