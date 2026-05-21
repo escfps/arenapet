@@ -107,7 +107,9 @@ function ShopPage() {
     const pity = CHEST_PITY[tier];
     const pityCol = PITY_COLUMN[tier];
     const currentPity = pityCol ? ((profile as Record<string, unknown>)[pityCol] as number ?? 0) : 0;
-    const forceRarity = pity && currentPity + 1 >= pity.limit ? pity.rarity : undefined;
+    const forceRarity = pity && currentPity + 1 >= pity.limit
+      ? pity.rarities[Math.floor(Math.random() * pity.rarities.length)]
+      : undefined;
 
     const reward = rollChest(tier, forceRarity);
 
@@ -116,10 +118,10 @@ function ShopPage() {
       gems: profile.gems - (useGems ? (c.priceGems ?? 0) : 0) + reward.gems,
     };
 
-    // Atualiza contador de pity: zera se pegou a raridade garantida, senão +1
+    // Atualiza contador de pity: zera se pegou alguma das raridades garantidas, senão +1
     if (pity && pityCol) {
       const gotRarity = reward.petSpecies ? SPECIES[reward.petSpecies].rarity : null;
-      patchObj[pityCol] = gotRarity === pity.rarity ? 0 : currentPity + 1;
+      patchObj[pityCol] = gotRarity && pity.rarities.includes(gotRarity) ? 0 : currentPity + 1;
     }
 
     await patch(patchObj);
