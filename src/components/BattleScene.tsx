@@ -1003,6 +1003,11 @@ function SideColumn({
               />
               <div className="flex-1 min-w-0">
                 <div className="font-bold text-[10px] sm:text-xs text-white truncate leading-tight">{m.name}</div>
+                <div className="flex items-center gap-0.5 leading-none -mt-0.5" title={`${m.rank ?? 1} estrelas`}>
+                  {Array.from({ length: m.rank ?? 1 }).map((_, i) => (
+                    <span key={i} className="text-[8px] sm:text-[9px] text-yellow-300 drop-shadow-[0_0_2px_rgba(0,0,0,0.8)]">★</span>
+                  ))}
+                </div>
                 <div className="h-1.5 sm:h-2 rounded-full bg-black/40 overflow-hidden mt-0.5 sm:mt-1">
                   <div
                     className={`h-full bg-gradient-to-r ${hpColor} transition-all duration-500`}
