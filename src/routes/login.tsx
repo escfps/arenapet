@@ -1,8 +1,9 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { toast } from "sonner";
+import { GEM_PACKS } from "@/lib/game-data";
 
 export const Route = createFileRoute("/login")({
   component: LoginPage,
@@ -229,6 +230,48 @@ function LoginPage() {
             </p>
           </div>
         </div>
+
+        {/* Public pricing — visible without login (Paddle readiness) */}
+        <section className="relative mt-8 rounded-3xl bg-[oklch(0.18_0.06_290)]/80 backdrop-blur-xl border border-white/10 p-5 text-white shadow-2xl">
+          <h2 className="text-lg font-black text-center mb-1">💎 Pacotes de Gemas</h2>
+          <p className="text-center text-white/60 text-xs mb-4">
+            Preços públicos — pagamentos processados por Paddle.com (Merchant of Record).
+          </p>
+          <ul className="grid grid-cols-2 gap-2">
+            {GEM_PACKS.map((p) => (
+              <li
+                key={p.id}
+                className="rounded-xl bg-gradient-to-br from-purple-600/70 to-fuchsia-700/70 border border-purple-300/40 p-3"
+              >
+                <div className="text-base font-extrabold">
+                  {p.gems.toLocaleString("pt-BR")} gemas
+                  {p.bonus > 0 && (
+                    <span className="text-yellow-300 text-xs font-bold"> +{p.bonus} 🎁</span>
+                  )}
+                </div>
+                <div className="text-emerald-300 font-black text-sm mt-1">
+                  R$ {p.priceBRL.toFixed(2).replace(".", ",")}
+                </div>
+              </li>
+            ))}
+          </ul>
+          <p className="text-center text-white/50 text-[11px] mt-4">
+            Assinatura VIP também disponível dentro do app após login.
+          </p>
+        </section>
+
+        {/* Public legal footer — required for Paddle readiness */}
+        <footer className="relative mt-6 text-center text-white/60 text-xs">
+          <nav className="flex flex-wrap justify-center gap-x-4 gap-y-1">
+            <Link to="/terms" className="underline hover:text-white">Termos de Uso</Link>
+            <Link to="/privacy" className="underline hover:text-white">Política de Privacidade</Link>
+            <Link to="/refunds" className="underline hover:text-white">Política de Reembolso</Link>
+          </nav>
+          <p className="mt-2 text-white/40 text-[11px]">
+            © {new Date().getFullYear()} ARENA PET — Operado por Bruno Henrique Moura Bernardo.
+            Pagamentos por Paddle.com.
+          </p>
+        </footer>
       </div>
     </main>
   );
