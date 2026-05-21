@@ -59,6 +59,9 @@ function AdminPage() {
   const addPetFn = useServerFn(adminAddPet);
   const delPetFn = useServerFn(adminDeletePet);
   const updateProfileFn = useServerFn(adminUpdateProfile);
+  const createCodeFn = useServerFn(adminCreateRedeemCode);
+  const listCodesFn = useServerFn(adminListRedeemCodes);
+  const delCodeFn = useServerFn(adminDeleteRedeemCode);
 
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<ProfileRow[]>([]);
@@ -71,6 +74,23 @@ function AdminPage() {
   const [newSpecies, setNewSpecies] = useState("flarepup");
   const [newRank, setNewRank] = useState(1);
   const [busy, setBusy] = useState(false);
+
+  // Redeem codes
+  type CodeRow = {
+    id: string;
+    code: string;
+    reward_type: string;
+    reward_data: Record<string, unknown>;
+    created_at: string;
+    used_at: string | null;
+    used_by_name: string | null;
+  };
+  const [codes, setCodes] = useState<CodeRow[]>([]);
+  const [codeType, setCodeType] = useState<"pet" | "chest" | "gems" | "coins">("gems");
+  const [codeSpecies, setCodeSpecies] = useState("flarepup");
+  const [codeRank, setCodeRank] = useState(1);
+  const [codeChest, setCodeChest] = useState<"wood" | "silver" | "gold" | "legendary">("gold");
+  const [codeAmount, setCodeAmount] = useState(100);
 
   useEffect(() => {
     if (loading) return;
