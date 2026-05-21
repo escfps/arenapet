@@ -718,6 +718,14 @@ function PatioPage() {
       {showTutorial && userId && (
         <TutorialOverlay userId={userId} onClose={() => setShowTutorial(false)} />
       )}
+
+      <footer className="mt-12 pb-8 text-center text-xs text-white/60 space-x-3">
+        <a href="/terms" className="hover:text-white underline">Termos</a>
+        <span>·</span>
+        <a href="/privacy" className="hover:text-white underline">Privacidade</a>
+        <span>·</span>
+        <a href="/refunds" className="hover:text-white underline">Reembolsos</a>
+      </footer>
     </main>
   );
 }
