@@ -41,10 +41,10 @@ const STEPS: Step[] = [
   },
   {
     emoji: "🔨",
-    title: "Forja — upa suas cartas",
-    body: "Na FORJA você evolui seus pets de rank. Quanto maior o rank, mais fortes ficam HP, ATK, DEF e SPD. Custa moedas e materiais.",
+    title: "Elevar — upa suas cartas",
+    body: "Em ELEVAR você evolui seus pets de rank. Quanto maior o rank, mais fortes ficam HP, ATK, DEF e SPD. Custa moedas e materiais.",
     goTo: "/forge",
-    goLabel: "Ver Forja",
+    goLabel: "Ver Elevar",
   },
   {
     emoji: "🛒",
