@@ -88,7 +88,7 @@ export function MobileNav({ open, onClose }: { open: boolean; onClose: () => voi
 
       {/* Drawer (mobile only) */}
       {open && (
-        <div className="md:hidden fixed inset-0 z-40">
+        <div className="fixed inset-0 z-40">
           <div
             className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-in fade-in"
             onClick={onClose}
