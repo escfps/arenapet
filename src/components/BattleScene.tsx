@@ -116,6 +116,18 @@ export function BattleScene({
   const [banner, setBanner] = useState<EffectBanner>(null);
   const [statuses, setStatuses] = useState<StatusMap>(new Map());
   const [turnFlash, setTurnFlash] = useState<{ id: number; turn: number } | null>(null);
+  const [actionFeed, setActionFeed] = useState<{
+    id: number;
+    side: "a" | "b";
+    image: string;
+    actorName: string;
+    skillEmoji: string;
+    skillLabel: string;
+    damage: number;
+    crit: boolean;
+    healing: boolean;
+  }[]>([]);
+
 
   // Turno atual derivado da última entrada exibida
   const currentTurn = step > 0 && step <= log.length ? log[step - 1].turn : 1;
@@ -127,6 +139,7 @@ export function BattleScene({
     setBanner(null);
     setStatuses(new Map());
     setTurnFlash(null);
+    setActionFeed([]);
   }, [initialHp]);
 
   // Detecta troca de turno e mostra flash "TURNO X"
@@ -140,6 +153,42 @@ export function BattleScene({
       return () => clearTimeout(t);
     }
   }, [step, log]);
+
+  // Feed de ações estilo Naruto Online (foto + skill + dano)
+  useEffect(() => {
+    if (step <= 0 || step > log.length) return;
+    const entry = log[step - 1];
+    if (!entry.actorName || entry.actorName === "—") return;
+    const actorSide: "a" | "b" = entry.actor === "team_a" ? "a" : "b";
+    const actorMon = (actorSide === "a" ? teamA : teamB).find((m) => m.name === entry.actorName);
+    if (!actorMon) return;
+    const sp = SPECIES[actorMon.species];
+    if (!sp) return;
+    const skill = getSkill(actorMon.species);
+    const msg = entry.message;
+    const healing = entry.damage < 0 || msg.includes("curou") || msg.includes("Curou");
+    const usesSkill = msg.includes(skill.name) || msg.includes(skill.emoji);
+    const isBasic = !usesSkill && (msg.includes("atacou") || msg.includes("golpeou") || entry.damage > 0);
+    const skillLabel = usesSkill ? skill.name : isBasic ? "Ataque básico" : healing ? "Cura" : skill.name;
+    const skillEmoji = usesSkill ? skill.emoji : isBasic ? "👊" : healing ? "💚" : skill.emoji;
+    const id = Date.now() + Math.random();
+    setActionFeed((prev) => [...prev.slice(-2), {
+      id,
+      side: actorSide,
+      image: sp.image,
+      actorName: entry.actorName,
+      skillEmoji,
+      skillLabel,
+      damage: Math.abs(entry.damage),
+      crit: entry.crit,
+      healing,
+    }]);
+    const t = setTimeout(() => {
+      setActionFeed((prev) => prev.filter((a) => a.id !== id));
+    }, 3500);
+    return () => clearTimeout(t);
+  }, [step, log, teamA, teamB]);
+
 
   useEffect(() => {
     if (step <= 0 || step > log.length) return;
@@ -414,9 +463,44 @@ export function BattleScene({
           </div>
         </div>
       )}
+
+      {/* Feed de ações estilo Naruto Online (canto inferior esquerdo) */}
+      {actionFeed.length > 0 && (
+        <div className="pointer-events-none absolute bottom-2 left-2 z-30 flex flex-col gap-1 max-w-[60%]">
+          {actionFeed.map((a) => (
+            <div
+              key={a.id}
+              className={`flex items-center gap-2 pl-1 pr-3 py-1 rounded-full bg-black/75 backdrop-blur-sm border ${
+                a.side === "a" ? "border-blue-400/60" : "border-red-400/60"
+              } shadow-xl animate-fade-in`}
+              style={{ animation: "fadeIn 0.2s ease-out" }}
+            >
+              <div className={`w-8 h-8 rounded-full overflow-hidden border-2 ${
+                a.side === "a" ? "border-blue-300" : "border-red-300"
+              } bg-gradient-to-br from-slate-700 to-slate-900 shrink-0 flex items-center justify-center`}>
+                <img src={a.image} alt={a.actorName} className="h-full w-auto object-contain" />
+              </div>
+              <div className="flex flex-col min-w-0 leading-tight">
+                <span className="text-white text-[10px] font-extrabold truncate drop-shadow">{a.actorName}</span>
+                <span className="text-white/90 text-[10px] font-bold truncate">
+                  {a.skillEmoji} {a.skillLabel}
+                </span>
+              </div>
+              {a.damage > 0 && (
+                <span className={`ml-auto text-sm font-black drop-shadow ${
+                  a.healing ? "text-emerald-300" : a.crit ? "text-yellow-300" : "text-orange-200"
+                }`}>
+                  {a.healing ? "+" : "-"}{a.damage}{a.crit ? "!" : ""}
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
+
 
 // === Linha dos 3 pets no cenário (apenas sprite) ===
 function ArenaLineup({

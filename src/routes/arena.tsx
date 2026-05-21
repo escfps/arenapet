@@ -813,19 +813,28 @@ function ArenaPage() {
 
             {battleLog && (
               <div className="rounded-2xl bg-black/60 backdrop-blur-md border border-white/30 p-4 text-white">
-                <h3 className="font-extrabold mb-2 flex items-center gap-2">📜 Log da batalha</h3>
-                <div className="space-y-1 text-sm max-h-72 overflow-y-auto">
-                  {shownLog.map((e, idx) => (
-                    <div
-                      key={idx}
-                      className={`px-3 py-1.5 rounded ${
-                        e.actor === "team_a" ? "bg-blue-500/30" : "bg-red-500/30"
-                      } ${e.crit ? "border-l-4 border-yellow-400" : ""}`}
-                    >
-                      {e.message}
+                {shownLog.length === battleLog.length ? (
+                  <details className="text-sm">
+                    <summary className="font-extrabold cursor-pointer flex items-center gap-2 select-none">📜 Ver log completo da batalha</summary>
+                    <div className="space-y-1 max-h-72 overflow-y-auto mt-2">
+                      {shownLog.map((e, idx) => (
+                        <div
+                          key={idx}
+                          className={`px-3 py-1.5 rounded ${
+                            e.actor === "team_a" ? "bg-blue-500/30" : "bg-red-500/30"
+                          } ${e.crit ? "border-l-4 border-yellow-400" : ""}`}
+                        >
+                          {e.message}
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  </details>
+                ) : (
+                  <div className="text-center text-xs font-bold text-white/70 py-1">
+                    ⚔️ Batalha em andamento... acompanhe as ações na arena acima.
+                  </div>
+                )}
+
                 {shownLog.length === battleLog.length && rewards && opponent && (
                   <>
                     <BattleStats teamA={myTeam} teamB={opponent.team} log={battleLog} />
