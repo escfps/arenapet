@@ -254,6 +254,10 @@ function ShopPage() {
               {Object.values(CHESTS).map((c) => {
                 const rarityEntries = Object.entries(c.petRarityWeights) as [Rarity, number][];
                 const totalW = rarityEntries.reduce((a, [, w]) => a + w, 0);
+                const pity = CHEST_PITY[c.id];
+                const pityCol = PITY_COLUMN[c.id];
+                const currentPity = pityCol ? ((profile as Record<string, unknown>)[pityCol] as number ?? 0) : 0;
+                const pityLeft = pity ? Math.max(0, pity.limit - currentPity) : 0;
                 return (
                   <div key={c.id} className="rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 p-4 text-white">
                     <div className="text-center">
@@ -261,6 +265,15 @@ function ShopPage() {
                       <h3 className="font-extrabold text-lg">{c.name}</h3>
                       <p className="text-xs opacity-80 mb-3">{c.description}</p>
                     </div>
+
+                    {pity && (
+                      <div className={`text-center text-xs font-extrabold mb-2 px-2 py-1.5 rounded-lg ${pityLeft <= 3 ? "bg-orange-500/30 text-orange-200 animate-pulse" : "bg-black/30 text-amber-200"}`}>
+                        {pityLeft === 1
+                          ? `🔥 Próximo baú garante ${RARITY_INFO[pity.rarity].emoji} ${RARITY_INFO[pity.rarity].name}!`
+                          : `${pityLeft <= 3 ? "🔥" : "🎯"} Faltam ${pityLeft} pra garantir ${RARITY_INFO[pity.rarity].emoji} ${RARITY_INFO[pity.rarity].name}`}
+                      </div>
+                    )}
+
 
                     <div className="bg-black/30 rounded-xl p-3 text-[11px] space-y-1 mb-3">
                       <div className="font-bold text-yellow-300 mb-1">📊 Drops garantidos:</div>
