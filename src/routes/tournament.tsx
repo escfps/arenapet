@@ -322,6 +322,17 @@ function TournamentPage() {
             <p className="text-sm opacity-80">Torneios de 32 a cada 10 minutos • MD1 ao vivo</p>
           </div>
 
+          {/* Schedule info */}
+          <div className="rounded-2xl bg-gradient-to-r from-purple-500/25 to-indigo-500/25 border border-purple-300/40 px-4 py-3 text-white text-sm">
+            <div className="font-extrabold text-yellow-200 mb-1">🕒 Quando acontece a Copa?</div>
+            <ul className="space-y-1 opacity-95 text-xs sm:text-sm">
+              <li>• <b>Toda hora cheia e a cada 10 minutos</b> (ex.: 14:00, 14:10, 14:20…) — 24h por dia, todo dia</li>
+              <li>• <b>Inscrições abertas por 1 minuto</b> a partir do horário do slot</li>
+              <li>• Assim que fecha, a 1ª rodada começa <b>na hora</b></li>
+              <li>• Cada rodada dura cerca de <b>1 minuto</b> — a copa inteira termina em poucos minutos</li>
+            </ul>
+          </div>
+
           {/* Trophy banner */}
           {lastT?.champion_id && (
             <div className="rounded-2xl bg-gradient-to-r from-yellow-500/35 via-amber-400/40 to-yellow-500/35 border-2 border-yellow-300 px-4 py-3 text-center text-white shadow-lg">
