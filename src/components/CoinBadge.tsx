@@ -28,7 +28,7 @@ export function GemBadge({ amount }: { amount: number }) {
 
 export function VipBadge() {
   return (
-    <span className="px-2 py-0.5 rounded-full bg-gradient-to-r from-yellow-400 via-amber-300 to-yellow-500 text-yellow-950 text-[10px] font-extrabold border-2 border-yellow-600 shadow-md">
+    <span className="px-1.5 py-0 rounded bg-amber-500/80 text-amber-950 text-[9px] font-extrabold border border-amber-700">
       👑 VIP
     </span>
   );
