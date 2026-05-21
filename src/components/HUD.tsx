@@ -3,7 +3,7 @@ import { useState } from "react";
 import { CoinBadge, GemBadge, VipBadge } from "./CoinBadge";
 import { SoundControl } from "./SoundControl";
 import { MobileNav, MobileDrawerButton } from "./MobileNav";
-import { isVip, getTier } from "@/lib/game-data";
+import { isVip } from "@/lib/game-data";
 import { supabase } from "@/integrations/supabase/client";
 
 export type ProfileRow = {
@@ -24,7 +24,6 @@ export type ProfileRow = {
 export function HUD({ profile }: { profile: ProfileRow }) {
   const navigate = useNavigate();
   const vip = isVip(profile.vip_until);
-  const tier = getTier(profile.arena_points ?? 0);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   async function logout() {
@@ -56,12 +55,11 @@ export function HUD({ profile }: { profile: ProfileRow }) {
         </nav>
         <div className="flex items-center gap-1.5 ml-auto flex-wrap">
           <Link to="/profile" className="text-right text-white hover:scale-105 transition">
-            <div className="text-[10px] font-bold opacity-80 flex items-center gap-1 justify-end hover:underline">
+            <div className="text-sm font-extrabold flex items-center gap-1.5 justify-end hover:underline">
               👤 {profile.username} {vip && <VipBadge />}
             </div>
             <div className="text-[10px] opacity-80 flex items-center gap-1 justify-end">
-              <span className={`px-1.5 py-0.5 rounded font-extrabold ${tier.color}`}>{tier.emoji} {tier.short}</span>
-              <span>• {profile.wins}V/{profile.losses}D</span>
+              {profile.wins}V / {profile.losses}D
             </div>
           </Link>
           <CoinBadge amount={profile.coins} />
