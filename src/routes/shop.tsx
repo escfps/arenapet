@@ -13,7 +13,16 @@ import type { MonsterRow } from "@/components/MonsterCard";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
 import { toast, Toaster } from "sonner";
+import { initializePaddle, getPaddlePriceId, getPaddleEnvironment } from "@/lib/paddle";
+import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import arenaBg from "@/assets/arena-bg.jpg";
+
+const PADDLE_PRICE_IDS: Record<string, string> = {
+  starter: "gems_starter_price",
+  pro: "gems_pro_price",
+  epic: "gems_epic_price",
+  legend: "gems_legend_price",
+};
 
 const WHATSAPP_NUMBER = "5554999999872";
 function whatsappUrl(message: string) {
@@ -156,12 +165,29 @@ function ShopPage() {
   }
 
   async function buyGems(pack: typeof GEM_PACKS[number]) {
-    // Placeholder — Stripe integration coming
-    toast.info(`Em breve! Pagamento real (R$ ${pack.priceBRL.toFixed(2)}) vai ser via Stripe.`);
-    // For now, give the gems for free as a demo (REMOVE later)
-    if (!profile) return;
-    await patch({ gems: profile.gems + pack.gems + pack.bonus });
-    toast.success(`+${pack.gems + pack.bonus} 💎 (modo demo)`);
+    if (!profile || !userId) return;
+    const priceId = PADDLE_PRICE_IDS[pack.id];
+    if (!priceId) { toast.error("Pacote indisponível"); return; }
+    try {
+      toast.loading("Abrindo pagamento...", { id: "pay" });
+      await initializePaddle();
+      const paddlePriceId = await getPaddlePriceId(priceId);
+      toast.dismiss("pay");
+      window.Paddle.Checkout.open({
+        items: [{ priceId: paddlePriceId, quantity: 1 }],
+        customData: { userId },
+        settings: {
+          displayMode: "overlay",
+          successUrl: `${window.location.origin}/shop?paid=1`,
+          allowLogout: false,
+          variant: "one-page",
+          locale: "pt-BR",
+        },
+      });
+    } catch (e: any) {
+      toast.dismiss("pay");
+      toast.error(`Erro ao abrir pagamento: ${e?.message ?? e}`);
+    }
   }
 
   async function refillEnergy(petId: string) {
@@ -372,20 +398,27 @@ function ShopPage() {
 
         {tab === "gems" && (
           <div className="space-y-3">
-            <p className="text-white/80 text-xs text-center">💬 Pagamento manual via WhatsApp — após o pagamento confirmado, as gemas são creditadas na sua conta.</p>
+            <PaymentTestModeBanner />
+            <p className="text-white/80 text-xs text-center">💳 Pague no cartão — gemas creditadas automaticamente em segundos.</p>
             <div className="grid sm:grid-cols-2 gap-3">
               {GEM_PACKS.map((p) => (
                 <div key={p.id} className="rounded-2xl bg-gradient-to-br from-purple-600 to-fuchsia-700 border-2 border-purple-300 p-4 text-white">
                   <div className="text-3xl">💎</div>
                   <div className="text-xl font-extrabold">{p.gems.toLocaleString("pt-BR")} gemas</div>
                   {p.bonus > 0 && <div className="text-xs text-yellow-300 font-bold">+ {p.bonus} bônus 🎁</div>}
+                  <button
+                    onClick={() => buyGems(p)}
+                    className="mt-3 w-full flex items-center justify-center gap-2 py-2 rounded-lg bg-emerald-500 text-white font-extrabold hover:bg-emerald-600 transition"
+                  >
+                    💳 R$ {p.priceBRL.toFixed(2).replace(".", ",")}
+                  </button>
                   <a
                     href={whatsappUrl(`Olá! Quero comprar o pacote de ${p.gems.toLocaleString("pt-BR")}${p.bonus > 0 ? ` (+${p.bonus} bônus)` : ""} 💎 por R$ ${p.priceBRL.toFixed(2).replace(".", ",")} no Arena Pet. Meu nick: ${profile.username}`)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-3 w-full flex items-center justify-center gap-2 py-2 rounded-lg bg-green-500 text-white font-extrabold hover:bg-green-600 transition"
+                    className="mt-2 w-full flex items-center justify-center gap-2 py-1.5 rounded-lg bg-green-600/80 text-white text-xs font-bold hover:bg-green-700 transition"
                   >
-                    💬 R$ {p.priceBRL.toFixed(2).replace(".", ",")}
+                    💬 Pagar via WhatsApp
                   </a>
                 </div>
               ))}
