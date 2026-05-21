@@ -27,7 +27,7 @@ export function MobileDrawerButton({ onOpen }: { onOpen: () => void }) {
     <button
       onClick={onOpen}
       aria-label="Abrir menu"
-      className="md:hidden p-2 rounded-lg text-white hover:bg-white/15 transition"
+      className="p-2 rounded-lg text-white hover:bg-white/15 transition"
     >
       <Menu className="w-5 h-5" />
     </button>
@@ -60,7 +60,7 @@ export function MobileNav({ open, onClose }: { open: boolean; onClose: () => voi
     <>
       {/* Bottom Navigation Bar (mobile only) */}
       <nav
-        className="md:hidden fixed bottom-0 inset-x-0 z-30 bg-purple-950/95 backdrop-blur-md border-t-2 border-purple-400/30 shadow-[0_-4px_20px_rgba(0,0,0,0.3)]"
+        className="fixed bottom-0 inset-x-0 z-30 bg-purple-950/95 backdrop-blur-md border-t-2 border-purple-400/30 shadow-[0_-4px_20px_rgba(0,0,0,0.3)]"
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
         <ul className="flex items-stretch justify-around">
@@ -88,7 +88,7 @@ export function MobileNav({ open, onClose }: { open: boolean; onClose: () => voi
 
       {/* Drawer (mobile only) */}
       {open && (
-        <div className="md:hidden fixed inset-0 z-40">
+        <div className="fixed inset-0 z-40">
           <div
             className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-in fade-in"
             onClick={onClose}
