@@ -527,16 +527,26 @@ function PatioPage() {
                           )}
                         </div>
                         {count === 1 ? (
-                          <button
-                            onClick={() => toggleTeam(g.rep)}
-                            className={`w-full text-[11px] font-bold rounded-lg py-1.5 transition ${
-                              g.rep.in_team
-                                ? "bg-yellow-400 text-yellow-950 hover:bg-yellow-300"
-                                : "bg-white/15 text-white hover:bg-white/25"
-                            }`}
-                          >
-                            {g.rep.in_team ? "✓ No time" : "+ Time"}
-                          </button>
+                          <div className="flex gap-1">
+                            <button
+                              onClick={() => toggleTeam(g.rep)}
+                              className={`flex-1 text-[11px] font-bold rounded-lg py-1.5 transition ${
+                                g.rep.in_team
+                                  ? "bg-yellow-400 text-yellow-950 hover:bg-yellow-300"
+                                  : "bg-white/15 text-white hover:bg-white/25"
+                              }`}
+                            >
+                              {g.rep.in_team ? "✓ No time" : "+ Time"}
+                            </button>
+                            <button
+                              onClick={() => navigate({ to: "/monster/$id", params: { id: g.rep.id }, search: { tab: "train" } })}
+                              className="flex-1 text-[11px] font-black rounded-lg py-1.5 transition bg-gradient-to-b from-emerald-400 to-emerald-600 hover:from-emerald-300 hover:to-emerald-500 text-white border border-emerald-300 shadow-lg"
+                              title="Treinar este pet"
+                            >
+                              💪 Treinar
+                            </button>
+                          </div>
+
                         ) : (
                           <button
                             onClick={() => setGroupModal(g.species)}
