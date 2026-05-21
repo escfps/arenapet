@@ -824,8 +824,9 @@ function ArenaPage() {
                       )}
 
                       {(() => {
-                        const sideA = new Map<string, { name: string; species: string; skin: string; dmg: number; heal: number; taken: number; kills: number }>();
-                        const sideB = new Map<string, typeof sideA extends Map<string, infer V> ? V : never>();
+                        type Stat = { name: string; species: string; skin: string; dmg: number; heal: number; taken: number; kills: number };
+                        const sideA = new Map<string, Stat>();
+                        const sideB = new Map<string, Stat>();
                         for (const m of myTeam) sideA.set(m.name, { name: m.name, species: m.species, skin: m.skin, dmg: 0, heal: 0, taken: 0, kills: 0 });
                         for (const m of opponent.team) sideB.set(m.name, { name: m.name, species: m.species, skin: m.skin, dmg: 0, heal: 0, taken: 0, kills: 0 });
                         for (const e of battleLog) {
@@ -838,33 +839,47 @@ function ArenaPage() {
                             const s = actSide.get(e.actorName); if (s) s.dmg += e.damage;
                             const t = tgtSide.get(e.targetName); if (t) t.taken += e.damage;
                           } else if (e.damage < 0) {
-                            const heal = -e.damage;
-                            const s = actSide.get(e.actorName); if (s) s.heal += heal;
+                            const s = actSide.get(e.actorName); if (s) s.heal += -e.damage;
                           }
                         }
-                        const pickMvp = (m: typeof sideA) => Array.from(m.values()).sort((x, y) => (y.dmg + y.heal) - (x.dmg + x.heal))[0];
-                        const mvpA = pickMvp(sideA);
-                        const mvpB = pickMvp(sideB);
-                        const Card = ({ s, label, accent }: { s: typeof mvpA; label: string; accent: string }) => {
-                          if (!s) return null;
+                        const mvpKey = (m: Map<string, Stat>) => {
+                          let best: string | null = null; let score = -1;
+                          for (const [k, s] of m) { const sc = s.dmg + s.heal; if (sc > score) { score = sc; best = k; } }
+                          return best;
+                        };
+                        const mvpA = mvpKey(sideA);
+                        const mvpB = mvpKey(sideB);
+                        const Row = ({ s, isMvp }: { s: Stat; isMvp: boolean }) => {
                           const sp = SPECIES[s.species];
                           return (
-                            <div className={`flex items-center gap-2 p-2 rounded-lg bg-black/40 border ${accent} min-w-0`}>
-                              {sp && <img src={sp.image} alt="" className="h-9 w-9 object-contain shrink-0" style={{ filter: skinFilter(s.skin) }} />}
+                            <div className={`flex items-center gap-1.5 p-1.5 rounded-md bg-black/40 border min-w-0 ${isMvp ? "border-yellow-300/80" : "border-white/15"}`}>
+                              {sp && <img src={sp.image} alt="" className="h-7 w-7 object-contain shrink-0" style={{ filter: skinFilter(s.skin) }} />}
                               <div className="flex-1 min-w-0 text-left">
-                                <div className="text-[10px] font-extrabold text-yellow-300 leading-none">⭐ MVP • {label}</div>
-                                <div className="text-xs font-bold text-white truncate">{s.name}</div>
-                                <div className="text-[10px] text-white/90 font-medium leading-tight">
-                                  ⚔️ {Math.round(s.dmg)} • 💚 {Math.round(s.heal)} • 💀 {Math.round(s.kills)}
+                                <div className="text-[11px] font-bold text-white truncate flex items-center gap-1">
+                                  {s.name}
+                                  {isMvp && <span className="text-[8px] bg-yellow-400 text-yellow-950 px-1 rounded font-extrabold">MVP</span>}
+                                </div>
+                                <div className="text-[9px] text-white/90 font-medium leading-tight">
+                                  ⚔️{Math.round(s.dmg)} 💚{Math.round(s.heal)} 🩸{Math.round(s.taken)} 💀{s.kills}
                                 </div>
                               </div>
                             </div>
                           );
                         };
+                        const SidePanel = ({ title, stats, mvp, accent }: { title: string; stats: Map<string, Stat>; mvp: string | null; accent: string }) => (
+                          <div className={`rounded-xl bg-black/30 border ${accent} p-2`}>
+                            <div className="text-[10px] font-extrabold text-yellow-200 uppercase tracking-wider mb-1 text-left">{title}</div>
+                            <div className="space-y-1">
+                              {Array.from(stats.entries()).map(([k, s]) => (
+                                <Row key={k} s={s} isMvp={k === mvp} />
+                              ))}
+                            </div>
+                          </div>
+                        );
                         return (
                           <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2 max-w-md mx-auto">
-                            <Card s={mvpA} label="Seu time" accent="border-blue-300/60" />
-                            <Card s={mvpB} label="Inimigo" accent="border-red-300/60" />
+                            <SidePanel title="Seu time" stats={sideA} mvp={mvpA} accent="border-blue-300/50" />
+                            <SidePanel title="Inimigo" stats={sideB} mvp={mvpB} accent="border-red-300/50" />
                           </div>
                         );
                       })()}
