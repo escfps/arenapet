@@ -702,9 +702,10 @@ export const SKINS: Record<string, Skin> = {
   rainbow: { id: "rainbow", name: "Arco-íris VIP", description: "Skin exclusiva VIP", priceGems: 0, hueRotate: 45, saturate: 1.8, vipOnly: true },
 };
 
-// ===== VIP / Gem packs =====
-export const VIP_PRICE_GEMS = 50;
-export const VIP_DURATION_DAYS = 30;
+// ===== Battle Pass / Gem packs =====
+export const BATTLE_PASS_PRICE_BRL = 14.90;
+export const BATTLE_PASS_DAILY_GEMS = 5;
+export const BATTLE_PASS_DAILY_RATIONS = 1;
 
 export const GEM_PACKS = [
   { id: "starter", gems: 50, priceBRL: 9.90, bonus: 0 },
