@@ -36,7 +36,7 @@ export function HUD({ profile }: { profile: ProfileRow }) {
   return (
     <>
     <header className="sticky top-0 z-20 backdrop-blur-md bg-purple-950/70 border-b-2 border-purple-400/30 shadow-lg">
-      <div className="max-w-6xl mx-auto px-3 py-2 flex items-center gap-2 flex-wrap">
+      <div className="max-w-6xl mx-auto px-2 py-1.5 flex items-center gap-1.5 md:gap-2 md:flex-wrap md:px-3 md:py-2">
         <MobileDrawerButton onOpen={() => setDrawerOpen(true)} />
         <Link to="/" className="hidden md:flex font-extrabold text-white items-center gap-1.5 hover:scale-105 transition">
           <span className="text-xl">🐲</span>
@@ -54,16 +54,17 @@ export function HUD({ profile }: { profile: ProfileRow }) {
           <NavLink to="/collection" label="Coleção" emoji="📖" />
           <NavLink to="/shop" label="Loja" emoji="🛒" />
         </nav>
-        <div className="flex items-center gap-1.5 ml-auto flex-wrap">
-          <Link to="/profile" className="text-right text-white hover:scale-105 transition">
-            <div className="text-sm font-extrabold flex items-center gap-1.5 justify-end hover:underline">
-              👤 {profile.username} {vip && <VipBadge />}
-            </div>
-            <div className="text-[10px] opacity-80 flex items-center gap-1 justify-end">
-              <span className={`px-1.5 py-0.5 rounded font-extrabold ${tier.color}`}>{tier.emoji} {tier.short}</span>
-              <span>• {profile.wins}V/{profile.losses}D</span>
-            </div>
-          </Link>
+        <Link to="/profile" className="text-white hover:scale-105 transition min-w-0 flex-1 md:flex-none md:text-right md:ml-auto">
+          <div className="text-xs md:text-sm font-extrabold flex items-center gap-1 md:justify-end hover:underline">
+            <span className="truncate">👤 {profile.username}</span>
+            {vip && <VipBadge />}
+          </div>
+          <div className="text-[10px] opacity-80 flex items-center gap-1 md:justify-end">
+            <span className={`px-1 rounded font-extrabold ${tier.color}`}>{tier.emoji} {tier.short}</span>
+            <span>• {profile.wins}V/{profile.losses}D</span>
+          </div>
+        </Link>
+        <div className="flex items-center gap-1 shrink-0">
           <CoinBadge amount={profile.coins} />
           <GemBadge amount={profile.gems} />
           <SoundControl />
