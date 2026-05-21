@@ -376,7 +376,7 @@ function PatioPage() {
                           className="flex-1 min-w-0 py-0.5 rounded-md bg-gradient-to-b from-emerald-400 to-emerald-600 hover:from-emerald-300 hover:to-emerald-500 text-white text-[10px] font-black shadow-lg border border-emerald-300 truncate"
                           title="Treinar este pet"
                         >
-                          💪 Treinar
+                          💪 UP
                         </button>
                         {canMoveRight ? (
                           <button
@@ -543,7 +543,7 @@ function PatioPage() {
                               className="flex-1 text-[11px] font-black rounded-lg py-1.5 transition bg-gradient-to-b from-emerald-400 to-emerald-600 hover:from-emerald-300 hover:to-emerald-500 text-white border border-emerald-300 shadow-lg"
                               title="Treinar este pet"
                             >
-                              💪 Treinar
+                              💪 UP
                             </button>
                           </div>
 
@@ -680,7 +680,7 @@ function PatioPage() {
                       className="flex-1 text-[11px] font-black rounded-lg py-1.5 transition bg-gradient-to-b from-emerald-400 to-emerald-600 hover:from-emerald-300 hover:to-emerald-500 text-white border border-emerald-300 shadow-lg"
                       title="Treinar este pet"
                     >
-                      💪 Treinar
+                      💪 UP
                     </button>
                   </div>
 
