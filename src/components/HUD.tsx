@@ -1,10 +1,12 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { CoinBadge, GemBadge, VipBadge } from "./CoinBadge";
 import { SoundControl } from "./SoundControl";
 import { MobileNav, MobileDrawerButton } from "./MobileNav";
 import { isVip, getTier } from "@/lib/game-data";
 import { supabase } from "@/integrations/supabase/client";
+import { heartbeat } from "@/lib/friends.functions";
 
 export type ProfileRow = {
   id: string;
