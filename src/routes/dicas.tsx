@@ -81,7 +81,7 @@ function DicasPage() {
         </Section>
 
         <Section title="⚔️ Seção 4 — Exemplo de Comp: Gelo ❄️">
-          <p className="font-bold text-cyan-300">Urso Polar + Lobo Ártico + Foca Glacial</p>
+          <p className="font-bold text-cyan-300">Foca Glacial + Lobo Ártico + Urso Polar</p>
           <div className="rounded-xl overflow-hidden border-2 border-cyan-400/40 shadow-lg">
             <img
               src={iceCompImg}
