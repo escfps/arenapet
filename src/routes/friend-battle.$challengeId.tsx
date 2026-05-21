@@ -87,8 +87,8 @@ function FriendBattlePage() {
           targetName: pb?.username ?? "Alvo",
           challengerPoints: pa?.arena_points ?? 0,
           targetPoints: pb?.arena_points ?? 0,
-          teamA,
-          teamB,
+          rawA: ta as DBMonster[],
+          rawB: tb as DBMonster[],
           log,
           winnerId,
         });
