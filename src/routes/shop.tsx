@@ -443,7 +443,6 @@ function ShopPage() {
                   <li>📦 A cada 7 dias: 1 Baú de Prata</li>
                   <li>🏆 Ao completar 30 dias: 1 Baú de Ouro + 1 Lendário</li>
                   <li>✨ +50% de recompensas em batalha (🪙 e XP)</li>
-                  <li>👥 +1 slot no time (4 pets)</li>
                   <li>🎨 Skin exclusiva Arco-íris</li>
                 </ul>
                 <div className="mt-3 text-xs bg-yellow-100/60 rounded-lg p-2">
