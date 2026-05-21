@@ -172,17 +172,23 @@ export function BattleScene({
     const skillLabel = usesSkill ? skill.name : isBasic ? "Ataque básico" : healing ? "Cura" : skill.name;
     const skillEmoji = usesSkill ? skill.emoji : isBasic ? "👊" : healing ? "💚" : skill.emoji;
     const id = Date.now() + Math.random();
-    setActionFeed((prev) => [...prev.slice(-2), {
-      id,
-      side: actorSide,
-      image: sp.image,
-      actorName: entry.actorName,
-      skillEmoji,
-      skillLabel,
-      damage: Math.abs(entry.damage),
-      crit: entry.crit,
-      healing,
-    }]);
+    setActionFeed((prev) => {
+      const newItem = {
+        id,
+        side: actorSide,
+        image: sp.image,
+        actorName: entry.actorName,
+        skillEmoji,
+        skillLabel,
+        damage: Math.abs(entry.damage),
+        crit: entry.crit,
+        healing,
+      };
+      const sameSide = prev.filter((a) => a.side === actorSide).slice(-1);
+      const otherSide = prev.filter((a) => a.side !== actorSide);
+      return [...otherSide, ...sameSide, newItem];
+    });
+
     const t = setTimeout(() => {
       setActionFeed((prev) => prev.filter((a) => a.id !== id));
     }, 3500);
