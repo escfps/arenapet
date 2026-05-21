@@ -104,30 +104,36 @@ export type Database = {
       friend_challenges: {
         Row: {
           battle_id: string | null
+          battle_log: Json | null
           challenger_id: string
           created_at: string
           id: string
           responded_at: string | null
           status: string
           target_id: string
+          winner_id: string | null
         }
         Insert: {
           battle_id?: string | null
+          battle_log?: Json | null
           challenger_id: string
           created_at?: string
           id?: string
           responded_at?: string | null
           status?: string
           target_id: string
+          winner_id?: string | null
         }
         Update: {
           battle_id?: string | null
+          battle_log?: Json | null
           challenger_id?: string
           created_at?: string
           id?: string
           responded_at?: string | null
           status?: string
           target_id?: string
+          winner_id?: string | null
         }
         Relationships: []
       }
