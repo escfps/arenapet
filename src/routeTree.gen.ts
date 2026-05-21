@@ -24,6 +24,7 @@ import { Route as HistoryRouteImport } from './routes/history'
 import { Route as FriendsRouteImport } from './routes/friends'
 import { Route as ForgeRouteImport } from './routes/forge'
 import { Route as ExpeditionsRouteImport } from './routes/expeditions'
+import { Route as DicasRouteImport } from './routes/dicas'
 import { Route as CollectionRouteImport } from './routes/collection'
 import { Route as ArenaRouteImport } from './routes/arena'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -108,6 +109,11 @@ const ExpeditionsRoute = ExpeditionsRouteImport.update({
   path: '/expeditions',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DicasRoute = DicasRouteImport.update({
+  id: '/dicas',
+  path: '/dicas',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CollectionRoute = CollectionRouteImport.update({
   id: '/collection',
   path: '/collection',
@@ -155,6 +161,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/arena': typeof ArenaRoute
   '/collection': typeof CollectionRoute
+  '/dicas': typeof DicasRoute
   '/expeditions': typeof ExpeditionsRoute
   '/forge': typeof ForgeRoute
   '/friends': typeof FriendsRouteWithChildren
@@ -180,6 +187,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/arena': typeof ArenaRoute
   '/collection': typeof CollectionRoute
+  '/dicas': typeof DicasRoute
   '/expeditions': typeof ExpeditionsRoute
   '/forge': typeof ForgeRoute
   '/friends': typeof FriendsRouteWithChildren
@@ -206,6 +214,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/arena': typeof ArenaRoute
   '/collection': typeof CollectionRoute
+  '/dicas': typeof DicasRoute
   '/expeditions': typeof ExpeditionsRoute
   '/forge': typeof ForgeRoute
   '/friends': typeof FriendsRouteWithChildren
@@ -233,6 +242,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/arena'
     | '/collection'
+    | '/dicas'
     | '/expeditions'
     | '/forge'
     | '/friends'
@@ -258,6 +268,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/arena'
     | '/collection'
+    | '/dicas'
     | '/expeditions'
     | '/forge'
     | '/friends'
@@ -283,6 +294,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/arena'
     | '/collection'
+    | '/dicas'
     | '/expeditions'
     | '/forge'
     | '/friends'
@@ -309,6 +321,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   ArenaRoute: typeof ArenaRoute
   CollectionRoute: typeof CollectionRoute
+  DicasRoute: typeof DicasRoute
   ExpeditionsRoute: typeof ExpeditionsRoute
   ForgeRoute: typeof ForgeRoute
   FriendsRoute: typeof FriendsRouteWithChildren
@@ -436,6 +449,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExpeditionsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dicas': {
+      id: '/dicas'
+      path: '/dicas'
+      fullPath: '/dicas'
+      preLoaderRoute: typeof DicasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/collection': {
       id: '/collection'
       path: '/collection'
@@ -511,6 +531,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   ArenaRoute: ArenaRoute,
   CollectionRoute: CollectionRoute,
+  DicasRoute: DicasRoute,
   ExpeditionsRoute: ExpeditionsRoute,
   ForgeRoute: ForgeRoute,
   FriendsRoute: FriendsRouteWithChildren,
