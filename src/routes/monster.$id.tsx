@@ -395,7 +395,25 @@ function MonsterPage() {
         )}
 
         {tab === "train" && (
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          <>
+            <div className="mb-3 rounded-2xl bg-black/30 border border-white/15 p-3 text-white text-xs space-y-1">
+              <div className="font-extrabold text-sm mb-1">📘 Guia de treino por role</div>
+              {([
+                { role: "tank", text: "🛡️ Tank → invista em HP e DEF" },
+                { role: "dps", text: "⚔️ DPS → invista em ATK" },
+                { role: "assassin", text: "🗡️ Assassino → invista em ATK e SPD" },
+                { role: "mage", text: "🔮 Mago → invista em INT" },
+                { role: "healer", text: "✨ Healer → invista em INT e HP" },
+              ] as const).map(({ role, text }) => (
+                <div
+                  key={role}
+                  className={sp.role === role ? "font-extrabold text-yellow-300" : "opacity-80"}
+                >
+                  {text}{sp.role === role ? " ← seu pet" : ""}
+                </div>
+              ))}
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {([
               { s: "atk", emoji: "⚔️", grad: "from-orange-500 to-red-600", gain: "+1~2" },
               { s: "def", emoji: "🛡️", grad: "from-blue-500 to-indigo-600", gain: "+1~2" },
