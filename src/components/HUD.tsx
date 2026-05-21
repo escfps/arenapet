@@ -60,7 +60,7 @@ export function HUD({ profile }: { profile: ProfileRow }) {
             {vip && <VipBadge />}
           </div>
           <div className="text-[10px] opacity-80 flex items-center gap-1 md:justify-end whitespace-nowrap">
-            <span className={`px-1.5 py-0.5 rounded font-extrabold whitespace-nowrap ${tier.color}`}>{tier.emoji}&nbsp;{tier.short}</span>
+            <span className={`px-1.5 py-0.5 rounded font-extrabold whitespace-nowrap mx-[4px] ${tier.color}`}>{tier.emoji}&nbsp;{tier.short}</span>
             <span>• {profile.wins}V/{profile.losses}D</span>
           </div>
         </Link>
