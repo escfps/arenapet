@@ -234,6 +234,9 @@ export type Database = {
           level: number
           losses: number
           nick_changes: number
+          pity_gold: number
+          pity_legendary: number
+          pity_silver: number
           updated_at: string
           username: string
           vip_until: string | null
@@ -253,6 +256,9 @@ export type Database = {
           level?: number
           losses?: number
           nick_changes?: number
+          pity_gold?: number
+          pity_legendary?: number
+          pity_silver?: number
           updated_at?: string
           username: string
           vip_until?: string | null
@@ -272,6 +278,9 @@ export type Database = {
           level?: number
           losses?: number
           nick_changes?: number
+          pity_gold?: number
+          pity_legendary?: number
+          pity_silver?: number
           updated_at?: string
           username?: string
           vip_until?: string | null

@@ -1,0 +1,4 @@
+ALTER TABLE public.profiles
+  ADD COLUMN IF NOT EXISTS pity_silver integer NOT NULL DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS pity_gold integer NOT NULL DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS pity_legendary integer NOT NULL DEFAULT 0;

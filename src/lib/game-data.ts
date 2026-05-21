@@ -790,7 +790,7 @@ export type ChestReward = {
   petSpecies?: string; // id da espécie sorteada (se caiu pet)
 };
 
-export function rollChest(tier: ChestTier): ChestReward {
+export function rollChest(tier: ChestTier, forceRarity?: Rarity): ChestReward {
   const c = CHESTS[tier];
   const rng = (range: [number, number]) =>
     Math.floor(Math.random() * (range[1] - range[0] + 1)) + range[0];
@@ -800,16 +800,19 @@ export function rollChest(tier: ChestTier): ChestReward {
   const gems = Math.random() < c.gemChance ? rng(c.gems) : 0;
 
   let petSpecies: string | undefined;
-  if (Math.random() < c.petChance) {
-    // 1) sorteia a raridade
-    const totalW = Object.values(c.petRarityWeights).reduce((a, b) => a + (b ?? 0), 0);
-    let r = Math.random() * totalW;
+  const shouldDropPet = forceRarity ? true : Math.random() < c.petChance;
+  if (shouldDropPet) {
     let chosenRarity: Rarity = "common";
-    for (const [rarity, weight] of Object.entries(c.petRarityWeights)) {
-      r -= weight ?? 0;
-      if (r <= 0) { chosenRarity = rarity as Rarity; break; }
+    if (forceRarity) {
+      chosenRarity = forceRarity;
+    } else {
+      const totalW = Object.values(c.petRarityWeights).reduce((a, b) => a + (b ?? 0), 0);
+      let r = Math.random() * totalW;
+      for (const [rarity, weight] of Object.entries(c.petRarityWeights)) {
+        r -= weight ?? 0;
+        if (r <= 0) { chosenRarity = rarity as Rarity; break; }
+      }
     }
-    // 2) sorteia uma espécie daquela raridade
     const pool = Object.values(SPECIES).filter((s) => s.rarity === chosenRarity);
     if (pool.length > 0) {
       petSpecies = pool[Math.floor(Math.random() * pool.length)].id;
@@ -818,6 +821,19 @@ export function rollChest(tier: ChestTier): ChestReward {
 
   return { coins, gems, rations, petSpecies };
 }
+
+// Pity system: tier => { guaranteed rarity, limit }
+export const CHEST_PITY: Partial<Record<ChestTier, { rarity: Rarity; limit: number }>> = {
+  silver: { rarity: "rare", limit: 10 },
+  gold: { rarity: "epic", limit: 20 },
+  legendary: { rarity: "mythic", limit: 10 },
+};
+
+export const PITY_COLUMN: Partial<Record<ChestTier, "pity_silver" | "pity_gold" | "pity_legendary">> = {
+  silver: "pity_silver",
+  gold: "pity_gold",
+  legendary: "pity_legendary",
+};
 
 // Baú de boas-vindas: 2 comuns aleatórios + 1 raro aleatório
 export function rollWelcomeChest(): string[] {
