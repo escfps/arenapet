@@ -822,11 +822,11 @@ export function rollChest(tier: ChestTier, forceRarity?: Rarity): ChestReward {
   return { coins, gems, rations, petSpecies };
 }
 
-// Pity system: tier => { guaranteed rarity, limit }
-export const CHEST_PITY: Partial<Record<ChestTier, { rarity: Rarity; limit: number }>> = {
-  silver: { rarity: "rare", limit: 10 },
-  gold: { rarity: "epic", limit: 20 },
-  legendary: { rarity: "mythic", limit: 10 },
+// Pity system: tier => { guaranteed rarities (any of), limit }
+export const CHEST_PITY: Partial<Record<ChestTier, { rarities: Rarity[]; limit: number }>> = {
+  silver: { rarities: ["rare"], limit: 10 },
+  gold: { rarities: ["epic"], limit: 20 },
+  legendary: { rarities: ["legendary", "mythic"], limit: 10 },
 };
 
 export const PITY_COLUMN: Partial<Record<ChestTier, "pity_silver" | "pity_gold" | "pity_legendary">> = {
