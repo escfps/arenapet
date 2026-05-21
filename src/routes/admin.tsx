@@ -100,6 +100,48 @@ function AdminPage() {
     }
   }, [userId, loading, navigate]);
 
+  useEffect(() => {
+    if (!userId || !ADMIN_USER_IDS.has(userId)) return;
+    listCodesFn({}).then((r) => setCodes(r.codes as CodeRow[])).catch(() => {});
+  }, [userId]); // eslint-disable-line
+
+  async function reloadCodes() {
+    const r = await listCodesFn({});
+    setCodes(r.codes as CodeRow[]);
+  }
+
+  async function createCode() {
+    setBusy(true);
+    try {
+      let payload: Parameters<typeof createCodeFn>[0]["data"];
+      if (codeType === "pet") payload = { reward_type: "pet", species: codeSpecies, rank: codeRank };
+      else if (codeType === "chest") payload = { reward_type: "chest", chestTier: codeChest };
+      else if (codeType === "gems") payload = { reward_type: "gems", amount: codeAmount };
+      else payload = { reward_type: "coins", amount: codeAmount };
+      const r = await createCodeFn({ data: payload });
+      toast.success(`Código gerado: ${r.code}`);
+      try { await navigator.clipboard.writeText(r.code); } catch {}
+      await reloadCodes();
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function deleteCode(id: string) {
+    if (!confirm("Excluir este código?")) return;
+    setBusy(true);
+    try {
+      await delCodeFn({ data: { id } });
+      await reloadCodes();
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function doSearch() {
     if (!query.trim()) return;
     try {
