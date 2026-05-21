@@ -1,10 +1,13 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { HUD } from "@/components/HUD";
+import { BattleScene } from "@/components/BattleScene";
+import { SynergyBadges } from "@/components/SynergyBadges";
 import { useProfile } from "@/lib/use-profile";
 import { supabase } from "@/integrations/supabase/client";
-import { simulateBattle, toBattleMonster, type DBMonster } from "@/lib/battle";
+import { simulateBattle, toBattleMonster, type DBMonster, type BattleLogEntry } from "@/lib/battle";
+import { getTier } from "@/lib/game-data";
 import { getChallenge, saveChallengeResult } from "@/lib/friends.functions";
 
 export const Route = createFileRoute("/friend-battle/$challengeId")({
@@ -17,6 +20,19 @@ function hashSeed(s: string): number {
   return Math.abs(h) || 1;
 }
 
+type Loaded = {
+  challengerId: string;
+  targetId: string;
+  challengerName: string;
+  targetName: string;
+  challengerPoints: number;
+  targetPoints: number;
+  teamA: ReturnType<typeof toBattleMonster>[];
+  teamB: ReturnType<typeof toBattleMonster>[];
+  log: BattleLogEntry[];
+  winnerId: string;
+};
+
 function FriendBattlePage() {
   const { challengeId } = Route.useParams();
   const { profile } = useProfile();
@@ -24,40 +40,115 @@ function FriendBattlePage() {
   const getChal = useServerFn(getChallenge);
   const saveResult = useServerFn(saveChallengeResult);
 
-  const [status, setStatus] = useState<string>("Carregando…");
-  const [result, setResult] = useState<{ winnerId: string; log: any[]; challengerId: string; targetId: string } | null>(null);
+  const [status, setStatus] = useState<string>("Preparando batalha…");
+  const [loaded, setLoaded] = useState<Loaded | null>(null);
+  const [shownLog, setShownLog] = useState<BattleLogEntry[]>([]);
+  const [battleTimer, setBattleTimer] = useState(120);
 
+  // Load challenge + teams + (simulate or fetch) log
   useEffect(() => {
     if (!profile) return;
+    let cancelled = false;
     (async () => {
       try {
         const c = await getChal({ data: { challengeId } });
-        if (c.winner_id && c.battle_log) {
-          setResult({ winnerId: c.winner_id, log: c.battle_log as any[], challengerId: c.challenger_id, targetId: c.target_id });
-          return;
-        }
-        setStatus("Carregando times…");
-        const [{ data: ta }, { data: tb }] = await Promise.all([
+        const [{ data: ta }, { data: tb }, { data: pa }, { data: pb }] = await Promise.all([
           supabase.from("monsters").select("*").eq("owner_id", c.challenger_id).eq("in_team", true).order("team_position"),
           supabase.from("monsters").select("*").eq("owner_id", c.target_id).eq("in_team", true).order("team_position"),
+          supabase.from("profiles").select("username, arena_points").eq("id", c.challenger_id).single(),
+          supabase.from("profiles").select("username, arena_points").eq("id", c.target_id).single(),
         ]);
+        if (cancelled) return;
         if (!ta?.length || !tb?.length) {
           setStatus("Um dos jogadores não tem time montado.");
           return;
         }
-        setStatus("Simulando batalha…");
         const teamA = (ta as DBMonster[]).map(toBattleMonster);
         const teamB = (tb as DBMonster[]).map(toBattleMonster);
-        const seed = hashSeed(challengeId);
-        const r = simulateBattle(teamA, teamB, seed);
-        const winnerId = r.winner === "team_a" ? c.challenger_id : r.winner === "team_b" ? c.target_id : c.challenger_id;
-        await saveResult({ data: { challengeId, winnerId, log: r.log } });
-        setResult({ winnerId, log: r.log, challengerId: c.challenger_id, targetId: c.target_id });
+
+        let log: BattleLogEntry[];
+        let winnerId: string;
+        if (c.winner_id && c.battle_log) {
+          log = c.battle_log as BattleLogEntry[];
+          winnerId = c.winner_id;
+        } else {
+          const seed = hashSeed(challengeId);
+          const r = simulateBattle(teamA, teamB, seed);
+          log = r.log;
+          winnerId = r.winner === "team_b" ? c.target_id : c.challenger_id;
+          // persist so the other side sees the same result
+          saveResult({ data: { challengeId, winnerId, log } }).catch(() => {});
+        }
+
+        setLoaded({
+          challengerId: c.challenger_id,
+          targetId: c.target_id,
+          challengerName: pa?.username ?? "Desafiante",
+          targetName: pb?.username ?? "Alvo",
+          challengerPoints: pa?.arena_points ?? 0,
+          targetPoints: pb?.arena_points ?? 0,
+          teamA,
+          teamB,
+          log,
+          winnerId,
+        });
       } catch (e) {
-        setStatus((e as Error).message);
+        if (!cancelled) setStatus((e as Error).message);
       }
     })();
+    return () => { cancelled = true; };
   }, [profile?.id, challengeId]);
+
+  // Animated log playback (same rhythm as arena)
+  useEffect(() => {
+    if (!loaded) return;
+    setShownLog([]);
+    let i = 0;
+    let cancelled = false;
+    function delayFor(entry: BattleLogEntry | undefined): number {
+      if (!entry) return 2400;
+      const m = entry.message ?? "";
+      if (m.includes("EXECUÇÃO") || m.includes("VERDADEIRO") || m.includes("ressuscitado")) return 3400;
+      if (entry.crit) return 2800;
+      if (m.includes("escudo") || m.includes("queimando") || m.includes("silenciou") || m.includes("fúria")) return 2700;
+      if (m.includes("salto") || m.includes("Curou todos") || m.includes("golpe ")) return 2600;
+      if (m.includes("sofreu") && m.includes("queimadura")) return 1500;
+      return 2400;
+    }
+    function tick() {
+      if (cancelled) return;
+      i += 1;
+      setShownLog(loaded!.log.slice(0, i));
+      if (i >= loaded!.log.length) return;
+      const prev = loaded!.log[i - 1];
+      const next = loaded!.log[i];
+      const turnChange = prev && next && prev.turn !== next.turn ? 1200 : 0;
+      setTimeout(tick, delayFor(next) + turnChange);
+    }
+    const initial = setTimeout(tick, delayFor(loaded.log[0]));
+    return () => { cancelled = true; clearTimeout(initial); };
+  }, [loaded]);
+
+  // Countdown
+  useEffect(() => {
+    if (!loaded) { setBattleTimer(120); return; }
+    if (shownLog.length >= loaded.log.length) return;
+    const id = setInterval(() => {
+      setBattleTimer((t) => {
+        if (t <= 1) { setShownLog(loaded.log); clearInterval(id); return 0; }
+        return t - 1;
+      });
+    }, 1000);
+    return () => clearInterval(id);
+  }, [loaded, shownLog.length]);
+
+  const done = !!loaded && shownLog.length >= loaded.log.length;
+  const iAmChallenger = !!loaded && profile?.id === loaded.challengerId;
+  const iWon = !!loaded && loaded.winnerId === profile?.id;
+
+  // Labels: render with challenger as team_a (matches log perspective)
+  const aName = useMemo(() => loaded ? (iAmChallenger ? `${loaded.challengerName} (você)` : loaded.challengerName) : "", [loaded, iAmChallenger]);
+  const bName = useMemo(() => loaded ? (!iAmChallenger ? `${loaded.targetName} (você)` : loaded.targetName) : "", [loaded, iAmChallenger]);
 
   if (!profile) return null;
 
@@ -68,31 +159,70 @@ function FriendBattlePage() {
         <Link to="/friends" className="text-white/70 text-sm">← Amigos</Link>
         <h1 className="text-2xl font-extrabold text-white my-3">⚔️ Batalha de Amigos</h1>
 
-        {!result && <div className="text-white/80">{status}</div>}
+        {!loaded && <div className="text-white/80">{status}</div>}
 
-        {result && (
-          <div className="bg-purple-900/60 border border-purple-400/30 rounded-2xl p-4">
-            <div className="text-center mb-4">
-              <div className="text-5xl mb-2">{result.winnerId === profile.id ? "🏆" : "💔"}</div>
-              <div className="text-white font-extrabold text-2xl">
-                {result.winnerId === profile.id ? "Você venceu!" : "Você perdeu"}
+        {loaded && (
+          <div className="relative">
+            <div className="absolute top-2 left-1/2 -translate-x-1/2 z-20 px-4 py-1.5 rounded-full bg-black/70 backdrop-blur border border-white/30 text-white font-mono font-bold text-lg shadow-lg">
+              ⏱️ {Math.floor(battleTimer / 60)}:{String(battleTimer % 60).padStart(2, "0")}
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2 text-white">
+              <div className="rounded-xl bg-blue-500/15 border border-blue-300/30 p-2">
+                <SynergyBadges
+                  title={`🟦 ${aName}`}
+                  onlyActive
+                  compact
+                  speciesIds={loaded.teamA.map((m) => m.species)}
+                />
+              </div>
+              <div className="rounded-xl bg-red-500/15 border border-red-300/30 p-2">
+                <SynergyBadges
+                  title={`🟥 ${bName}`}
+                  onlyActive
+                  compact
+                  speciesIds={loaded.teamB.map((m) => m.species)}
+                />
               </div>
             </div>
-            <div className="bg-black/30 rounded-xl p-3 max-h-[400px] overflow-y-auto text-sm space-y-1">
-              {result.log.map((e: any, i: number) => (
-                <div key={i} className="text-white/90">
-                  <span className="text-yellow-300">T{e.turn}</span> {e.message}
+
+            <BattleScene
+              teamA={loaded.teamA}
+              teamB={loaded.teamB}
+              log={loaded.log}
+              step={shownLog.length}
+              playerAName={loaded.challengerName}
+              playerATier={getTier(loaded.challengerPoints).short}
+              playerBName={loaded.targetName}
+              playerBTier={getTier(loaded.targetPoints).short}
+            />
+
+            {done && (
+              <div className="absolute inset-0 z-30 flex items-start sm:items-center justify-center animate-fade-in overflow-y-auto py-4">
+                <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+                <div
+                  className={`relative px-6 py-6 rounded-3xl border-4 shadow-2xl text-center animate-scale-in max-w-md w-[92%] ${
+                    iWon
+                      ? "bg-gradient-to-br from-yellow-400 to-amber-600 border-yellow-200 text-yellow-950"
+                      : "bg-gradient-to-br from-red-600 to-rose-900 border-red-300 text-white"
+                  }`}
+                  style={{ textShadow: "0 2px 6px rgba(0,0,0,0.4)" }}
+                >
+                  <div className="text-6xl mb-1">{iWon ? "🏆" : "💀"}</div>
+                  <div className="text-4xl font-black tracking-widest">
+                    {iWon ? "VITÓRIA!" : "DERROTA"}
+                  </div>
+                  <div className="text-sm mt-2 font-bold opacity-90">
+                    Batalha amistosa contra {iAmChallenger ? loaded.targetName : loaded.challengerName}
+                  </div>
+                  <button
+                    onClick={() => navigate({ to: "/friends" })}
+                    className="mt-4 px-5 py-2 rounded-xl bg-black/40 hover:bg-black/60 text-white font-extrabold border border-white/30"
+                  >
+                    Voltar pros amigos
+                  </button>
                 </div>
-              ))}
-            </div>
-            <div className="text-center mt-4">
-              <button
-                onClick={() => navigate({ to: "/friends" })}
-                className="px-4 py-2 rounded-lg bg-purple-500 text-white font-bold"
-              >
-                Voltar
-              </button>
-            </div>
+              </div>
+            )}
           </div>
         )}
       </div>
