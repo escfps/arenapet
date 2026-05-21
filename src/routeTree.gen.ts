@@ -14,6 +14,7 @@ import { Route as TournamentRouteImport } from './routes/tournament'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as RefundsRouteImport } from './routes/refunds'
+import { Route as RedeemRouteImport } from './routes/redeem'
 import { Route as RankingRouteImport } from './routes/ranking'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PrivacyRouteImport } from './routes/privacy'
@@ -52,6 +53,11 @@ const ShopRoute = ShopRouteImport.update({
 const RefundsRoute = RefundsRouteImport.update({
   id: '/refunds',
   path: '/refunds',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RedeemRoute = RedeemRouteImport.update({
+  id: '/redeem',
+  path: '/redeem',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RankingRoute = RankingRouteImport.update({
@@ -139,6 +145,7 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/ranking': typeof RankingRoute
+  '/redeem': typeof RedeemRoute
   '/refunds': typeof RefundsRoute
   '/shop': typeof ShopRoute
   '/terms': typeof TermsRoute
@@ -160,6 +167,7 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/ranking': typeof RankingRoute
+  '/redeem': typeof RedeemRoute
   '/refunds': typeof RefundsRoute
   '/shop': typeof ShopRoute
   '/terms': typeof TermsRoute
@@ -182,6 +190,7 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/ranking': typeof RankingRoute
+  '/redeem': typeof RedeemRoute
   '/refunds': typeof RefundsRoute
   '/shop': typeof ShopRoute
   '/terms': typeof TermsRoute
@@ -205,6 +214,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/profile'
     | '/ranking'
+    | '/redeem'
     | '/refunds'
     | '/shop'
     | '/terms'
@@ -226,6 +236,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/profile'
     | '/ranking'
+    | '/redeem'
     | '/refunds'
     | '/shop'
     | '/terms'
@@ -247,6 +258,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/profile'
     | '/ranking'
+    | '/redeem'
     | '/refunds'
     | '/shop'
     | '/terms'
@@ -269,6 +281,7 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   ProfileRoute: typeof ProfileRoute
   RankingRoute: typeof RankingRoute
+  RedeemRoute: typeof RedeemRoute
   RefundsRoute: typeof RefundsRoute
   ShopRoute: typeof ShopRoute
   TermsRoute: typeof TermsRoute
@@ -313,6 +326,13 @@ declare module '@tanstack/react-router' {
       path: '/refunds'
       fullPath: '/refunds'
       preLoaderRoute: typeof RefundsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/redeem': {
+      id: '/redeem'
+      path: '/redeem'
+      fullPath: '/redeem'
+      preLoaderRoute: typeof RedeemRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ranking': {
@@ -429,6 +449,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   ProfileRoute: ProfileRoute,
   RankingRoute: RankingRoute,
+  RedeemRoute: RedeemRoute,
   RefundsRoute: RefundsRoute,
   ShopRoute: ShopRoute,
   TermsRoute: TermsRoute,

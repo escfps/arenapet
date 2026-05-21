@@ -18,6 +18,7 @@ const drawerItems = [
   { to: "/history", label: "Histórico", emoji: "📜" },
   { to: "/trade", label: "Trocas", emoji: "🔄" },
   { to: "/expeditions", label: "Expedições", emoji: "🗺️" },
+  { to: "/redeem", label: "Resgatar Código", emoji: "🎁" },
 ] as const;
 
 export function MobileDrawerButton({ onOpen }: { onOpen: () => void }) {
