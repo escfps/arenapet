@@ -224,6 +224,14 @@ export type Database = {
       profiles: {
         Row: {
           arena_points: number
+          bp_customer_id: string | null
+          bp_days_claimed: number
+          bp_last_claim_date: string | null
+          bp_monthly_claimed: boolean
+          bp_silvers_given: number
+          bp_started_at: string | null
+          bp_status: string | null
+          bp_subscription_id: string | null
           coins: number
           created_at: string
           expedition_slots: number
@@ -246,6 +254,14 @@ export type Database = {
         }
         Insert: {
           arena_points?: number
+          bp_customer_id?: string | null
+          bp_days_claimed?: number
+          bp_last_claim_date?: string | null
+          bp_monthly_claimed?: boolean
+          bp_silvers_given?: number
+          bp_started_at?: string | null
+          bp_status?: string | null
+          bp_subscription_id?: string | null
           coins?: number
           created_at?: string
           expedition_slots?: number
@@ -268,6 +284,14 @@ export type Database = {
         }
         Update: {
           arena_points?: number
+          bp_customer_id?: string | null
+          bp_days_claimed?: number
+          bp_last_claim_date?: string | null
+          bp_monthly_claimed?: boolean
+          bp_silvers_given?: number
+          bp_started_at?: string | null
+          bp_status?: string | null
+          bp_subscription_id?: string | null
           coins?: number
           created_at?: string
           expedition_slots?: number
