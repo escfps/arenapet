@@ -707,10 +707,10 @@ export const VIP_PRICE_GEMS = 50;
 export const VIP_DURATION_DAYS = 30;
 
 export const GEM_PACKS = [
-  { id: "starter", gems: 30, priceBRL: 9.90, bonus: 0 },
-  { id: "pro", gems: 100, priceBRL: 24.90, bonus: 20 },
-  { id: "epic", gems: 300, priceBRL: 59.90, bonus: 100 },
-  { id: "legend", gems: 800, priceBRL: 119.90, bonus: 300 },
+  { id: "starter", gems: 50, priceBRL: 9.90, bonus: 0 },
+  { id: "pro", gems: 150, priceBRL: 24.90, bonus: 20 },
+  { id: "epic", gems: 400, priceBRL: 59.90, bonus: 80 },
+  { id: "legend", gems: 1000, priceBRL: 119.90, bonus: 300 },
 ];
 
 // ===== Baús (loja) =====
