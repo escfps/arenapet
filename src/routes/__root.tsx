@@ -151,6 +151,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <PWARegister />
       <Outlet />
     </QueryClientProvider>
   );
