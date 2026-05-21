@@ -698,6 +698,7 @@ export const SKINS: Record<string, Skin> = {
   golden: { id: "golden", name: "Dourado", description: "Brilho dourado luxuoso", priceGems: 15, hueRotate: -30, saturate: 1.4 },
   arctic: { id: "arctic", name: "Ártico", description: "Tons gelados", priceGems: 15, hueRotate: 180 },
   toxic: { id: "toxic", name: "Tóxico", description: "Verde radioativo", priceGems: 20, hueRotate: 90, saturate: 1.6 },
+  dark: { id: "dark", name: "Sombrio", description: "Pelagem negra com aura vermelha 🩸", priceGems: 25, hueRotate: 0 },
   rainbow: { id: "rainbow", name: "Arco-íris VIP", description: "Skin exclusiva VIP", priceGems: 0, hueRotate: 45, saturate: 1.8, vipOnly: true },
 };
 
@@ -1052,6 +1053,7 @@ export function rollEgg(eggId: string): string {
 export function skinFilter(skinId: string): string {
   const s = SKINS[skinId];
   if (!s || skinId === "default") return "none";
+  if (skinId === "dark") return "brightness(0.25) contrast(1.4) sepia(1) hue-rotate(-50deg) saturate(6) drop-shadow(0 0 6px rgba(255,0,0,0.7))";
   return `hue-rotate(${s.hueRotate}deg) saturate(${s.saturate ?? 1})`;
 }
 
