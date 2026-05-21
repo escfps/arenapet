@@ -232,8 +232,8 @@ function FriendProfilePage() {
           </div>
         </div>
 
-        <div className="bg-purple-900/60 border border-purple-400/30 rounded-2xl p-3 flex flex-col" style={{ height: 420 }}>
-          <div className="text-white font-bold mb-2">💬 Chat</div>
+        <div id="chat" className="bg-purple-900/60 border-2 border-purple-400/60 rounded-2xl p-3 flex flex-col" style={{ height: 420 }}>
+          <div className="text-white font-bold mb-2">💬 Chat com {fp.username}</div>
           <div ref={scrollerRef} className="flex-1 overflow-y-auto space-y-1 pr-1">
             {messages.length === 0 && <div className="text-white/50 text-sm">Diga oi!</div>}
             {messages.map((m) => {
@@ -249,6 +249,7 @@ function FriendProfilePage() {
           </div>
           <div className="flex gap-2 mt-2">
             <input
+              ref={inputRef}
               value={text}
               onChange={(e) => setText(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && doSend()}
