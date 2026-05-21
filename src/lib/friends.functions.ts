@@ -413,6 +413,26 @@ export const sendChallenge = createServerFn({ method: "POST" })
       .maybeSingle();
     if (!f || f.status !== "accepted") throw new Error("Não é seu amigo");
 
+    // cooldown: 60s after last decline from this challenger to this target
+    const cutoff = new Date(Date.now() - 60_000).toISOString();
+    const { data: recentDecline } = await supabaseAdmin
+      .from("friend_challenges")
+      .select("responded_at")
+      .eq("challenger_id", context.userId)
+      .eq("target_id", data.friendId)
+      .eq("status", "declined")
+      .gt("responded_at", cutoff)
+      .order("responded_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (recentDecline?.responded_at) {
+      const wait = Math.max(
+        1,
+        Math.ceil((60_000 - (Date.now() - new Date(recentDecline.responded_at).getTime())) / 1000)
+      );
+      throw new Error(`Aguarde ${wait}s antes de desafiar novamente`);
+    }
+
     // expire old pending challenges between them
     await supabaseAdmin
       .from("friend_challenges")
