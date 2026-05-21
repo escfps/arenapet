@@ -25,6 +25,7 @@ export function HUD({ profile }: { profile: ProfileRow }) {
   const navigate = useNavigate();
   const vip = isVip(profile.vip_until);
   const tier = getTier(profile.arena_points ?? 0);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   async function logout() {
     try { localStorage.removeItem("arenapet:remember"); } catch {}
@@ -33,13 +34,15 @@ export function HUD({ profile }: { profile: ProfileRow }) {
   }
 
   return (
+    <>
     <header className="sticky top-0 z-20 backdrop-blur-md bg-purple-950/70 border-b-2 border-purple-400/30 shadow-lg">
       <div className="max-w-6xl mx-auto px-3 py-2 flex items-center gap-2 flex-wrap">
+        <MobileDrawerButton onOpen={() => setDrawerOpen(true)} />
         <Link to="/" className="font-extrabold text-white flex items-center gap-1.5 hover:scale-105 transition">
           <span className="text-xl">🐲</span>
           <span className="hidden sm:inline text-sm">ARENA PET</span>
         </Link>
-        <nav className="flex items-center gap-1 ml-2">
+        <nav className="hidden md:flex items-center gap-1 ml-2">
           <NavLink to="/" label="Home" emoji="🏠" />
           <NavLink to="/arena" label="Arena" emoji="⚔️" />
           <NavLink to="/tournament" label="Copa" emoji="🏆" />
@@ -64,10 +67,12 @@ export function HUD({ profile }: { profile: ProfileRow }) {
           <CoinBadge amount={profile.coins} />
           <GemBadge amount={profile.gems} />
           <SoundControl />
-          <button onClick={logout} className="text-[10px] text-white/70 hover:text-white px-1.5">Sair</button>
+          <button onClick={logout} className="hidden md:inline text-[10px] text-white/70 hover:text-white px-1.5">Sair</button>
         </div>
       </div>
     </header>
+    <MobileNav open={drawerOpen} onClose={() => setDrawerOpen(false)} />
+    </>
   );
 }
 
