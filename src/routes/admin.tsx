@@ -421,6 +421,150 @@ function AdminPage() {
             </div>
           </>
         )}
+
+        {/* Redeem Codes */}
+        <div className="rounded-2xl bg-white/10 backdrop-blur border border-white/20 p-4">
+          <h2 className="text-xl font-bold mb-3">🎁 Códigos de resgate</h2>
+
+          <div className="rounded-lg bg-black/30 p-3 space-y-2 mb-4">
+            <div className="text-xs opacity-70 font-bold">Criar novo código</div>
+            <div className="flex flex-wrap items-end gap-2">
+              <div>
+                <label className="text-xs opacity-70 block">Tipo</label>
+                <select
+                  value={codeType}
+                  onChange={(e) => setCodeType(e.target.value as typeof codeType)}
+                  className="px-2 py-1 rounded bg-black/40 border border-white/10 text-sm"
+                >
+                  <option value="gems">💎 Diamantes</option>
+                  <option value="coins">🪙 Moedas</option>
+                  <option value="chest">📦 Baú</option>
+                  <option value="pet">🐾 Pet</option>
+                </select>
+              </div>
+
+              {codeType === "pet" && (
+                <>
+                  <div className="flex-1 min-w-[160px]">
+                    <label className="text-xs opacity-70 block">Espécie</label>
+                    <select
+                      value={codeSpecies}
+                      onChange={(e) => setCodeSpecies(e.target.value)}
+                      className="w-full px-2 py-1 rounded bg-black/40 border border-white/10 text-sm"
+                    >
+                      {Object.values(SPECIES).map((sp) => (
+                        <option key={sp.id} value={sp.id}>
+                          {sp.name} ({RARITY_INFO[sp.rarity].name})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-xs opacity-70 block">Estrelas</label>
+                    <input
+                      type="number"
+                      min={1}
+                      max={10}
+                      value={codeRank}
+                      onChange={(e) => setCodeRank(Math.max(1, Math.min(10, Number(e.target.value))))}
+                      className="w-20 px-2 py-1 rounded bg-black/40 border border-white/10 text-sm"
+                    />
+                  </div>
+                </>
+              )}
+
+              {codeType === "chest" && (
+                <div>
+                  <label className="text-xs opacity-70 block">Tier do baú</label>
+                  <select
+                    value={codeChest}
+                    onChange={(e) => setCodeChest(e.target.value as typeof codeChest)}
+                    className="px-2 py-1 rounded bg-black/40 border border-white/10 text-sm"
+                  >
+                    <option value="wood">📦 Madeira</option>
+                    <option value="silver">🥈 Prata</option>
+                    <option value="gold">🥇 Ouro</option>
+                    <option value="legendary">👑 Lendário</option>
+                  </select>
+                </div>
+              )}
+
+              {(codeType === "gems" || codeType === "coins") && (
+                <div>
+                  <label className="text-xs opacity-70 block">Quantidade</label>
+                  <input
+                    type="number"
+                    min={1}
+                    value={codeAmount}
+                    onChange={(e) => setCodeAmount(Math.max(1, Number(e.target.value)))}
+                    className="w-28 px-2 py-1 rounded bg-black/40 border border-white/10 text-sm"
+                  />
+                </div>
+              )}
+
+              <button
+                disabled={busy}
+                onClick={createCode}
+                className="px-4 py-1.5 rounded bg-green-600 hover:bg-green-500 font-bold text-sm"
+              >
+                ✨ Gerar código
+              </button>
+            </div>
+          </div>
+
+          <div className="space-y-1 max-h-96 overflow-y-auto">
+            {codes.map((c) => {
+              const rd = c.reward_data || {};
+              let desc = "";
+              if (c.reward_type === "pet") {
+                const sp = SPECIES[String(rd.species ?? "")];
+                desc = `🐾 ${sp?.name ?? rd.species} ${rankStars(Number(rd.rank) || 1)}`;
+              } else if (c.reward_type === "chest") {
+                desc = `📦 Baú ${String(rd.chestTier ?? "")}`;
+              } else if (c.reward_type === "gems") {
+                desc = `💎 ${rd.amount} diamantes`;
+              } else if (c.reward_type === "coins") {
+                desc = `🪙 ${rd.amount} moedas`;
+              }
+              return (
+                <div
+                  key={c.id}
+                  className={`flex items-center gap-2 p-2 rounded text-sm ${
+                    c.used_at ? "bg-red-900/30 opacity-70" : "bg-green-900/30"
+                  }`}
+                >
+                  <span className="font-mono font-bold tracking-wider flex-1 truncate">
+                    {c.code}
+                  </span>
+                  <span className="text-xs opacity-80 hidden sm:block">{desc}</span>
+                  {c.used_at ? (
+                    <span className="text-xs text-red-300">
+                      ✓ usado por {c.used_by_name ?? "?"}
+                    </span>
+                  ) : (
+                    <span className="text-xs text-green-300">disponível</span>
+                  )}
+                  <button
+                    onClick={() => navigator.clipboard.writeText(c.code).then(() => toast.success("Copiado!"))}
+                    className="px-2 py-1 rounded bg-white/10 hover:bg-white/20 text-xs"
+                  >
+                    📋
+                  </button>
+                  <button
+                    disabled={busy}
+                    onClick={() => deleteCode(c.id)}
+                    className="px-2 py-1 rounded bg-red-700 hover:bg-red-600"
+                  >
+                    🗑️
+                  </button>
+                </div>
+              );
+            })}
+            {codes.length === 0 && (
+              <div className="opacity-60 text-sm p-2">Nenhum código criado.</div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
