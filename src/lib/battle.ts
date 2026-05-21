@@ -816,13 +816,13 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           const target = aliveEnemies.length ? aliveEnemies.reduce((x, y) => (x.current < y.current ? x : y)) : null;
           if (target) {
             const eff = defensiveMultiplier(getElement(attacker.species), target.species);
-            const base = Math.max(1, effAtk * 2 - tgtEffDef(target) * 0.4);
-            const dmg = Math.max(1, Math.round(base * eff * 2.0 * 1.7 * skillMult));
+            const base = Math.max(1, effAtk * 2 - tgtEffDef(target));
+            const dmg = Math.max(1, Math.round(base * eff * 2.0 * skillMult));
             applyDamage(target, dmg);
             log.push({
               turn, actor: side, actorName: attacker.name, targetName: target.name,
               damage: dmg, crit: true, effective: eff, remainingHp: target.current, targetShield: target.shield,
-              message: `${skill.emoji} ${attacker.name} usou ${skill.name}: ${dmg} CRÍTICO em ${target.name} (ignora 60% DEF)`,
+              message: `${skill.emoji} ${attacker.name} usou ${skill.name}: ${dmg} CRÍTICO em ${target.name}`,
             });
             if (target.current <= 0) {
               target.lastFallenAt = turn;
