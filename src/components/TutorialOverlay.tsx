@@ -40,7 +40,7 @@ const STEPS: Step[] = [
     goLabel: "Ver Ranking",
   },
   {
-    emoji: "🔨",
+    emoji: "⭐",
     title: "Elevar — upa suas cartas",
     body: "Em ELEVAR você evolui seus pets de rank. Quanto maior o rank, mais fortes ficam HP, ATK, DEF e SPD. Custa moedas e materiais.",
     goTo: "/forge",
