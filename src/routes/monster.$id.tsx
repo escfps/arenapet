@@ -86,7 +86,7 @@ function MonsterPage() {
   const TRAIN_ENERGY_COST = 2;
   const PLAY_ENERGY_COST = 1;
 
-  const TRAIN_GEM_COST = 3;
+  const TRAIN_GEM_COST = 4;
 
   async function train(stat: "atk" | "def" | "spd" | "hp" | "int") {
     if (!profile || !monster) return;
