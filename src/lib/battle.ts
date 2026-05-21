@@ -1265,6 +1265,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
 
 
       if (target.current <= 0) {
+        target.lastFallenAt = turn;
         if (attacker.species === "trex" && attacker.current > 0) {
           attacker.killStacks += 1;
           log.push({ turn, actor: side, actorName: attacker.name, targetName: attacker.name, damage: 0, crit: false, effective: 1, remainingHp: attacker.current, message: `🦖 ${attacker.name} sente o rugido do rei: +15% ATK permanente (total +${attacker.killStacks * 15}%)` });
