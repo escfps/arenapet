@@ -46,6 +46,7 @@ function FriendsPage() {
   const sendReq = useServerFn(sendFriendRequest);
   const respond = useServerFn(respondFriendRequest);
   const remove = useServerFn(removeFriend);
+  const challenge = useServerFn(sendChallenge);
   const incomingGifts = useServerFn(listIncomingGifts);
   const claim = useServerFn(claimGift);
 
