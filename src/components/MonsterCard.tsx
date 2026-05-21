@@ -18,6 +18,7 @@ export type MonsterRow = {
   battle_energy?: number;
   battle_energy_at?: string;
   team_position?: number;
+  train_count?: number;
 };
 
 type Props = {
