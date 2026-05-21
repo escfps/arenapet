@@ -7,8 +7,36 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
+import { useEffect } from "react";
 
 import appCss from "../styles.css?url";
+
+function PWARegister() {
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!("serviceWorker" in navigator)) return;
+
+    let inIframe = false;
+    try { inIframe = window.self !== window.top; } catch { inIframe = true; }
+    const host = window.location.hostname;
+    const isPreview =
+      host.includes("id-preview--") ||
+      host.includes("lovableproject.com") ||
+      host.includes("lovable.dev");
+
+    if (inIframe || isPreview) {
+      // Limpa qualquer SW antigo no preview/iframe pra evitar cache stale
+      navigator.serviceWorker.getRegistrations().then((rs) => rs.forEach((r) => r.unregister()));
+      return;
+    }
+
+    navigator.serviceWorker.register("/sw.js").catch((err) => {
+      console.warn("[PWA] SW register failed:", err);
+    });
+  }, []);
+  return null;
+}
+
 
 function NotFoundComponent() {
   return (
@@ -84,12 +112,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:description", content: "🐾 Colecione pets, evolua criaturas raras e lute em batalhas épicas na arena! Suba de rank, desbloqueie pets lendários e torne-se o mestre definitivo do Pet Are" },
       { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/7ef14885-9aec-4d68-ac0c-58a3717513cb/id-preview-73e563a6--993b034b-51fb-45b6-b538-9688525e21d5.lovable.app-1779084588984.png" },
       { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/7ef14885-9aec-4d68-ac0c-58a3717513cb/id-preview-73e563a6--993b034b-51fb-45b6-b538-9688525e21d5.lovable.app-1779084588984.png" },
+      { name: "theme-color", content: "#7c3aed" },
+      { name: "mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
+      { name: "apple-mobile-web-app-title", content: "ArenaPet" },
     ],
     links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
+      { rel: "stylesheet", href: appCss },
+      { rel: "manifest", href: "/manifest.json" },
+      { rel: "apple-touch-icon", href: "/icons/icon-192.png" },
+      { rel: "icon", type: "image/png", sizes: "192x192", href: "/icons/icon-192.png" },
+      { rel: "icon", type: "image/png", sizes: "512x512", href: "/icons/icon-512.png" },
     ],
   }),
   shellComponent: RootShell,
@@ -117,6 +151,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <PWARegister />
       <Outlet />
     </QueryClientProvider>
   );
