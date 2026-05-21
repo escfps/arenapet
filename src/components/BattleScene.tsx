@@ -399,8 +399,15 @@ export function BattleScene({
               {playerAName ?? "Você"}
             </div>
             {playerATier && (
-              <div className="mt-1 px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-black text-[10px] font-extrabold shadow">
-                🏆 {playerATier}
+              <div className="mt-1 flex items-center gap-1">
+                <div className="px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-black text-[10px] font-extrabold shadow">
+                  🏆 {playerATier}
+                </div>
+                {playerARank != null && (
+                  <div className="px-1.5 py-0.5 rounded-full bg-black/70 border border-yellow-300/60 text-yellow-200 text-[10px] font-extrabold shadow">
+                    #{playerARank}
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -415,8 +422,15 @@ export function BattleScene({
               {playerBName ?? "Oponente"}
             </div>
             {playerBTier && (
-              <div className="mt-1 px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-black text-[10px] font-extrabold shadow">
-                🏆 {playerBTier}
+              <div className="mt-1 flex items-center gap-1 flex-row-reverse">
+                <div className="px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-black text-[10px] font-extrabold shadow">
+                  🏆 {playerBTier}
+                </div>
+                {playerBRank != null && (
+                  <div className="px-1.5 py-0.5 rounded-full bg-black/70 border border-yellow-300/60 text-yellow-200 text-[10px] font-extrabold shadow">
+                    #{playerBRank}
+                  </div>
+                )}
               </div>
             )}
           </div>
