@@ -36,7 +36,7 @@ export const Route = createFileRoute("/shop")({
 
 function ShopPage() {
   const navigate = useNavigate();
-  const { userId, profile, patch, loading } = useProfile();
+  const { userId, profile, patch, reload, loading } = useProfile();
   const [tab, setTab] = useState<"chests" | "skins" | "vip" | "gems" | "energy">("chests");
   const claimBP = useServerFn(claimBattlePassDaily);
   const [ownedSkins, setOwnedSkins] = useState<string[]>(["default"]);
