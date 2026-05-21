@@ -38,6 +38,7 @@ function ShopPage() {
   const navigate = useNavigate();
   const { userId, profile, patch, loading } = useProfile();
   const [tab, setTab] = useState<"chests" | "skins" | "vip" | "gems" | "energy">("chests");
+  const claimBP = useServerFn(claimBattlePassDaily);
   const [ownedSkins, setOwnedSkins] = useState<string[]>(["default"]);
   const [hatchResult, setHatchResult] = useState<string | null>(null);
   const [chestResult, setChestResult] = useState<{ tier: ChestTier; reward: ChestReward } | null>(null);
