@@ -174,6 +174,7 @@ export type Database = {
           spd: number
           species: string
           team_position: number
+          train_count: number
         }
         Insert: {
           atk?: number
@@ -196,6 +197,7 @@ export type Database = {
           spd?: number
           species: string
           team_position?: number
+          train_count?: number
         }
         Update: {
           atk?: number
@@ -218,6 +220,7 @@ export type Database = {
           spd?: number
           species?: string
           team_position?: number
+          train_count?: number
         }
         Relationships: []
       }
