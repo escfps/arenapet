@@ -3,7 +3,7 @@ import { useState } from "react";
 import { CoinBadge, GemBadge, VipBadge } from "./CoinBadge";
 import { SoundControl } from "./SoundControl";
 import { MobileNav, MobileDrawerButton } from "./MobileNav";
-import { isVip } from "@/lib/game-data";
+import { isVip, getTier } from "@/lib/game-data";
 import { supabase } from "@/integrations/supabase/client";
 
 export type ProfileRow = {
