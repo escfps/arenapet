@@ -21,6 +21,8 @@ const GEMS_BY_PRICE: Record<string, number> = {
   gems_legend_price: 1300,
 };
 
+const BATTLE_PASS_PRICE_ID = "battle_pass_monthly";
+
 async function handleTransactionCompleted(data: any, env: PaddleEnv) {
   const transactionId: string = data.id;
   const userId: string | undefined = data.customData?.userId;
@@ -34,6 +36,10 @@ async function handleTransactionCompleted(data: any, env: PaddleEnv) {
     console.warn("transaction.completed sem importMeta.externalId", { transactionId });
     return;
   }
+
+  // Passe de Batalha é tratado via subscription events
+  if (priceId === BATTLE_PASS_PRICE_ID) return;
+
   const gems = GEMS_BY_PRICE[priceId];
   if (!gems) {
     console.warn("price_id desconhecido", { priceId });
@@ -42,8 +48,6 @@ async function handleTransactionCompleted(data: any, env: PaddleEnv) {
 
   const supabase = getSupabase();
 
-  // Idempotência: insere o registro de compra; se a transação já foi processada,
-  // a constraint UNIQUE em paddle_transaction_id falha e nada é creditado.
   const amount = Number(data.details?.totals?.total ?? 0);
   const { error: insertErr } = await supabase.from("gem_purchases").insert({
     user_id: userId,
@@ -61,7 +65,6 @@ async function handleTransactionCompleted(data: any, env: PaddleEnv) {
     throw insertErr;
   }
 
-  // Credita as gems no profile (read-modify-write — sem RPC)
   const { data: profile, error: pErr } = await supabase
     .from("profiles")
     .select("gems")
@@ -78,11 +81,68 @@ async function handleTransactionCompleted(data: any, env: PaddleEnv) {
   console.log(`Creditadas ${gems} 💎 ao usuário ${userId} (tx ${transactionId})`);
 }
 
+async function applyBattlePassSubscription(data: any, _env: PaddleEnv) {
+  const userId: string | undefined = data.customData?.userId;
+  if (!userId) {
+    console.warn("subscription event sem userId em customData", data.id);
+    return;
+  }
+  const item = data.items?.[0];
+  const priceId: string | undefined = item?.price?.importMeta?.externalId;
+  if (priceId !== BATTLE_PASS_PRICE_ID) {
+    console.log("subscription ignorada (não é battle pass):", priceId);
+    return;
+  }
+
+  const supabase = getSupabase();
+  const status: string = data.status;
+  const periodEnd: string | null = data.currentBillingPeriod?.endsAt ?? null;
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("vip_until, bp_subscription_id")
+    .eq("id", userId)
+    .single();
+
+  const update: Record<string, unknown> = {
+    bp_subscription_id: data.id,
+    bp_customer_id: data.customerId,
+    bp_status: status,
+  };
+
+  const isActive = ["active", "trialing", "past_due"].includes(status);
+
+  if (isActive && periodEnd) {
+    update.vip_until = periodEnd;
+    // se é uma nova assinatura (ID mudou), zera contadores diários
+    if (profile?.bp_subscription_id !== data.id) {
+      update.bp_started_at = new Date().toISOString();
+      update.bp_last_claim_date = null;
+      update.bp_days_claimed = 0;
+      update.bp_silvers_given = 0;
+      update.bp_monthly_claimed = false;
+    }
+  } else if (status === "canceled") {
+    // mantém vip_until até o fim do período pago
+    if (periodEnd) update.vip_until = periodEnd;
+  }
+
+  const { error: uErr } = await supabase.from("profiles").update(update).eq("id", userId);
+  if (uErr) throw uErr;
+
+  console.log(`Battle Pass ${status} para ${userId} até ${periodEnd}`);
+}
+
 async function handleWebhook(req: Request, env: PaddleEnv) {
   const event = await verifyWebhook(req, env);
   switch (event.eventType) {
     case EventName.TransactionCompleted:
       await handleTransactionCompleted(event.data, env);
+      break;
+    case EventName.SubscriptionCreated:
+    case EventName.SubscriptionUpdated:
+    case EventName.SubscriptionCanceled:
+      await applyBattlePassSubscription(event.data, env);
       break;
     default:
       console.log("Evento não tratado:", event.eventType);
