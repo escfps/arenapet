@@ -479,7 +479,7 @@ export function BattleScene({
         return (
           <div
             key={sideKey}
-            className={`pointer-events-none absolute top-1 ${isLeft ? "left-1 items-start" : "right-1 items-end"} z-30 flex flex-col gap-0.5 max-w-[38%]`}
+            className={`pointer-events-none absolute bottom-1 ${isLeft ? "left-1 items-start" : "right-1 items-end"} z-30 flex flex-col gap-0.5 max-w-[38%]`}
           >
             {items.map((a) => (
               <div
