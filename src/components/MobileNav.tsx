@@ -8,7 +8,7 @@ const bottomItems = [
   { to: "/arena", label: "Arena", emoji: "⚔️" },
   { to: "/ranking", label: "Ranking", emoji: "📊" },
   { to: "/tournament", label: "Copa", emoji: "🏆" },
-  { to: "/forge", label: "Elevar", emoji: "⚒️" },
+  { to: "/forge", label: "Elevar", emoji: "⭐" },
   { to: "/collection", label: "Coleção", emoji: "🎒" },
 ] as const;
 

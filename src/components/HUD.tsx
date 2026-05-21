@@ -48,7 +48,7 @@ export function HUD({ profile }: { profile: ProfileRow }) {
           <NavLink to="/tournament" label="Copa" emoji="🏆" />
           <NavLink to="/ranking" label="Ranking" emoji="📊" />
           <NavLink to="/history" label="Histórico" emoji="📜" />
-          <NavLink to="/forge" label="Elevar" emoji="🔨" />
+          <NavLink to="/forge" label="Elevar" emoji="⭐" />
           <NavLink to="/trade" label="Trocas" emoji="🔄" />
           <NavLink to="/expeditions" label="Expedições" emoji="🗺️" />
           <NavLink to="/collection" label="Coleção" emoji="📖" />
