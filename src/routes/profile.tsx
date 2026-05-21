@@ -108,6 +108,45 @@ function ProfilePage() {
             </form>
           </div>
         </div>
+
+        {/* Season trophies (permanent) */}
+        <div className="rounded-3xl bg-[oklch(0.18_0.06_290)]/90 backdrop-blur-xl border-2 border-amber-400/30 p-6 shadow-2xl">
+          <h2 className="text-lg font-extrabold text-white mb-1 flex items-center gap-2">
+            🏆 Troféus de Season
+          </h2>
+          <p className="text-white/60 text-xs mb-4">Conquistas permanentes de cada temporada (Mestre, Grão-Mestre e Lendário)</p>
+          {trophies.length === 0 ? (
+            <div className="text-center py-6 text-white/50 text-sm">
+              Ainda sem troféus. Alcance <b>Mestre</b> ou acima até o fim da Season pra conquistar o seu! ✨
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {trophies.map((t) => {
+                const isLegendary = t.tier === "Lendário";
+                const isGM = t.tier === "Grão-Mestre";
+                return (
+                  <div
+                    key={t.season_number}
+                    className={`rounded-2xl p-3 border-2 text-center ${
+                      isLegendary
+                        ? "bg-gradient-to-br from-fuchsia-700/60 via-pink-700/60 to-amber-600/60 border-amber-300 shadow-[0_0_20px_rgba(251,191,36,0.4)]"
+                        : isGM
+                        ? "bg-gradient-to-br from-red-700/60 to-pink-700/60 border-red-300"
+                        : "bg-gradient-to-br from-purple-700/60 to-fuchsia-700/60 border-fuchsia-300"
+                    }`}
+                  >
+                    <div className="text-3xl mb-1">{tierTrophyEmoji(t.tier)}</div>
+                    <div className="text-white font-extrabold text-sm">{t.tier}</div>
+                    <div className="text-white/80 text-[10px] mt-0.5">Season #{t.season_number}</div>
+                    {t.final_rank && (
+                      <div className="text-amber-300 text-[10px] font-bold mt-0.5">#{t.final_rank} • {t.arena_points} pts</div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </main>
     </div>
   );
