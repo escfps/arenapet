@@ -71,11 +71,7 @@ function ForgePage() {
     const consume = available[1];
     const sp = SPECIES[group.species];
     const newRank = group.rank + 1;
-    const ok = confirm(
-      `Fundir 2x ${sp?.name} ${rankStars(group.rank)} → 1x ${sp?.name} ${rankStars(newRank)}?\n\n` +
-      `Você vai PERDER "${consume.name}" permanentemente.\nO "${keep.name}" sobe pra ${rankStars(newRank)} (+${Math.round((RANK_MULT[newRank] / RANK_MULT[group.rank] - 1) * 100)}% stats).`
-    );
-    if (!ok) return;
+
 
     setFusing(true);
     const { error: delErr } = await supabase.from("monsters").delete().eq("id", consume.id);
