@@ -417,28 +417,45 @@ function MonsterPage() {
                 </div>
               ))}
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            {([
-              { s: "atk", emoji: "⚔️", grad: "from-orange-500 to-red-600", gain: "+1~2" },
-              { s: "def", emoji: "🛡️", grad: "from-blue-500 to-indigo-600", gain: "+1~2" },
-              { s: "spd", emoji: "💨", grad: "from-purple-500 to-fuchsia-600", gain: "+1~2" },
-              { s: "hp",  emoji: "❤️", grad: "from-rose-500 to-pink-600", gain: "+3~5" },
-              { s: "int", emoji: "🧠", grad: "from-fuchsia-500 to-violet-600", gain: "+1~2" },
-            ] as const).map(({ s, emoji, grad, gain }) => (
-              <button
-                key={s}
-                onClick={() => train(s)}
-                className={`p-4 rounded-2xl bg-gradient-to-br ${grad} text-white font-extrabold transition shadow-lg hover:scale-105`}
-              >
-                <div className="text-3xl mb-1">{emoji}</div>
-                <div>Treinar {s.toUpperCase()}</div>
-                <div className="text-xs font-normal opacity-90 mt-1">
-                  🪙 {20 + monster.rank * 10} • 💎 {TRAIN_GEM_COST} • -{TRAIN_ENERGY_COST} energia • {gain} {s.toUpperCase()}
-                </div>
-
-              </button>
-            ))}
-            </div>
+            {(() => {
+              const limit = (monster.rank ?? 1) * 10;
+              const used = monster.train_count ?? 0;
+              const remaining = Math.max(0, limit - used);
+              const reached = remaining === 0;
+              return (
+                <>
+                  <div className={`mb-3 rounded-2xl border p-3 text-center font-extrabold ${reached ? "bg-rose-900/40 border-rose-400/40 text-rose-100" : "bg-emerald-900/30 border-emerald-400/30 text-emerald-100"}`}>
+                    {reached ? (
+                      <span className="text-sm">Limite atingido! Eleve o pet para continuar. ⭐</span>
+                    ) : (
+                      <span className="text-sm">💪 Treinos disponíveis: {remaining}/{limit}</span>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    {([
+                      { s: "atk", emoji: "⚔️", grad: "from-orange-500 to-red-600", gain: "+1~2" },
+                      { s: "def", emoji: "🛡️", grad: "from-blue-500 to-indigo-600", gain: "+1~2" },
+                      { s: "spd", emoji: "💨", grad: "from-purple-500 to-fuchsia-600", gain: "+1~2" },
+                      { s: "hp",  emoji: "❤️", grad: "from-rose-500 to-pink-600", gain: "+3~5" },
+                      { s: "int", emoji: "🧠", grad: "from-fuchsia-500 to-violet-600", gain: "+1~2" },
+                    ] as const).map(({ s, emoji, grad, gain }) => (
+                      <button
+                        key={s}
+                        onClick={() => train(s)}
+                        disabled={reached}
+                        className={`p-4 rounded-2xl bg-gradient-to-br ${grad} text-white font-extrabold transition shadow-lg ${reached ? "opacity-40 cursor-not-allowed grayscale" : "hover:scale-105"}`}
+                      >
+                        <div className="text-3xl mb-1">{emoji}</div>
+                        <div>Treinar {s.toUpperCase()}</div>
+                        <div className="text-xs font-normal opacity-90 mt-1">
+                          🪙 {20 + monster.rank * 10} • 💎 {TRAIN_GEM_COST} • -{TRAIN_ENERGY_COST} energia • {gain} {s.toUpperCase()}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </>
+              );
+            })()}
           </>
         )}
 
