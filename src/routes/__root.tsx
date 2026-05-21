@@ -7,8 +7,36 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
+import { useEffect } from "react";
 
 import appCss from "../styles.css?url";
+
+function PWARegister() {
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!("serviceWorker" in navigator)) return;
+
+    let inIframe = false;
+    try { inIframe = window.self !== window.top; } catch { inIframe = true; }
+    const host = window.location.hostname;
+    const isPreview =
+      host.includes("id-preview--") ||
+      host.includes("lovableproject.com") ||
+      host.includes("lovable.dev");
+
+    if (inIframe || isPreview) {
+      // Limpa qualquer SW antigo no preview/iframe pra evitar cache stale
+      navigator.serviceWorker.getRegistrations().then((rs) => rs.forEach((r) => r.unregister()));
+      return;
+    }
+
+    navigator.serviceWorker.register("/sw.js").catch((err) => {
+      console.warn("[PWA] SW register failed:", err);
+    });
+  }, []);
+  return null;
+}
+
 
 function NotFoundComponent() {
   return (
