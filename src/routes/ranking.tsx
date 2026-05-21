@@ -104,11 +104,44 @@ function RankingPage() {
 
         <header className="text-center text-white">
           <div className="inline-flex items-center gap-2 px-3 py-1 mb-2 rounded-full bg-gradient-to-r from-fuchsia-500 via-pink-500 to-orange-400 text-white text-xs font-extrabold shadow-lg uppercase tracking-wider">
-            ⭐ Season #1 ⭐
+            ⭐ Season {season ? `#${season.number}` : "#1"} ⭐
           </div>
           <h1 className="text-4xl font-extrabold drop-shadow-lg">🏆 Ranking</h1>
           <p className="opacity-80 text-sm">Top 100 jogadores da arena</p>
         </header>
+
+        {/* Season banner: countdown + legendary slots */}
+        {season && (
+          <div className="rounded-2xl bg-gradient-to-br from-fuchsia-900/70 via-purple-900/70 to-indigo-900/70 backdrop-blur-md border-2 border-fuchsia-400/40 p-4 text-white shadow-xl">
+            <div className="flex items-center justify-between flex-wrap gap-3">
+              <div>
+                <div className="text-[10px] uppercase tracking-wider opacity-80 font-bold">Season Atual</div>
+                <div className="text-2xl font-extrabold drop-shadow">Season {season.number}</div>
+              </div>
+              <div className="text-right">
+                <div className="text-[10px] uppercase tracking-wider opacity-80 font-bold">⏳ Termina em</div>
+                <div className="text-xl font-extrabold text-amber-300 drop-shadow">
+                  {formatTimeLeft(season.ends_at).label}
+                </div>
+              </div>
+            </div>
+            <div className="mt-3 rounded-xl bg-black/30 p-3 border border-white/10">
+              <div className="flex items-center justify-between gap-2 mb-1">
+                <span className="text-sm font-extrabold flex items-center gap-1">🌟 Lendário — vagas exclusivas</span>
+                <span className="text-sm font-extrabold text-amber-300">{season.legendary_filled}/{season.legendary_slots}</span>
+              </div>
+              <div className="h-2 rounded-full bg-black/50 overflow-hidden">
+                <div
+                  className="h-full bg-gradient-to-r from-fuchsia-500 via-pink-500 to-amber-400"
+                  style={{ width: `${Math.min(100, (season.legendary_filled / season.legendary_slots) * 100)}%` }}
+                />
+              </div>
+              <div className="text-[10px] opacity-80 mt-1">
+                Quando 10 jogadores atingirem 4000+ pts, o tier Lendário fecha!
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Player tier card */}
         <div className="rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 p-4 text-white">
@@ -136,31 +169,26 @@ function RankingPage() {
           </div>
         </div>
 
-        {/* Tier reference */}
+        {/* Season rewards per tier */}
         <details className="rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 text-white overflow-hidden" open>
           <summary className="cursor-pointer select-none px-4 py-3 font-bold flex items-center justify-between hover:bg-white/5">
-            <span>📜 Elos & Pontuação</span>
-            <span className="text-[10px] opacity-70">cada divisão = 100 pts</span>
+            <span>🎁 Recompensas da Season</span>
+            <span className="text-[10px] opacity-70">enviadas automaticamente no fim</span>
           </summary>
-          <ul className="divide-y divide-white/10 text-sm">
-            {[
-              { name: "Ferro",       emoji: "⛓️", range: "0 – 499",      color: "bg-zinc-600 text-white" },
-              { name: "Bronze",      emoji: "🥉", range: "500 – 999",    color: "bg-amber-700 text-amber-50" },
-              { name: "Prata",       emoji: "🥈", range: "1000 – 1499",  color: "bg-slate-400 text-slate-900" },
-              { name: "Ouro",        emoji: "🥇", range: "1500 – 1999",  color: "bg-yellow-500 text-yellow-950" },
-              { name: "Platina",     emoji: "💠", range: "2000 – 2499",  color: "bg-cyan-500 text-cyan-950" },
-              { name: "Diamante",    emoji: "💎", range: "2500 – 2999",  color: "bg-sky-400 text-sky-950" },
-              { name: "Mestre",      emoji: "🏆", range: "3000 – 3999",  color: "bg-gradient-to-r from-purple-500 to-fuchsia-600 text-white" },
-              { name: "Grão-Mestre", emoji: "🔥", range: "4000+",        color: "bg-gradient-to-r from-red-500 to-pink-600 text-white" },
-              { name: "Lendário",    emoji: "👑", range: "Top 10 (4000+)", color: "bg-gradient-to-r from-fuchsia-500 via-pink-500 to-orange-400 text-white" },
-            ].map((t) => (
-              <li key={t.name} className="flex items-center gap-3 px-4 py-2">
-                <span className={`px-2 py-1 rounded text-xs font-extrabold ${t.color}`}>{t.emoji} {t.name}</span>
-                <span className="text-xs opacity-80 ml-auto font-mono">{t.range} pts</span>
-              </li>
+          <div className="p-3 grid gap-2 sm:grid-cols-2">
+            {SEASON_REWARDS.map((r) => (
+              <div key={r.tier} className="rounded-xl bg-black/30 border border-white/10 p-3">
+                <div className="flex items-center justify-between mb-1">
+                  <span className={`px-2 py-1 rounded text-xs font-extrabold ${r.color}`}>{r.emoji} {r.tier}</span>
+                  <span className="text-sm font-extrabold text-cyan-200">💎 {r.gems}</span>
+                </div>
+                <div className="text-xs opacity-90">📦 {r.chests}</div>
+                {r.extras && <div className="text-[11px] mt-1 text-amber-200 font-bold">✨ {r.extras}</div>}
+              </div>
             ))}
-          </ul>
+          </div>
         </details>
+
 
         {/* Leaderboard */}
         <div className="rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 overflow-hidden">
