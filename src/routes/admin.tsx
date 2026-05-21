@@ -13,6 +13,11 @@ import {
   adminDeletePet,
   adminUpdateProfile,
 } from "@/lib/admin.functions";
+import {
+  adminCreateRedeemCode,
+  adminListRedeemCodes,
+  adminDeleteRedeemCode,
+} from "@/lib/redeem.functions";
 
 const ADMIN_USER_IDS = new Set<string>([
   "9efcc279-b110-4feb-862e-deea6acf858e",
