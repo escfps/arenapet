@@ -69,25 +69,6 @@ export function HUD({ profile }: { profile: ProfileRow }) {
         </div>
 
       </div>
-        <Link to="/profile" className="text-white hover:scale-105 transition min-w-0 flex-1 md:flex-none md:text-right md:ml-auto">
-          <div className="text-base md:text-sm font-extrabold flex items-center gap-1.5 md:justify-end hover:underline leading-tight">
-            <span className="truncate">{profile.username}</span>
-          </div>
-          <div className="text-[10px] opacity-90 flex items-center gap-1 md:justify-end whitespace-nowrap mt-0.5">
-            {vip && <VipBadge />}
-            {vip && <span className="text-white/40">•</span>}
-            <span className={`px-1.5 py-0.5 rounded font-extrabold whitespace-nowrap ${tier.color}`}>{tier.emoji}&nbsp;{tier.short}</span>
-          </div>
-        </Link>
-        
-        <div className="flex items-center gap-1.5 shrink-0">
-          <CoinBadge amount={profile.coins} />
-          <GemBadge amount={profile.gems} />
-          <SoundControl />
-          <button onClick={logout} className="hidden md:inline text-[10px] text-white/70 hover:text-white px-1.5">Sair</button>
-        </div>
-
-      </div>
     </header>
     <MobileNav open={drawerOpen} onClose={() => setDrawerOpen(false)} />
     </>
