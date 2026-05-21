@@ -773,8 +773,10 @@ function ArenaPage() {
                   step={shownLog.length}
                   playerAName={profile.username}
                   playerATier={getTier(profile.arena_points ?? 0).short}
+                  playerARank={ranks.mine ?? undefined}
                   playerBName={opponent.ownerName}
                   playerBTier={getTier(opponent.arenaPoints).short}
+                  playerBRank={ranks.opp ?? undefined}
                 />
 
                 {shownLog.length === battleLog.length && winner && (
