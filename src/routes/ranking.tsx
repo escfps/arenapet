@@ -46,11 +46,15 @@ type Row = {
 function RankingPage() {
   const navigate = useNavigate();
   const { profile, loading } = useProfile();
+  const fetchSeason = useServerFn(getCurrentSeason);
   const [rows, setRows] = useState<Row[]>([]);
   const [myRank, setMyRank] = useState<number | null>(null);
   const [historyOf, setHistoryOf] = useState<Row | null>(null);
+  const [season, setSeason] = useState<SeasonInfo | null>(null);
 
   useEffect(() => {
+    fetchSeason().then(setSeason).catch(() => {});
+  }, [fetchSeason]);
     async function load() {
       const { data } = await supabase
         .from("profiles")
