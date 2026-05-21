@@ -268,13 +268,16 @@ function ShopPage() {
                       <p className="text-xs opacity-80 mb-3">{c.description}</p>
                     </div>
 
-                    {pity && (
-                      <div className={`text-center text-xs font-extrabold mb-2 px-2 py-1.5 rounded-lg ${pityLeft <= 3 ? "bg-orange-500/30 text-orange-200 animate-pulse" : "bg-black/30 text-amber-200"}`}>
-                        {pityLeft === 1
-                          ? `🔥 Próximo baú garante ${RARITY_INFO[pity.rarity].emoji} ${RARITY_INFO[pity.rarity].name}!`
-                          : `${pityLeft <= 3 ? "🔥" : "🎯"} Faltam ${pityLeft} pra garantir ${RARITY_INFO[pity.rarity].emoji} ${RARITY_INFO[pity.rarity].name}`}
-                      </div>
-                    )}
+                    {pity && (() => {
+                      const label = pity.rarities.map((r) => `${RARITY_INFO[r].emoji} ${RARITY_INFO[r].name}`).join(" ou ");
+                      return (
+                        <div className={`text-center text-xs font-extrabold mb-2 px-2 py-1.5 rounded-lg ${pityLeft <= 3 ? "bg-orange-500/30 text-orange-200 animate-pulse" : "bg-black/30 text-amber-200"}`}>
+                          {pityLeft === 1
+                            ? `🔥 Próximo baú garante ${label}!`
+                            : `${pityLeft <= 3 ? "🔥" : "🎯"} Faltam ${pityLeft} pra garantir ${label}`}
+                        </div>
+                      );
+                    })()}
 
 
                     <div className="bg-black/30 rounded-xl p-3 text-[11px] space-y-1 mb-3">
