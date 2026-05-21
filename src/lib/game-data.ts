@@ -559,7 +559,7 @@ export const SPECIES: Record<string, Species> = {
     emoji: "🦊", image: raposaEspectralImg,
     description: "Caçadora silenciosa entre sombras. Cada bote é certeiro e atravessa qualquer guarda.",
     base: { hp: 58, atk: 22, def: 9, spd: 21, int: 10 },
-    skill: { name: "Bote Certeiro", emoji: "🦊", kind: "spectral_pounce", cooldown: 3, description: "ATIVA: crítico garantido no inimigo mais fraco (2× dano) ignorando 60% da DEF. PASSIVA: todo ataque básico tem 50% de chance de critar." },
+    skill: { name: "Bote Certeiro", emoji: "🦊", kind: "spectral_pounce", cooldown: 4, description: "ATIVA: ataca o inimigo mais fraco com crítico garantido. PASSIVA: todo ataque básico tem 30% de chance de critar." },
   },
 };
 
