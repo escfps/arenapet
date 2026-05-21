@@ -478,29 +478,29 @@ export function BattleScene({
         return (
           <div
             key={sideKey}
-            className={`pointer-events-none absolute bottom-2 ${isLeft ? "left-2 items-start" : "right-2 items-end"} z-30 flex flex-col gap-1 max-w-[45%]`}
+            className={`pointer-events-none absolute top-1 ${isLeft ? "left-1 items-start" : "right-1 items-end"} z-30 flex flex-col gap-0.5 max-w-[38%]`}
           >
             {items.map((a) => (
               <div
                 key={a.id}
-                className={`flex items-center gap-2 ${isLeft ? "pl-1 pr-3 flex-row" : "pr-1 pl-3 flex-row-reverse"} py-1 rounded-full bg-black/75 backdrop-blur-sm border ${
+                className={`flex items-center gap-1 ${isLeft ? "pl-0.5 pr-1.5 flex-row" : "pr-0.5 pl-1.5 flex-row-reverse"} py-0.5 rounded-full bg-black/70 backdrop-blur-sm border ${
                   a.side === "a" ? "border-blue-400/60" : "border-red-400/60"
-                } shadow-xl animate-fade-in`}
+                } shadow-lg animate-fade-in`}
                 style={{ animation: "fadeIn 0.2s ease-out" }}
               >
-                <div className={`w-8 h-8 rounded-full overflow-hidden border-2 ${
+                <div className={`w-5 h-5 rounded-full overflow-hidden border ${
                   a.side === "a" ? "border-blue-300" : "border-red-300"
                 } bg-gradient-to-br from-slate-700 to-slate-900 shrink-0 flex items-center justify-center`}>
                   <img src={a.image} alt={a.actorName} className="h-full w-auto object-contain" />
                 </div>
-                <div className={`flex flex-col min-w-0 leading-tight ${isLeft ? "" : "text-right"}`}>
-                  <span className="text-white text-[10px] font-extrabold truncate drop-shadow">{a.actorName}</span>
-                  <span className="text-white/90 text-[10px] font-bold truncate">
+                <div className={`flex flex-col min-w-0 leading-none ${isLeft ? "" : "text-right"}`}>
+                  <span className="text-white text-[8px] font-extrabold truncate drop-shadow">{a.actorName}</span>
+                  <span className="text-white/90 text-[8px] font-bold truncate">
                     {a.skillEmoji} {a.skillLabel}
                   </span>
                 </div>
                 {a.damage > 0 && (
-                  <span className={`text-sm font-black drop-shadow ${
+                  <span className={`text-[11px] font-black drop-shadow ${
                     a.healing ? "text-emerald-300" : a.crit ? "text-yellow-300" : "text-orange-200"
                   }`}>
                     {a.healing ? "+" : "-"}{a.damage}{a.crit ? "!" : ""}
@@ -508,6 +508,7 @@ export function BattleScene({
                 )}
               </div>
             ))}
+
           </div>
         );
       })}
