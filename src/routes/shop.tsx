@@ -172,13 +172,40 @@ function ShopPage() {
     toast.success(`Skin ${sk.name} desbloqueada!`);
   }
 
-  async function buyVip() {
-    if (!profile) return;
-    if (profile.gems < VIP_PRICE_GEMS) { toast.error("Gemas insuficientes!"); return; }
-    const base = isVip(profile.vip_until) ? new Date(profile.vip_until!) : new Date();
-    const newUntil = new Date(base.getTime() + VIP_DURATION_DAYS * 24 * 60 * 60 * 1000);
-    await patch({ gems: profile.gems - VIP_PRICE_GEMS, vip_until: newUntil.toISOString() });
-    toast.success("👑 VIP ativado!");
+  async function subscribeBattlePass() {
+    if (!profile || !userId) return;
+    try {
+      toast.loading("Abrindo pagamento...", { id: "pay" });
+      await initializePaddle();
+      const paddlePriceId = await getPaddlePriceId("battle_pass_monthly");
+      toast.dismiss("pay");
+      window.Paddle.Checkout.open({
+        items: [{ priceId: paddlePriceId, quantity: 1 }],
+        customData: { userId },
+        settings: {
+          displayMode: "overlay",
+          successUrl: `${window.location.origin}/shop?bp=1`,
+          allowLogout: false,
+          variant: "one-page",
+          locale: "pt-BR",
+        },
+      });
+    } catch (e: any) {
+      toast.dismiss("pay");
+      toast.error(`Erro ao abrir pagamento: ${e?.message ?? e}`);
+    }
+  }
+
+  async function claimDailyBP() {
+    try {
+      const res = await claimBP();
+      const chestMsg = res.chests.length ? ` + ${res.chests.map((c) => c.name).join(" + ")}` : "";
+      toast.success(`Dia ${res.day}! +${res.gems} 💎 +${res.rations} 🍖${chestMsg}`);
+      // refresh
+      await patch({});
+    } catch (e: any) {
+      toast.error(e?.message ?? "Erro ao reivindicar");
+    }
   }
 
   async function buyGems(pack: typeof GEM_PACKS[number]) {
