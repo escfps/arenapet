@@ -27,8 +27,8 @@ type Loaded = {
   targetName: string;
   challengerPoints: number;
   targetPoints: number;
-  teamA: ReturnType<typeof toBattleMonster>[];
-  teamB: ReturnType<typeof toBattleMonster>[];
+  rawA: DBMonster[];
+  rawB: DBMonster[];
   log: BattleLogEntry[];
   winnerId: string;
 };
