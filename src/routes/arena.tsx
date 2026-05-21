@@ -780,10 +780,10 @@ function ArenaPage() {
                 />
 
                 {shownLog.length === battleLog.length && winner && (
-                  <div className="absolute inset-0 z-30 flex items-center justify-center animate-fade-in">
-                    <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+                  <div className="absolute inset-0 z-30 flex items-start sm:items-center justify-center animate-fade-in overflow-y-auto py-4">
+                    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
                     <div
-                      className={`relative px-8 py-6 rounded-3xl border-4 shadow-2xl text-center animate-scale-in ${
+                      className={`relative px-5 sm:px-8 py-5 sm:py-6 rounded-3xl border-4 shadow-2xl text-center animate-scale-in max-w-2xl w-[95%] max-h-[92vh] overflow-y-auto ${
                         winner === "team_a"
                           ? "bg-gradient-to-br from-yellow-400 to-amber-600 border-yellow-200 text-yellow-950"
                           : winner === "draw"
@@ -792,14 +792,38 @@ function ArenaPage() {
                       }`}
                       style={{ textShadow: "0 2px 6px rgba(0,0,0,0.4)" }}
                     >
-                      <div className="text-6xl leading-none mb-1">
+                      <div className="text-5xl sm:text-6xl leading-none mb-1">
                         {winner === "team_a" ? "🏆" : winner === "draw" ? "🤝" : "💀"}
                       </div>
-                      <div className="text-4xl sm:text-5xl font-black tracking-widest">
+                      <div className="text-3xl sm:text-5xl font-black tracking-widest">
                         {winner === "team_a" ? "VITÓRIA!" : winner === "draw" ? "EMPATE!" : "DERROTA"}
                       </div>
+
+                      {/* Recompensas */}
+                      {rewards && (
+                        <div className="mt-3 rounded-xl bg-black/40 border border-white/30 px-3 py-2 max-w-md mx-auto">
+                          <div className="text-[10px] font-extrabold text-yellow-200 uppercase tracking-wider mb-1">Recompensas</div>
+                          <div className="flex items-center justify-center gap-3 flex-wrap text-sm font-extrabold text-white">
+                            <span>🪙 +{rewards.coins}</span>
+                            <span>✨ +{rewards.xp} XP</span>
+                            {rewards.gems > 0 && <span className="text-cyan-200">💎 +{rewards.gems}</span>}
+                          </div>
+                          <div className="mt-1.5 flex items-center justify-center gap-2 text-xs font-bold">
+                            <span className={`px-2 py-0.5 rounded ${getTier(rewards.oldPoints).color}`}>{getTier(rewards.oldPoints).short}</span>
+                            <span className={rewards.points >= 0 ? "text-green-300" : "text-red-300"}>
+                              {rewards.points >= 0 ? `+${rewards.points}` : rewards.points} pts
+                            </span>
+                            <span className={`px-2 py-0.5 rounded ${getTier(rewards.newPoints).color}`}>{getTier(rewards.newPoints).short}</span>
+                          </div>
+                          {rewards.promoMsg && (
+                            <div className="mt-2 text-xs font-extrabold bg-black/40 rounded-lg px-2 py-1.5 text-white">
+                              {rewards.promoMsg}
+                            </div>
+                          )}
+                        </div>
+                      )}
+
                       {(() => {
-                        // Compute per-side stats inline
                         const sideA = new Map<string, { name: string; species: string; skin: string; dmg: number; heal: number; taken: number; kills: number }>();
                         const sideB = new Map<string, typeof sideA extends Map<string, infer V> ? V : never>();
                         for (const m of myTeam) sideA.set(m.name, { name: m.name, species: m.species, skin: m.skin, dmg: 0, heal: 0, taken: 0, kills: 0 });
@@ -844,6 +868,26 @@ function ArenaPage() {
                           </div>
                         );
                       })()}
+
+                      {/* Log da batalha */}
+                      <details className="mt-3 max-w-md mx-auto rounded-xl bg-black/40 border border-white/30 text-left text-white">
+                        <summary className="cursor-pointer select-none px-3 py-2 text-xs font-extrabold flex items-center gap-2">
+                          📜 Ver log completo da batalha
+                        </summary>
+                        <div className="space-y-1 max-h-60 overflow-y-auto px-3 pb-3 pt-1 text-[11px]">
+                          {battleLog.map((e, idx) => (
+                            <div
+                              key={idx}
+                              className={`px-2 py-1 rounded ${
+                                e.actor === "team_a" ? "bg-blue-500/30" : "bg-red-500/30"
+                              } ${e.crit ? "border-l-4 border-yellow-400" : ""}`}
+                            >
+                              {e.message}
+                            </div>
+                          ))}
+                        </div>
+                      </details>
+
                       <div className="mt-4 flex flex-col sm:flex-row gap-2 justify-center">
                         <button
                           onClick={findOpponent}
