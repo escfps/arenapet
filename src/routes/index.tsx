@@ -363,21 +363,30 @@ function PatioPage() {
                       >
                         ×
                       </button>
-                      <div className="absolute inset-x-0 bottom-6 flex justify-between px-1 z-10">
+                      <div className="absolute inset-x-0 bottom-6 flex items-center justify-between px-1 z-10 gap-1">
                         {canMoveLeft ? (
                           <button
                             onClick={(e) => { e.stopPropagation(); swapPositions(i, i + 1); }}
-                            className="w-6 h-6 rounded-full bg-black/70 hover:bg-yellow-400 hover:text-yellow-950 text-white text-xs font-black flex items-center justify-center shadow"
+                            className="w-6 h-6 shrink-0 rounded-full bg-black/70 hover:bg-yellow-400 hover:text-yellow-950 text-white text-xs font-black flex items-center justify-center shadow"
                             title="Mover pra trás"
                           >◀</button>
-                        ) : <span />}
+                        ) : <span className="w-6 shrink-0" />}
+                        <button
+                          onClick={(e) => { e.stopPropagation(); navigate({ to: "/monster/$id", params: { id: m.id }, search: { tab: "train" } }); }}
+                          className="flex-1 min-w-0 py-0.5 rounded-md bg-gradient-to-b from-emerald-400 to-emerald-600 hover:from-emerald-300 hover:to-emerald-500 text-white text-[10px] font-black shadow-lg border border-emerald-300 truncate"
+                          title="Treinar este pet"
+                        >
+                          💪 Treinar
+                        </button>
                         {canMoveRight ? (
                           <button
                             onClick={(e) => { e.stopPropagation(); swapPositions(i, i - 1); }}
-                            className="w-6 h-6 rounded-full bg-black/70 hover:bg-yellow-400 hover:text-yellow-950 text-white text-xs font-black flex items-center justify-center shadow"
+                            className="w-6 h-6 shrink-0 rounded-full bg-black/70 hover:bg-yellow-400 hover:text-yellow-950 text-white text-xs font-black flex items-center justify-center shadow"
                             title="Mover pra frente"
                           >▶</button>
-                        ) : <span />}
+                        ) : <span className="w-6 shrink-0" />}
+                      </div>
+
                       </div>
                     </div>
                   );
