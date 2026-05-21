@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { CoinBadge, GemBadge, VipBadge } from "./CoinBadge";
 import { SoundControl } from "./SoundControl";
 import { MobileNav, MobileDrawerButton } from "./MobileNav";
+import { ChallengeNotifier } from "./ChallengeNotifier";
 import { isVip, getTier } from "@/lib/game-data";
 import { supabase } from "@/integrations/supabase/client";
 import { heartbeat } from "@/lib/friends.functions";
