@@ -428,12 +428,13 @@ export function BattleScene({
       </div>
 
       {/* === ARENA: pets na grama embaixo === */}
-      <div className="relative px-4 pt-6 pb-6">
+      <div className="relative px-4 pt-2 pb-16">
         <div className="grid grid-cols-2 gap-3 items-end min-h-[140px]">
           <ArenaLineup team={teamA} side="a" hp={hp} fx={fx} />
           <ArenaLineup team={teamB} side="b" hp={hp} fx={fx} mirrored />
         </div>
       </div>
+
 
       {/* Overlay central de efeito */}
       {banner && (
@@ -478,7 +479,7 @@ export function BattleScene({
         return (
           <div
             key={sideKey}
-            className={`pointer-events-none absolute top-1 ${isLeft ? "left-1 items-start" : "right-1 items-end"} z-30 flex flex-col gap-0.5 max-w-[38%]`}
+            className={`pointer-events-none absolute bottom-1 ${isLeft ? "left-1 items-start" : "right-1 items-end"} z-30 flex flex-col gap-0.5 max-w-[38%]`}
           >
             {items.map((a) => (
               <div
