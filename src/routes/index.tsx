@@ -386,10 +386,9 @@ function PatioPage() {
                           >▶</button>
                         ) : <span className="w-6 shrink-0" />}
                       </div>
-
-                      </div>
                     </div>
                   );
+
                 })}
               </div>
             </section>
