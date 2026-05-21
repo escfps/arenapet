@@ -548,10 +548,10 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Investida de Chifres", emoji: "🦕", kind: "horn_charge", cooldown: 3, description: "Provoca todos os inimigos por 2 turnos e ganha escudo de 35% HP máx. PASSIVA: todo inimigo que atacar recebe 15% do dano de volta." },
   },
   fantasminha: {
-    id: "fantasminha", name: "???", element: "shadow", role: "mage", rarity: "epic",
+    id: "fantasminha", name: "???", element: "shadow", role: "mage", rarity: "mythic",
     emoji: "👻", image: fantasminhaImg,
     description: "Espectro travesso com fome insaciável. Devora a essência do mais fraco e, se o derrota, vai atrás do próximo.",
-    base: { hp: 55, atk: 12, def: 9, spd: 14, int: 25 },
+    base: { hp: 76, atk: 14, def: 13, spd: 16, int: 28 },
     skill: { name: "Fome Espectral", emoji: "👻", kind: "spectral_hunger", cooldown: 4, description: "Ataque mágico no inimigo mais fraco ignorando DEF. PASSIVA: se matar o alvo, ataca mais uma vez o próximo mais fraco (máx 2 ataques)." },
   },
   raposa_espectral: {
