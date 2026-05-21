@@ -1,0 +1,1 @@
+ALTER TABLE public.monsters ADD COLUMN IF NOT EXISTS train_count integer NOT NULL DEFAULT 0;
