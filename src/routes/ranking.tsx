@@ -6,6 +6,8 @@ import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
 import { getTier, nextTierProgress, SPECIES, RARITY_INFO, skinFilter, ARENA_WIN_POINTS, ARENA_LOSS_POINTS, rankStars, MAX_RANK } from "@/lib/game-data";
 import { getPlayerBattles } from "@/lib/battles.functions";
+import { getCurrentSeason, type SeasonInfo } from "@/lib/seasons.functions";
+import { SEASON_REWARDS } from "@/lib/season-rewards";
 import { BattleDetailModal, type BattleRow } from "@/components/BattleDetailModal";
 import { SynergyBadges } from "@/components/SynergyBadges";
 import arenaBg from "@/assets/arena-bg.jpg";
@@ -13,6 +15,15 @@ import arenaBg from "@/assets/arena-bg.jpg";
 export const Route = createFileRoute("/ranking")({
   component: RankingPage,
 });
+
+function formatTimeLeft(endsAt: string): { days: number; hours: number; label: string } {
+  const ms = new Date(endsAt).getTime() - Date.now();
+  if (ms <= 0) return { days: 0, hours: 0, label: "encerrando…" };
+  const days = Math.floor(ms / 86400000);
+  const hours = Math.floor((ms % 86400000) / 3600000);
+  if (days > 0) return { days, hours, label: `${days} dia${days !== 1 ? "s" : ""}${hours > 0 ? ` e ${hours}h` : ""}` };
+  return { days: 0, hours, label: `${hours}h` };
+}
 
 type TeamMon = {
   id: string;
