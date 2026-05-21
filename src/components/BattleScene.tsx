@@ -139,6 +139,7 @@ export function BattleScene({
     setBanner(null);
     setStatuses(new Map());
     setTurnFlash(null);
+    setActionFeed([]);
   }, [initialHp]);
 
   // Detecta troca de turno e mostra flash "TURNO X"
@@ -152,6 +153,42 @@ export function BattleScene({
       return () => clearTimeout(t);
     }
   }, [step, log]);
+
+  // Feed de ações estilo Naruto Online (foto + skill + dano)
+  useEffect(() => {
+    if (step <= 0 || step > log.length) return;
+    const entry = log[step - 1];
+    if (!entry.actorName || entry.actorName === "—") return;
+    const actorSide: "a" | "b" = entry.actor === "team_a" ? "a" : "b";
+    const actorMon = (actorSide === "a" ? teamA : teamB).find((m) => m.name === entry.actorName);
+    if (!actorMon) return;
+    const sp = SPECIES[actorMon.species];
+    if (!sp) return;
+    const skill = getSkill(actorMon.species);
+    const msg = entry.message;
+    const healing = entry.damage < 0 || msg.includes("curou") || msg.includes("Curou");
+    const usesSkill = msg.includes(skill.name) || msg.includes(skill.emoji);
+    const isBasic = !usesSkill && (msg.includes("atacou") || msg.includes("golpeou") || entry.damage > 0);
+    const skillLabel = usesSkill ? skill.name : isBasic ? "Ataque básico" : healing ? "Cura" : skill.name;
+    const skillEmoji = usesSkill ? skill.emoji : isBasic ? "👊" : healing ? "💚" : skill.emoji;
+    const id = Date.now() + Math.random();
+    setActionFeed((prev) => [...prev.slice(-2), {
+      id,
+      side: actorSide,
+      image: sp.image,
+      actorName: entry.actorName,
+      skillEmoji,
+      skillLabel,
+      damage: Math.abs(entry.damage),
+      crit: entry.crit,
+      healing,
+    }]);
+    const t = setTimeout(() => {
+      setActionFeed((prev) => prev.filter((a) => a.id !== id));
+    }, 3500);
+    return () => clearTimeout(t);
+  }, [step, log, teamA, teamB]);
+
 
   useEffect(() => {
     if (step <= 0 || step > log.length) return;
