@@ -90,6 +90,9 @@ function MonsterPage() {
 
   async function train(stat: "atk" | "def" | "spd" | "hp" | "int") {
     if (!profile || !monster) return;
+    const limit = (monster.rank ?? 1) * 10;
+    const used = monster.train_count ?? 0;
+    if (used >= limit) { toast.error("Limite de treinos atingido! Eleve o pet ⭐"); return; }
     const cost = 20 + (monster.rank ?? 1) * 10;
     if (profile.coins < cost) { toast.error("Moedas insuficientes!"); return; }
     if ((profile.gems ?? 0) < TRAIN_GEM_COST) { toast.error(`Faltam 💎 ${TRAIN_GEM_COST} diamantes!`); return; }
@@ -102,10 +105,11 @@ function MonsterPage() {
       battle_energy: e.energy - TRAIN_ENERGY_COST,
       battle_energy_at: e.nextStoredAt,
       hunger: monster.hunger - 5,
+      train_count: used + 1,
     };
     updates[stat] = (monster[stat] ?? 0) + gain;
     await patchMonster(updates);
-    toast.success(`+${gain} ${stat.toUpperCase()}!`);
+    toast.success(`+${gain} ${stat.toUpperCase()}! (${used + 1}/${limit})`);
   }
 
 
