@@ -55,6 +55,8 @@ function RankingPage() {
   useEffect(() => {
     fetchSeason().then(setSeason).catch(() => {});
   }, [fetchSeason]);
+
+  useEffect(() => {
     async function load() {
       const { data } = await supabase
         .from("profiles")
