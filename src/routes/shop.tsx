@@ -103,13 +103,26 @@ function ShopPage() {
     if (useCoins && profile.coins < (c.priceCoins ?? 0)) { toast.error("Moedas insuficientes!"); return; }
     if (useGems && profile.gems < (c.priceGems ?? 0)) { toast.error("Gemas insuficientes!"); return; }
 
-    const reward = rollChest(tier);
+    // Pity: força o drop garantido quando o contador bate o limite
+    const pity = CHEST_PITY[tier];
+    const pityCol = PITY_COLUMN[tier];
+    const currentPity = pityCol ? ((profile as Record<string, unknown>)[pityCol] as number ?? 0) : 0;
+    const forceRarity = pity && currentPity + 1 >= pity.limit ? pity.rarity : undefined;
 
-    // debita preço + credita moedas/gemas
-    await patch({
+    const reward = rollChest(tier, forceRarity);
+
+    const patchObj: Record<string, number> = {
       coins: profile.coins - (useCoins ? (c.priceCoins ?? 0) : 0) + reward.coins,
       gems: profile.gems - (useGems ? (c.priceGems ?? 0) : 0) + reward.gems,
-    });
+    };
+
+    // Atualiza contador de pity: zera se pegou a raridade garantida, senão +1
+    if (pity && pityCol) {
+      const gotRarity = reward.petSpecies ? SPECIES[reward.petSpecies].rarity : null;
+      patchObj[pityCol] = gotRarity === pity.rarity ? 0 : currentPity + 1;
+    }
+
+    await patch(patchObj);
 
 
     // rações no inventário (upsert somando)
