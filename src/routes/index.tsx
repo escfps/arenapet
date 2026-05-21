@@ -344,13 +344,6 @@ function PatioPage() {
                       <div className="absolute bottom-0 inset-x-0 bg-black/70 px-1 py-0.5 text-white text-[10px] font-extrabold truncate text-center pointer-events-none">
                         {m.name}
                       </div>
-                      <button
-                        onClick={(e) => { e.stopPropagation(); navigate({ to: "/monster/$id", params: { id: m.id }, search: { tab: "train" } }); }}
-                        className="absolute bottom-6 inset-x-1 z-20 py-1 rounded-md bg-gradient-to-b from-emerald-400 to-emerald-600 hover:from-emerald-300 hover:to-emerald-500 text-white text-[10px] font-black shadow-lg border border-emerald-300 flex items-center justify-center gap-0.5"
-                        title="Treinar este pet"
-                      >
-                        💪 Treinar
-                      </button>
 
                       <div className="absolute top-7 left-1 z-10 flex flex-col gap-0.5 pointer-events-none">
                         {getSpeciesCategories(m.species).map((cat) => (
