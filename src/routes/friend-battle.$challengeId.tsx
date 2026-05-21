@@ -172,7 +172,7 @@ function FriendBattlePage() {
                   title={`🟦 ${aName}`}
                   onlyActive
                   compact
-                  speciesIds={loaded.teamA.map((m) => m.species)}
+                  speciesIds={loaded.rawA.map((m) => m.species)}
                 />
               </div>
               <div className="rounded-xl bg-red-500/15 border border-red-300/30 p-2">
@@ -180,14 +180,14 @@ function FriendBattlePage() {
                   title={`🟥 ${bName}`}
                   onlyActive
                   compact
-                  speciesIds={loaded.teamB.map((m) => m.species)}
+                  speciesIds={loaded.rawB.map((m) => m.species)}
                 />
               </div>
             </div>
 
             <BattleScene
-              teamA={loaded.teamA}
-              teamB={loaded.teamB}
+              teamA={loaded.rawA as any}
+              teamB={loaded.rawB as any}
               log={loaded.log}
               step={shownLog.length}
               playerAName={loaded.challengerName}
