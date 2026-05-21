@@ -664,16 +664,26 @@ function PatioPage() {
                     monster={m}
                     onClick={() => { setGroupModal(null); navigate({ to: "/monster/$id", params: { id: m.id } }); }}
                   />
-                  <button
-                    onClick={() => toggleTeam(m)}
-                    className={`w-full text-[11px] font-bold rounded-lg py-1.5 transition ${
-                      m.in_team
-                        ? "bg-yellow-400 text-yellow-950 hover:bg-yellow-300"
-                        : "bg-white/15 text-white hover:bg-white/25"
-                    }`}
-                  >
-                    {m.in_team ? "✓ No time" : "+ Time"}
-                  </button>
+                  <div className="flex gap-1">
+                    <button
+                      onClick={() => toggleTeam(m)}
+                      className={`flex-1 text-[11px] font-bold rounded-lg py-1.5 transition ${
+                        m.in_team
+                          ? "bg-yellow-400 text-yellow-950 hover:bg-yellow-300"
+                          : "bg-white/15 text-white hover:bg-white/25"
+                      }`}
+                    >
+                      {m.in_team ? "✓ No time" : "+ Time"}
+                    </button>
+                    <button
+                      onClick={() => { setGroupModal(null); navigate({ to: "/monster/$id", params: { id: m.id }, search: { tab: "train" } }); }}
+                      className="flex-1 text-[11px] font-black rounded-lg py-1.5 transition bg-gradient-to-b from-emerald-400 to-emerald-600 hover:from-emerald-300 hover:to-emerald-500 text-white border border-emerald-300 shadow-lg"
+                      title="Treinar este pet"
+                    >
+                      💪 Treinar
+                    </button>
+                  </div>
+
                 </div>
               ))}
             </div>
