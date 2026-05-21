@@ -15,10 +15,10 @@ function getSupabase(): any {
 
 // price_id (external_id) -> total de gemas a creditar
 const GEMS_BY_PRICE: Record<string, number> = {
-  gems_starter_price: 30,
-  gems_pro_price: 120,
-  gems_epic_price: 400,
-  gems_legend_price: 1100,
+  gems_starter_price: 50,
+  gems_pro_price: 170,
+  gems_epic_price: 480,
+  gems_legend_price: 1300,
 };
 
 async function handleTransactionCompleted(data: any, env: PaddleEnv) {
