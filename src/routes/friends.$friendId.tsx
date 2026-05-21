@@ -61,6 +61,17 @@ function FriendProfilePage() {
   const [text, setText] = useState("");
   const [pendingChallenge, setPendingChallenge] = useState<{ id: string; from: "me" | "them" } | null>(null);
   const scrollerRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // Auto-scroll to chat & focus input when profile loads (so 💬 button feels responsive)
+  useEffect(() => {
+    if (!data) return;
+    const t = setTimeout(() => {
+      document.getElementById("chat")?.scrollIntoView({ behavior: "smooth", block: "center" });
+      inputRef.current?.focus({ preventScroll: true });
+    }, 200);
+    return () => clearTimeout(t);
+  }, [data?.profile?.id]);
 
   async function reloadProfile() {
     try {
