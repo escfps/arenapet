@@ -11,9 +11,12 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TradeRouteImport } from './routes/trade'
 import { Route as TournamentRouteImport } from './routes/tournament'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as ShopRouteImport } from './routes/shop'
+import { Route as RefundsRouteImport } from './routes/refunds'
 import { Route as RankingRouteImport } from './routes/ranking'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PreviewChestRouteImport } from './routes/preview-chest'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HistoryRouteImport } from './routes/history'
@@ -36,9 +39,19 @@ const TournamentRoute = TournamentRouteImport.update({
   path: '/tournament',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ShopRoute = ShopRouteImport.update({
   id: '/shop',
   path: '/shop',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RefundsRoute = RefundsRouteImport.update({
+  id: '/refunds',
+  path: '/refunds',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RankingRoute = RankingRouteImport.update({
@@ -49,6 +62,11 @@ const RankingRoute = RankingRouteImport.update({
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PreviewChestRoute = PreviewChestRouteImport.update({
@@ -118,9 +136,12 @@ export interface FileRoutesByFullPath {
   '/history': typeof HistoryRoute
   '/login': typeof LoginRoute
   '/preview-chest': typeof PreviewChestRoute
+  '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/ranking': typeof RankingRoute
+  '/refunds': typeof RefundsRoute
   '/shop': typeof ShopRoute
+  '/terms': typeof TermsRoute
   '/tournament': typeof TournamentRoute
   '/trade': typeof TradeRoute
   '/monster/$id': typeof MonsterIdRoute
@@ -136,9 +157,12 @@ export interface FileRoutesByTo {
   '/history': typeof HistoryRoute
   '/login': typeof LoginRoute
   '/preview-chest': typeof PreviewChestRoute
+  '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/ranking': typeof RankingRoute
+  '/refunds': typeof RefundsRoute
   '/shop': typeof ShopRoute
+  '/terms': typeof TermsRoute
   '/tournament': typeof TournamentRoute
   '/trade': typeof TradeRoute
   '/monster/$id': typeof MonsterIdRoute
@@ -155,9 +179,12 @@ export interface FileRoutesById {
   '/history': typeof HistoryRoute
   '/login': typeof LoginRoute
   '/preview-chest': typeof PreviewChestRoute
+  '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/ranking': typeof RankingRoute
+  '/refunds': typeof RefundsRoute
   '/shop': typeof ShopRoute
+  '/terms': typeof TermsRoute
   '/tournament': typeof TournamentRoute
   '/trade': typeof TradeRoute
   '/monster/$id': typeof MonsterIdRoute
@@ -175,9 +202,12 @@ export interface FileRouteTypes {
     | '/history'
     | '/login'
     | '/preview-chest'
+    | '/privacy'
     | '/profile'
     | '/ranking'
+    | '/refunds'
     | '/shop'
+    | '/terms'
     | '/tournament'
     | '/trade'
     | '/monster/$id'
@@ -193,9 +223,12 @@ export interface FileRouteTypes {
     | '/history'
     | '/login'
     | '/preview-chest'
+    | '/privacy'
     | '/profile'
     | '/ranking'
+    | '/refunds'
     | '/shop'
+    | '/terms'
     | '/tournament'
     | '/trade'
     | '/monster/$id'
@@ -211,9 +244,12 @@ export interface FileRouteTypes {
     | '/history'
     | '/login'
     | '/preview-chest'
+    | '/privacy'
     | '/profile'
     | '/ranking'
+    | '/refunds'
     | '/shop'
+    | '/terms'
     | '/tournament'
     | '/trade'
     | '/monster/$id'
@@ -230,9 +266,12 @@ export interface RootRouteChildren {
   HistoryRoute: typeof HistoryRoute
   LoginRoute: typeof LoginRoute
   PreviewChestRoute: typeof PreviewChestRoute
+  PrivacyRoute: typeof PrivacyRoute
   ProfileRoute: typeof ProfileRoute
   RankingRoute: typeof RankingRoute
+  RefundsRoute: typeof RefundsRoute
   ShopRoute: typeof ShopRoute
+  TermsRoute: typeof TermsRoute
   TournamentRoute: typeof TournamentRoute
   TradeRoute: typeof TradeRoute
   MonsterIdRoute: typeof MonsterIdRoute
@@ -255,11 +294,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TournamentRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/shop': {
       id: '/shop'
       path: '/shop'
       fullPath: '/shop'
       preLoaderRoute: typeof ShopRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/refunds': {
+      id: '/refunds'
+      path: '/refunds'
+      fullPath: '/refunds'
+      preLoaderRoute: typeof RefundsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ranking': {
@@ -274,6 +327,13 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/preview-chest': {
@@ -366,9 +426,12 @@ const rootRouteChildren: RootRouteChildren = {
   HistoryRoute: HistoryRoute,
   LoginRoute: LoginRoute,
   PreviewChestRoute: PreviewChestRoute,
+  PrivacyRoute: PrivacyRoute,
   ProfileRoute: ProfileRoute,
   RankingRoute: RankingRoute,
+  RefundsRoute: RefundsRoute,
   ShopRoute: ShopRoute,
+  TermsRoute: TermsRoute,
   TournamentRoute: TournamentRoute,
   TradeRoute: TradeRoute,
   MonsterIdRoute: MonsterIdRoute,
@@ -377,3 +440,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
