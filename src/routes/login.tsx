@@ -47,47 +47,92 @@ function LoginPage() {
     });
   }, [navigate]);
 
+  function translateAuthError(raw: string): string {
+    const m = raw.toLowerCase();
+    if (m.includes("invalid login credentials") || m.includes("invalid_credentials"))
+      return "Email ou senha incorretos. Verifique e tente novamente.";
+    if (m.includes("email not confirmed"))
+      return "Confirme seu email antes de entrar (verifique sua caixa de entrada).";
+    if (m.includes("already registered") || m.includes("já está cadastrado") || m.includes("user already"))
+      return "Este email já está cadastrado. Faça login.";
+    if (m.includes("password should be at least") || m.includes("password is too short") || m.includes("weak_password"))
+      return "Senha muito curta. Use no mínimo 6 caracteres.";
+    if (m.includes("pwned") || (m.includes("password") && m.includes("compromised")))
+      return "Essa senha apareceu em vazamentos públicos. Escolha outra mais segura.";
+    if (m.includes("unable to validate email") || m.includes("invalid email") || m.includes("invalid format"))
+      return "Email inválido. Verifique se digitou corretamente (sem espaços).";
+    if (m.includes("rate limit") || m.includes("too many requests"))
+      return "Muitas tentativas. Aguarde alguns segundos e tente novamente.";
+    if (m.includes("signup is disabled") || m.includes("signups not allowed"))
+      return "Cadastros temporariamente desativados. Tente mais tarde.";
+    if (m.includes("network") || m.includes("failed to fetch"))
+      return "Sem conexão com o servidor. Verifique sua internet.";
+    if (m.includes("user not found"))
+      return "Conta não encontrada. Crie uma conta primeiro.";
+    return raw;
+  }
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+
+    // Validações locais antes de chamar a API
+    const cleanEmail = email.trim();
+    if (cleanEmail !== email) setEmail(cleanEmail);
+    if (!cleanEmail) { toast.error("Digite seu email."); return; }
+    if (/\s/.test(cleanEmail)) { toast.error("O email não pode ter espaços."); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) { toast.error("Email inválido. Ex: nome@exemplo.com"); return; }
+    if (!password) { toast.error("Digite sua senha."); return; }
+    if (/\s/.test(password)) { toast.error("A senha não pode ter espaços."); return; }
+    if (password.length < 6) { toast.error("A senha precisa ter no mínimo 6 caracteres."); return; }
+
+    if (mode === "signup") {
+      const uname = username.trim();
+      if (uname) {
+        if (uname.length < 3) { toast.error("O nome do treinador precisa ter ao menos 3 caracteres."); return; }
+        if (uname.length > 20) { toast.error("O nome do treinador deve ter no máximo 20 caracteres."); return; }
+        if (/\s/.test(uname)) { toast.error("O nome do treinador não pode ter espaços."); return; }
+        if (!/^[a-zA-Z0-9_.-]+$/.test(uname)) {
+          toast.error("Use só letras, números, _ . - no nome do treinador (sem acentos/símbolos).");
+          return;
+        }
+      }
+    }
+
     setBusy(true);
-    // Safety: nunca deixar o botão preso no AGUARDE
     const watchdog = setTimeout(() => {
       setBusy(false);
       toast.error("A operação demorou muito. Tente novamente.");
     }, 20000);
     try {
       if (mode === "signup") {
-        // Garante que não há sessão antiga interferindo no signup
         try { await supabase.auth.signOut(); } catch {}
         const { data, error } = await supabase.auth.signUp({
-          email, password,
+          email: cleanEmail, password,
           options: {
             emailRedirectTo: window.location.origin,
-            data: { username: username || email.split("@")[0] },
+            data: { username: username.trim() || cleanEmail.split("@")[0] },
           },
         });
         if (error) throw error;
-        // Email já cadastrado: Supabase devolve user com identities=[] e sem sessão
         const identities = (data.user as { identities?: unknown[] } | null)?.identities;
         if (data.user && Array.isArray(identities) && identities.length === 0) {
           throw new Error("Este email já está cadastrado. Faça login.");
         }
         if (remember) {
-          localStorage.setItem(REMEMBER_KEY, JSON.stringify({ email, password }));
+          localStorage.setItem(REMEMBER_KEY, JSON.stringify({ email: cleanEmail, password }));
         }
-        // Se não logou direto (confirmação pendente), tenta login imediato
         if (!data.session) {
-          const { error: signInErr } = await supabase.auth.signInWithPassword({ email, password });
+          const { error: signInErr } = await supabase.auth.signInWithPassword({ email: cleanEmail, password });
           if (signInErr) throw signInErr;
         }
         toast.success("Conta criada! Bem-vindo à arena! 🎉");
         navigate({ to: "/" });
         return;
       } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { error } = await supabase.auth.signInWithPassword({ email: cleanEmail, password });
         if (error) throw error;
         if (remember) {
-          localStorage.setItem(REMEMBER_KEY, JSON.stringify({ email, password }));
+          localStorage.setItem(REMEMBER_KEY, JSON.stringify({ email: cleanEmail, password }));
         } else {
           localStorage.removeItem(REMEMBER_KEY);
         }
@@ -95,7 +140,8 @@ function LoginPage() {
       }
     } catch (err) {
       console.error("[auth submit]", err);
-      toast.error(err instanceof Error ? err.message : "Erro ao processar");
+      const raw = err instanceof Error ? err.message : "Erro ao processar";
+      toast.error(translateAuthError(raw));
     } finally {
       clearTimeout(watchdog);
       setBusy(false);
