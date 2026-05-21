@@ -652,6 +652,7 @@ function ArenaPage() {
           </div>
         ) : (
           <>
+            {!battleLog && (<>
             <div className="grid md:grid-cols-2 gap-4">
               <TeamPanel title="Seu time" team={myTeam} side="left" energies={teamEnergies} />
               {opponent ? (
