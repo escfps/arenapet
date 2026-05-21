@@ -479,6 +479,63 @@ export type Database = {
         }
         Relationships: []
       }
+      season_trophies: {
+        Row: {
+          arena_points: number
+          created_at: string
+          final_rank: number | null
+          id: string
+          season_number: number
+          tier: string
+          user_id: string
+        }
+        Insert: {
+          arena_points?: number
+          created_at?: string
+          final_rank?: number | null
+          id?: string
+          season_number: number
+          tier: string
+          user_id: string
+        }
+        Update: {
+          arena_points?: number
+          created_at?: string
+          final_rank?: number | null
+          id?: string
+          season_number?: number
+          tier?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      seasons: {
+        Row: {
+          ended_at: string | null
+          ends_at: string
+          id: string
+          number: number
+          started_at: string
+          status: string
+        }
+        Insert: {
+          ended_at?: string | null
+          ends_at: string
+          id?: string
+          number: number
+          started_at?: string
+          status?: string
+        }
+        Update: {
+          ended_at?: string | null
+          ends_at?: string
+          id?: string
+          number?: number
+          started_at?: string
+          status?: string
+        }
+        Relationships: []
+      }
       skins_owned: {
         Row: {
           acquired_at: string
@@ -748,6 +805,14 @@ export type Database = {
         Returns: undefined
       }
       _bot_xp_for_next: { Args: { lvl: number }; Returns: number }
+      _season_grant_chest: {
+        Args: { p_item: string; p_qty: number; p_user: string }
+        Returns: undefined
+      }
+      _season_tier_name: {
+        Args: { p_points: number; p_rank: number }
+        Returns: string
+      }
       _tour_next_slot: { Args: never; Returns: string }
       _tour_pick_winner: {
         Args: { p1: string; p2: string; pw1: number; pw2: number }
@@ -772,12 +837,14 @@ export type Database = {
         Args: { p_tournament_id: string }
         Returns: undefined
       }
+      end_season: { Args: { p_season_id: string }; Returns: undefined }
       ensure_tournament: { Args: { slot: string }; Returns: string }
       join_tournament: { Args: { p_tournament_id: string }; Returns: Json }
       report_match_result: {
         Args: { p_log: Json; p_match_id: string; p_winner_id: string }
         Returns: undefined
       }
+      seasons_tick: { Args: never; Returns: undefined }
       simulate_bot_battles: { Args: never; Returns: undefined }
       tournaments_tick: { Args: never; Returns: undefined }
       train_bot_pets: { Args: never; Returns: undefined }
