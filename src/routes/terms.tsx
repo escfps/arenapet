@@ -21,7 +21,7 @@ function TermsPage() {
         <section className="space-y-3 text-sm leading-relaxed">
           <h2 className="text-xl font-bold mt-4">1. Sobre o vendedor</h2>
           <p>
-            O Arena Pet é operado por <b>Bruno Henrique Moura Bernardo</b>, pessoa física,
+            O <b>ARENA PET</b> é operado por Bruno Henrique Moura Bernardo (pessoa física),
             domiciliado no Brasil ("nós", "vendedor"). Ao utilizar o serviço, você aceita
             integralmente estes Termos. Caso não concorde, não utilize o serviço.
           </p>
