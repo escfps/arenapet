@@ -776,6 +776,52 @@ function ArenaPage() {
                       <div className="text-4xl sm:text-5xl font-black tracking-widest">
                         {winner === "team_a" ? "VITÓRIA!" : winner === "draw" ? "EMPATE!" : "DERROTA"}
                       </div>
+                      {(() => {
+                        // Compute per-side stats inline
+                        const sideA = new Map<string, { name: string; species: string; skin: string; dmg: number; heal: number; taken: number; kills: number }>();
+                        const sideB = new Map<string, typeof sideA extends Map<string, infer V> ? V : never>();
+                        for (const m of myTeam) sideA.set(m.name, { name: m.name, species: m.species, skin: m.skin, dmg: 0, heal: 0, taken: 0, kills: 0 });
+                        for (const m of opponent.team) sideB.set(m.name, { name: m.name, species: m.species, skin: m.skin, dmg: 0, heal: 0, taken: 0, kills: 0 });
+                        for (const e of battleLog) {
+                          const actSide = e.actor === "team_a" ? sideA : sideB;
+                          const tgtSide = e.actor === "team_a" ? sideB : sideA;
+                          if (e.damage === 0 && e.message.startsWith("💀")) {
+                            const s = actSide.get(e.actorName); if (s) s.kills += 1; continue;
+                          }
+                          if (e.damage > 0) {
+                            const s = actSide.get(e.actorName); if (s) s.dmg += e.damage;
+                            const t = tgtSide.get(e.targetName); if (t) t.taken += e.damage;
+                          } else if (e.damage < 0) {
+                            const heal = -e.damage;
+                            const s = actSide.get(e.actorName); if (s) s.heal += heal;
+                          }
+                        }
+                        const pickMvp = (m: typeof sideA) => Array.from(m.values()).sort((x, y) => (y.dmg + y.heal) - (x.dmg + x.heal))[0];
+                        const mvpA = pickMvp(sideA);
+                        const mvpB = pickMvp(sideB);
+                        const Card = ({ s, label, accent }: { s: typeof mvpA; label: string; accent: string }) => {
+                          if (!s) return null;
+                          const sp = SPECIES[s.species];
+                          return (
+                            <div className={`flex items-center gap-2 p-2 rounded-lg bg-black/40 border ${accent} min-w-0`}>
+                              {sp && <img src={sp.image} alt="" className="h-9 w-9 object-contain shrink-0" style={{ filter: skinFilter(s.skin) }} />}
+                              <div className="flex-1 min-w-0 text-left">
+                                <div className="text-[10px] font-extrabold text-yellow-300 leading-none">⭐ MVP • {label}</div>
+                                <div className="text-xs font-bold text-white truncate">{s.name}</div>
+                                <div className="text-[10px] text-white/90 font-medium leading-tight">
+                                  ⚔️ {Math.round(s.dmg)} • 💚 {Math.round(s.heal)} • 💀 {Math.round(s.kills)}
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        };
+                        return (
+                          <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2 max-w-md mx-auto">
+                            <Card s={mvpA} label="Seu time" accent="border-blue-300/60" />
+                            <Card s={mvpB} label="Inimigo" accent="border-red-300/60" />
+                          </div>
+                        );
+                      })()}
                       <div className="mt-4 flex flex-col sm:flex-row gap-2 justify-center">
                         <button
                           onClick={findOpponent}
