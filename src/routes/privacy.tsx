@@ -21,7 +21,7 @@ function PrivacyPage() {
         <section className="space-y-3 text-sm leading-relaxed">
           <h2 className="text-xl font-bold mt-4">1. Controlador dos dados</h2>
           <p>
-            <b>Bruno Henrique Moura Bernardo</b>, pessoa física, é o controlador dos dados
+            <b>ARENA PET</b>, operada por Bruno Henrique Moura Bernardo (pessoa física), é a controladora dos dados
             pessoais coletados pelo Arena Pet, conforme a Lei Geral de Proteção de Dados
             (LGPD - Lei 13.709/2018).
           </p>
