@@ -434,7 +434,8 @@ function MonsterPage() {
 
               </button>
             ))}
-          </div>
+            </div>
+          </>
         )}
 
         {tab === "skin" && (
