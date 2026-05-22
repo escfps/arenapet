@@ -339,7 +339,7 @@ function PatioPage() {
                         const from = Number(e.dataTransfer.getData("text/plain"));
                         if (!Number.isNaN(from) && from !== i) swapPositions(from, i);
                       }}
-                      className={`relative aspect-square rounded-2xl border-2 border-yellow-300 bg-gradient-to-br ${ELEMENT_COLORS[sp.element]} shadow-lg overflow-hidden cursor-grab active:cursor-grabbing ${dragHint ? "animate-tutorial-drag" : ""}`}
+                      className={`relative aspect-square rounded-2xl border-2 border-yellow-300 bg-gradient-to-br ${ELEMENT_COLORS[sp.element]} shadow-lg overflow-hidden cursor-grab active:cursor-grabbing`}
                     >
                       <div className="absolute top-1 left-1 z-10 px-1.5 py-0.5 rounded-md bg-black/70 text-yellow-300 text-[9px] font-extrabold shadow">
                         {PILLS[i]}
@@ -377,7 +377,7 @@ function PatioPage() {
                         {canMoveLeft ? (
                           <button
                             onClick={(e) => { e.stopPropagation(); swapPositions(i, i + 1); }}
-                            className="w-6 h-6 shrink-0 rounded-full bg-black/70 hover:bg-yellow-400 hover:text-yellow-950 text-white text-xs font-black flex items-center justify-center shadow"
+                            className={`w-6 h-6 shrink-0 rounded-full bg-black/70 hover:bg-yellow-400 hover:text-yellow-950 text-white text-xs font-black flex items-center justify-center shadow ${dragHint ? "animate-tutorial-arrow ring-2 ring-yellow-300" : ""}`}
                             title="Mover pra trás"
                           >◀</button>
                         ) : <span className="w-6 shrink-0" />}
@@ -392,7 +392,7 @@ function PatioPage() {
                         {canMoveRight ? (
                           <button
                             onClick={(e) => { e.stopPropagation(); swapPositions(i, i - 1); }}
-                            className="w-6 h-6 shrink-0 rounded-full bg-black/70 hover:bg-yellow-400 hover:text-yellow-950 text-white text-xs font-black flex items-center justify-center shadow"
+                            className={`w-6 h-6 shrink-0 rounded-full bg-black/70 hover:bg-yellow-400 hover:text-yellow-950 text-white text-xs font-black flex items-center justify-center shadow ${dragHint ? "animate-tutorial-arrow ring-2 ring-yellow-300" : ""}`}
                             title="Mover pra frente"
                           >▶</button>
                         ) : <span className="w-6 shrink-0" />}
