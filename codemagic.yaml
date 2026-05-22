@@ -10,7 +10,7 @@ workflows:
         distribution_type: app_store
         bundle_identifier: com.arenapet.app
       vars:
-        APP_STORE_APPLE_ID: 0000000000 # substitua pelo Apple ID do app no App Store Connect
+        APP_STORE_APPLE_ID: 6772081915
         BUNDLE_ID: "com.arenapet.app"
         XCODE_WORKSPACE: "ios/App/App.xcworkspace"
         XCODE_SCHEME: "App"
