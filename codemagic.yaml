@@ -38,8 +38,12 @@ workflows:
           ./node_modules/.bin/cap sync ios
       - name: Install pods
         script: |
-          cd ios/App
-          pod install
+          echo "=== iOS structure ==="
+          find ios -name "Podfile" 2>/dev/null || echo "No Podfile found"
+          ls -la ios/ 2>/dev/null || echo "No ios dir"
+          PODFILE_DIR=$(find . -name "Podfile" -not -path "*/node_modules/*" 2>/dev/null | head -1 | xargs dirname)
+          echo "Podfile dir: $PODFILE_DIR"
+          cd $PODFILE_DIR && pod install
       - name: Set up code signing
         script: |
           keychain initialize
