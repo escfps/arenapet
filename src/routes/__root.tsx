@@ -7,9 +7,11 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import appCss from "../styles.css?url";
+import { TutorialProvider } from "@/lib/use-tutorial";
+import { TutorialSpotlight } from "@/components/TutorialSpotlight";
 
 function PWARegister() {
   useEffect(() => {
@@ -153,7 +155,28 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <PWARegister />
-      <Outlet />
+      <TutorialRoot />
     </QueryClientProvider>
+  );
+}
+
+function TutorialRoot() {
+  const [userId, setUserId] = useState<string | null>(null);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    import("@/integrations/supabase/client").then(({ supabase }) => {
+      supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id ?? null));
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
+        setUserId(session?.user?.id ?? null);
+      });
+      return () => subscription.unsubscribe();
+    });
+  }, []);
+
+  return (
+    <TutorialProvider userId={userId}>
+      <Outlet />
+      <TutorialSpotlight />
+    </TutorialProvider>
   );
 }

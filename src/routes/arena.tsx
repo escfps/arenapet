@@ -530,6 +530,9 @@ function ArenaPage() {
           attacker_points_delta: displayedAttackerDelta,
           defender_points_delta: displayedDefenderDelta,
         });
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new CustomEvent("tutorial:battle-finished"));
+        }
 
         if (won && Math.random() < 0.70) {
           const dropped = 1 + Math.floor(Math.random() * 2);
@@ -704,6 +707,7 @@ function ArenaPage() {
               <button
                 onClick={findOpponent}
                 disabled={searching}
+                data-tutorial="find-opponent"
                 className="px-6 py-3 rounded-xl bg-white/20 text-white font-extrabold hover:bg-white/30 transition disabled:opacity-50"
               >
                 {searching ? `🔍 Procurando oponente... ${searchCountdown}s` : "🎯 Buscar oponente"}
