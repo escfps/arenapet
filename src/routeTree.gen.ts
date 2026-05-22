@@ -21,6 +21,7 @@ import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PreviewChestRouteImport } from './routes/preview-chest'
 import { Route as NovidadesRouteImport } from './routes/novidades'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as InventarioRouteImport } from './routes/inventario'
 import { Route as HistoryRouteImport } from './routes/history'
 import { Route as FriendsRouteImport } from './routes/friends'
 import { Route as ForgeRouteImport } from './routes/forge'
@@ -93,6 +94,11 @@ const NovidadesRoute = NovidadesRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InventarioRoute = InventarioRouteImport.update({
+  id: '/inventario',
+  path: '/inventario',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HistoryRoute = HistoryRouteImport.update({
@@ -172,6 +178,7 @@ export interface FileRoutesByFullPath {
   '/forge': typeof ForgeRoute
   '/friends': typeof FriendsRouteWithChildren
   '/history': typeof HistoryRoute
+  '/inventario': typeof InventarioRoute
   '/login': typeof LoginRoute
   '/novidades': typeof NovidadesRoute
   '/preview-chest': typeof PreviewChestRoute
@@ -199,6 +206,7 @@ export interface FileRoutesByTo {
   '/forge': typeof ForgeRoute
   '/friends': typeof FriendsRouteWithChildren
   '/history': typeof HistoryRoute
+  '/inventario': typeof InventarioRoute
   '/login': typeof LoginRoute
   '/novidades': typeof NovidadesRoute
   '/preview-chest': typeof PreviewChestRoute
@@ -227,6 +235,7 @@ export interface FileRoutesById {
   '/forge': typeof ForgeRoute
   '/friends': typeof FriendsRouteWithChildren
   '/history': typeof HistoryRoute
+  '/inventario': typeof InventarioRoute
   '/login': typeof LoginRoute
   '/novidades': typeof NovidadesRoute
   '/preview-chest': typeof PreviewChestRoute
@@ -256,6 +265,7 @@ export interface FileRouteTypes {
     | '/forge'
     | '/friends'
     | '/history'
+    | '/inventario'
     | '/login'
     | '/novidades'
     | '/preview-chest'
@@ -283,6 +293,7 @@ export interface FileRouteTypes {
     | '/forge'
     | '/friends'
     | '/history'
+    | '/inventario'
     | '/login'
     | '/novidades'
     | '/preview-chest'
@@ -310,6 +321,7 @@ export interface FileRouteTypes {
     | '/forge'
     | '/friends'
     | '/history'
+    | '/inventario'
     | '/login'
     | '/novidades'
     | '/preview-chest'
@@ -338,6 +350,7 @@ export interface RootRouteChildren {
   ForgeRoute: typeof ForgeRoute
   FriendsRoute: typeof FriendsRouteWithChildren
   HistoryRoute: typeof HistoryRoute
+  InventarioRoute: typeof InventarioRoute
   LoginRoute: typeof LoginRoute
   NovidadesRoute: typeof NovidadesRoute
   PreviewChestRoute: typeof PreviewChestRoute
@@ -439,6 +452,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/inventario': {
+      id: '/inventario'
+      path: '/inventario'
+      fullPath: '/inventario'
+      preLoaderRoute: typeof InventarioRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/history': {
@@ -556,6 +576,7 @@ const rootRouteChildren: RootRouteChildren = {
   ForgeRoute: ForgeRoute,
   FriendsRoute: FriendsRouteWithChildren,
   HistoryRoute: HistoryRoute,
+  InventarioRoute: InventarioRoute,
   LoginRoute: LoginRoute,
   NovidadesRoute: NovidadesRoute,
   PreviewChestRoute: PreviewChestRoute,

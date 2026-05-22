@@ -12,6 +12,7 @@ import {
 } from "@/lib/game-data";
 import { useServerFn } from "@tanstack/react-start";
 import { claimBattlePassDaily } from "@/lib/battle-pass.functions";
+import { storeChest } from "@/lib/chest-inventory";
 import type { MonsterRow } from "@/components/MonsterCard";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
@@ -158,6 +159,21 @@ function ShopPage() {
     }
 
     setChestResult({ tier, reward });
+  }
+
+  async function buyChestToInventory(tier: ChestTier, payWith: "coins" | "gems") {
+    if (!profile || !userId) return;
+    const c = CHESTS[tier];
+    const useCoins = payWith === "coins" && c.priceCoins != null;
+    const useGems = !useCoins && c.priceGems != null;
+    if (useCoins && profile.coins < (c.priceCoins ?? 0)) { toast.error("Moedas insuficientes!"); return; }
+    if (useGems && profile.gems < (c.priceGems ?? 0)) { toast.error("Gemas insuficientes!"); return; }
+    await patch({
+      coins: profile.coins - (useCoins ? (c.priceCoins ?? 0) : 0),
+      gems: profile.gems - (useGems ? (c.priceGems ?? 0) : 0),
+    });
+    await storeChest(userId, tier, 1);
+    toast.success(`📦 ${c.name} guardado no inventário!`);
   }
 
   async function buySkin(skinId: string) {
@@ -344,6 +360,13 @@ function ShopPage() {
                           Abrir por 💎 {c.priceGems.toLocaleString("pt-BR")}
                         </button>
                       )}
+                      <button
+                        onClick={() => buyChestToInventory(c.id, c.priceGems != null ? "gems" : "coins")}
+                        className="w-full py-1.5 rounded-xl bg-white/15 hover:bg-white/25 text-white text-xs font-bold transition"
+                        title="Compra o baú e guarda no inventário pra abrir depois"
+                      >
+                        📦 Comprar e guardar no inventário
+                      </button>
                     </div>
 
                   </div>

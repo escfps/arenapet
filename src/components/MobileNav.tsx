@@ -15,6 +15,7 @@ const bottomItems = [
 const drawerItems = [
   { to: "/friends", label: "Amigos", emoji: "👥" },
   { to: "/shop", label: "Loja", emoji: "🏪" },
+  { to: "/inventario", label: "Inventário", emoji: "🎒" },
   { to: "/profile", label: "Perfil", emoji: "👤" },
   { to: "/history", label: "Histórico", emoji: "📜" },
   { to: "/trade", label: "Trocas", emoji: "🔄" },
