@@ -377,7 +377,7 @@ function PatioPage() {
                         {canMoveLeft ? (
                           <button
                             onClick={(e) => { e.stopPropagation(); swapPositions(i, i + 1); }}
-                            className="w-6 h-6 shrink-0 rounded-full bg-black/70 hover:bg-yellow-400 hover:text-yellow-950 text-white text-xs font-black flex items-center justify-center shadow"
+                            className={`w-6 h-6 shrink-0 rounded-full bg-black/70 hover:bg-yellow-400 hover:text-yellow-950 text-white text-xs font-black flex items-center justify-center shadow ${dragHint ? "animate-tutorial-arrow ring-2 ring-yellow-300" : ""}`}
                             title="Mover pra trás"
                           >◀</button>
                         ) : <span className="w-6 shrink-0" />}
@@ -392,7 +392,7 @@ function PatioPage() {
                         {canMoveRight ? (
                           <button
                             onClick={(e) => { e.stopPropagation(); swapPositions(i, i - 1); }}
-                            className="w-6 h-6 shrink-0 rounded-full bg-black/70 hover:bg-yellow-400 hover:text-yellow-950 text-white text-xs font-black flex items-center justify-center shadow"
+                            className={`w-6 h-6 shrink-0 rounded-full bg-black/70 hover:bg-yellow-400 hover:text-yellow-950 text-white text-xs font-black flex items-center justify-center shadow ${dragHint ? "animate-tutorial-arrow ring-2 ring-yellow-300" : ""}`}
                             title="Mover pra frente"
                           >▶</button>
                         ) : <span className="w-6 shrink-0" />}
