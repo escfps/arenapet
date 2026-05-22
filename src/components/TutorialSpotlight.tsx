@@ -69,8 +69,8 @@ export function TutorialSpotlight() {
   const [claiming, setClaiming] = useState(false);
   const claimedRef = useRef(false);
 
-  if (!active || !current) {
-    return rewardQueue.length > 0 ? (
+  if (rewardQueue.length > 0) {
+    return (
       <ChestRewardPopup
         queue={rewardQueue}
         onConsume={(id) => {
@@ -78,8 +78,10 @@ export function TutorialSpotlight() {
           finish();
         }}
       />
-    ) : null;
+    );
   }
+
+  if (!active || !current) return null;
 
   if (hidden) return null;
 
@@ -103,6 +105,8 @@ export function TutorialSpotlight() {
               reward: result.reward,
             },
           ]);
+          window.dispatchEvent(new Event("profile:reload"));
+          finish();
         }
       } catch (err) {
         console.error(err);
