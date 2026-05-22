@@ -324,6 +324,7 @@ function PatioPage() {
                   return (
                     <div
                       key={m.id}
+                      data-tutorial="team-slot"
                       draggable
                       onDragStart={(e) => { e.dataTransfer.setData("text/plain", String(i)); e.dataTransfer.effectAllowed = "move"; }}
                       onDragOver={(e) => { e.preventDefault(); e.currentTarget.classList.add("ring-4","ring-yellow-300"); }}
