@@ -1,0 +1,71 @@
+workflows:
+  ios-appstore:
+    name: iOS App Store Release
+    max_build_duration: 90
+    instance_type: mac_mini_m2
+    integrations:
+      app_store_connect: codemagic
+    environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.arenapet.app
+      vars:
+        APP_STORE_APPLE_ID: 0000000000 # substitua pelo Apple ID do app no App Store Connect
+        BUNDLE_ID: "com.arenapet.app"
+        XCODE_WORKSPACE: "ios/App/App.xcworkspace"
+        XCODE_SCHEME: "App"
+      node: 20.11.0
+      xcode: latest
+      cocoapods: default
+    triggering:
+      events:
+        - tag
+      tag_patterns:
+        - pattern: 'v*'
+          include: true
+    scripts:
+      - name: Instalar dependências
+        script: |
+          bun install || npm ci
+      - name: Build do PWA (Vite)
+        script: |
+          bun run build || npm run build
+      - name: Configurar Capacitor iOS (se ainda não existir)
+        script: |
+          if [ ! -d "ios" ]; then
+            npm i -D @capacitor/cli
+            npm i @capacitor/core @capacitor/ios
+            npx cap init "Arena Pet" "$BUNDLE_ID" --web-dir=dist
+            npx cap add ios
+          fi
+          npx cap sync ios
+      - name: Instalar Pods
+        script: |
+          cd ios/App && pod install
+      - name: Definir versão de build
+        script: |
+          cd ios/App
+          agvtool new-version -all $(($BUILD_NUMBER + 1))
+      - name: Build IPA
+        script: |
+          xcode-project build-ipa \
+            --workspace "$XCODE_WORKSPACE" \
+            --scheme "$XCODE_SCHEME"
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
+        submit_to_app_store: false
+        beta_groups:
+          - Internal Testers
+      email:
+        recipients:
+          - dev@arenapet.app
+        notify:
+          success: true
+          failure: true
