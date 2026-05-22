@@ -23,11 +23,11 @@ workflows:
         script: npm run build
       - name: Install Capacitor
         script: |
-          npm install @capacitor/core @capacitor/ios
-          npx cap init "Arena Pet" com.arenapet.app --web-dir dist
-          npx cap add ios
-          npx cap copy ios
-          npx cap sync ios
+          npm install @capacitor/core @capacitor/ios @capacitor/cli
+          ./node_modules/.bin/cap init "Arena Pet" com.arenapet.app --web-dir dist
+          ./node_modules/.bin/cap add ios
+          ./node_modules/.bin/cap copy ios
+          ./node_modules/.bin/cap sync ios
       - name: Install pods
         script: |
           cd ios/App
