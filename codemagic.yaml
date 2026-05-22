@@ -61,6 +61,29 @@ workflows:
             PROVISIONING_PROFILE_SPECIFIER="Arena Pet Appstore" \
             CODE_SIGN_IDENTITY="Apple Distribution" \
             DEVELOPMENT_TEAM="8Q7D6F63F2"
+          cat > /tmp/ExportOptions.plist << EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>method</key>
+  <string>app-store</string>
+  <key>teamID</key>
+  <string>8Q7D6F63F2</string>
+  <key>signingStyle</key>
+  <string>manual</string>
+  <key>provisioningProfiles</key>
+  <dict>
+    <key>com.arenapet.app</key>
+    <string>Arena Pet Appstore</string>
+  </dict>
+</dict>
+</plist>
+EOF
+          xcodebuild -exportArchive \
+            -archivePath ios/App/build/App.xcarchive \
+            -exportOptionsPlist /tmp/ExportOptions.plist \
+            -exportPath ios/App/build/
     artifacts:
       - ios/App/build/*.ipa
     publishing:
