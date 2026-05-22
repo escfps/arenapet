@@ -22,8 +22,9 @@ export const TUTORIAL_STEPS: TutorialStep[] = [
     target: '[data-tutorial="team-slot"]',
     title: "1/9 — Monte seu time",
     body:
-      "Toque em qualquer slot pra trocar/posicionar seus pets.\n\n🛡️ Frente = tanques (absorvem dano)\n⚔️ Meio = DPS e suporte\n🏹 Trás = magos e healers",
-    advance: "click",
+      "Arraste um pet pra outro slot pra trocar de posição (ou use as setinhas ◀ ▶). Faça pelo menos UMA troca pra continuar!\n\n🛡️ Frente = tanques\n⚔️ Meio = DPS/suporte\n🏹 Trás = magos/healers",
+    advance: "event",
+    eventName: "tutorial:team-swapped",
     requiredRoute: "/",
     goLabel: "🏠 Ir pro Pátio",
   },

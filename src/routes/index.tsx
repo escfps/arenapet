@@ -45,7 +45,8 @@ function PatioPage() {
   const [pickerElement, setPickerElement] = useState<Element | "all">("all");
   const [pickerRole, setPickerRole] = useState<Role | "all">("all");
   const [pickerCategory, setPickerCategory] = useState<Category | "all">("all");
-  const { start: startTutorial } = useTutorial();
+  const { start: startTutorial, current: tutorialStep } = useTutorial();
+  const dragHint = tutorialStep?.id === "team";
 
   // Tutorial é iniciado quando o jogador clica "Vamos lá!" no WelcomeChestModal (onDone).
   // O gate de nível 1 fica no próprio start (e a recompensa do baú de prata é idempotente no servidor).
@@ -249,6 +250,9 @@ function PatioPage() {
     }));
     await supabase.from("monsters").update({ team_position: slotB }).eq("id", a.id);
     if (b) await supabase.from("monsters").update({ team_position: slotA }).eq("id", b.id);
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("tutorial:team-swapped"));
+    }
   }
 
 
@@ -335,7 +339,7 @@ function PatioPage() {
                         const from = Number(e.dataTransfer.getData("text/plain"));
                         if (!Number.isNaN(from) && from !== i) swapPositions(from, i);
                       }}
-                      className={`relative aspect-square rounded-2xl border-2 border-yellow-300 bg-gradient-to-br ${ELEMENT_COLORS[sp.element]} shadow-lg overflow-hidden cursor-grab active:cursor-grabbing`}
+                      className={`relative aspect-square rounded-2xl border-2 border-yellow-300 bg-gradient-to-br ${ELEMENT_COLORS[sp.element]} shadow-lg overflow-hidden cursor-grab active:cursor-grabbing ${dragHint ? "animate-tutorial-drag" : ""}`}
                     >
                       <div className="absolute top-1 left-1 z-10 px-1.5 py-0.5 rounded-md bg-black/70 text-yellow-300 text-[9px] font-extrabold shadow">
                         {PILLS[i]}
