@@ -19,6 +19,7 @@ import { Route as RankingRouteImport } from './routes/ranking'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PreviewChestRouteImport } from './routes/preview-chest'
+import { Route as NovidadesRouteImport } from './routes/novidades'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HistoryRouteImport } from './routes/history'
 import { Route as FriendsRouteImport } from './routes/friends'
@@ -82,6 +83,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const PreviewChestRoute = PreviewChestRouteImport.update({
   id: '/preview-chest',
   path: '/preview-chest',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NovidadesRoute = NovidadesRouteImport.update({
+  id: '/novidades',
+  path: '/novidades',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -167,6 +173,7 @@ export interface FileRoutesByFullPath {
   '/friends': typeof FriendsRouteWithChildren
   '/history': typeof HistoryRoute
   '/login': typeof LoginRoute
+  '/novidades': typeof NovidadesRoute
   '/preview-chest': typeof PreviewChestRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
@@ -193,6 +200,7 @@ export interface FileRoutesByTo {
   '/friends': typeof FriendsRouteWithChildren
   '/history': typeof HistoryRoute
   '/login': typeof LoginRoute
+  '/novidades': typeof NovidadesRoute
   '/preview-chest': typeof PreviewChestRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
@@ -220,6 +228,7 @@ export interface FileRoutesById {
   '/friends': typeof FriendsRouteWithChildren
   '/history': typeof HistoryRoute
   '/login': typeof LoginRoute
+  '/novidades': typeof NovidadesRoute
   '/preview-chest': typeof PreviewChestRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
@@ -248,6 +257,7 @@ export interface FileRouteTypes {
     | '/friends'
     | '/history'
     | '/login'
+    | '/novidades'
     | '/preview-chest'
     | '/privacy'
     | '/profile'
@@ -274,6 +284,7 @@ export interface FileRouteTypes {
     | '/friends'
     | '/history'
     | '/login'
+    | '/novidades'
     | '/preview-chest'
     | '/privacy'
     | '/profile'
@@ -300,6 +311,7 @@ export interface FileRouteTypes {
     | '/friends'
     | '/history'
     | '/login'
+    | '/novidades'
     | '/preview-chest'
     | '/privacy'
     | '/profile'
@@ -327,6 +339,7 @@ export interface RootRouteChildren {
   FriendsRoute: typeof FriendsRouteWithChildren
   HistoryRoute: typeof HistoryRoute
   LoginRoute: typeof LoginRoute
+  NovidadesRoute: typeof NovidadesRoute
   PreviewChestRoute: typeof PreviewChestRoute
   PrivacyRoute: typeof PrivacyRoute
   ProfileRoute: typeof ProfileRoute
@@ -412,6 +425,13 @@ declare module '@tanstack/react-router' {
       path: '/preview-chest'
       fullPath: '/preview-chest'
       preLoaderRoute: typeof PreviewChestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/novidades': {
+      id: '/novidades'
+      path: '/novidades'
+      fullPath: '/novidades'
+      preLoaderRoute: typeof NovidadesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -537,6 +557,7 @@ const rootRouteChildren: RootRouteChildren = {
   FriendsRoute: FriendsRouteWithChildren,
   HistoryRoute: HistoryRoute,
   LoginRoute: LoginRoute,
+  NovidadesRoute: NovidadesRoute,
   PreviewChestRoute: PreviewChestRoute,
   PrivacyRoute: PrivacyRoute,
   ProfileRoute: ProfileRoute,

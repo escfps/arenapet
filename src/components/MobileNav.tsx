@@ -20,6 +20,7 @@ const drawerItems = [
   { to: "/trade", label: "Trocas", emoji: "🔄" },
   { to: "/expeditions", label: "Expedições", emoji: "🗺️" },
   { to: "/dicas", label: "Dicas", emoji: "💡" },
+  { to: "/novidades", label: "Novidades", emoji: "📢" },
   { to: "/redeem", label: "Resgatar Código", emoji: "🎁" },
 ] as const;
 
