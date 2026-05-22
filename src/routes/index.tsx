@@ -45,7 +45,8 @@ function PatioPage() {
   const [pickerElement, setPickerElement] = useState<Element | "all">("all");
   const [pickerRole, setPickerRole] = useState<Role | "all">("all");
   const [pickerCategory, setPickerCategory] = useState<Category | "all">("all");
-  const { start: startTutorial } = useTutorial();
+  const { start: startTutorial, current: tutorialStep } = useTutorial();
+  const dragHint = tutorialStep?.id === "team";
 
   // Tutorial é iniciado quando o jogador clica "Vamos lá!" no WelcomeChestModal (onDone).
   // O gate de nível 1 fica no próprio start (e a recompensa do baú de prata é idempotente no servidor).
