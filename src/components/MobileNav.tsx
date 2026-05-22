@@ -29,6 +29,7 @@ export function MobileDrawerButton({ onOpen }: { onOpen: () => void }) {
   return (
     <button
       onClick={onOpen}
+      data-tutorial="open-menu"
       aria-label="Abrir menu"
       className="p-2 rounded-lg text-white hover:bg-white/15 transition"
     >
