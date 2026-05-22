@@ -30,6 +30,12 @@ export function useProfile() {
 
   useEffect(() => { if (userId) reload(); }, [userId, reload]);
 
+  useEffect(() => {
+    if (!userId) return;
+    window.addEventListener("profile:reload", reload);
+    return () => window.removeEventListener("profile:reload", reload);
+  }, [userId, reload]);
+
   const patch = useCallback(async (updates: Partial<ProfileRow>) => {
     if (!profile) return;
     const merged = { ...profile, ...updates };
