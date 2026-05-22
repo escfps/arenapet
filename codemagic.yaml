@@ -38,13 +38,14 @@ workflows:
           ./node_modules/.bin/cap sync ios
       - name: Build iOS
         script: |
-          echo "=== Finding xcworkspace ==="
-          find ios -name "*.xcworkspace" 2>/dev/null
-          WORKSPACE=$(find ios -name "*.xcworkspace" | head -1)
-          SCHEME=$(echo $WORKSPACE | xargs -I{} basename {} .xcworkspace)
-          echo "Workspace: $WORKSPACE, Scheme: $SCHEME"
+          WORKSPACE=$(find ios -name "*.xcworkspace" | grep -v xcodeproj | head -1)
+          if [ -z "$WORKSPACE" ]; then
+            WORKSPACE=$(find ios -name "*.xcworkspace" | head -1)
+          fi
+          echo "Workspace: $WORKSPACE"
+          xcodebuild -workspace $WORKSPACE -list 2>&1 | head -20
           xcodebuild -workspace $WORKSPACE \
-            -scheme $SCHEME \
+            -scheme App \
             -configuration Release \
             -archivePath ios/App/build/App.xcarchive \
             archive \
