@@ -45,19 +45,17 @@ function PatioPage() {
   const [pickerElement, setPickerElement] = useState<Element | "all">("all");
   const [pickerRole, setPickerRole] = useState<Role | "all">("all");
   const [pickerCategory, setPickerCategory] = useState<Category | "all">("all");
-  const [showTutorial, setShowTutorial] = useState(false);
+  const { start: startTutorial } = useTutorial();
 
-  // Mostra tutorial após o baú ser aberto — APENAS no nível 1.
-  // Depois da 1ª batalha o jogador sobe pra lvl 2 e o tutorial nunca mais aparece
-  // (e o baú de prata de recompensa também não pode ser reclamado de novo).
-  useEffect(() => {
+  // Tutorial é iniciado quando o jogador clica "Vamos lá!" no WelcomeChestModal (onDone).
+  // O gate de nível 1 fica no próprio start (e a recompensa do baú de prata é idempotente no servidor).
+  const maybeStartTutorial = useCallback(() => {
     if (!userId || !profile) return;
-    if (!profile.welcome_chest_claimed) return;
-    if (welcomeReveal) return; // ainda mostrando os pets do baú
-    if ((profile.level ?? 1) > 1) return; // já passou do nível 1, não mostra mais
+    if ((profile.level ?? 1) > 1) return;
     const done = localStorage.getItem(`tutorial_done_${userId}`);
-    if (!done) setShowTutorial(true);
-  }, [userId, profile, welcomeReveal]);
+    if (done) return;
+    startTutorial();
+  }, [userId, profile, startTutorial]);
 
   const loadMonsters = useCallback(async () => {
     if (!userId) return;
