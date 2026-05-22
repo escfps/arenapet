@@ -19,12 +19,14 @@ workflows:
     scripts:
       - name: Install dependencies
         script: npm install
+      - name: Install Capacitor deps
+        script: npm install @capacitor/core @capacitor/ios @capacitor/cli
+      - name: Init Capacitor
+        script: ./node_modules/.bin/cap init "Arena Pet" com.arenapet.app --web-dir dist
       - name: Build web assets
         script: npm run build
-      - name: Install Capacitor
+      - name: Add and sync iOS
         script: |
-          npm install @capacitor/core @capacitor/ios @capacitor/cli
-          ./node_modules/.bin/cap init "Arena Pet" com.arenapet.app --web-dir dist
           ./node_modules/.bin/cap add ios
           ./node_modules/.bin/cap copy ios
           ./node_modules/.bin/cap sync ios
