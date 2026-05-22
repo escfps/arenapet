@@ -50,6 +50,20 @@ export function TutorialSpotlight() {
     return () => window.removeEventListener(name, onEvt);
   }, [active, current, next]);
 
+  // Estado de "esconder temporariamente" — usado pela arena pra sumir com o overlay
+  // durante a animação da batalha.
+  const [hidden, setHidden] = useState(false);
+  useEffect(() => {
+    function onHide() { setHidden(true); }
+    function onShow() { setHidden(false); }
+    window.addEventListener("tutorial:hide", onHide);
+    window.addEventListener("tutorial:show", onShow);
+    return () => {
+      window.removeEventListener("tutorial:hide", onHide);
+      window.removeEventListener("tutorial:show", onShow);
+    };
+  }, []);
+
   // Estado da reward final
   const [rewardQueue, setRewardQueue] = useState<PendingChest[]>([]);
   const [claiming, setClaiming] = useState(false);
