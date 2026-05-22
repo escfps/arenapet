@@ -66,6 +66,7 @@ export function TutorialSpotlight() {
 
   // Estado da reward final
   const [rewardQueue, setRewardQueue] = useState<PendingChest[]>([]);
+  const [showFarewell, setShowFarewell] = useState(false);
   const [claiming, setClaiming] = useState(false);
   const claimedRef = useRef(false);
 
@@ -76,9 +77,35 @@ export function TutorialSpotlight() {
         defaultOpened
         onConsume={(id) => {
           setRewardQueue((q) => q.filter((c) => c.id !== id));
-          finish();
+          setShowFarewell(true);
         }}
       />
+    );
+  }
+
+  if (showFarewell) {
+    return (
+      <div className="fixed inset-0 z-[100] bg-black/85 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in">
+        <div className="max-w-md w-full rounded-3xl bg-gradient-to-br from-indigo-900 via-purple-900 to-fuchsia-900 border-4 border-yellow-300 shadow-2xl p-6 text-center text-white animate-in zoom-in">
+          <div className="text-6xl mb-3 animate-bounce">🎮</div>
+          <h2 className="text-2xl font-black drop-shadow-lg text-yellow-200">Bom jogo!</h2>
+          <p className="text-white/95 mt-4 text-sm leading-relaxed">
+            Você tá pronto pra dominar a arena! ⚔️
+          </p>
+          <p className="text-white/90 mt-3 text-sm leading-relaxed">
+            Qualquer dúvida, é só abrir o <b>menu</b> no canto e ir em <b className="text-yellow-300">💡 Dicas</b> — tem estratégias, sinergias e comps prontas pra você.
+          </p>
+          <p className="text-white/80 mt-3 text-xs italic">
+            Boa sorte, treinador! 🐲✨
+          </p>
+          <button
+            onClick={() => { setShowFarewell(false); finish(); }}
+            className="mt-5 w-full px-6 py-4 rounded-2xl bg-gradient-to-b from-yellow-300 via-amber-400 to-yellow-600 text-yellow-950 font-black text-lg shadow-2xl hover:scale-105 transition border-4 border-yellow-200"
+          >
+            🚀 Jogar agora
+          </button>
+        </div>
+      </div>
     );
   }
 
