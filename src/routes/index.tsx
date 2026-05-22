@@ -4,8 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { SPECIES, ELEMENT_COLORS, ELEMENT_NAMES, RARITY_INFO, ROLE_INFO, rollWelcomeChest, starterMonsterStats, getSpeciesCategories, CATEGORY_INFO, type Rarity, type Element, type Role, type Category } from "@/lib/game-data";
 import { MonsterCard, type MonsterRow } from "@/components/MonsterCard";
 import { HUD } from "@/components/HUD";
-import { TutorialOverlay } from "@/components/TutorialOverlay";
 import { WelcomeChestModal } from "@/components/WelcomeChestModal";
+import { useTutorial } from "@/lib/use-tutorial";
 import { SynergyBadges } from "@/components/SynergyBadges";
 import { useProfile } from "@/lib/use-profile";
 import { toast, Toaster } from "sonner";
@@ -45,19 +45,17 @@ function PatioPage() {
   const [pickerElement, setPickerElement] = useState<Element | "all">("all");
   const [pickerRole, setPickerRole] = useState<Role | "all">("all");
   const [pickerCategory, setPickerCategory] = useState<Category | "all">("all");
-  const [showTutorial, setShowTutorial] = useState(false);
+  const { start: startTutorial } = useTutorial();
 
-  // Mostra tutorial após o baú ser aberto — APENAS no nível 1.
-  // Depois da 1ª batalha o jogador sobe pra lvl 2 e o tutorial nunca mais aparece
-  // (e o baú de prata de recompensa também não pode ser reclamado de novo).
-  useEffect(() => {
+  // Tutorial é iniciado quando o jogador clica "Vamos lá!" no WelcomeChestModal (onDone).
+  // O gate de nível 1 fica no próprio start (e a recompensa do baú de prata é idempotente no servidor).
+  const maybeStartTutorial = useCallback(() => {
     if (!userId || !profile) return;
-    if (!profile.welcome_chest_claimed) return;
-    if (welcomeReveal) return; // ainda mostrando os pets do baú
-    if ((profile.level ?? 1) > 1) return; // já passou do nível 1, não mostra mais
+    if ((profile.level ?? 1) > 1) return;
     const done = localStorage.getItem(`tutorial_done_${userId}`);
-    if (!done) setShowTutorial(true);
-  }, [userId, profile, welcomeReveal]);
+    if (done) return;
+    startTutorial();
+  }, [userId, profile, startTutorial]);
 
   const loadMonsters = useCallback(async () => {
     if (!userId) return;
@@ -379,6 +377,7 @@ function PatioPage() {
                           >◀</button>
                         ) : <span className="w-6 shrink-0" />}
                         <button
+                          data-tutorial="train-pet"
                           onClick={(e) => { e.stopPropagation(); navigate({ to: "/monster/$id", params: { id: m.id }, search: { tab: "train" } }); }}
                           className="flex-1 min-w-0 py-0.5 rounded-md bg-gradient-to-b from-emerald-400 to-emerald-600 hover:from-emerald-300 hover:to-emerald-500 text-white text-[10px] font-black shadow-lg border border-emerald-300 truncate"
                           title="Treinar este pet"
@@ -703,12 +702,8 @@ function PatioPage() {
           hatching={hatching}
           reveal={welcomeReveal}
           onOpen={openWelcomeChest}
-          onDone={() => setWelcomeReveal(null)}
+          onDone={() => { setWelcomeReveal(null); maybeStartTutorial(); }}
         />
-      )}
-
-      {showTutorial && userId && (
-        <TutorialOverlay userId={userId} onClose={() => setShowTutorial(false)} />
       )}
 
       <footer className="mt-12 pb-8 text-center text-xs text-white/60 space-x-3">
