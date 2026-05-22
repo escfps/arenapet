@@ -73,6 +73,7 @@ export function TutorialSpotlight() {
     return (
       <ChestRewardPopup
         queue={rewardQueue}
+        defaultOpened
         onConsume={(id) => {
           setRewardQueue((q) => q.filter((c) => c.id !== id));
           finish();
