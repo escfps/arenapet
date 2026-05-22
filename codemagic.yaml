@@ -36,10 +36,16 @@ workflows:
           ./node_modules/.bin/cap add ios
           ./node_modules/.bin/cap copy ios
           ./node_modules/.bin/cap sync ios
-      - name: Install pods
+      - name: Build iOS
         script: |
-          ./node_modules/.bin/cap sync ios
-          cd ios/App && pod install
+          xcodebuild -workspace ios/App/App.xcworkspace \
+            -scheme App \
+            -configuration Release \
+            -archivePath ios/App/build/App.xcarchive \
+            archive \
+            CODE_SIGN_STYLE=Manual \
+            PROVISIONING_PROFILE_SPECIFIER="Arena Pet Appstore" \
+            CODE_SIGN_IDENTITY="Apple Distribution"
       - name: Set up code signing
         script: |
           keychain initialize
@@ -49,7 +55,7 @@ workflows:
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp /tmp/profile.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
     artifacts:
-      - ios/App/build/ios/ipa/*.ipa
+      - ios/App/build/*.ipa
     publishing:
       app_store_connect:
         auth: integration
