@@ -6,9 +6,8 @@ workflows:
     integrations:
       app_store_connect: Codemagic
     environment:
-      ios_signing:
-        distribution_type: app_store
-        bundle_identifier: com.arenapet.app
+      groups:
+        - ios_signing
       vars:
         APP_STORE_APPLE_ID: 6772081915
         BUNDLE_ID: "com.arenapet.app"
@@ -33,6 +32,14 @@ workflows:
         script: |
           cd ios/App
           pod install
+      - name: Set up code signing
+        script: |
+          keychain initialize
+          echo $CM_CERTIFICATE | base64 --decode > /tmp/certificate.p12
+          keychain add-certificates --certificate /tmp/certificate.p12 --certificate-password $CM_CERTIFICATE_PASSWORD
+          echo $CM_PROVISIONING_PROFILE | base64 --decode > /tmp/profile.mobileprovision
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          cp /tmp/profile.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
     artifacts:
       - ios/App/build/ios/ipa/*.ipa
     publishing:
