@@ -81,6 +81,8 @@ export function TutorialSpotlight() {
     ) : null;
   }
 
+  if (hidden) return null;
+
   // Passo final: pede pro user clicar pra abrir o baú
   if (current.advance === "manual" && current.id === "reward") {
     async function doClaim() {
