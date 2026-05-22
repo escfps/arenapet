@@ -161,9 +161,11 @@ function PatioPage() {
     if (updErr) {
       toast.error("Baú aberto, mas falhou ao registrar: " + updErr.message);
     }
+    // IMPORTANTE: setar reveal ANTES do reload pra evitar que o tutorial
+    // apareça no breve render onde welcome_chest_claimed=true mas reveal=null
+    setWelcomeReveal(speciesIds);
     await reload();
     await loadMonsters();
-    setWelcomeReveal(speciesIds);
     toast.success("Baú de boas-vindas aberto! 🎁");
   }
 
