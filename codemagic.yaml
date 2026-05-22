@@ -22,7 +22,14 @@ workflows:
       - name: Install Capacitor deps
         script: npm install @capacitor/core @capacitor/ios @capacitor/cli
       - name: Build web assets
-        script: npm run build
+        script: |
+          npm run build
+          echo "=== Build output ==="
+          ls -la
+          echo "=== Checking common output dirs ==="
+          ls -la dist 2>/dev/null || echo "no dist"
+          ls -la .output 2>/dev/null || echo "no .output"
+          ls -la build 2>/dev/null || echo "no build"
       - name: Init Capacitor
         script: |
           BUILD_DIR=$(ls -d .output/public dist/client dist 2>/dev/null | head -1)
