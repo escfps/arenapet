@@ -377,6 +377,7 @@ function PatioPage() {
                           >◀</button>
                         ) : <span className="w-6 shrink-0" />}
                         <button
+                          data-tutorial="train-pet"
                           onClick={(e) => { e.stopPropagation(); navigate({ to: "/monster/$id", params: { id: m.id }, search: { tab: "train" } }); }}
                           className="flex-1 min-w-0 py-0.5 rounded-md bg-gradient-to-b from-emerald-400 to-emerald-600 hover:from-emerald-300 hover:to-emerald-500 text-white text-[10px] font-black shadow-lg border border-emerald-300 truncate"
                           title="Treinar este pet"
