@@ -249,6 +249,9 @@ function PatioPage() {
     }));
     await supabase.from("monsters").update({ team_position: slotB }).eq("id", a.id);
     if (b) await supabase.from("monsters").update({ team_position: slotA }).eq("id", b.id);
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("tutorial:team-swapped"));
+    }
   }
 
 
