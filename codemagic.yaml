@@ -61,25 +61,11 @@ workflows:
             PROVISIONING_PROFILE_SPECIFIER="Arena Pet Appstore" \
             CODE_SIGN_IDENTITY="Apple Distribution" \
             DEVELOPMENT_TEAM="8Q7D6F63F2"
-          cat > /tmp/ExportOptions.plist << EOF
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-  <key>method</key>
-  <string>app-store</string>
-  <key>teamID</key>
-  <string>8Q7D6F63F2</string>
-  <key>signingStyle</key>
-  <string>manual</string>
-  <key>provisioningProfiles</key>
-  <dict>
-    <key>com.arenapet.app</key>
-    <string>Arena Pet Appstore</string>
-  </dict>
-</dict>
-</plist>
-EOF
+          /usr/libexec/PlistBuddy -c "Add :method string app-store" /tmp/ExportOptions.plist
+          /usr/libexec/PlistBuddy -c "Add :teamID string 8Q7D6F63F2" /tmp/ExportOptions.plist
+          /usr/libexec/PlistBuddy -c "Add :signingStyle string manual" /tmp/ExportOptions.plist
+          /usr/libexec/PlistBuddy -c "Add :provisioningProfiles dict" /tmp/ExportOptions.plist
+          /usr/libexec/PlistBuddy -c "Add :provisioningProfiles:com.arenapet.app string 'Arena Pet Appstore'" /tmp/ExportOptions.plist
           xcodebuild -exportArchive \
             -archivePath ios/App/build/App.xcarchive \
             -exportOptionsPlist /tmp/ExportOptions.plist \
