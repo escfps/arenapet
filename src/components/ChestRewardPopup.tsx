@@ -25,11 +25,13 @@ const TIER_RING: Record<ChestTier, string> = {
 export function ChestRewardPopup({
   queue,
   onConsume,
+  defaultOpened = false,
 }: {
   queue: PendingChest[];
   onConsume: (id: string) => void;
+  defaultOpened?: boolean;
 }) {
-  const [opened, setOpened] = useState(false);
+  const [opened, setOpened] = useState(defaultOpened);
   const current = queue[0];
 
   if (!current) return null;

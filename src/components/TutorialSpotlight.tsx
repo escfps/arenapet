@@ -69,17 +69,20 @@ export function TutorialSpotlight() {
   const [claiming, setClaiming] = useState(false);
   const claimedRef = useRef(false);
 
-  if (!active || !current) {
-    return rewardQueue.length > 0 ? (
+  if (rewardQueue.length > 0) {
+    return (
       <ChestRewardPopup
         queue={rewardQueue}
+        defaultOpened
         onConsume={(id) => {
           setRewardQueue((q) => q.filter((c) => c.id !== id));
           finish();
         }}
       />
-    ) : null;
+    );
   }
+
+  if (!active || !current) return null;
 
   if (hidden) return null;
 
@@ -92,6 +95,7 @@ export function TutorialSpotlight() {
         const result = await claim({});
         if (result.alreadyClaimed) {
           toast.info("Você já recebeu sua recompensa do tutorial.");
+          window.dispatchEvent(new Event("profile:reload"));
           finish();
         } else {
           claimedRef.current = true;
@@ -103,6 +107,8 @@ export function TutorialSpotlight() {
               reward: result.reward,
             },
           ]);
+          window.dispatchEvent(new Event("profile:reload"));
+          finish();
         }
       } catch (err) {
         console.error(err);
