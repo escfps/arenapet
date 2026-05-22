@@ -296,6 +296,7 @@ function PatioPage() {
                     return (
                       <button
                         key={`slot-${i}`}
+                        data-tutorial="team-slot"
                         onClick={() => setSlotPicker(i)}
                         onDragOver={(e) => { e.preventDefault(); e.currentTarget.classList.add("ring-2","ring-yellow-300"); }}
                         onDragLeave={(e) => e.currentTarget.classList.remove("ring-2","ring-yellow-300")}

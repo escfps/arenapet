@@ -72,6 +72,7 @@ export function MobileNav({ open, onClose }: { open: boolean; onClose: () => voi
               <li key={item.to} className="flex-1">
                 <Link
                   to={item.to}
+                  data-tutorial-nav={item.to}
                   className={`flex flex-col items-center justify-center gap-0.5 py-2 px-1 min-h-[56px] transition ${
                     active
                       ? "text-yellow-300"
@@ -116,6 +117,7 @@ export function MobileNav({ open, onClose }: { open: boolean; onClose: () => voi
                   <li key={item.to}>
                     <Link
                       to={item.to}
+                      data-tutorial-nav={item.to}
                       onClick={onClose}
                       className={`flex items-center gap-3 px-4 py-3 rounded-xl text-base font-bold transition ${
                         active
