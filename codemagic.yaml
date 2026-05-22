@@ -9,6 +9,7 @@ workflows:
       ios_signing:
         distribution_type: app_store
         bundle_identifier: com.arenapet.app
+        api_key: Codemagic
       vars:
         APP_STORE_APPLE_ID: 6772081915
         BUNDLE_ID: "com.arenapet.app"
