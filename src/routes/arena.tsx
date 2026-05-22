@@ -119,6 +119,14 @@ function ArenaPage() {
     return () => clearInterval(interval);
   }, [battleLog, winner, shownLog.length]);
 
+  // Esconde o overlay do tutorial enquanto a batalha está rolando — volta a aparecer
+  // quando a animação acaba (winner definido + log totalmente exibido).
+  useEffect(() => {
+    const inBattle = !!battleLog && !(winner && shownLog.length >= battleLog.length);
+    window.dispatchEvent(new CustomEvent(inBattle ? "tutorial:hide" : "tutorial:show"));
+    return () => { window.dispatchEvent(new CustomEvent("tutorial:show")); };
+  }, [battleLog, winner, shownLog.length]);
+
   // Trilha ambiente enquanto está na arena
   useEffect(() => {
     startMusic();
