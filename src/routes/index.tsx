@@ -339,7 +339,7 @@ function PatioPage() {
                         const from = Number(e.dataTransfer.getData("text/plain"));
                         if (!Number.isNaN(from) && from !== i) swapPositions(from, i);
                       }}
-                      className={`relative aspect-square rounded-2xl border-2 border-yellow-300 bg-gradient-to-br ${ELEMENT_COLORS[sp.element]} shadow-lg overflow-hidden cursor-grab active:cursor-grabbing ${dragHint ? "animate-tutorial-drag" : ""}`}
+                      className={`relative aspect-square rounded-2xl border-2 border-yellow-300 bg-gradient-to-br ${ELEMENT_COLORS[sp.element]} shadow-lg overflow-hidden cursor-grab active:cursor-grabbing`}
                     >
                       <div className="absolute top-1 left-1 z-10 px-1.5 py-0.5 rounded-md bg-black/70 text-yellow-300 text-[9px] font-extrabold shadow">
                         {PILLS[i]}
