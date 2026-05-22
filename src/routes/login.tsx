@@ -185,7 +185,7 @@ function LoginPage() {
             <div className="absolute inset-0 opacity-20" style={{ backgroundImage: "radial-gradient(circle at 20% 20%, white 1px, transparent 1px), radial-gradient(circle at 70% 60%, white 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
             <div className="relative">
               <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-white/15 backdrop-blur-sm border border-white/30 shadow-xl mb-3 text-5xl rotate-3 hover:rotate-0 transition-transform">
-                🐉
+                🦊
               </div>
               <h1 className="text-3xl font-black text-white tracking-wider drop-shadow-lg">ARENA PET</h1>
               <p className="text-white/80 text-xs mt-1 font-medium">Colecione · Treine · Batalhe</p>
