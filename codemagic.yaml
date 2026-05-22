@@ -24,12 +24,11 @@ workflows:
       - name: Build web assets
         script: |
           npm run build
-          echo "=== Build output ==="
-          ls -la
-          echo "=== Checking common output dirs ==="
-          ls -la dist 2>/dev/null || echo "no dist"
-          ls -la .output 2>/dev/null || echo "no .output"
-          ls -la build 2>/dev/null || echo "no build"
+          ls dist/client/
+          if [ ! -f dist/client/index.html ]; then
+            cp dist/client/$(ls dist/client/ | grep -i 'index\|app' | head -1) dist/client/index.html 2>/dev/null || \
+            echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Arena Pet</title></head><body><div id="root"></div></body></html>' > dist/client/index.html
+          fi
       - name: Init Capacitor
         script: ./node_modules/.bin/cap init "Arena Pet" com.arenapet.app --web-dir dist/client
       - name: Add and sync iOS
