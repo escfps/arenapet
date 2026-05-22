@@ -137,7 +137,7 @@ function RankingPage() {
                 />
               </div>
               <div className="text-[10px] opacity-80 mt-1">
-                Quando 10 jogadores atingirem 4000+ pts, o tier Lendário fecha!
+                Só os 10 jogadores que se mantiverem no topo até o último dia da Season ganham Lendário. Se alguém te ultrapassar, você cai pra Mestre — a disputa vale até o fim! ⚔️
               </div>
             </div>
           </div>
