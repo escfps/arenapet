@@ -5,6 +5,7 @@ type Step = {
   emoji: string;
   title: string;
   body: string;
+  hint?: string; // dica destacada do "o que clicar" quando chegar lá
   goTo?: string;
   goLabel?: string;
 };
@@ -23,56 +24,61 @@ const STEPS: Step[] = [
   {
     emoji: "💪",
     title: "Treinar pets — DEIXA ELES FORTES!",
-    body: "Clique em qualquer pet no Pátio pra abrir os detalhes. Lá tem a aba TREINAR onde você gasta moedas + energia pra aumentar ATK, DEF, SPD, HP e INT PERMANENTEMENTE. É a forma principal de evoluir seus bichinhos — treine bastante antes de cada batalha!",
+    body: "Clique em qualquer pet pra abrir os detalhes, vai na aba TREINAR e gaste moedas + energia pra aumentar ATK, DEF, SPD, HP e INT permanentemente.",
+    hint: "👉 Quando chegar lá, clique no botão verde 💪 UP em qualquer pet — depois na aba 💪 Treinar e escolha um atributo (ex.: ATK).",
+    goTo: "/",
+    goLabel: "💪 Treinar um pet agora",
   },
   {
     emoji: "⚔️",
     title: "Arena — onde rola a batalha",
-    body: "Na aba ARENA você procura adversários e luta automaticamente. Vencer dá moedas, XP e pontos de rank. Cada batalha gasta energia do pet.",
+    body: "Na ARENA você procura adversários e luta automaticamente. Vencer dá moedas, XP e pontos de rank. Cada batalha gasta energia do pet.",
+    hint: "👉 Lá dentro, clique no botão 🎯 Buscar oponente pra iniciar sua primeira batalha.",
     goTo: "/arena",
-    goLabel: "Ver Arena",
+    goLabel: "⚔️ Ir pra Arena agora",
   },
   {
     emoji: "🏆",
     title: "Ranking",
     body: "Veja os melhores treinadores do servidor. Suba seus pontos de arena pra escalar tiers (Bronze, Prata, Ouro, Platina...) e aparecer no topo.",
     goTo: "/ranking",
-    goLabel: "Ver Ranking",
+    goLabel: "🏆 Ver o Ranking",
   },
   {
     emoji: "⭐",
     title: "Elevar — upa suas cartas",
-    body: "Em ELEVAR você evolui seus pets de rank. Quanto maior o rank, mais fortes ficam HP, ATK, DEF e SPD. Custa moedas e materiais.",
+    body: "Em ELEVAR você evolui seus pets de rank (⭐). Quanto maior o rank, mais fortes ficam HP, ATK, DEF e SPD. Custa moedas e materiais.",
     goTo: "/forge",
-    goLabel: "Ver Elevar",
+    goLabel: "⭐ Ver Elevar",
   },
   {
     emoji: "🛒",
     title: "Loja — onde compra baús",
     body: "Na LOJA você compra ovos (baús) com moedas 🪙 ou gemas 💎. Ovo Comum sai por moedas, Ovo Raro/Épico precisa de gemas e tem chance de pets raros, lendários e até míticos!",
+    hint: "👉 Lá dentro, toque em um baú e depois em ABRIR pra ver o que vem dentro.",
     goTo: "/shop",
-    goLabel: "Ver Loja",
+    goLabel: "🛒 Ir pra Loja",
   },
   {
     emoji: "🗺️",
     title: "Expedições",
     body: "Mande um pet em expedição: ele fica fora por um tempo e volta com moedas, XP e itens. Ótimo pra ganhar recursos sem batalhar.",
     goTo: "/expeditions",
-    goLabel: "Ver Expedições",
+    goLabel: "🗺️ Ver Expedições",
   },
   {
     emoji: "📖",
     title: "Coleção",
     body: "Veja o catálogo completo de pets do jogo e quais você já tem. Bom pra saber o que ainda falta.",
     goTo: "/collection",
-    goLabel: "Ver Coleção",
+    goLabel: "📖 Ver Coleção",
   },
   {
     emoji: "🔄",
     title: "Trocas",
     body: "Troque pets com outros jogadores. Bom pra completar a coleção ou se livrar de duplicatas.",
     goTo: "/trade",
-    goLabel: "Ver Trocas",
+    goLabel: "🔄 Ver Trocas",
   },
   {
     emoji: "🚀",
@@ -124,6 +130,24 @@ export function TutorialOverlay({ userId, onClose }: { userId: string; onClose: 
           <div className="text-6xl mb-2 animate-bounce">{s.emoji}</div>
           <h2 className="text-2xl font-black drop-shadow-lg">{s.title}</h2>
           <p className="text-white/90 mt-3 text-sm leading-relaxed">{s.body}</p>
+
+          {s.hint && (
+            <div className="mt-3 rounded-xl border-2 border-yellow-300/70 bg-yellow-300/10 p-3 text-left text-[12px] leading-snug font-bold text-yellow-100 animate-pulse">
+              {s.hint}
+            </div>
+          )}
+
+          {s.goTo && (
+            <button
+              onClick={() => {
+                finish();
+                navigate({ to: s.goTo! });
+              }}
+              className="mt-4 w-full px-5 py-3 rounded-2xl bg-gradient-to-b from-emerald-400 to-emerald-600 hover:from-emerald-300 hover:to-emerald-500 text-white font-black text-base shadow-lg border-2 border-emerald-200 hover:scale-[1.02] transition"
+            >
+              {s.goLabel ?? "Ir agora"}
+            </button>
+          )}
         </div>
 
         <div className="mt-6 flex flex-wrap items-center justify-between gap-2">
@@ -135,34 +159,21 @@ export function TutorialOverlay({ userId, onClose }: { userId: string; onClose: 
             ← Voltar
           </button>
 
-          <div className="flex gap-2">
-            {s.goTo && (
-              <button
-                onClick={() => {
-                  finish();
-                  navigate({ to: s.goTo! });
-                }}
-                className="px-4 py-2 rounded-xl bg-white/15 hover:bg-white/25 font-bold text-sm transition border border-white/30"
-              >
-                {s.goLabel ?? "Ir agora"}
-              </button>
-            )}
-            {isLast ? (
-              <button
-                onClick={finish}
-                className="px-6 py-2.5 rounded-xl bg-gradient-to-b from-yellow-300 to-amber-500 text-yellow-950 font-extrabold text-sm shadow-lg hover:scale-105 transition"
-              >
-                Começar a jogar 🚀
-              </button>
-            ) : (
-              <button
-                onClick={() => setStep((p) => Math.min(STEPS.length - 1, p + 1))}
-                className="px-6 py-2.5 rounded-xl bg-gradient-to-b from-yellow-300 to-amber-500 text-yellow-950 font-extrabold text-sm shadow-lg hover:scale-105 transition"
-              >
-                Próximo →
-              </button>
-            )}
-          </div>
+          {isLast ? (
+            <button
+              onClick={finish}
+              className="px-6 py-2.5 rounded-xl bg-gradient-to-b from-yellow-300 to-amber-500 text-yellow-950 font-extrabold text-sm shadow-lg hover:scale-105 transition"
+            >
+              Começar a jogar 🚀
+            </button>
+          ) : (
+            <button
+              onClick={() => setStep((p) => Math.min(STEPS.length - 1, p + 1))}
+              className="px-6 py-2.5 rounded-xl bg-gradient-to-b from-yellow-300 to-amber-500 text-yellow-950 font-extrabold text-sm shadow-lg hover:scale-105 transition"
+            >
+              {s.goTo ? "Pular esse →" : "Próximo →"}
+            </button>
+          )}
         </div>
       </div>
     </div>
