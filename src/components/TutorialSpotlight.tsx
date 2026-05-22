@@ -95,6 +95,7 @@ export function TutorialSpotlight() {
         const result = await claim({});
         if (result.alreadyClaimed) {
           toast.info("Você já recebeu sua recompensa do tutorial.");
+          window.dispatchEvent(new Event("profile:reload"));
           finish();
         } else {
           claimedRef.current = true;
