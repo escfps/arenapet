@@ -13,7 +13,7 @@ workflows:
         BUNDLE_ID: "com.arenapet.app"
         XCODE_WORKSPACE: "ios/App/App.xcworkspace"
         XCODE_SCHEME: "App"
-      node: 20.11.0
+      node: 22.12.0
       xcode: latest
       cocoapods: default
     scripts:
