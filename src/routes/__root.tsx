@@ -7,9 +7,11 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import appCss from "../styles.css?url";
+import { TutorialProvider } from "@/lib/use-tutorial";
+import { TutorialSpotlight } from "@/components/TutorialSpotlight";
 
 function PWARegister() {
   useEffect(() => {
