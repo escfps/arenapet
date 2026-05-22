@@ -333,3 +333,16 @@
     padding-bottom: calc(64px + env(safe-area-inset-bottom));
   }
 }
+
+@layer utilities {
+  @keyframes tutorialDrag {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    50% { transform: translateX(0); }
+    75% { transform: translateX(10px); }
+  }
+  .animate-tutorial-drag {
+    animation: tutorialDrag 1.4s ease-in-out infinite;
+    box-shadow: 0 0 0 3px rgba(250, 204, 21, 0.7), 0 0 20px rgba(250, 204, 21, 0.5);
+  }
+}
