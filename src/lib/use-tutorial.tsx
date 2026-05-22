@@ -20,7 +20,7 @@ export const TUTORIAL_STEPS: TutorialStep[] = [
   {
     id: "team",
     target: '[data-tutorial="team-slot"]',
-    title: "1/7 — Monte seu time",
+    title: "1/8 — Monte seu time",
     body:
       "Toque em qualquer slot pra trocar/posicionar seus pets.\n\n🛡️ Frente = tanques (absorvem dano)\n⚔️ Meio = DPS e suporte\n🏹 Trás = magos e healers",
     advance: "click",
@@ -30,24 +30,35 @@ export const TUTORIAL_STEPS: TutorialStep[] = [
   {
     id: "train",
     target: '[data-tutorial="train-pet"]',
-    title: "2/7 — Treine um pet",
+    title: "2/8 — Treine um pet",
     body:
-      "Treinar deixa seus pets MUITO mais fortes! Toque no botão 💪 UP de qualquer pet pra ver os atributos e gastar moedas treinando.",
+      "Treinar deixa seus pets MUITO mais fortes! Toque no botão 💪 UP de qualquer pet pra abrir a tela de treino.",
     advance: "click",
     requiredRoute: "/",
     goLabel: "🏠 Voltar ao Pátio",
   },
   {
+    id: "train-stat",
+    target: '[data-tutorial="train-stat"]',
+    title: "3/8 — Suba um atributo",
+    body:
+      "Toque em qualquer botão de Treinar (ATK, DEF, SPD, HP ou INT) pra gastar moedas e melhorar o seu pet. Você precisa fazer pelo menos UM treino pra continuar!",
+    advance: "event",
+    eventName: "tutorial:trained",
+    requiredRoute: /^\/monster\//,
+    goLabel: "💪 Voltar pra tela de treino",
+  },
+  {
     id: "arena-nav",
     target: '[data-tutorial-nav="/arena"]',
-    title: "3/7 — Hora da batalha!",
+    title: "4/8 — Hora da batalha!",
     body: "Toque em ⚔️ Arena pra ir lutar contra outros treinadores.",
     advance: "click",
   },
   {
     id: "battle",
     target: '[data-tutorial="find-opponent"]',
-    title: "4/7 — Sua primeira luta",
+    title: "5/8 — Sua primeira luta",
     body:
       "Toque em 🎯 Buscar oponente, depois em ⚔️ BATALHAR! pra fazer sua primeira batalha. Eu te espero aqui!",
     advance: "event",
@@ -58,21 +69,21 @@ export const TUTORIAL_STEPS: TutorialStep[] = [
   {
     id: "ranking-nav",
     target: '[data-tutorial-nav="/ranking"]',
-    title: "5/7 — Veja o Ranking",
+    title: "6/8 — Veja o Ranking",
     body: "Toque em 📊 Ranking pra ver onde você está entre os melhores treinadores.",
     advance: "click",
   },
   {
     id: "collection-nav",
     target: '[data-tutorial-nav="/collection"]',
-    title: "6/7 — Sua Coleção",
+    title: "7/8 — Sua Coleção",
     body: "Toque em 🎒 Coleção pra ver todos os pets do jogo e quais você já tem.",
     advance: "click",
   },
   {
     id: "shop-nav",
     target: '[data-tutorial-nav="/shop"]',
-    title: "7/7 — A Loja de Baús",
+    title: "8/8 — A Loja de Baús",
     body: "Toque em 🏪 Loja pra comprar ovos (baús) e tentar conseguir pets raros, lendários e até míticos!",
     advance: "click",
   },
