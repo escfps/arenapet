@@ -701,12 +701,8 @@ function PatioPage() {
           hatching={hatching}
           reveal={welcomeReveal}
           onOpen={openWelcomeChest}
-          onDone={() => setWelcomeReveal(null)}
+          onDone={() => { setWelcomeReveal(null); maybeStartTutorial(); }}
         />
-      )}
-
-      {showTutorial && userId && (
-        <TutorialOverlay userId={userId} onClose={() => setShowTutorial(false)} />
       )}
 
       <footer className="mt-12 pb-8 text-center text-xs text-white/60 space-x-3">
