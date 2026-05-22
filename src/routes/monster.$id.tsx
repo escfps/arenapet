@@ -110,6 +110,7 @@ function MonsterPage() {
     updates[stat] = (monster[stat] ?? 0) + gain;
     await patchMonster(updates);
     toast.success(`+${gain} ${stat.toUpperCase()}! (${used + 1}/${limit})`);
+    window.dispatchEvent(new CustomEvent("tutorial:trained"));
   }
 
 
