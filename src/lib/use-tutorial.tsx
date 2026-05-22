@@ -76,14 +76,21 @@ export const TUTORIAL_STEPS: TutorialStep[] = [
   {
     id: "collection-nav",
     target: '[data-tutorial-nav="/collection"]',
-    title: "7/8 — Sua Coleção",
+    title: "7/9 — Sua Coleção",
     body: "Toque em 🎒 Coleção pra ver todos os pets do jogo e quais você já tem.",
+    advance: "click",
+  },
+  {
+    id: "open-menu",
+    target: '[data-tutorial="open-menu"]',
+    title: "8/9 — Abra o menu",
+    body: "A Loja fica no menu lateral. Toque no ícone ☰ no canto superior esquerdo pra abrir o menu.",
     advance: "click",
   },
   {
     id: "shop-nav",
     target: '[data-tutorial-nav="/shop"]',
-    title: "8/8 — A Loja de Baús",
+    title: "9/9 — A Loja de Baús",
     body: "Toque em 🏪 Loja pra comprar ovos (baús) e tentar conseguir pets raros, lendários e até míticos!",
     advance: "click",
   },
