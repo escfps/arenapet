@@ -51,7 +51,8 @@ workflows:
             archive \
             CODE_SIGN_STYLE=Manual \
             PROVISIONING_PROFILE_SPECIFIER="Arena Pet Appstore" \
-            CODE_SIGN_IDENTITY="Apple Distribution"
+            CODE_SIGN_IDENTITY="Apple Distribution" \
+            DEVELOPMENT_TEAM="8Q7D6F63F2"
       - name: Set up code signing
         script: |
           keychain initialize
