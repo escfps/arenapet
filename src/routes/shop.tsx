@@ -360,6 +360,13 @@ function ShopPage() {
                           Abrir por 💎 {c.priceGems.toLocaleString("pt-BR")}
                         </button>
                       )}
+                      <button
+                        onClick={() => buyChestToInventory(c.id, c.priceGems != null ? "gems" : "coins")}
+                        className="w-full py-1.5 rounded-xl bg-white/15 hover:bg-white/25 text-white text-xs font-bold transition"
+                        title="Compra o baú e guarda no inventário pra abrir depois"
+                      >
+                        📦 Comprar e guardar no inventário
+                      </button>
                     </div>
 
                   </div>
