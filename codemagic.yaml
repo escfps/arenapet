@@ -31,10 +31,7 @@ workflows:
           ls -la .output 2>/dev/null || echo "no .output"
           ls -la build 2>/dev/null || echo "no build"
       - name: Init Capacitor
-        script: |
-          BUILD_DIR=$(ls -d .output/public dist/client dist 2>/dev/null | head -1)
-          echo "Using build dir: $BUILD_DIR"
-          ./node_modules/.bin/cap init "Arena Pet" com.arenapet.app --web-dir $BUILD_DIR
+        script: ./node_modules/.bin/cap init "Arena Pet" com.arenapet.app --web-dir dist/client
       - name: Add and sync iOS
         script: |
           ./node_modules/.bin/cap add ios
