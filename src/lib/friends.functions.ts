@@ -77,6 +77,22 @@ export const listFriends = createServerFn({ method: "POST" })
       .is("claimed_at", null);
     const giftFrom = new Set((gifts ?? []).map((g) => g.sender_id));
 
+    // teams (in_team monsters) for each friend
+    const teamsByOwner: Record<string, { id: string; species: string; name: string; skin: string; rank: number }[]> = {};
+    if (otherIds.length > 0) {
+      const { data: mons } = await supabaseAdmin
+        .from("monsters")
+        .select("id, owner_id, species, name, skin, rank, team_position")
+        .in("owner_id", otherIds)
+        .eq("in_team", true)
+        .order("team_position", { ascending: true });
+      (mons ?? []).forEach((m) => {
+        (teamsByOwner[m.owner_id] ||= []).push({
+          id: m.id, species: m.species, name: m.name, skin: m.skin, rank: m.rank,
+        });
+      });
+    }
+
     const friends = list
       .filter((r) => r.status === "accepted")
       .map((r) => {
@@ -93,6 +109,7 @@ export const listFriends = createServerFn({ method: "POST" })
           losses: p?.losses ?? 0,
           unread: unreadCount[otherId] ?? 0,
           hasGift: giftFrom.has(otherId),
+          team: (teamsByOwner[otherId] ?? []).slice(0, 3),
         };
       });
 
