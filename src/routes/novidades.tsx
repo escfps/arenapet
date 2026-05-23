@@ -54,7 +54,6 @@ function NovidadesPage() {
         <Section title="👀 Em Breve">
           <Bullet>🦏 <b>Rinoceronte Guardião</b> — remove debuffs do time</Bullet>
           <Bullet>🐘 <b>Elefante Ancestral</b> — imune a todo CC</Bullet>
-          <Bullet>🦧 <b>Orangotango Guardião</b> — completa o trio dos primatas</Bullet>
           <Bullet>🐋 <b>Baleia Leviatã</b> — completa o trio abissal</Bullet>
           <Bullet>⚔️ <b>Times de 4 pets</b> — quem sabe... 👀</Bullet>
         </Section>
