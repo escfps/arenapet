@@ -78,7 +78,7 @@ function ArenaPage() {
   const pendingApplyRef = useRef<null | (() => Promise<void>)>(null);
   const playbackStoppedRef = useRef(false);
   const [ranks, setRanks] = useState<{ mine: number | null; opp: number | null }>({ mine: null, opp: null });
-  const battleFinished = !!battleLog && (shownLog.length >= battleLog.length || battleTimer <= 0);
+  const battleFinished = !!battleLog && (shownLog.length >= battleLog.length || (battleTimer <= 0 && playbackStoppedRef.current));
 
   // Compute ranking positions (1-based) when fight starts
   useEffect(() => {
@@ -645,7 +645,7 @@ function ArenaPage() {
   useEffect(() => {
     if (!battleLog) return;
     const animationDone = shownLog.length >= battleLog.length;
-    if (animationDone) return;
+    if (animationDone || battleFinished) return;
     function onBeforeUnload(e: BeforeUnloadEvent) {
       e.preventDefault();
       e.returnValue = "Batalha em andamento! O resultado já foi registrado.";
@@ -653,7 +653,7 @@ function ArenaPage() {
     }
     window.addEventListener("beforeunload", onBeforeUnload);
     return () => window.removeEventListener("beforeunload", onBeforeUnload);
-  }, [battleLog, shownLog.length]);
+  }, [battleLog, shownLog.length, battleFinished]);
 
 
 
