@@ -284,6 +284,7 @@ export type Database = {
           battle_energy: number
           battle_energy_at: string
           created_at: string
+          crit: number
           def: number
           energy: number
           happiness: number
@@ -307,6 +308,7 @@ export type Database = {
           battle_energy?: number
           battle_energy_at?: string
           created_at?: string
+          crit?: number
           def?: number
           energy?: number
           happiness?: number
@@ -330,6 +332,7 @@ export type Database = {
           battle_energy?: number
           battle_energy_at?: string
           created_at?: string
+          crit?: number
           def?: number
           energy?: number
           happiness?: number
