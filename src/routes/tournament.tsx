@@ -136,8 +136,8 @@ function TournamentPage() {
       if (last?.champion_id) userIds.add(last.champion_id);
       if (active?.champion_id) userIds.add(active.champion_id);
       if (userIds.size > 0) {
-        const { data: ps } = await supabase
-          .from("profiles")
+        const { data: ps } = await (supabase as any)
+          .from("public_profiles")
           .select("id, username, is_bot")
           .in("id", Array.from(userIds));
         const map: Record<string, ProfileLite> = {};
