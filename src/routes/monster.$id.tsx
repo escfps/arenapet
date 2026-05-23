@@ -25,6 +25,8 @@ function MonsterPage() {
   const [ownedSkins, setOwnedSkins] = useState<string[]>(["default"]);
   const [rations, setRations] = useState<number>(0);
   const [tab, setTab] = useState<"care" | "train" | "skin">(initialTab ?? "care");
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const RESET_GEM_COST = 50;
 
 
   const load = useCallback(async () => {
