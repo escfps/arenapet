@@ -60,7 +60,7 @@ function HistoryPage() {
           .select("id,username,level")
           .in("id", Array.from(ids));
         const map: OpponentMap = {};
-        (profs ?? []).forEach((p) => { map[p.id] = { username: p.username, level: p.level }; });
+        (profs ?? []).forEach((p: { id: string; username: string; level: number }) => { map[p.id] = { username: p.username, level: p.level }; });
         setOpponents(map);
       }
     })();
