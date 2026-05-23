@@ -396,6 +396,20 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
         }
       }
 
+      // PASSIVA Orangotango: cada turno reduz 1 cd do aliado mais travado (maior skillCd)
+      if (attacker.species === "orangotango") {
+        const candidates = allies.filter((m) => m.current > 0 && m.skillCd > 0);
+        if (candidates.length) {
+          const stuck = candidates.reduce((x, y) => (y.skillCd > x.skillCd ? y : x));
+          stuck.skillCd = Math.max(0, stuck.skillCd - 1);
+          log.push({
+            turn, actor: side, actorName: attacker.name, targetName: stuck.name,
+            damage: 0, crit: false, effective: 1, remainingHp: stuck.current,
+            message: `🦧 ${attacker.name} (Ritual): acelerou ${stuck.name} (-1 cd)`,
+          });
+        }
+      }
+
       const skill = getSkill(attacker.species);
       const skillMult = RARITY_INFO[attacker.rarity].skillMult;
       const silenced = attacker.silenceTurns > 0;
