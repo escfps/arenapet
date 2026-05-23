@@ -99,15 +99,20 @@ export function MonsterCard({ monster, onClick, compact, selected }: Props) {
             </span>
           ))}
         </div>
-        {!compact && (
-          <div className="mt-1.5 grid grid-cols-5 gap-1 text-[10px] font-bold">
-            <span className="text-rose-600">❤️{stats.hp}</span>
-            <span className="text-orange-600">⚔️{stats.atk}</span>
-            <span className="text-blue-600">🛡️{stats.def}</span>
-            <span className="text-purple-600">💨{stats.spd}</span>
-            <span className="text-fuchsia-600">🧠{stats.int}</span>
-          </div>
-        )}
+        {!compact && (() => {
+          const baseCritPct = sp.role === "assassin" ? 35 : monster.species === "raposa_espectral" ? 30 : 12;
+          const critPct = Math.min(95, baseCritPct + (monster.crit ?? 0) * 2);
+          return (
+            <div className="mt-1.5 grid grid-cols-6 gap-0.5 text-[10px] font-bold">
+              <span className="text-rose-600">❤️{stats.hp}</span>
+              <span className="text-orange-600">⚔️{stats.atk}</span>
+              <span className="text-blue-600">🛡️{stats.def}</span>
+              <span className="text-purple-600">💨{stats.spd}</span>
+              <span className="text-fuchsia-600">🧠{stats.int}</span>
+              <span className="text-yellow-600">💢{critPct}%</span>
+            </div>
+          );
+        })()}
       </div>
     </button>
   );
