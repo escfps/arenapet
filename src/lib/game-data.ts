@@ -1274,7 +1274,7 @@ export const CATEGORY_INFO: Record<Category, { name: string; emoji: string; stat
   fogo:      { name: "Fogo",      emoji: "🔥", stat: "atk",  statLabel: "ATK" },
   pedra:     { name: "Pedra",     emoji: "🪨", stat: "def",  statLabel: "DEF" },
   relampago: { name: "Relâmpago", emoji: "⚡", stat: "spd",  statLabel: "SPD" },
-  macacos:   { name: "Macacos",   emoji: "🦧", stat: "atk",  statLabel: "ATK" },
+  macacos:   { name: "Macacos",   emoji: "🦧", stat: "spd",  statLabel: "SPD" },
 };
 
 export const SPECIES_CATEGORIES: Record<string, Category[]> = {
@@ -1353,9 +1353,8 @@ export function computeSynergies(speciesIds: string[]): SynergyEntry[] {
   }
   const out: SynergyEntry[] = [];
   for (const [category, count] of counts.entries()) {
-    // Macacos é um trio raro e poderoso: bônus muito maior (15% / 35%)
     let bonusPct = count >= 3 ? 10 : count >= 2 ? 5 : 0;
-    if (category === "macacos") bonusPct = count >= 3 ? 35 : count >= 2 ? 15 : 0;
+    if (category === "macacos") bonusPct = count >= 3 ? 5 : count >= 2 ? 3 : 0;
     out.push({ category, count, bonusPct, active: count >= 2 });
   }
   // Ordena: ativos primeiro (maior bonus), depois inativos

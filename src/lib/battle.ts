@@ -398,7 +398,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
 
       // PASSIVA Orangotango: cada turno reduz 1 cd do aliado mais travado (maior skillCd)
       if (attacker.species === "orangotango") {
-        const candidates = allies.filter((m) => m.current > 0 && m.skillCd > 0);
+        const candidates = allies.filter((m) => m.current > 0 && m.skillCd > 0 && m !== attacker);
         if (candidates.length) {
           const stuck = candidates.reduce((x, y) => (y.skillCd > x.skillCd ? y : x));
           stuck.skillCd = Math.max(0, stuck.skillCd - 1);
@@ -900,7 +900,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
         }
 
         if (skill.kind === "cooldown_reduction") {
-          const targets = allies.filter((m) => m.current > 0);
+          const targets = allies.filter((m) => m.current > 0 && m !== attacker);
           let count = 0;
           for (const t of targets) {
             if (t.skillCd > 0) { t.skillCd = Math.max(0, t.skillCd - 1); count++; }
