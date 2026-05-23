@@ -22,6 +22,8 @@ export const Route = createFileRoute("/friends")({
   component: FriendsPage,
 });
 
+type TeamMon = { id: string; species: string; name: string; skin: string; rank: number };
+
 type Friend = {
   friendshipId: string;
   id: string;
@@ -33,6 +35,7 @@ type Friend = {
   losses: number;
   unread: number;
   hasGift: boolean;
+  team: TeamMon[];
 };
 
 type ChatMessage = {
