@@ -396,6 +396,20 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
         }
       }
 
+      // PASSIVA Orangotango: cada turno reduz 1 cd do aliado mais travado (maior skillCd)
+      if (attacker.species === "orangotango") {
+        const candidates = allies.filter((m) => m.current > 0 && m.skillCd > 0);
+        if (candidates.length) {
+          const stuck = candidates.reduce((x, y) => (y.skillCd > x.skillCd ? y : x));
+          stuck.skillCd = Math.max(0, stuck.skillCd - 1);
+          log.push({
+            turn, actor: side, actorName: attacker.name, targetName: stuck.name,
+            damage: 0, crit: false, effective: 1, remainingHp: stuck.current,
+            message: `🦧 ${attacker.name} (Ritual): acelerou ${stuck.name} (-1 cd)`,
+          });
+        }
+      }
+
       const skill = getSkill(attacker.species);
       const skillMult = RARITY_INFO[attacker.rarity].skillMult;
       const silenced = attacker.silenceTurns > 0;
@@ -881,6 +895,20 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
             turn, actor: side, actorName: attacker.name, targetName: "todos os aliados",
             damage: -heal, crit: false, effective: 1, remainingHp: attacker.current,
             message: `${skill.emoji} ${attacker.name} usou ${skill.name}: curou todos em ${heal} HP + 💎 DEF do time +15% por 2 turnos`,
+          });
+          return;
+        }
+
+        if (skill.kind === "cooldown_reduction") {
+          const targets = allies.filter((m) => m.current > 0);
+          let count = 0;
+          for (const t of targets) {
+            if (t.skillCd > 0) { t.skillCd = Math.max(0, t.skillCd - 1); count++; }
+          }
+          log.push({
+            turn, actor: side, actorName: attacker.name, targetName: "todos os aliados",
+            damage: 0, crit: false, effective: 1, remainingHp: attacker.current,
+            message: `${skill.emoji} ${attacker.name} usou ${skill.name}: reduziu 1 turno de cooldown de ${count} aliado(s)!`,
           });
           return;
         }

@@ -52,6 +52,7 @@ import pterossauroImg from "@/assets/monsters/pterossauro.png";
 import triceratopsColossalImg from "@/assets/monsters/triceratops_colossal.png";
 import fantasminhaImg from "@/assets/monsters/fantasminha.png";
 import raposaEspectralImg from "@/assets/monsters/raposa_espectral.png";
+import orangotangoImg from "@/assets/monsters/orangotango.png";
 
 export type Element = "fire" | "water" | "grass" | "electric" | "shadow" | "earth";
 export type Role = "tank" | "dps" | "assassin" | "mage" | "healer";
@@ -125,7 +126,8 @@ export type SkillKind =
   | "king_roar"         // assassin — mordida no mais forte (2.5× dano) / PASSIVA: cada kill +15% ATK permanente
   | "horn_charge"       // tank — provoca todos 2 turnos + escudo 35% / PASSIVA: refletir 15% do dano recebido
   | "spectral_hunger"   // mage — dano mágico no mais fraco ignorando DEF / PASSIVA: se matar, ataca novamente o próximo (máx 2)
-  | "spectral_pounce";  // assassin — crítico garantido no mais fraco (2× dano) ignorando 60% DEF / PASSIVA: ataque básico 50% chance de critar
+  | "spectral_pounce"    // assassin — crítico garantido no mais fraco (2× dano) ignorando 60% DEF / PASSIVA: ataque básico 50% chance de critar
+  | "cooldown_reduction"; // healer mítico — reduz 1 turno de cooldown de todos aliados / PASSIVA: cada turno reduz cd do aliado mais travado
 
 export type Skill = {
   name: string;
@@ -560,6 +562,13 @@ export const SPECIES: Record<string, Species> = {
     description: "Caçadora silenciosa entre sombras. Cada bote é certeiro e atravessa qualquer guarda.",
     base: { hp: 58, atk: 22, def: 9, spd: 21, int: 10 },
     skill: { name: "Bote Certeiro", emoji: "🦊", kind: "spectral_pounce", cooldown: 4, description: "ATIVA: ataca o inimigo mais fraco com crítico garantido. PASSIVA: todo ataque básico tem 30% de chance de critar." },
+  },
+  orangotango: {
+    id: "orangotango", name: "Orangotango", element: "grass", role: "healer", rarity: "mythic",
+    emoji: "🦧", image: orangotangoImg,
+    description: "Sábio ancestral da floresta. Manipula o fluxo do tempo dos aliados, fazendo suas habilidades fluírem mais rápido.",
+    base: { hp: 82, atk: 9, def: 14, spd: 8, int: 28 },
+    skill: { name: "Ritual Ancestral", emoji: "🦧", kind: "cooldown_reduction", cooldown: 4, description: "ATIVA: reduz 1 turno de cooldown de TODOS os aliados — o time inteiro solta skill mais rápido. PASSIVA: a cada turno reduz 1 cooldown do aliado mais travado (maior cd acumulado)." },
   },
 };
 
@@ -1249,7 +1258,7 @@ export function rollArenaPoints(currentPoints: number): { win: number; loss: num
 // ===== SINERGIA POR CATEGORIA =====
 export type Category =
   | "fogo" | "floresta" | "sombras" | "felinos" | "repteis"
-  | "abyssal" | "dragoes" | "gelo" | "aves" | "pedra" | "relampago";
+  | "abyssal" | "dragoes" | "gelo" | "aves" | "pedra" | "relampago" | "macacos";
 
 export type SynergyStat = "hp" | "atk" | "def" | "spd" | "int" | "crit";
 
@@ -1265,6 +1274,7 @@ export const CATEGORY_INFO: Record<Category, { name: string; emoji: string; stat
   fogo:      { name: "Fogo",      emoji: "🔥", stat: "atk",  statLabel: "ATK" },
   pedra:     { name: "Pedra",     emoji: "🪨", stat: "def",  statLabel: "DEF" },
   relampago: { name: "Relâmpago", emoji: "⚡", stat: "spd",  statLabel: "SPD" },
+  macacos:   { name: "Macacos",   emoji: "🦧", stat: "atk",  statLabel: "ATK" },
 };
 
 export const SPECIES_CATEGORIES: Record<string, Category[]> = {
@@ -1288,14 +1298,14 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   shadepup: ["sombras"],
   rockpup: ["pedra"],
   rato_bomba: ["fogo"],
-  macaco_prego: ["floresta"],
+  macaco_prego: ["floresta", "macacos"],
   tubarao_abissal: ["abyssal"],
   polvo_venenoso: ["abyssal", "sombras"],
   cobra_sangrenta: ["repteis", "sombras"],
   borboleta_sonifera: ["aves", "floresta"],
   urso_polar: ["abyssal", "gelo"],
   jacare_ancestral: ["repteis", "abyssal"],
-  gorila_titan: ["floresta"],
+  gorila_titan: ["floresta", "macacos"],
   aguia_cega: ["aves", "relampago"],
   lobo_lua_sangrenta: ["sombras"],
   onca_sombria: ["felinos", "sombras"],
@@ -1322,6 +1332,7 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   triceratops_colossal: ["repteis", "pedra"],
   fantasminha: ["sombras"],
   raposa_espectral: ["felinos", "sombras"],
+  orangotango: ["floresta", "macacos"],
 };
 
 export function getSpeciesCategories(speciesId: string): Category[] {
@@ -1342,7 +1353,9 @@ export function computeSynergies(speciesIds: string[]): SynergyEntry[] {
   }
   const out: SynergyEntry[] = [];
   for (const [category, count] of counts.entries()) {
-    const bonusPct = count >= 3 ? 10 : count >= 2 ? 5 : 0;
+    // Macacos é um trio raro e poderoso: bônus muito maior (15% / 35%)
+    let bonusPct = count >= 3 ? 10 : count >= 2 ? 5 : 0;
+    if (category === "macacos") bonusPct = count >= 3 ? 35 : count >= 2 ? 15 : 0;
     out.push({ category, count, bonusPct, active: count >= 2 });
   }
   // Ordena: ativos primeiro (maior bonus), depois inativos
