@@ -49,8 +49,8 @@ async function fetchOpponentProfiles(ownerIds: string[]) {
   const chunkSize = 200;
 
   for (let i = 0; i < ownerIds.length; i += chunkSize) {
-    const { data } = await supabase
-      .from("profiles")
+    const { data } = await (supabase as any)
+      .from("public_profiles")
       .select("id, username, level, vip_until, arena_points, is_bot")
       .in("id", ownerIds.slice(i, i + chunkSize));
 
