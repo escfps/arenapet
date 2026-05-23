@@ -579,7 +579,7 @@ function ArenaLineup({
         const h = hp.get(key) ?? { cur: 0, max: 1 };
         const dead = h.cur <= 0;
         const isActor = fx.actor === key && !dead;
-        const isTarget = fx.target === key;
+        const isTarget = fx.target === key || (fx.skillFx === "cooldown" && fx.targets.includes(key));
         const hasSkillFx = fx.skillFx && (fx.targets.includes(key) || (isActor && (fx.skillFx === "fury" || fx.skillFx === "shield")));
         // Algum pet está em foco nesta cena?
         const sceneHasFocus = fx.actor !== null || fx.target !== null;
@@ -1003,7 +1003,7 @@ function SideColumn({
         const shieldPct = Math.max(0, Math.min(100, (shield / h.max) * 100));
         const dead = h.cur <= 0;
         const isActor = fx.actor === key && !dead;
-        const isTarget = fx.target === key;
+        const isTarget = fx.target === key || (fx.skillFx === "cooldown" && fx.targets.includes(key));
         const lunge = isActor ? (mirrored ? "-translate-x-3" : "translate-x-3") : "";
         const hpColor =
           pct > 50
