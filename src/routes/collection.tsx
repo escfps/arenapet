@@ -353,7 +353,7 @@ function DexCard({ sp, owned }: { sp: (typeof SPECIES)[string]; owned: boolean }
   );
 }
 
-function Stat({ label, value, color }: { label: string; value: number; color: string }) {
+function Stat({ label, value, color }: { label: string; value: number | string; color: string }) {
   return (
     <div className="flex flex-col items-center">
       <span className="text-muted-foreground text-[8px]">{label}</span>
