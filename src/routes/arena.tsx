@@ -173,9 +173,11 @@ function ArenaPage() {
   // animate log com ritmo dramático (pausas maiores em momentos especiais)
   useEffect(() => {
     if (!battleLog) return;
+    playbackStoppedRef.current = false;
     setShownLog([]);
     let i = 0;
     let cancelled = false;
+    let timeoutId: number | undefined;
     function delayFor(entry: BattleLogEntry | undefined): number {
       if (!entry) return 2400;
       const m = entry.message;
@@ -189,7 +191,7 @@ function ArenaPage() {
       return 2400; // ritmo base bem mais lento, golpe por golpe
     }
     function tick() {
-      if (cancelled) return;
+      if (cancelled || playbackStoppedRef.current) return;
       i += 1;
       setShownLog(battleLog!.slice(0, i));
       if (i >= battleLog!.length) return;
@@ -197,24 +199,20 @@ function ArenaPage() {
       const prev = battleLog![i - 1];
       const next = battleLog![i];
       const turnChange = prev && next && prev.turn !== next.turn ? 1200 : 0;
-      setTimeout(tick, delayFor(next) + turnChange);
+      timeoutId = window.setTimeout(tick, delayFor(next) + turnChange);
     }
-    const initial = setTimeout(tick, delayFor(battleLog[0]));
-    return () => { cancelled = true; clearTimeout(initial); };
+    const initial = window.setTimeout(tick, delayFor(battleLog[0]));
+    return () => { cancelled = true; clearTimeout(initial); if (timeoutId) clearTimeout(timeoutId); };
   }, [battleLog]);
 
-  const [searchCountdown, setSearchCountdown] = useState(0);
-  const [battleTimer, setBattleTimer] = useState(120);
-
-  // Timer regressivo de 2min durante a batalha (pausa quando termina/empate)
+  // Timer regressivo de 2min durante a batalha (ao zerar, congela a cena no estado atual)
   useEffect(() => {
     if (!battleLog) { setBattleTimer(120); return; }
-    const done = shownLog.length >= battleLog.length;
-    if (done) return; // pausa quando a animação termina
+    if (battleFinished) return;
     const id = setInterval(() => {
       setBattleTimer((t) => {
         if (t <= 1) {
-          setShownLog(battleLog);
+          playbackStoppedRef.current = true;
           clearInterval(id);
           return 0;
         }
@@ -222,7 +220,7 @@ function ArenaPage() {
       });
     }, 1000);
     return () => clearInterval(id);
-  }, [battleLog, shownLog.length]);
+  }, [battleLog, battleFinished]);
 
   // Reseta o timer ao iniciar uma nova batalha
   useEffect(() => {
