@@ -767,7 +767,48 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      public_profiles: {
+        Row: {
+          arena_points: number | null
+          created_at: string | null
+          highest_tier_rank: number | null
+          id: string | null
+          is_bot: boolean | null
+          last_seen_at: string | null
+          level: number | null
+          losses: number | null
+          username: string | null
+          vip_until: string | null
+          wins: number | null
+        }
+        Insert: {
+          arena_points?: number | null
+          created_at?: string | null
+          highest_tier_rank?: number | null
+          id?: string | null
+          is_bot?: boolean | null
+          last_seen_at?: string | null
+          level?: number | null
+          losses?: number | null
+          username?: string | null
+          vip_until?: string | null
+          wins?: number | null
+        }
+        Update: {
+          arena_points?: number | null
+          created_at?: string | null
+          highest_tier_rank?: number | null
+          id?: string | null
+          is_bot?: boolean | null
+          last_seen_at?: string | null
+          level?: number | null
+          losses?: number | null
+          username?: string | null
+          vip_until?: string | null
+          wins?: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       _bot_apply_levelup: {

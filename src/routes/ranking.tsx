@@ -58,8 +58,8 @@ function RankingPage() {
 
   useEffect(() => {
     async function load() {
-      const { data } = await supabase
-        .from("profiles")
+      const { data } = await (supabase as any)
+        .from("public_profiles")
         .select("id, username, arena_points, wins, losses, level")
         .order("arena_points", { ascending: false })
         .limit(100);

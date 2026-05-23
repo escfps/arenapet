@@ -136,8 +136,8 @@ function TournamentPage() {
       if (last?.champion_id) userIds.add(last.champion_id);
       if (active?.champion_id) userIds.add(active.champion_id);
       if (userIds.size > 0) {
-        const { data: ps } = await supabase
-          .from("profiles")
+        const { data: ps } = await (supabase as any)
+          .from("public_profiles")
           .select("id, username, is_bot")
           .in("id", Array.from(userIds));
         const map: Record<string, ProfileLite> = {};
@@ -157,10 +157,10 @@ function TournamentPage() {
     if (cs && cs.length > 0) {
       const ids = cs.map((c) => c.user_id);
       const [{ data: ps }, { data: tm }] = await Promise.all([
-        supabase.from("profiles").select("id, username").in("id", ids),
+        (supabase as any).from("public_profiles").select("id, username").in("id", ids),
         supabase.from("monsters").select("owner_id, species, team_position").in("owner_id", ids).eq("in_team", true),
       ]);
-      const nameMap = new Map((ps ?? []).map((p) => [p.id as string, p.username as string]));
+      const nameMap = new Map(((ps ?? []) as Array<{ id: string; username: string }>).map((p) => [p.id, p.username]));
       const teamMap: Record<string, ChampTeamPet[]> = {};
       (tm ?? []).forEach((row: { owner_id: string; species: string; team_position: number }) => {
         (teamMap[row.owner_id] ??= []).push({ species: row.species, team_position: row.team_position });

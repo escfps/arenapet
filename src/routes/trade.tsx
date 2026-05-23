@@ -86,12 +86,12 @@ function TradePage() {
       setMonstersById(map);
     }
     if (userIds.size > 0) {
-      const { data: profs } = await supabase
-        .from("profiles")
+      const { data: profs } = await (supabase as any)
+        .from("public_profiles")
         .select("id,username")
         .in("id", Array.from(userIds));
       const um = new Map<string, string>();
-      for (const p of profs ?? []) um.set(p.id, p.username);
+      for (const p of (profs ?? []) as Array<{ id: string; username: string }>) um.set(p.id, p.username);
       setUsernamesById(um);
     }
   }, [userId]);

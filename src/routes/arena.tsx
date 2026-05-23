@@ -49,8 +49,8 @@ async function fetchOpponentProfiles(ownerIds: string[]) {
   const chunkSize = 200;
 
   for (let i = 0; i < ownerIds.length; i += chunkSize) {
-    const { data } = await supabase
-      .from("profiles")
+    const { data } = await (supabase as any)
+      .from("public_profiles")
       .select("id, username, level, vip_until, arena_points, is_bot")
       .in("id", ownerIds.slice(i, i + chunkSize));
 
@@ -86,8 +86,8 @@ function ArenaPage() {
     let cancel = false;
     (async () => {
       const [mineRes, oppRes] = await Promise.all([
-        supabase.from("profiles").select("id", { count: "exact", head: true }).gt("arena_points", profile.arena_points ?? 0),
-        supabase.from("profiles").select("id", { count: "exact", head: true }).gt("arena_points", opponent.arenaPoints),
+        (supabase as any).from("public_profiles").select("id", { count: "exact", head: true }).gt("arena_points", profile.arena_points ?? 0),
+        (supabase as any).from("public_profiles").select("id", { count: "exact", head: true }).gt("arena_points", opponent.arenaPoints),
       ]);
       if (cancel) return;
       setRanks({

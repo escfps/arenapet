@@ -55,12 +55,12 @@ function HistoryPage() {
       });
       ids.delete(userId);
       if (ids.size > 0) {
-        const { data: profs } = await supabase
-          .from("profiles")
+        const { data: profs } = await (supabase as any)
+          .from("public_profiles")
           .select("id,username,level")
           .in("id", Array.from(ids));
         const map: OpponentMap = {};
-        (profs ?? []).forEach((p) => { map[p.id] = { username: p.username, level: p.level }; });
+        (profs ?? []).forEach((p: { id: string; username: string; level: number }) => { map[p.id] = { username: p.username, level: p.level }; });
         setOpponents(map);
       }
     })();

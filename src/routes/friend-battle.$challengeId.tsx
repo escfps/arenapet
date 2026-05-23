@@ -57,8 +57,8 @@ function FriendBattlePage() {
         const [{ data: ta }, { data: tb }, { data: pa }, { data: pb }] = await Promise.all([
           supabase.from("monsters").select("*").eq("owner_id", c.challenger_id).eq("in_team", true).order("team_position"),
           supabase.from("monsters").select("*").eq("owner_id", c.target_id).eq("in_team", true).order("team_position"),
-          supabase.from("profiles").select("username, arena_points").eq("id", c.challenger_id).single(),
-          supabase.from("profiles").select("username, arena_points").eq("id", c.target_id).single(),
+          (supabase as any).from("public_profiles").select("username, arena_points").eq("id", c.challenger_id).single(),
+          (supabase as any).from("public_profiles").select("username, arena_points").eq("id", c.target_id).single(),
         ]);
         if (cancelled) return;
         if (!ta?.length || !tb?.length) {
