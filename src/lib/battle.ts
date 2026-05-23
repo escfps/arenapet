@@ -2041,6 +2041,68 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
   return { winner, log };
 }
 
+/**
+ * Reconstrói o vencedor a partir do estado visível do log até `step` entradas,
+ * usando o mesmo critério de desempate de tempo esgotado:
+ *   1) mais pets vivos
+ *   2) maior HP+escudo total dos vivos
+ *   3) maior HP máximo total
+ * Usado quando o cronômetro da UI termina antes da animação acabar.
+ */
+export function computeWinnerFromVisibleLog(
+  teamA: BattleMonster[],
+  teamB: BattleMonster[],
+  log: BattleLogEntry[],
+  step: number,
+): "team_a" | "team_b" {
+  const visible = log.slice(0, Math.max(0, step));
+  type S = { hp: number; shield: number; maxHp: number; dead: boolean };
+  const mk = (t: BattleMonster[]) => {
+    const m = new Map<string, S>();
+    for (const x of t) m.set(x.name, { hp: x.maxHp, shield: 0, maxHp: x.maxHp, dead: false });
+    return m;
+  };
+  const aState = mk(teamA);
+  const bState = mk(teamB);
+
+  for (const e of visible) {
+    // morte declarada explicitamente na mensagem
+    if (e.damage === 0 && /morreu|💀/.test(e.message)) {
+      const s = aState.get(e.targetName) ?? bState.get(e.targetName);
+      if (s) { s.hp = 0; s.shield = 0; s.dead = true; }
+      continue;
+    }
+    // alvo no time do ator (heal/escudo em aliado, self-buff)
+    const sameTeam = e.targetTeam === "actor" || e.damage < 0;
+    const ownerMap =
+      sameTeam
+        ? (e.actor === "team_a" ? aState : bState)
+        : (e.actor === "team_a" ? bState : aState);
+    const s = ownerMap.get(e.targetName) ?? aState.get(e.targetName) ?? bState.get(e.targetName);
+    if (!s) continue;
+    if (typeof e.remainingHp === "number") {
+      s.hp = Math.max(0, e.remainingHp);
+      if (s.hp <= 0) s.dead = true;
+    }
+    if (typeof e.targetShield === "number") {
+      s.shield = Math.max(0, e.targetShield);
+    }
+  }
+
+  const aLive = [...aState.values()].filter((s) => !s.dead && s.hp > 0);
+  const bLive = [...bState.values()].filter((s) => !s.dead && s.hp > 0);
+
+  if (aLive.length === 0 && bLive.length > 0) return "team_b";
+  if (bLive.length === 0 && aLive.length > 0) return "team_a";
+  if (aLive.length !== bLive.length) return aLive.length > bLive.length ? "team_a" : "team_b";
+  const aTotal = aLive.reduce((s, m) => s + m.hp + m.shield, 0);
+  const bTotal = bLive.reduce((s, m) => s + m.hp + m.shield, 0);
+  if (aTotal !== bTotal) return aTotal > bTotal ? "team_a" : "team_b";
+  const aMax = [...aState.values()].reduce((s, m) => s + m.maxHp, 0);
+  const bMax = [...bState.values()].reduce((s, m) => s + m.maxHp, 0);
+  return aMax >= bMax ? "team_a" : "team_b";
+}
+
 export function computeRewards(playerLevel: number, won: boolean, isVip: boolean) {
   const baseCoins = won ? 50 + playerLevel * 10 : 15 + playerLevel * 3;
   const baseXp = won ? 25 + playerLevel * 5 : 8 + playerLevel * 2;
