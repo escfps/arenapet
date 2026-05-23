@@ -237,7 +237,7 @@ function MonsterPage() {
                     </div>
                     {(() => {
                       const sb = monster.in_team ? teamSynergyBonus : { hp: 0, atk: 0, def: 0, spd: 0, int: 0, crit: 0 };
-                      const baseCritPct = sp.role === "assassin" ? 35 : sp.species === "raposa_espectral" ? 30 : 12;
+                      const baseCritPct = sp.role === "assassin" ? 35 : monster.species === "raposa_espectral" ? 30 : 12;
                       const trainedCritPct = (monster.crit ?? 0) * 2;
                       const critPct = Math.min(95, baseCritPct + trainedCritPct + (sb.crit ?? 0));
                       const cls = (b: number) =>
