@@ -214,10 +214,11 @@ export function BattleScene({
     const actorKey = `a:${entry.actorName}`.replace(/^a:/, `${actorSide}:`);
 
     // Determine target side
-    const isSelfOrAlly = entry.damage < 0 || entry.targetName === entry.actorName;
+    const isSelfOrAlly = entry.targetTeam === "actor" || entry.damage < 0 || entry.targetName === entry.actorName;
     const targetSide: "a" | "b" = isSelfOrAlly ? actorSide : actorSide === "a" ? "b" : "a";
+    const namedTargetKeys = (entry.targetNames ?? []).map((name) => `${targetSide}:${name}`);
     const targetKey =
-      entry.targetName === "todos os aliados" ? null : `${targetSide}:${entry.targetName}`;
+      entry.targetName === "todos os aliados" || namedTargetKeys.length > 0 ? null : `${targetSide}:${entry.targetName}`;
 
     // Fênix Negra: parse "+X HP máx" para crescer o max do atacante
     const growMatch = entry.message.match(/\+(\d+)\s*HP máx/);
@@ -267,7 +268,7 @@ export function BattleScene({
     const skillKind = actorMon ? getSkill(actorMon.species).kind : null;
     const msg = entry.message;
     let skillFx: SkillFxKind | null = null;
-    let targets: string[] = targetKey ? [targetKey] : [];
+    let targets: string[] = namedTargetKeys.length > 0 ? namedTargetKeys : targetKey ? [targetKey] : [];
     // Cura (dano negativo) sempre mostra cruzes verdes
     if (entry.damage < 0 || msg.includes("Curou todos") || msg.includes("curou")) {
       skillFx = "heal";
@@ -275,6 +276,9 @@ export function BattleScene({
         const allies = actorSide === "a" ? teamA : teamB;
         targets = allies.filter((m) => (hp.get(`${actorSide}:${m.name}`)?.cur ?? 0) >= 0).map((m) => `${actorSide}:${m.name}`);
       }
+    } else if (skillKind === "cooldown_reduction" || msg.includes("Ritual Ancestral") || msg.includes("cooldown")) {
+      skillFx = "cooldown";
+      targets = namedTargetKeys;
     } else if (msg.includes("ressuscitado")) {
       skillFx = "revive";
     } else if (msg.includes("VERDADEIRO") || msg.includes("reduzido a pó")) {
