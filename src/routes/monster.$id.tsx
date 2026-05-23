@@ -534,6 +534,36 @@ function MonsterPage() {
           </div>
         )}
       </div>
+
+      {showResetConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4" onClick={() => setShowResetConfirm(false)}>
+          <div className="w-full max-w-sm rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 border border-white/20 p-5 text-white shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <div className="text-center text-4xl mb-2">♻️</div>
+            <div className="text-center font-extrabold text-lg mb-1">Resetar atributos?</div>
+            <div className="text-center text-sm opacity-90 mb-4">
+              Todos os pontos distribuídos (HP, ATK, DEF, SPD, INT) voltarão pra você redistribuir.
+              <br />
+              <span className="text-xs opacity-70">Energia, moedas e diamantes gastos no treino <b>não</b> serão devolvidos.</span>
+            </div>
+            <div className="text-center font-extrabold text-amber-300 mb-4">Custo: 💎 {RESET_GEM_COST} diamantes</div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setShowResetConfirm(false)}
+                className="flex-1 py-2 rounded-xl bg-white/10 hover:bg-white/20 font-bold"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={resetTraining}
+                disabled={(profile.gems ?? 0) < RESET_GEM_COST}
+                className="flex-1 py-2 rounded-xl bg-gradient-to-br from-amber-500 to-rose-600 font-extrabold disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                Confirmar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
