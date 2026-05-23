@@ -650,10 +650,28 @@ function ArenaLineup({
             key={m.id}
             className={`relative transition-all duration-300 ease-out ${cameraZoom} ${lunge} ${
               dead ? "opacity-20 grayscale rotate-90" : ""
-            } ${isTarget ? "animate-battle-shake" : ""}`}
+            } ${isTarget ? "animate-battle-shake" : ""} ${skillReady ? "drop-shadow-[0_0_18px_rgba(250,204,21,0.85)]" : ""}`}
           >
             {/* Plataforma circular */}
             <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-16 h-3 rounded-full bg-black/40 blur-sm" />
+            {/* Badge de cooldown da skill */}
+            {!dead && (
+              <div
+                className={`absolute -top-1 ${mirrored ? "-left-1" : "-right-1"} z-30 pointer-events-none`}
+                title={skillReady ? "Skill pronta!" : `Skill em ${cd} turno(s)`}
+              >
+                {skillReady ? (
+                  <div className="px-1.5 py-0.5 rounded-full bg-gradient-to-br from-yellow-300 to-amber-500 border border-yellow-100 text-black text-[10px] font-black shadow-[0_0_10px_rgba(250,204,21,0.95)] animate-pulse">
+                    ⚡
+                  </div>
+                ) : (
+                  <div className="w-6 h-6 rounded-full bg-black/80 border border-white/40 text-white text-[11px] font-black flex items-center justify-center shadow">
+                    {cd}
+                  </div>
+                )}
+              </div>
+            )}
+
             <img
               src={sp.image}
               alt={m.name}
