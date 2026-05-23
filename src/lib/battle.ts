@@ -35,6 +35,8 @@ export type BattleLogEntry = {
   actor: "team_a" | "team_b";
   actorName: string;
   targetName: string;
+  targetNames?: string[];
+  targetTeam?: "actor" | "opponent";
   damage: number;
   crit: boolean;
   effective: number;
@@ -528,7 +530,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
 
         // PASSIVA Orangotango: cada turno reduz 1 cd do aliado mais travado (maior skillCd) — nunca afeta ele mesmo
         if (attacker.species === "orangotango") {
-          const candidates = allies.filter((m) => m.current > 0 && m.skillCd > 0 && m !== attacker);
+          const candidates = allies.filter((m) => m.current > 0 && m.skillCd > 0 && m.id !== attacker.id);
           if (candidates.length) {
             const stuck = candidates.reduce((x, y) => (y.skillCd > x.skillCd ? y : x));
             stuck.skillCd = Math.max(0, stuck.skillCd - 1);
@@ -537,11 +539,13 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
               actor: side,
               actorName: attacker.name,
               targetName: stuck.name,
+                targetNames: [stuck.name],
+                targetTeam: "actor",
               damage: 0,
               crit: false,
               effective: 1,
               remainingHp: stuck.current,
-              message: `🦧 ${attacker.name} (Ritual): acelerou ${stuck.name} (-1 cd)`,
+                message: `🦧 ${attacker.name} (Ritual Ancestral): reduziu cooldown de ${stuck.name} (-1 turno)`,
             });
           }
         }
@@ -1351,25 +1355,27 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           }
 
           if (skill.kind === "cooldown_reduction") {
-            const targets = allies.filter((m) => m.current > 0 && m !== attacker);
+            const targets = allies.filter((m) => m.current > 0 && m.skillCd > 0 && m.id !== attacker.id);
             const reduced: string[] = [];
             for (const t of targets) {
-              if (t.skillCd > 0) {
-                t.skillCd = Math.max(0, t.skillCd - 1);
-                reduced.push(t.name);
-              }
+              t.skillCd = Math.max(0, t.skillCd - 1);
+              reduced.push(t.name);
             }
-            const reducedStr = reduced.length ? reduced.join(", ") : "ninguém (todos já prontos)";
+            const reducedStr = reduced.length ? reduced.join(", ") : "ninguém — todos aliados já estavam prontos";
             log.push({
               turn,
               actor: side,
               actorName: attacker.name,
-              targetName: reduced.join(", "),
+              targetName: reducedStr,
+              targetNames: reduced,
+              targetTeam: "actor",
               damage: 0,
               crit: false,
               effective: 1,
               remainingHp: attacker.current,
-              message: `${skill.emoji} ${attacker.name} usou ${skill.name}: -1 cd em ${reducedStr}`,
+              message: reduced.length
+                ? `${skill.emoji} ${attacker.name} usou ${skill.name} em ${reducedStr}: -1 turno de cooldown`
+                : `${skill.emoji} ${attacker.name} usou ${skill.name}, mas não reduziu cooldown de ninguém`,
             });
             return;
           }
