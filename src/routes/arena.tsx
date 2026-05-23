@@ -224,7 +224,7 @@ function ArenaPage() {
 
   // Reseta o timer ao iniciar uma nova batalha
   useEffect(() => {
-    if (battleLog) setBattleTimer(120);
+    if (battleLog) setBattleTimer(10);
   }, [battleLog]);
 
   useEffect(() => {
