@@ -55,8 +55,8 @@ function HistoryPage() {
       });
       ids.delete(userId);
       if (ids.size > 0) {
-        const { data: profs } = await supabase
-          .from("profiles")
+        const { data: profs } = await (supabase as any)
+          .from("public_profiles")
           .select("id,username,level")
           .in("id", Array.from(ids));
         const map: OpponentMap = {};
