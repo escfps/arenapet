@@ -115,6 +115,30 @@ function MonsterPage() {
     window.dispatchEvent(new CustomEvent("tutorial:trained"));
   }
 
+  async function resetTraining() {
+    if (!profile || !monster) return;
+    if ((profile.gems ?? 0) < RESET_GEM_COST) {
+      toast.error(`Faltam 💎 ${RESET_GEM_COST} diamantes!`);
+      setShowResetConfirm(false);
+      return;
+    }
+    if ((monster.train_count ?? 0) === 0) {
+      toast.error("Nenhum ponto distribuído pra resetar.");
+      setShowResetConfirm(false);
+      return;
+    }
+    await patch({ gems: (profile.gems ?? 0) - RESET_GEM_COST });
+    await patchMonster({
+      hp: sp.base.hp,
+      atk: sp.base.atk,
+      def: sp.base.def,
+      spd: sp.base.spd,
+      int: sp.base.int,
+      train_count: 0,
+    });
+    setShowResetConfirm(false);
+    toast.success("Atributos resetados! Redistribua como quiser. ✨");
+
 
   async function play() {
     if (!monster) return;
