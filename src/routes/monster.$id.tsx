@@ -519,14 +519,35 @@ function MonsterPage() {
                         </div>
                       </button>
                     ))}
+                    {(() => {
+                      const critLimit = monster.rank ?? 1;
+                      const critUsed = monster.crit ?? 0;
+                      const critReached = critUsed >= critLimit;
+                      return (
+                        <button
+                          onClick={() => train("crit")}
+                          disabled={critReached}
+                          className={`p-4 rounded-2xl bg-gradient-to-br from-yellow-400 to-amber-600 text-white font-extrabold transition shadow-lg ${critReached ? "opacity-40 cursor-not-allowed grayscale" : "hover:scale-105"}`}
+                        >
+                          <div className="text-3xl mb-1">💢</div>
+                          <div>Treinar CRIT</div>
+                          <div className="text-xs font-normal opacity-90 mt-1">
+                            🪙 {20 + monster.rank * 10} • 💎 {TRAIN_GEM_COST} • -{TRAIN_ENERGY_COST} energia • +2% CRIT
+                          </div>
+                          <div className="text-[10px] font-bold mt-1 bg-black/30 rounded-full px-2 py-0.5 inline-block">
+                            {critUsed}/{critLimit} ⭐
+                          </div>
+                        </button>
+                      );
+                    })()}
                   </div>
                 </>
               );
             })()}
             <button
               onClick={() => setShowResetConfirm(true)}
-              disabled={(monster.train_count ?? 0) === 0}
-              className={`mt-4 w-full p-3 rounded-2xl bg-gradient-to-br from-amber-500 to-rose-600 text-white font-extrabold transition shadow-lg ${(monster.train_count ?? 0) === 0 ? "opacity-40 cursor-not-allowed grayscale" : "hover:scale-[1.02]"}`}
+              disabled={(monster.train_count ?? 0) === 0 && (monster.crit ?? 0) === 0}
+              className={`mt-4 w-full p-3 rounded-2xl bg-gradient-to-br from-amber-500 to-rose-600 text-white font-extrabold transition shadow-lg ${(monster.train_count ?? 0) === 0 && (monster.crit ?? 0) === 0 ? "opacity-40 cursor-not-allowed grayscale" : "hover:scale-[1.02]"}`}
             >
               <div className="text-base">♻️ Resetar atributos distribuídos</div>
               <div className="text-xs font-normal opacity-90 mt-1">
