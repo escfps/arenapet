@@ -526,7 +526,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           }
         }
 
-        // PASSIVA Orangotango: cada turno reduz 1 cd do aliado mais travado (maior skillCd)
+        // PASSIVA Orangotango: cada turno reduz 1 cd do aliado mais travado (maior skillCd) — nunca afeta ele mesmo
         if (attacker.species === "orangotango") {
           const candidates = allies.filter((m) => m.current > 0 && m.skillCd > 0 && m !== attacker);
           if (candidates.length) {
