@@ -77,8 +77,13 @@ function ArenaPage() {
   const [chestQueue, setChestQueue] = useState<PendingChest[]>([]);
   const pendingApplyRef = useRef<null | (() => Promise<void>)>(null);
   const playbackStoppedRef = useRef(false);
+  const winnerRef = useRef<"team_a" | "team_b" | "draw" | null>(null);
+  const battleTeamsRef = useRef<{ a: ReturnType<typeof toBattleMonster>[]; b: ReturnType<typeof toBattleMonster>[] } | null>(null);
   const [ranks, setRanks] = useState<{ mine: number | null; opp: number | null }>({ mine: null, opp: null });
   const battleFinished = !!battleLog && (shownLog.length >= battleLog.length || (battleTimer <= 0 && playbackStoppedRef.current));
+
+  // mantém winnerRef sincronizado com o estado (apply lê daqui)
+  useEffect(() => { winnerRef.current = winner; }, [winner]);
 
   // Compute ranking positions (1-based) when fight starts
   useEffect(() => {
