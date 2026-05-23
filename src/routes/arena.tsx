@@ -71,7 +71,7 @@ function ArenaPage() {
   const [rewards, setRewards] = useState<{ coins: number; xp: number; gems: number; points: number; oldPoints: number; newPoints: number; promoMsg?: string; promoBefore?: PromoSeries | null; promoAfter?: PromoSeries | null } | null>(null);
   const [shownLog, setShownLog] = useState<BattleLogEntry[]>([]);
   const [searchCountdown, setSearchCountdown] = useState(0);
-  const [battleTimer, setBattleTimer] = useState(10); // TEST: reduzido de 120 pra forçar timeout
+  const [battleTimer, setBattleTimer] = useState(120);
   const [promo, setPromo] = useState<PromoSeries | null>(null);
   const [autoRematch, setAutoRematch] = useState<number | null>(null);
   const [chestQueue, setChestQueue] = useState<PendingChest[]>([]);
