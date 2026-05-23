@@ -86,8 +86,8 @@ function ArenaPage() {
     let cancel = false;
     (async () => {
       const [mineRes, oppRes] = await Promise.all([
-        supabase.from("profiles").select("id", { count: "exact", head: true }).gt("arena_points", profile.arena_points ?? 0),
-        supabase.from("profiles").select("id", { count: "exact", head: true }).gt("arena_points", opponent.arenaPoints),
+        (supabase as any).from("public_profiles").select("id", { count: "exact", head: true }).gt("arena_points", profile.arena_points ?? 0),
+        (supabase as any).from("public_profiles").select("id", { count: "exact", head: true }).gt("arena_points", opponent.arenaPoints),
       ]);
       if (cancel) return;
       setRanks({
