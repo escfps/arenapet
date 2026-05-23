@@ -8,7 +8,7 @@ import { playSfx } from "@/lib/sound";
 type Team = (MonsterRow & { owner_id: string })[];
 type HpMap = Map<string, { cur: number; max: number }>;
 type ShieldMap = Map<string, number>;
-type SkillFxKind = "heal" | "bite" | "explosion" | "lightning" | "fire" | "shield" | "slash" | "skull" | "fury" | "silence" | "magic" | "revive" | "true";
+type SkillFxKind = "heal" | "bite" | "explosion" | "lightning" | "fire" | "shield" | "slash" | "skull" | "fury" | "silence" | "magic" | "revive" | "true" | "cooldown";
 type MissLabel = { key: string; kind: "dodge" | "miss" } | null;
 type Fx = { actor: string | null; target: string | null; dmg: number | null; shieldGain: number | null; crit: boolean; skillFx: SkillFxKind | null; targets: string[]; miss: MissLabel };
 type StatusKind = "burn" | "poison" | "bleed" | "blind" | "sleep" | "freeze" | "silence" | "rage" | "shield";
@@ -55,6 +55,8 @@ function detectEffect(entry: BattleLogEntry): EffectBanner {
     return { id: mkId, emoji: "🛡️", label: "PROVOCAR", detail: "Inimigos forçados a atacar o tank", color: "from-amber-500 to-yellow-800" };
   if (m.includes("Curou todos"))
     return { id: mkId, emoji: "💚", label: "CURA EM ÁREA", detail: "Time inteiro recuperou HP", color: "from-emerald-400 to-green-700" };
+  if (m.includes("Ritual Ancestral") || m.includes("cooldown"))
+    return { id: mkId, emoji: "🦧", label: "RITUAL ANCESTRAL", detail: "Cooldown dos aliados reduzido", color: "from-lime-500 to-emerald-800" };
   if (m.includes("dano arcano") || m.includes("dano em CADA"))
     return { id: mkId, emoji: "🔮", label: "DANO MÁGICO EM ÁREA", color: "from-fuchsia-500 to-purple-800" };
   return null;
@@ -127,6 +129,7 @@ export function BattleScene({
     actorName: string;
     skillEmoji: string;
     skillLabel: string;
+    detail?: string;
     damage: number;
     crit: boolean;
     healing: boolean;
@@ -175,6 +178,9 @@ export function BattleScene({
     const isBasic = !usesSkill && (msg.includes("atacou") || msg.includes("golpeou") || entry.damage > 0);
     const skillLabel = usesSkill ? skill.name : isBasic ? "Ataque básico" : healing ? "Cura" : skill.name;
     const skillEmoji = usesSkill ? skill.emoji : isBasic ? "👊" : healing ? "💚" : skill.emoji;
+    const cooldownTargets = skill.kind === "cooldown_reduction" && entry.targetNames?.length
+      ? `em ${entry.targetNames.join(", ")}`
+      : undefined;
     const id = Date.now() + Math.random();
     setActionFeed((prev) => {
       const newItem = {
@@ -184,6 +190,7 @@ export function BattleScene({
         actorName: entry.actorName,
         skillEmoji,
         skillLabel,
+        detail: cooldownTargets,
         damage: Math.abs(entry.damage),
         crit: entry.crit,
         healing,
