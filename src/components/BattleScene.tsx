@@ -1047,6 +1047,7 @@ function SideColumn({
   shields,
   fx,
   statuses,
+  cooldowns,
   mirrored,
 }: {
   team: Team;
@@ -1056,6 +1057,7 @@ function SideColumn({
   shields: ShieldMap;
   fx: Fx;
   statuses: StatusMap;
+  cooldowns: Map<string, number>;
   mirrored?: boolean;
 }) {
   return (
@@ -1074,6 +1076,8 @@ function SideColumn({
         const isActor = fx.actor === key && !dead;
         const isTarget = fx.target === key || (fx.skillFx === "cooldown" && fx.targets.includes(key));
         const lunge = isActor ? (mirrored ? "-translate-x-3" : "translate-x-3") : "";
+        const cd = cooldowns.get(key) ?? 0;
+        const skillReady = !dead && cd <= 0;
         const hpColor =
           pct > 50
             ? "from-green-400 to-emerald-500"
@@ -1095,6 +1099,23 @@ function SideColumn({
               dead ? "opacity-30 grayscale" : ""
             } ${lunge} ${isTarget ? "animate-battle-shake" : ""}`}
           >
+            {/* Badge de cooldown da skill */}
+            {!dead && (
+              <div
+                className={`absolute -top-1.5 ${mirrored ? "-left-1.5" : "-right-1.5"} z-30 pointer-events-none`}
+                title={skillReady ? "Skill pronta!" : `Skill em ${cd} turno(s)`}
+              >
+                {skillReady ? (
+                  <div className="px-1.5 py-0.5 rounded-full bg-gradient-to-br from-yellow-300 to-amber-500 border border-yellow-100 text-black text-[10px] font-black shadow-[0_0_10px_rgba(250,204,21,0.95)] animate-pulse">
+                    ⚡
+                  </div>
+                ) : (
+                  <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-black/80 border border-white/40 text-white text-[10px] sm:text-[11px] font-black flex items-center justify-center shadow">
+                    {cd}
+                  </div>
+                )}
+              </div>
+            )}
             <div
               className={`flex items-center gap-1.5 sm:gap-2 p-1 sm:p-2 rounded-lg bg-gradient-to-r ${
                 ELEMENT_COLORS[sp.element]
@@ -1102,8 +1123,9 @@ function SideColumn({
                 (m.rank ?? 1) >= MAX_RANK ? "rank-max-glow" : ""
               } ${isTarget ? "ring-4 ring-red-400" : ""} ${
                 isActor ? "ring-4 ring-yellow-300" : ""
-              } transition-all`}
+              } ${skillReady && !isActor && !isTarget ? "ring-2 ring-yellow-300/80 shadow-[0_0_14px_rgba(250,204,21,0.7)]" : ""} transition-all`}
             >
+
               <img
                 src={sp.image}
                 alt=""
