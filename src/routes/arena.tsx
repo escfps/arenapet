@@ -71,7 +71,7 @@ function ArenaPage() {
   const [rewards, setRewards] = useState<{ coins: number; xp: number; gems: number; points: number; oldPoints: number; newPoints: number; promoMsg?: string; promoBefore?: PromoSeries | null; promoAfter?: PromoSeries | null } | null>(null);
   const [shownLog, setShownLog] = useState<BattleLogEntry[]>([]);
   const [searchCountdown, setSearchCountdown] = useState(0);
-  const [battleTimer, setBattleTimer] = useState(120);
+  const [battleTimer, setBattleTimer] = useState(10); // TEST: reduzido de 120 pra forçar timeout
   const [promo, setPromo] = useState<PromoSeries | null>(null);
   const [autoRematch, setAutoRematch] = useState<number | null>(null);
   const [chestQueue, setChestQueue] = useState<PendingChest[]>([]);
@@ -207,7 +207,7 @@ function ArenaPage() {
 
   // Timer regressivo de 2min durante a batalha (ao zerar, congela a cena no estado atual)
   useEffect(() => {
-    if (!battleLog) { setBattleTimer(120); return; }
+    if (!battleLog) { setBattleTimer(10); return; }
     if (battleFinished) return;
     const id = setInterval(() => {
       setBattleTimer((t) => {
@@ -224,7 +224,7 @@ function ArenaPage() {
 
   // Reseta o timer ao iniciar uma nova batalha
   useEffect(() => {
-    if (battleLog) setBattleTimer(120);
+    if (battleLog) setBattleTimer(10);
   }, [battleLog]);
 
   useEffect(() => {
@@ -411,7 +411,7 @@ function ArenaPage() {
     // Inicia a animação ANTES de aplicar resultado, pra não revelar o vencedor
     // pelas atualizações de vitórias/derrotas/recompensas no HUD.
     playbackStoppedRef.current = false;
-    setBattleTimer(120);
+    setBattleTimer(10);
     setShownLog([]);
     setBattleLog(result.log);
     setWinner(result.winner);
