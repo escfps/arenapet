@@ -496,18 +496,19 @@ export function BattleScene({
       {/* === Cards (status) em cima === */}
       <div className="relative px-4 pt-3 pb-2 bg-gradient-to-b from-black/50 to-transparent">
         <div className="grid grid-cols-2 gap-3">
-          <SideColumn team={teamA} side="a" hp={hp} baseHp={initialHp} shields={shields} fx={fx} statuses={statuses} />
-          <SideColumn team={teamB} side="b" hp={hp} baseHp={initialHp} shields={shields} fx={fx} statuses={statuses} mirrored />
+          <SideColumn team={teamA} side="a" hp={hp} baseHp={initialHp} shields={shields} fx={fx} statuses={statuses} cooldowns={cooldowns} />
+          <SideColumn team={teamB} side="b" hp={hp} baseHp={initialHp} shields={shields} fx={fx} statuses={statuses} cooldowns={cooldowns} mirrored />
         </div>
       </div>
 
       {/* === ARENA: pets na grama embaixo === */}
       <div className="relative px-4 pt-2 pb-16">
         <div className="grid grid-cols-2 gap-3 items-end min-h-[140px]">
-          <ArenaLineup team={teamA} side="a" hp={hp} fx={fx} />
-          <ArenaLineup team={teamB} side="b" hp={hp} fx={fx} mirrored />
+          <ArenaLineup team={teamA} side="a" hp={hp} fx={fx} cooldowns={cooldowns} />
+          <ArenaLineup team={teamB} side="b" hp={hp} fx={fx} cooldowns={cooldowns} mirrored />
         </div>
       </div>
+
 
 
       {/* Overlay central de efeito */}
