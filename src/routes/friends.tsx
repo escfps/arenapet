@@ -5,6 +5,7 @@ import { toast, Toaster } from "sonner";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
 import { supabase } from "@/integrations/supabase/client";
+import { SPECIES, RARITY_INFO, skinFilter, rankStars, MAX_RANK } from "@/lib/game-data";
 import {
   listFriends,
   searchPlayer,
