@@ -93,11 +93,17 @@ function MonsterPage() {
 
   const TRAIN_GEM_COST = 4;
 
-  async function train(stat: "atk" | "def" | "spd" | "hp" | "int") {
+  async function train(stat: "atk" | "def" | "spd" | "hp" | "int" | "crit") {
     if (!profile || !monster) return;
-    const limit = (monster.rank ?? 1) * 10;
-    const used = monster.train_count ?? 0;
-    if (used >= limit) { toast.error("Limite de treinos atingido! Eleve o pet ⭐"); return; }
+    if (stat === "crit") {
+      const critLimit = monster.rank ?? 1;
+      const critUsed = monster.crit ?? 0;
+      if (critUsed >= critLimit) { toast.error("Limite de CRIT atingido! Eleve o pet ⭐"); return; }
+    } else {
+      const limit = (monster.rank ?? 1) * 10;
+      const used = monster.train_count ?? 0;
+      if (used >= limit) { toast.error("Limite de treinos atingido! Eleve o pet ⭐"); return; }
+    }
     const cost = 20 + (monster.rank ?? 1) * 10;
     if (profile.coins < cost) { toast.error("Moedas insuficientes!"); return; }
     if ((profile.gems ?? 0) < TRAIN_GEM_COST) { toast.error(`Faltam 💎 ${TRAIN_GEM_COST} diamantes!`); return; }
@@ -105,16 +111,23 @@ function MonsterPage() {
     if (e.energy < TRAIN_ENERGY_COST) { toast.error("Sem energia! Dê um energético ou espere regenerar."); return; }
     if (monster.hunger < 20) { toast.error("Está com fome! Alimente primeiro."); return; }
     await patch({ coins: profile.coins - cost, gems: (profile.gems ?? 0) - TRAIN_GEM_COST });
-    const gain = stat === "hp" ? 3 + Math.floor(Math.random() * 3) : 1 + Math.floor(Math.random() * 2);
     const updates: Partial<MonsterRow> = {
       battle_energy: e.energy - TRAIN_ENERGY_COST,
       battle_energy_at: e.nextStoredAt,
       hunger: monster.hunger - 5,
-      train_count: used + 1,
     };
-    updates[stat] = (monster[stat] ?? 0) + gain;
-    await patchMonster(updates);
-    toast.success(`+${gain} ${stat.toUpperCase()}! (${used + 1}/${limit})`);
+    if (stat === "crit") {
+      const newCrit = (monster.crit ?? 0) + 1;
+      updates.crit = newCrit;
+      await patchMonster(updates);
+      toast.success(`+2% CRIT! (${newCrit}/${monster.rank ?? 1})`);
+    } else {
+      const gain = stat === "hp" ? 3 + Math.floor(Math.random() * 3) : 1 + Math.floor(Math.random() * 2);
+      updates.train_count = (monster.train_count ?? 0) + 1;
+      updates[stat] = (monster[stat] ?? 0) + gain;
+      await patchMonster(updates);
+      toast.success(`+${gain} ${stat.toUpperCase()}! (${(monster.train_count ?? 0) + 1}/${(monster.rank ?? 1) * 10})`);
+    }
     window.dispatchEvent(new CustomEvent("tutorial:trained"));
   }
 
@@ -125,7 +138,7 @@ function MonsterPage() {
       setShowResetConfirm(false);
       return;
     }
-    if ((monster.train_count ?? 0) === 0) {
+    if ((monster.train_count ?? 0) === 0 && (monster.crit ?? 0) === 0) {
       toast.error("Nenhum ponto distribuído pra resetar.");
       setShowResetConfirm(false);
       return;
@@ -137,6 +150,7 @@ function MonsterPage() {
       def: sp.base.def,
       spd: sp.base.spd,
       int: sp.base.int,
+      crit: 0,
       train_count: 0,
     });
     setShowResetConfirm(false);
