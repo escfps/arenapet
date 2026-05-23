@@ -606,12 +606,14 @@ function ArenaLineup({
   side,
   hp,
   fx,
+  cooldowns,
   mirrored,
 }: {
   team: Team;
   side: "a" | "b";
   hp: HpMap;
   fx: Fx;
+  cooldowns: Map<string, number>;
   mirrored?: boolean;
 }) {
   return (
@@ -624,6 +626,9 @@ function ArenaLineup({
         const key = `${side}:${m.name}`;
         const h = hp.get(key) ?? { cur: 0, max: 1 };
         const dead = h.cur <= 0;
+        const cd = cooldowns.get(key) ?? 0;
+        const skillReady = !dead && cd <= 0;
+
         const isActor = fx.actor === key && !dead;
         const isTarget = fx.target === key || (fx.skillFx === "cooldown" && fx.targets.includes(key));
         const hasSkillFx = fx.skillFx && (fx.targets.includes(key) || (isActor && (fx.skillFx === "fury" || fx.skillFx === "shield")));
