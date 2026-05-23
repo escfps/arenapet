@@ -1258,7 +1258,7 @@ export function rollArenaPoints(currentPoints: number): { win: number; loss: num
 // ===== SINERGIA POR CATEGORIA =====
 export type Category =
   | "fogo" | "floresta" | "sombras" | "felinos" | "repteis"
-  | "abyssal" | "dragoes" | "gelo" | "aves" | "pedra" | "relampago";
+  | "abyssal" | "dragoes" | "gelo" | "aves" | "pedra" | "relampago" | "macacos";
 
 export type SynergyStat = "hp" | "atk" | "def" | "spd" | "int" | "crit";
 
