@@ -1352,23 +1352,24 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
 
           if (skill.kind === "cooldown_reduction") {
             const targets = allies.filter((m) => m.current > 0 && m !== attacker);
-            let count = 0;
+            const reduced: string[] = [];
             for (const t of targets) {
               if (t.skillCd > 0) {
                 t.skillCd = Math.max(0, t.skillCd - 1);
-                count++;
+                reduced.push(t.name);
               }
             }
+            const reducedStr = reduced.length ? reduced.join(", ") : "ninguém (todos já prontos)";
             log.push({
               turn,
               actor: side,
               actorName: attacker.name,
-              targetName: targets.map((t) => t.name).join(", "),
+              targetName: reduced.join(", "),
               damage: 0,
               crit: false,
               effective: 1,
               remainingHp: attacker.current,
-              message: `${skill.emoji} ${attacker.name} usou ${skill.name}: reduziu 1 turno de cooldown de ${count} aliado(s)!`,
+              message: `${skill.emoji} ${attacker.name} usou ${skill.name}: -1 cd em ${reducedStr}`,
             });
             return;
           }
