@@ -1078,9 +1078,14 @@ function TeamPanel({ title, team, side, energies }: { title: string; team: FullM
                     </span>
                   ))}
                 </div>
-                {(() => { const st = totalStats(m.species, m.rank ?? 1, { hp: m.hp ?? 0, atk: m.atk ?? 0, def: m.def ?? 0, spd: m.spd ?? 0, int: m.int ?? 0 }); return (
-                  <div className="text-[10px] opacity-90">{rankStars(m.rank ?? 1)} • ❤️{st.hp} ⚔️{st.atk} 🛡️{st.def} 💨{st.spd} 🧠{st.int}</div>
-                ); })()}
+                {(() => {
+                  const st = totalStats(m.species, m.rank ?? 1, { hp: m.hp ?? 0, atk: m.atk ?? 0, def: m.def ?? 0, spd: m.spd ?? 0, int: m.int ?? 0 });
+                  const baseCritPct = sp.role === "assassin" ? 35 : m.species === "raposa_espectral" ? 30 : 12;
+                  const critPct = Math.min(95, baseCritPct + ((m.crit ?? 0) * 2));
+                  return (
+                    <div className="text-[10px] opacity-90">{rankStars(m.rank ?? 1)} • ❤️{st.hp} ⚔️{st.atk} 🛡️{st.def} 💨{st.spd} 🧠{st.int} 💢{critPct}%</div>
+                  );
+                })()}
                 {en && (
                   <div className={`text-[10px] font-bold mt-0.5 flex items-center gap-1 ${en.energy === 0 ? "text-red-200" : "text-yellow-100"}`}>
                     ⚡ {en.energy}/{MAX_BATTLE_ENERGY}
