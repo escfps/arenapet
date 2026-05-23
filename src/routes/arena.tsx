@@ -795,7 +795,7 @@ function ArenaPage() {
                   playerBRank={ranks.opp ?? undefined}
                 />
 
-                {shownLog.length === battleLog.length && winner && (
+                {battleFinished && winner && (
                   <div className="absolute inset-0 z-30 flex items-start sm:items-center justify-center animate-fade-in overflow-y-auto py-4">
                     <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
                     <div
@@ -957,7 +957,7 @@ function ArenaPage() {
               </div>
             )}
 
-            {battleLog && shownLog.length < battleLog.length && (
+            {battleLog && !battleFinished && (
               <div className="rounded-2xl bg-black/60 backdrop-blur-md border border-white/30 p-4 text-white">
                 {shownLog.length === battleLog.length ? (
                   <details className="text-sm">
@@ -981,7 +981,7 @@ function ArenaPage() {
                   </div>
                 )}
 
-                {shownLog.length === battleLog.length && rewards && opponent && (
+                {battleFinished && rewards && opponent && (
                   <>
                     <BattleStats teamA={myTeam} teamB={opponent.team} log={battleLog} />
                     <div className={`mt-4 p-4 rounded-xl text-center font-extrabold ${winner === "team_a" ? "bg-green-500/40" : winner === "draw" ? "bg-yellow-500/40" : "bg-red-500/40"}`}>
