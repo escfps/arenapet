@@ -389,6 +389,51 @@ export function BattleScene({
     };
   }, [step, log, teamA, teamB]);
 
+  // === Cooldown atual da skill ativa de cada pet (mapeado por chave side:name) ===
+  const cooldowns = useMemo<Map<string, number>>(() => {
+    const cds = new Map<string, number>();
+    for (const m of teamA) cds.set(`a:${m.name}`, 1);
+    for (const m of teamB) cds.set(`b:${m.name}`, 1);
+    const upTo = Math.min(step, log.length - 1);
+    for (let i = 0; i <= upTo; i++) {
+      const entry = log[i];
+      const sideKey: "a" | "b" = entry.actor === "team_a" ? "a" : "b";
+      const team = sideKey === "a" ? teamA : teamB;
+      const actorMon = team.find((m) => m.name === entry.actorName);
+      if (!actorMon) continue;
+      const skill = getSkill(actorMon.species);
+      const msg = entry.message;
+      const actorKey = `${sideKey}:${entry.actorName}`;
+      // Passiva do Orangotango: "(Ritual Ancestral):" — não consome cd, mas reduz cd do alvo
+      const isPassiveRitual = msg.includes("(Ritual Ancestral)");
+      const usedActive = !isPassiveRitual && msg.includes("usou") && msg.includes(skill.name);
+      if (isPassiveRitual) {
+        // não altera cd do ator; apenas reduz cd dos targetNames
+        if (entry.targetNames?.length) {
+          for (const tn of entry.targetNames) {
+            const k = `${sideKey}:${tn}`;
+            cds.set(k, Math.max(0, (cds.get(k) ?? 0) - 1));
+          }
+        }
+        continue;
+      }
+      if (usedActive) {
+        cds.set(actorKey, skill.cooldown);
+        if (skill.kind === "cooldown_reduction" && entry.targetNames?.length) {
+          for (const tn of entry.targetNames) {
+            const k = `${sideKey}:${tn}`;
+            cds.set(k, Math.max(0, (cds.get(k) ?? 0) - 1));
+          }
+        }
+      } else {
+        // ação normal (ataque básico ou skill sem cd próprio) — apenas decrementa
+        cds.set(actorKey, Math.max(0, (cds.get(actorKey) ?? 0) - 1));
+      }
+    }
+    return cds;
+  }, [step, log, teamA, teamB]);
+
+
   return (
     <div
       className="relative rounded-2xl border-2 border-white/30 overflow-hidden shadow-2xl"
