@@ -411,7 +411,7 @@ function ArenaPage() {
     // Inicia a animação ANTES de aplicar resultado, pra não revelar o vencedor
     // pelas atualizações de vitórias/derrotas/recompensas no HUD.
     playbackStoppedRef.current = false;
-    setBattleTimer(120);
+    setBattleTimer(10);
     setShownLog([]);
     setBattleLog(result.log);
     setWinner(result.winner);
