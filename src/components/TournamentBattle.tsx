@@ -33,9 +33,9 @@ async function fetchTeam(ownerId: string): Promise<Team> {
 }
 
 async function fetchArenaInfo(ownerId: string): Promise<{ points: number; rank: number }> {
-  const { data } = await supabase.from("profiles").select("arena_points").eq("id", ownerId).maybeSingle();
+  const { data } = await (supabase as any).from("public_profiles").select("arena_points").eq("id", ownerId).maybeSingle();
   const points = (data?.arena_points as number) ?? 0;
-  const { count } = await supabase.from("profiles").select("id", { count: "exact", head: true }).gt("arena_points", points);
+  const { count } = await (supabase as any).from("public_profiles").select("id", { count: "exact", head: true }).gt("arena_points", points);
   return { points, rank: (count ?? 0) + 1 };
 }
 
