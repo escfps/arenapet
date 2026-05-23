@@ -266,54 +266,91 @@ function FriendsPage() {
               return (
                 <div
                   key={f.id}
-                  className="w-full bg-purple-900/60 border border-purple-400/30 rounded-xl p-3 flex items-center gap-3"
+                  className="w-full bg-purple-900/60 border border-purple-400/30 rounded-xl p-3 flex flex-col gap-2"
                 >
-                  <button
-                    onClick={() => navigate({ to: "/friends/$friendId", params: { friendId: f.id } })}
-                    className="flex items-center gap-3 flex-1 min-w-0 text-left hover:opacity-80"
-                  >
-                    <span className="text-xl">{online ? "🟢" : "⚫"}</span>
-                    <div className="flex-1 min-w-0">
-                      <div className="text-white font-bold truncate">{f.username}</div>
-                      <div className="text-xs text-white/70">Lvl {f.level} • {f.arena_points} pts • {f.wins}V/{f.losses}D</div>
-                    </div>
-                    {f.hasGift && <span className="text-yellow-300">🎁</span>}
-                    {f.unread > 0 && (
-                      <span className="bg-red-500 text-white text-xs font-extrabold rounded-full px-2 py-0.5">
-                        {f.unread}
-                      </span>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => navigate({ to: "/friends/$friendId", params: { friendId: f.id } })}
+                      className="flex items-center gap-3 flex-1 min-w-0 text-left hover:opacity-80"
+                    >
+                      <span className="text-xl">{online ? "🟢" : "⚫"}</span>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-white font-bold truncate">{f.username}</div>
+                        <div className="text-xs text-white/70">Lvl {f.level} • {f.arena_points} pts • {f.wins}V/{f.losses}D</div>
+                      </div>
+                      {f.hasGift && <span className="text-yellow-300">🎁</span>}
+                      {f.unread > 0 && (
+                        <span className="bg-red-500 text-white text-xs font-extrabold rounded-full px-2 py-0.5">
+                          {f.unread}
+                        </span>
+                      )}
+                    </button>
+                    <button
+                      onClick={() => openChat(f)}
+                      className="p-2 rounded-lg bg-purple-500 hover:bg-purple-600 text-white text-sm font-bold"
+                      title="Mensagem"
+                    >
+                      💬
+                    </button>
+                    <button
+                      onClick={async () => {
+                        if (!online) { toast.error("Amigo offline"); return; }
+                        try {
+                          await challenge({ data: { friendId: f.id } });
+                          toast.success("Desafio enviado! Aguardando resposta…");
+                        } catch (e) {
+                          toast.error((e as Error).message);
+                        }
+                      }}
+                      className="p-2 rounded-lg bg-red-500 hover:bg-red-600 text-white text-sm font-bold disabled:opacity-40"
+                      title="Desafiar"
+                      disabled={!online}
+                    >
+                      ⚔️
+                    </button>
+                    <button
+                      onClick={() => doRemove(f.id)}
+                      className="text-white/50 hover:text-red-300 text-xs px-1"
+                      title="Remover"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                  <div className="flex items-center gap-2 pl-7">
+                    <span className="text-[10px] text-white/50 font-bold uppercase">Time:</span>
+                    {f.team.length === 0 ? (
+                      <span className="text-[10px] text-white/40 italic">Sem time</span>
+                    ) : (
+                      f.team.map((m) => {
+                        const sp = SPECIES[m.species];
+                        const rar = sp ? RARITY_INFO[sp.rarity] : null;
+                        const isMax = (m.rank ?? 1) >= MAX_RANK;
+                        return (
+                          <div
+                            key={m.id}
+                            title={`${m.name}${sp ? ` (${sp.name})` : ""} • ${rankStars(m.rank ?? 1)}`}
+                            className="flex flex-col items-center gap-0.5"
+                          >
+                            <div className={`w-8 h-8 rounded-full bg-black/40 border ring-1 ${rar ? rar.ringColor : "ring-white/20"} overflow-hidden flex items-center justify-center ${isMax ? "rank-max-glow" : ""}`}>
+                              {sp?.image ? (
+                                <img
+                                  src={sp.image}
+                                  alt={m.name}
+                                  className="w-full h-full object-cover"
+                                  style={{ filter: skinFilter(m.skin) }}
+                                />
+                              ) : (
+                                <span className="text-base leading-none">❓</span>
+                              )}
+                            </div>
+                            <span className={`text-[8px] leading-none font-extrabold px-1 py-0.5 rounded ${isMax ? "bg-gradient-to-r from-yellow-300 via-pink-400 to-violet-400 text-white" : "bg-amber-400/90 text-amber-950"}`}>
+                              {rankStars(m.rank ?? 1)}
+                            </span>
+                          </div>
+                        );
+                      })
                     )}
-                  </button>
-                  <button
-                    onClick={() => openChat(f)}
-                    className="p-2 rounded-lg bg-purple-500 hover:bg-purple-600 text-white text-sm font-bold"
-                    title="Mensagem"
-                  >
-                    💬
-                  </button>
-                  <button
-                    onClick={async () => {
-                      if (!online) { toast.error("Amigo offline"); return; }
-                      try {
-                        await challenge({ data: { friendId: f.id } });
-                        toast.success("Desafio enviado! Aguardando resposta…");
-                      } catch (e) {
-                        toast.error((e as Error).message);
-                      }
-                    }}
-                    className="p-2 rounded-lg bg-red-500 hover:bg-red-600 text-white text-sm font-bold disabled:opacity-40"
-                    title="Desafiar"
-                    disabled={!online}
-                  >
-                    ⚔️
-                  </button>
-                  <button
-                    onClick={() => doRemove(f.id)}
-                    className="text-white/50 hover:text-red-300 text-xs px-1"
-                    title="Remover"
-                  >
-                    ✕
-                  </button>
+                  </div>
                 </div>
               );
             })}
