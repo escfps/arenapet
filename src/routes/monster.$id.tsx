@@ -521,7 +521,7 @@ function MonsterPage() {
                     {(() => {
                       const critLimit = monster.rank ?? 1;
                       const critUsed = monster.crit ?? 0;
-                      const critReached = critUsed >= critLimit;
+                      const critReached = critUsed >= critLimit || reached;
                       return (
                         <button
                           onClick={() => train("crit")}
