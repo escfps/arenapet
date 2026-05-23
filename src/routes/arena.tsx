@@ -218,6 +218,14 @@ function ArenaPage() {
       setBattleTimer((t) => {
         if (t <= 1) {
           playbackStoppedRef.current = true;
+          // Recalcula o vencedor com base no que está visível na cena,
+          // pra que o resultado bata com os pets que o jogador vê vivos.
+          const teams = battleTeamsRef.current;
+          if (teams && battleLog) {
+            const visibleWinner = computeWinnerFromVisibleLog(teams.a, teams.b, battleLog, shownLog.length);
+            setWinner(visibleWinner);
+            winnerRef.current = visibleWinner;
+          }
           clearInterval(id);
           return 0;
         }
@@ -225,7 +233,7 @@ function ArenaPage() {
       });
     }, 1000);
     return () => clearInterval(id);
-  }, [battleLog, battleFinished]);
+  }, [battleLog, battleFinished, shownLog.length]);
 
   // Reseta o timer ao iniciar uma nova batalha
   useEffect(() => {
