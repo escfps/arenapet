@@ -1305,7 +1305,7 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   borboleta_sonifera: ["aves", "floresta"],
   urso_polar: ["abyssal", "gelo"],
   jacare_ancestral: ["repteis", "abyssal"],
-  gorila_titan: ["floresta"],
+  gorila_titan: ["floresta", "macacos"],
   aguia_cega: ["aves", "relampago"],
   lobo_lua_sangrenta: ["sombras"],
   onca_sombria: ["felinos", "sombras"],
