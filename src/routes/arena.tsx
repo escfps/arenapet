@@ -414,12 +414,7 @@ function ArenaPage() {
     const a = myTeam.map(toBattleMonster);
     const b = opp.team.map(toBattleMonster);
     const result = simulateBattle(a, b);
-    const isDraw = result.winner === "draw";
-    const won = result.winner === "team_a";
-    const rew = isDraw
-      ? { coins: 0, xp: 0 }
-      : computeRewards(profile.level, won, isVip(profile.vip_until));
-    const gemWin = !isDraw && Math.random() < (won ? 0.5 : 0.25) ? 1 : 0;
+    battleTeamsRef.current = { a, b };
 
     // Inicia a animação ANTES de aplicar resultado, pra não revelar o vencedor
     // pelas atualizações de vitórias/derrotas/recompensas no HUD.
@@ -428,9 +423,20 @@ function ArenaPage() {
     setShownLog([]);
     setBattleLog(result.log);
     setWinner(result.winner);
+    winnerRef.current = result.winner;
 
     // Aplica HUD, recompensas e gravações no DB somente quando a animação terminar.
+    // Lê o vencedor do ref no momento de aplicar — assim respeita o recálculo
+    // que acontece quando o cronômetro de 2min estoura antes do fim da animação.
     pendingApplyRef.current = async () => {
+      const finalWinner = winnerRef.current ?? result.winner;
+      const isDraw = finalWinner === "draw";
+      const won = finalWinner === "team_a";
+      const rew = isDraw
+        ? { coins: 0, xp: 0 }
+        : computeRewards(profile.level, won, isVip(profile.vip_until));
+      const gemWin = !isDraw && Math.random() < (won ? 0.5 : 0.25) ? 1 : 0;
+
       // Arena points + promo series logic
       const oldPoints = profile.arena_points ?? 0;
       const promoBefore = promo;
