@@ -563,6 +563,13 @@ export const SPECIES: Record<string, Species> = {
     base: { hp: 58, atk: 22, def: 9, spd: 21, int: 10 },
     skill: { name: "Bote Certeiro", emoji: "🦊", kind: "spectral_pounce", cooldown: 4, description: "ATIVA: ataca o inimigo mais fraco com crítico garantido. PASSIVA: todo ataque básico tem 30% de chance de critar." },
   },
+  orangotango: {
+    id: "orangotango", name: "Orangotango", element: "grass", role: "healer", rarity: "mythic",
+    emoji: "🦧", image: orangotangoImg,
+    description: "Sábio ancestral da floresta. Manipula o fluxo do tempo dos aliados, fazendo suas habilidades fluírem mais rápido.",
+    base: { hp: 82, atk: 9, def: 14, spd: 8, int: 28 },
+    skill: { name: "Ritual Ancestral", emoji: "🦧", kind: "cooldown_reduction", cooldown: 4, description: "ATIVA: reduz 1 turno de cooldown de TODOS os aliados — o time inteiro solta skill mais rápido. PASSIVA: a cada turno reduz 1 cooldown do aliado mais travado (maior cd acumulado)." },
+  },
 };
 
 export const ELEMENT_COLORS: Record<Element, string> = {
