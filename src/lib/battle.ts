@@ -1999,21 +1999,44 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
     turn += 1;
   }
 
-  const aAlive = a.some((m) => m.current > 0);
-  const bAlive = b.some((m) => m.current > 0);
-  const winner: "team_a" | "team_b" | "draw" = aAlive && bAlive ? "draw" : aAlive ? "team_a" : "team_b";
-  if (winner === "draw") {
+  const aLiveMons = a.filter((m) => m.current > 0);
+  const bLiveMons = b.filter((m) => m.current > 0);
+  const aAlive = aLiveMons.length > 0;
+  const bAlive = bLiveMons.length > 0;
+  let winner: "team_a" | "team_b" | "draw";
+  if (aAlive && bAlive) {
+    // Tempo esgotado: decide por nº de pets vivos, depois por HP+escudo total
+    const aCount = aLiveMons.length;
+    const bCount = bLiveMons.length;
+    const aTotalHp = aLiveMons.reduce((s, m) => s + m.current + m.shield, 0);
+    const bTotalHp = bLiveMons.reduce((s, m) => s + m.current + m.shield, 0);
+    let reason = "";
+    if (aCount !== bCount) {
+      winner = aCount > bCount ? "team_a" : "team_b";
+      reason = `${aCount} vs ${bCount} pets vivos`;
+    } else if (aTotalHp !== bTotalHp) {
+      winner = aTotalHp > bTotalHp ? "team_a" : "team_b";
+      reason = `HP+escudo total ${aTotalHp} vs ${bTotalHp}`;
+    } else {
+      // fallback extremamente raro: decide pelo HP máximo total
+      const aMax = aLiveMons.reduce((s, m) => s + m.maxHp, 0);
+      const bMax = bLiveMons.reduce((s, m) => s + m.maxHp, 0);
+      winner = aMax >= bMax ? "team_a" : "team_b";
+      reason = `desempate por HP máximo (${aMax} vs ${bMax})`;
+    }
     log.push({
       turn,
-      actor: "team_a",
+      actor: winner,
       actorName: "—",
       targetName: "—",
       damage: 0,
       crit: false,
       effective: 1,
       remainingHp: 0,
-      message: "⏱️ Tempo esgotado! A batalha terminou em EMPATE.",
+      message: `⏱️ Tempo esgotado! Vitória do ${winner === "team_a" ? "Time A" : "Time B"} (${reason}).`,
     });
+  } else {
+    winner = aAlive ? "team_a" : "team_b";
   }
   return { winner, log };
 }
