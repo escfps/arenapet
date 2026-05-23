@@ -235,13 +235,32 @@ function MonsterPage() {
                       <Bar label="⚡ Energia" value={computeBattleEnergy(monster.battle_energy, monster.battle_energy_at).energy} max={MAX_BATTLE_ENERGY} color="bg-yellow-400" />
                       <Bar label="😊 Felicidade" value={monster.happiness} max={100} color="bg-pink-500" />
                     </div>
-                    <div className="mt-2 grid grid-cols-5 gap-1 text-xs font-bold bg-black/30 rounded-lg p-2">
-                      <span>❤️ {stats.hp}</span>
-                      <span>⚔️ {stats.atk}</span>
-                      <span>🛡️ {stats.def}</span>
-                      <span>💨 {stats.spd}</span>
-                      <span>🧠 {stats.int}</span>
-                    </div>
+                    {(() => {
+                      const sb = monster.in_team ? teamSynergyBonus : { hp: 0, atk: 0, def: 0, spd: 0, int: 0, crit: 0 };
+                      const baseCritPct = sp.role === "assassin" ? 35 : sp.species === "raposa_espectral" ? 30 : 12;
+                      const trainedCritPct = (monster.crit ?? 0) * 2;
+                      const critPct = Math.min(95, baseCritPct + trainedCritPct + (sb.crit ?? 0));
+                      const cls = (b: number) =>
+                        b > 0
+                          ? "text-yellow-300 font-extrabold drop-shadow-[0_0_4px_rgba(250,204,21,0.7)]"
+                          : "";
+                      const Tag = ({ stat, label, value }: { stat: SynergyStat; label: string; value: number | string }) => (
+                        <span className={`flex items-center gap-0.5 ${cls(sb[stat] ?? 0)}`} title={(sb[stat] ?? 0) > 0 ? `+${sb[stat]}% por sinergia ativa` : undefined}>
+                          {label} {value}
+                          {(sb[stat] ?? 0) > 0 && <span className="text-[9px] ml-0.5">+{sb[stat]}%</span>}
+                        </span>
+                      );
+                      return (
+                        <div className="mt-2 grid grid-cols-3 gap-1 text-xs font-bold bg-black/30 rounded-lg p-2">
+                          <Tag stat="hp" label="❤️" value={stats.hp} />
+                          <Tag stat="atk" label="⚔️" value={stats.atk} />
+                          <Tag stat="def" label="🛡️" value={stats.def} />
+                          <Tag stat="spd" label="💨" value={stats.spd} />
+                          <Tag stat="int" label="🧠" value={stats.int} />
+                          <Tag stat="crit" label="💢" value={`${critPct}%`} />
+                        </div>
+                      );
+                    })()}
                   </>
                 );
               })()}
