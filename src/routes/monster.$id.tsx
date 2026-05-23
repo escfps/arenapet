@@ -487,6 +487,16 @@ function MonsterPage() {
                 </>
               );
             })()}
+            <button
+              onClick={() => setShowResetConfirm(true)}
+              disabled={(monster.train_count ?? 0) === 0}
+              className={`mt-4 w-full p-3 rounded-2xl bg-gradient-to-br from-amber-500 to-rose-600 text-white font-extrabold transition shadow-lg ${(monster.train_count ?? 0) === 0 ? "opacity-40 cursor-not-allowed grayscale" : "hover:scale-[1.02]"}`}
+            >
+              <div className="text-base">♻️ Resetar atributos distribuídos</div>
+              <div className="text-xs font-normal opacity-90 mt-1">
+                Devolve todos os pontos pra redistribuir • Custo: 💎 {RESET_GEM_COST}
+              </div>
+            </button>
           </>
         )}
 
