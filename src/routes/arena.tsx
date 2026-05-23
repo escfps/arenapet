@@ -70,11 +70,15 @@ function ArenaPage() {
   const [winner, setWinner] = useState<"team_a" | "team_b" | "draw" | null>(null);
   const [rewards, setRewards] = useState<{ coins: number; xp: number; gems: number; points: number; oldPoints: number; newPoints: number; promoMsg?: string; promoBefore?: PromoSeries | null; promoAfter?: PromoSeries | null } | null>(null);
   const [shownLog, setShownLog] = useState<BattleLogEntry[]>([]);
+  const [searchCountdown, setSearchCountdown] = useState(0);
+  const [battleTimer, setBattleTimer] = useState(120);
   const [promo, setPromo] = useState<PromoSeries | null>(null);
   const [autoRematch, setAutoRematch] = useState<number | null>(null);
   const [chestQueue, setChestQueue] = useState<PendingChest[]>([]);
   const pendingApplyRef = useRef<null | (() => Promise<void>)>(null);
+  const playbackStoppedRef = useRef(false);
   const [ranks, setRanks] = useState<{ mine: number | null; opp: number | null }>({ mine: null, opp: null });
+  const battleFinished = !!battleLog && (shownLog.length >= battleLog.length || (battleTimer <= 0 && playbackStoppedRef.current));
 
   // Compute ranking positions (1-based) when fight starts
   useEffect(() => {
@@ -99,17 +103,17 @@ function ArenaPage() {
   // pra não revelar o vencedor pelas atualizações de vitórias/derrotas no topo.
   useEffect(() => {
     if (!battleLog) return;
-    if (shownLog.length < battleLog.length) return;
+    if (!battleFinished) return;
     const apply = pendingApplyRef.current;
     if (!apply) return;
     pendingApplyRef.current = null;
     void apply();
-  }, [battleLog, shownLog.length]);
+  }, [battleLog, battleFinished]);
 
   // auto rematch: começa countdown de 10s quando a batalha termina
   useEffect(() => {
     if (!battleLog || !winner) return;
-    if (shownLog.length !== battleLog.length) return;
+    if (!battleFinished) return;
     setAutoRematch(10);
     if (winner === "team_a") playSfx("victory");
     else if (winner === "team_b") playSfx("defeat");
@@ -117,15 +121,15 @@ function ArenaPage() {
       setAutoRematch((v) => (v === null ? null : v - 1));
     }, 1000);
     return () => clearInterval(interval);
-  }, [battleLog, winner, shownLog.length]);
+  }, [battleLog, winner, battleFinished]);
 
   // Esconde o overlay do tutorial enquanto a batalha está rolando — volta a aparecer
   // quando a animação acaba (winner definido + log totalmente exibido).
   useEffect(() => {
-    const inBattle = !!battleLog && !(winner && shownLog.length >= battleLog.length);
+    const inBattle = !!battleLog && !battleFinished;
     window.dispatchEvent(new CustomEvent(inBattle ? "tutorial:hide" : "tutorial:show"));
     return () => { window.dispatchEvent(new CustomEvent("tutorial:show")); };
-  }, [battleLog, winner, shownLog.length]);
+  }, [battleLog, battleFinished]);
 
   // Trilha ambiente enquanto está na arena
   useEffect(() => {
@@ -169,9 +173,11 @@ function ArenaPage() {
   // animate log com ritmo dramático (pausas maiores em momentos especiais)
   useEffect(() => {
     if (!battleLog) return;
+    playbackStoppedRef.current = false;
     setShownLog([]);
     let i = 0;
     let cancelled = false;
+    let timeoutId: number | undefined;
     function delayFor(entry: BattleLogEntry | undefined): number {
       if (!entry) return 2400;
       const m = entry.message;
@@ -185,7 +191,7 @@ function ArenaPage() {
       return 2400; // ritmo base bem mais lento, golpe por golpe
     }
     function tick() {
-      if (cancelled) return;
+      if (cancelled || playbackStoppedRef.current) return;
       i += 1;
       setShownLog(battleLog!.slice(0, i));
       if (i >= battleLog!.length) return;
@@ -193,24 +199,20 @@ function ArenaPage() {
       const prev = battleLog![i - 1];
       const next = battleLog![i];
       const turnChange = prev && next && prev.turn !== next.turn ? 1200 : 0;
-      setTimeout(tick, delayFor(next) + turnChange);
+      timeoutId = window.setTimeout(tick, delayFor(next) + turnChange);
     }
-    const initial = setTimeout(tick, delayFor(battleLog[0]));
-    return () => { cancelled = true; clearTimeout(initial); };
+    const initial = window.setTimeout(tick, delayFor(battleLog[0]));
+    return () => { cancelled = true; clearTimeout(initial); if (timeoutId) clearTimeout(timeoutId); };
   }, [battleLog]);
 
-  const [searchCountdown, setSearchCountdown] = useState(0);
-  const [battleTimer, setBattleTimer] = useState(120);
-
-  // Timer regressivo de 2min durante a batalha (pausa quando termina/empate)
+  // Timer regressivo de 2min durante a batalha (ao zerar, congela a cena no estado atual)
   useEffect(() => {
     if (!battleLog) { setBattleTimer(120); return; }
-    const done = shownLog.length >= battleLog.length;
-    if (done) return; // pausa quando a animação termina
+    if (battleFinished) return;
     const id = setInterval(() => {
       setBattleTimer((t) => {
         if (t <= 1) {
-          setShownLog(battleLog);
+          playbackStoppedRef.current = true;
           clearInterval(id);
           return 0;
         }
@@ -218,7 +220,7 @@ function ArenaPage() {
       });
     }, 1000);
     return () => clearInterval(id);
-  }, [battleLog, shownLog.length]);
+  }, [battleLog, battleFinished]);
 
   // Reseta o timer ao iniciar uma nova batalha
   useEffect(() => {
@@ -408,6 +410,9 @@ function ArenaPage() {
 
     // Inicia a animação ANTES de aplicar resultado, pra não revelar o vencedor
     // pelas atualizações de vitórias/derrotas/recompensas no HUD.
+    playbackStoppedRef.current = false;
+    setBattleTimer(120);
+    setShownLog([]);
     setBattleLog(result.log);
     setWinner(result.winner);
 
@@ -643,7 +648,7 @@ function ArenaPage() {
   useEffect(() => {
     if (!battleLog) return;
     const animationDone = shownLog.length >= battleLog.length;
-    if (animationDone) return;
+    if (animationDone || battleFinished) return;
     function onBeforeUnload(e: BeforeUnloadEvent) {
       e.preventDefault();
       e.returnValue = "Batalha em andamento! O resultado já foi registrado.";
@@ -651,7 +656,7 @@ function ArenaPage() {
     }
     window.addEventListener("beforeunload", onBeforeUnload);
     return () => window.removeEventListener("beforeunload", onBeforeUnload);
-  }, [battleLog, shownLog.length]);
+  }, [battleLog, shownLog.length, battleFinished]);
 
 
 
@@ -793,7 +798,7 @@ function ArenaPage() {
                   playerBRank={ranks.opp ?? undefined}
                 />
 
-                {shownLog.length === battleLog.length && winner && (
+                {battleFinished && winner && (
                   <div className="absolute inset-0 z-30 flex items-start sm:items-center justify-center animate-fade-in overflow-y-auto py-4">
                     <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
                     <div
@@ -955,7 +960,7 @@ function ArenaPage() {
               </div>
             )}
 
-            {battleLog && shownLog.length < battleLog.length && (
+            {battleLog && !battleFinished && (
               <div className="rounded-2xl bg-black/60 backdrop-blur-md border border-white/30 p-4 text-white">
                 {shownLog.length === battleLog.length ? (
                   <details className="text-sm">
@@ -979,7 +984,7 @@ function ArenaPage() {
                   </div>
                 )}
 
-                {shownLog.length === battleLog.length && rewards && opponent && (
+                {battleFinished && rewards && opponent && (
                   <>
                     <BattleStats teamA={myTeam} teamB={opponent.team} log={battleLog} />
                     <div className={`mt-4 p-4 rounded-xl text-center font-extrabold ${winner === "team_a" ? "bg-green-500/40" : winner === "draw" ? "bg-yellow-500/40" : "bg-red-500/40"}`}>

@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { HUD } from "@/components/HUD";
 import { BattleScene } from "@/components/BattleScene";
@@ -44,6 +44,8 @@ function FriendBattlePage() {
   const [loaded, setLoaded] = useState<Loaded | null>(null);
   const [shownLog, setShownLog] = useState<BattleLogEntry[]>([]);
   const [battleTimer, setBattleTimer] = useState(120);
+  const playbackStoppedRef = useRef(false);
+  const battleFinished = !!loaded && (shownLog.length >= loaded.log.length || (battleTimer <= 0 && playbackStoppedRef.current));
 
   // Load challenge + teams + (simulate or fetch) log
   useEffect(() => {
@@ -102,9 +104,11 @@ function FriendBattlePage() {
   // Animated log playback (same rhythm as arena)
   useEffect(() => {
     if (!loaded) return;
+    playbackStoppedRef.current = false;
     setShownLog([]);
     let i = 0;
     let cancelled = false;
+    let timeoutId: number | undefined;
     function delayFor(entry: BattleLogEntry | undefined): number {
       if (!entry) return 2400;
       const m = entry.message ?? "";
@@ -116,33 +120,33 @@ function FriendBattlePage() {
       return 2400;
     }
     function tick() {
-      if (cancelled) return;
+      if (cancelled || playbackStoppedRef.current) return;
       i += 1;
       setShownLog(loaded!.log.slice(0, i));
       if (i >= loaded!.log.length) return;
       const prev = loaded!.log[i - 1];
       const next = loaded!.log[i];
       const turnChange = prev && next && prev.turn !== next.turn ? 1200 : 0;
-      setTimeout(tick, delayFor(next) + turnChange);
+      timeoutId = window.setTimeout(tick, delayFor(next) + turnChange);
     }
-    const initial = setTimeout(tick, delayFor(loaded.log[0]));
-    return () => { cancelled = true; clearTimeout(initial); };
+    const initial = window.setTimeout(tick, delayFor(loaded.log[0]));
+    return () => { cancelled = true; clearTimeout(initial); if (timeoutId) clearTimeout(timeoutId); };
   }, [loaded]);
 
   // Countdown
   useEffect(() => {
     if (!loaded) { setBattleTimer(120); return; }
-    if (shownLog.length >= loaded.log.length) return;
+    if (battleFinished) return;
     const id = setInterval(() => {
       setBattleTimer((t) => {
-        if (t <= 1) { setShownLog(loaded.log); clearInterval(id); return 0; }
+        if (t <= 1) { playbackStoppedRef.current = true; clearInterval(id); return 0; }
         return t - 1;
       });
     }, 1000);
     return () => clearInterval(id);
-  }, [loaded, shownLog.length]);
+  }, [loaded, battleFinished]);
 
-  const done = !!loaded && shownLog.length >= loaded.log.length;
+  const done = battleFinished;
   const iAmChallenger = !!loaded && profile?.id === loaded.challengerId;
   const iWon = !!loaded && loaded.winnerId === profile?.id;
 
