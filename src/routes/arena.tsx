@@ -5,7 +5,7 @@ import { SPECIES, ELEMENT_COLORS, ROLE_INFO, RARITY_INFO, MAX_RANK, skinFilter, 
 import type { MonsterRow } from "@/components/MonsterCard";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
-import { simulateBattle, computeRewards, toBattleMonster, type BattleLogEntry } from "@/lib/battle";
+import { simulateBattle, computeRewards, toBattleMonster, computeWinnerFromVisibleLog, type BattleLogEntry } from "@/lib/battle";
 import { BattleScene } from "@/components/BattleScene";
 import { BattleStats } from "@/components/BattleStats";
 import { SynergyBadges } from "@/components/SynergyBadges";
@@ -77,8 +77,13 @@ function ArenaPage() {
   const [chestQueue, setChestQueue] = useState<PendingChest[]>([]);
   const pendingApplyRef = useRef<null | (() => Promise<void>)>(null);
   const playbackStoppedRef = useRef(false);
+  const winnerRef = useRef<"team_a" | "team_b" | "draw" | null>(null);
+  const battleTeamsRef = useRef<{ a: ReturnType<typeof toBattleMonster>[]; b: ReturnType<typeof toBattleMonster>[] } | null>(null);
   const [ranks, setRanks] = useState<{ mine: number | null; opp: number | null }>({ mine: null, opp: null });
   const battleFinished = !!battleLog && (shownLog.length >= battleLog.length || (battleTimer <= 0 && playbackStoppedRef.current));
+
+  // mantém winnerRef sincronizado com o estado (apply lê daqui)
+  useEffect(() => { winnerRef.current = winner; }, [winner]);
 
   // Compute ranking positions (1-based) when fight starts
   useEffect(() => {
@@ -213,6 +218,14 @@ function ArenaPage() {
       setBattleTimer((t) => {
         if (t <= 1) {
           playbackStoppedRef.current = true;
+          // Recalcula o vencedor com base no que está visível na cena,
+          // pra que o resultado bata com os pets que o jogador vê vivos.
+          const teams = battleTeamsRef.current;
+          if (teams && battleLog) {
+            const visibleWinner = computeWinnerFromVisibleLog(teams.a, teams.b, battleLog, shownLog.length);
+            setWinner(visibleWinner);
+            winnerRef.current = visibleWinner;
+          }
           clearInterval(id);
           return 0;
         }
@@ -220,7 +233,7 @@ function ArenaPage() {
       });
     }, 1000);
     return () => clearInterval(id);
-  }, [battleLog, battleFinished]);
+  }, [battleLog, battleFinished, shownLog.length]);
 
   // Reseta o timer ao iniciar uma nova batalha
   useEffect(() => {
@@ -401,12 +414,7 @@ function ArenaPage() {
     const a = myTeam.map(toBattleMonster);
     const b = opp.team.map(toBattleMonster);
     const result = simulateBattle(a, b);
-    const isDraw = result.winner === "draw";
-    const won = result.winner === "team_a";
-    const rew = isDraw
-      ? { coins: 0, xp: 0 }
-      : computeRewards(profile.level, won, isVip(profile.vip_until));
-    const gemWin = !isDraw && Math.random() < (won ? 0.5 : 0.25) ? 1 : 0;
+    battleTeamsRef.current = { a, b };
 
     // Inicia a animação ANTES de aplicar resultado, pra não revelar o vencedor
     // pelas atualizações de vitórias/derrotas/recompensas no HUD.
@@ -415,9 +423,20 @@ function ArenaPage() {
     setShownLog([]);
     setBattleLog(result.log);
     setWinner(result.winner);
+    winnerRef.current = result.winner;
 
     // Aplica HUD, recompensas e gravações no DB somente quando a animação terminar.
+    // Lê o vencedor do ref no momento de aplicar — assim respeita o recálculo
+    // que acontece quando o cronômetro de 2min estoura antes do fim da animação.
     pendingApplyRef.current = async () => {
+      const finalWinner = winnerRef.current ?? result.winner;
+      const isDraw = finalWinner === "draw";
+      const won = finalWinner === "team_a";
+      const rew = isDraw
+        ? { coins: 0, xp: 0 }
+        : computeRewards(profile.level, won, isVip(profile.vip_until));
+      const gemWin = !isDraw && Math.random() < (won ? 0.5 : 0.25) ? 1 : 0;
+
       // Arena points + promo series logic
       const oldPoints = profile.arena_points ?? 0;
       const promoBefore = promo;
