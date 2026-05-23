@@ -138,6 +138,9 @@ function MonsterPage() {
     });
     setShowResetConfirm(false);
     toast.success("Atributos resetados! Redistribua como quiser. ✨");
+  }
+
+
 
 
   async function play() {
