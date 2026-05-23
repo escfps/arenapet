@@ -126,7 +126,8 @@ export type SkillKind =
   | "king_roar"         // assassin — mordida no mais forte (2.5× dano) / PASSIVA: cada kill +15% ATK permanente
   | "horn_charge"       // tank — provoca todos 2 turnos + escudo 35% / PASSIVA: refletir 15% do dano recebido
   | "spectral_hunger"   // mage — dano mágico no mais fraco ignorando DEF / PASSIVA: se matar, ataca novamente o próximo (máx 2)
-  | "spectral_pounce";  // assassin — crítico garantido no mais fraco (2× dano) ignorando 60% DEF / PASSIVA: ataque básico 50% chance de critar
+  | "spectral_pounce"    // assassin — crítico garantido no mais fraco (2× dano) ignorando 60% DEF / PASSIVA: ataque básico 50% chance de critar
+  | "cooldown_reduction"; // healer mítico — reduz 1 turno de cooldown de todos aliados / PASSIVA: cada turno reduz cd do aliado mais travado
 
 export type Skill = {
   name: string;
