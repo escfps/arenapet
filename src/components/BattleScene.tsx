@@ -8,7 +8,7 @@ import { playSfx } from "@/lib/sound";
 type Team = (MonsterRow & { owner_id: string })[];
 type HpMap = Map<string, { cur: number; max: number }>;
 type ShieldMap = Map<string, number>;
-type SkillFxKind = "heal" | "bite" | "explosion" | "lightning" | "fire" | "shield" | "slash" | "skull" | "fury" | "silence" | "magic" | "revive" | "true";
+type SkillFxKind = "heal" | "bite" | "explosion" | "lightning" | "fire" | "shield" | "slash" | "skull" | "fury" | "silence" | "magic" | "revive" | "true" | "cooldown";
 type MissLabel = { key: string; kind: "dodge" | "miss" } | null;
 type Fx = { actor: string | null; target: string | null; dmg: number | null; shieldGain: number | null; crit: boolean; skillFx: SkillFxKind | null; targets: string[]; miss: MissLabel };
 type StatusKind = "burn" | "poison" | "bleed" | "blind" | "sleep" | "freeze" | "silence" | "rage" | "shield";
@@ -55,6 +55,8 @@ function detectEffect(entry: BattleLogEntry): EffectBanner {
     return { id: mkId, emoji: "🛡️", label: "PROVOCAR", detail: "Inimigos forçados a atacar o tank", color: "from-amber-500 to-yellow-800" };
   if (m.includes("Curou todos"))
     return { id: mkId, emoji: "💚", label: "CURA EM ÁREA", detail: "Time inteiro recuperou HP", color: "from-emerald-400 to-green-700" };
+  if (m.includes("Ritual Ancestral") || m.includes("cooldown"))
+    return { id: mkId, emoji: "🦧", label: "RITUAL ANCESTRAL", detail: "Cooldown dos aliados reduzido", color: "from-lime-500 to-emerald-800" };
   if (m.includes("dano arcano") || m.includes("dano em CADA"))
     return { id: mkId, emoji: "🔮", label: "DANO MÁGICO EM ÁREA", color: "from-fuchsia-500 to-purple-800" };
   return null;
@@ -127,6 +129,7 @@ export function BattleScene({
     actorName: string;
     skillEmoji: string;
     skillLabel: string;
+    detail?: string;
     damage: number;
     crit: boolean;
     healing: boolean;
@@ -175,6 +178,9 @@ export function BattleScene({
     const isBasic = !usesSkill && (msg.includes("atacou") || msg.includes("golpeou") || entry.damage > 0);
     const skillLabel = usesSkill ? skill.name : isBasic ? "Ataque básico" : healing ? "Cura" : skill.name;
     const skillEmoji = usesSkill ? skill.emoji : isBasic ? "👊" : healing ? "💚" : skill.emoji;
+    const cooldownTargets = skill.kind === "cooldown_reduction" && entry.targetNames?.length
+      ? `em ${entry.targetNames.join(", ")}`
+      : undefined;
     const id = Date.now() + Math.random();
     setActionFeed((prev) => {
       const newItem = {
@@ -184,6 +190,7 @@ export function BattleScene({
         actorName: entry.actorName,
         skillEmoji,
         skillLabel,
+        detail: cooldownTargets,
         damage: Math.abs(entry.damage),
         crit: entry.crit,
         healing,
@@ -207,10 +214,11 @@ export function BattleScene({
     const actorKey = `a:${entry.actorName}`.replace(/^a:/, `${actorSide}:`);
 
     // Determine target side
-    const isSelfOrAlly = entry.damage < 0 || entry.targetName === entry.actorName;
+    const isSelfOrAlly = entry.targetTeam === "actor" || entry.damage < 0 || entry.targetName === entry.actorName;
     const targetSide: "a" | "b" = isSelfOrAlly ? actorSide : actorSide === "a" ? "b" : "a";
+    const namedTargetKeys = (entry.targetNames ?? []).map((name) => `${targetSide}:${name}`);
     const targetKey =
-      entry.targetName === "todos os aliados" ? null : `${targetSide}:${entry.targetName}`;
+      entry.targetName === "todos os aliados" || namedTargetKeys.length > 0 ? null : `${targetSide}:${entry.targetName}`;
 
     // Fênix Negra: parse "+X HP máx" para crescer o max do atacante
     const growMatch = entry.message.match(/\+(\d+)\s*HP máx/);
@@ -260,7 +268,7 @@ export function BattleScene({
     const skillKind = actorMon ? getSkill(actorMon.species).kind : null;
     const msg = entry.message;
     let skillFx: SkillFxKind | null = null;
-    let targets: string[] = targetKey ? [targetKey] : [];
+    let targets: string[] = namedTargetKeys.length > 0 ? namedTargetKeys : targetKey ? [targetKey] : [];
     // Cura (dano negativo) sempre mostra cruzes verdes
     if (entry.damage < 0 || msg.includes("Curou todos") || msg.includes("curou")) {
       skillFx = "heal";
@@ -268,6 +276,9 @@ export function BattleScene({
         const allies = actorSide === "a" ? teamA : teamB;
         targets = allies.filter((m) => (hp.get(`${actorSide}:${m.name}`)?.cur ?? 0) >= 0).map((m) => `${actorSide}:${m.name}`);
       }
+    } else if (skillKind === "cooldown_reduction" || msg.includes("Ritual Ancestral") || msg.includes("cooldown")) {
+      skillFx = "cooldown";
+      targets = namedTargetKeys;
     } else if (msg.includes("ressuscitado")) {
       skillFx = "revive";
     } else if (msg.includes("VERDADEIRO") || msg.includes("reduzido a pó")) {
@@ -520,6 +531,7 @@ export function BattleScene({
                   <span className={`text-white/90 font-bold truncate ${veryLongSkill ? "text-[8px]" : longSkill ? "text-[9px]" : "text-[10px]"}`}>
                     {a.skillEmoji} {a.skillLabel}
                   </span>
+                  {a.detail && <span className="text-lime-200 text-[8px] font-extrabold truncate">{a.detail}</span>}
                 </div>
                 {a.damage > 0 && (
                   <span className={`font-black drop-shadow shrink-0 ${longSkill ? "text-xs" : "text-sm"} ${
@@ -567,7 +579,7 @@ function ArenaLineup({
         const h = hp.get(key) ?? { cur: 0, max: 1 };
         const dead = h.cur <= 0;
         const isActor = fx.actor === key && !dead;
-        const isTarget = fx.target === key;
+        const isTarget = fx.target === key || (fx.skillFx === "cooldown" && fx.targets.includes(key));
         const hasSkillFx = fx.skillFx && (fx.targets.includes(key) || (isActor && (fx.skillFx === "fury" || fx.skillFx === "shield")));
         // Algum pet está em foco nesta cena?
         const sceneHasFocus = fx.actor !== null || fx.target !== null;
@@ -807,6 +819,16 @@ function SkillFxOverlay({ kind, keyId }: { kind: SkillFxKind; keyId: string }) {
         </>
       )}
 
+      {kind === "cooldown" && (
+        <>
+          <div className="absolute inset-0 rounded-full bg-lime-400/25 animate-skill-aura-green" />
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 rounded-full border-4 border-lime-300 animate-skill-shield-ring" />
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-5xl animate-skill-pop" style={{ textShadow: "0 0 14px rgba(132,204,22,0.95)" }}>
+            ⏱️
+          </div>
+        </>
+      )}
+
       {kind === "slash" && (
         <>
           {[-30, 0, 30].map((deg, i) => (
@@ -981,7 +1003,7 @@ function SideColumn({
         const shieldPct = Math.max(0, Math.min(100, (shield / h.max) * 100));
         const dead = h.cur <= 0;
         const isActor = fx.actor === key && !dead;
-        const isTarget = fx.target === key;
+        const isTarget = fx.target === key || (fx.skillFx === "cooldown" && fx.targets.includes(key));
         const lunge = isActor ? (mirrored ? "-translate-x-3" : "translate-x-3") : "";
         const hpColor =
           pct > 50
