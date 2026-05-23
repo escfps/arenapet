@@ -5,7 +5,7 @@ import { SPECIES, ELEMENT_COLORS, ROLE_INFO, RARITY_INFO, MAX_RANK, skinFilter, 
 import type { MonsterRow } from "@/components/MonsterCard";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
-import { simulateBattle, computeRewards, toBattleMonster, type BattleLogEntry } from "@/lib/battle";
+import { simulateBattle, computeRewards, toBattleMonster, computeWinnerFromVisibleLog, type BattleLogEntry } from "@/lib/battle";
 import { BattleScene } from "@/components/BattleScene";
 import { BattleStats } from "@/components/BattleStats";
 import { SynergyBadges } from "@/components/SynergyBadges";
