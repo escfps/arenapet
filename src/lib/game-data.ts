@@ -1298,7 +1298,7 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   shadepup: ["sombras"],
   rockpup: ["pedra"],
   rato_bomba: ["fogo"],
-  macaco_prego: ["floresta"],
+  macaco_prego: ["floresta", "macacos"],
   tubarao_abissal: ["abyssal"],
   polvo_venenoso: ["abyssal", "sombras"],
   cobra_sangrenta: ["repteis", "sombras"],
