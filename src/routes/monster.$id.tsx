@@ -95,14 +95,13 @@ function MonsterPage() {
 
   async function train(stat: "atk" | "def" | "spd" | "hp" | "int" | "crit") {
     if (!profile || !monster) return;
+    const limit = (monster.rank ?? 1) * 10;
+    const used = monster.train_count ?? 0;
+    if (used >= limit) { toast.error("Limite de treinos atingido! Eleve o pet ⭐"); return; }
     if (stat === "crit") {
       const critLimit = monster.rank ?? 1;
       const critUsed = monster.crit ?? 0;
-      if (critUsed >= critLimit) { toast.error("Limite de CRIT atingido! Eleve o pet ⭐"); return; }
-    } else {
-      const limit = (monster.rank ?? 1) * 10;
-      const used = monster.train_count ?? 0;
-      if (used >= limit) { toast.error("Limite de treinos atingido! Eleve o pet ⭐"); return; }
+      if (critUsed >= critLimit) { toast.error(`Limite de CRIT atingido (${critLimit})! Eleve o pet ⭐`); return; }
     }
     const cost = 20 + (monster.rank ?? 1) * 10;
     if (profile.coins < cost) { toast.error("Moedas insuficientes!"); return; }
@@ -115,18 +114,18 @@ function MonsterPage() {
       battle_energy: e.energy - TRAIN_ENERGY_COST,
       battle_energy_at: e.nextStoredAt,
       hunger: monster.hunger - 5,
+      train_count: used + 1,
     };
     if (stat === "crit") {
       const newCrit = (monster.crit ?? 0) + 1;
       updates.crit = newCrit;
       await patchMonster(updates);
-      toast.success(`+2% CRIT! (${newCrit}/${monster.rank ?? 1})`);
+      toast.success(`+2% CRIT! (${used + 1}/${limit})`);
     } else {
       const gain = stat === "hp" ? 3 + Math.floor(Math.random() * 3) : 1 + Math.floor(Math.random() * 2);
-      updates.train_count = (monster.train_count ?? 0) + 1;
       updates[stat] = (monster[stat] ?? 0) + gain;
       await patchMonster(updates);
-      toast.success(`+${gain} ${stat.toUpperCase()}! (${(monster.train_count ?? 0) + 1}/${(monster.rank ?? 1) * 10})`);
+      toast.success(`+${gain} ${stat.toUpperCase()}! (${used + 1}/${limit})`);
     }
     window.dispatchEvent(new CustomEvent("tutorial:trained"));
   }
