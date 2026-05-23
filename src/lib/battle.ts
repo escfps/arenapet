@@ -885,6 +885,20 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           return;
         }
 
+        if (skill.kind === "cooldown_reduction") {
+          const targets = allies.filter((m) => m.current > 0);
+          let count = 0;
+          for (const t of targets) {
+            if (t.skillCd > 0) { t.skillCd = Math.max(0, t.skillCd - 1); count++; }
+          }
+          log.push({
+            turn, actor: side, actorName: attacker.name, targetName: "todos os aliados",
+            damage: 0, crit: false, effective: 1, remainingHp: attacker.current,
+            message: `${skill.emoji} ${attacker.name} usou ${skill.name}: reduziu 1 turno de cooldown de ${count} aliado(s)!`,
+          });
+          return;
+        }
+
         if (skill.kind === "king_roar") {
           const aliveEnemies = enemies.filter((e) => e.current > 0);
           const target = aliveEnemies.length ? aliveEnemies.reduce((x, y) => (x.atk > y.atk ? x : y)) : null;
