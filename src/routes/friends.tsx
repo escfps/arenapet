@@ -350,6 +350,14 @@ function FriendsPage() {
                         );
                       })
                     )}
+                    {(() => {
+                      const tier = getTier(f.arena_points ?? 0);
+                      return (
+                        <span className={`ml-auto px-2 py-1 rounded text-[10px] font-extrabold ${tier.color}`} title={`${tier.name} • ${f.arena_points} pts`}>
+                          {tier.emoji} {tier.short}
+                        </span>
+                      );
+                    })()}
                   </div>
                 </div>
               );
