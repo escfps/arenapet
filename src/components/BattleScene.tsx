@@ -531,6 +531,7 @@ export function BattleScene({
                   <span className={`text-white/90 font-bold truncate ${veryLongSkill ? "text-[8px]" : longSkill ? "text-[9px]" : "text-[10px]"}`}>
                     {a.skillEmoji} {a.skillLabel}
                   </span>
+                  {a.detail && <span className="text-lime-200 text-[8px] font-extrabold truncate">{a.detail}</span>}
                 </div>
                 {a.damage > 0 && (
                   <span className={`font-black drop-shadow shrink-0 ${longSkill ? "text-xs" : "text-sm"} ${
@@ -814,6 +815,16 @@ function SkillFxOverlay({ kind, keyId }: { kind: SkillFxKind; keyId: string }) {
             style={{ textShadow: "0 0 14px rgba(56,189,248,0.9)" }}
           >
             🛡️
+          </div>
+        </>
+      )}
+
+      {kind === "cooldown" && (
+        <>
+          <div className="absolute inset-0 rounded-full bg-lime-400/25 animate-skill-aura-green" />
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 rounded-full border-4 border-lime-300 animate-skill-shield-ring" />
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-5xl animate-skill-pop" style={{ textShadow: "0 0 14px rgba(132,204,22,0.95)" }}>
+            ⏱️
           </div>
         </>
       )}
