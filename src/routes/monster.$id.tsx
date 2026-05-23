@@ -26,19 +26,22 @@ function MonsterPage() {
   const [rations, setRations] = useState<number>(0);
   const [tab, setTab] = useState<"care" | "train" | "skin">(initialTab ?? "care");
   const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [teamSynergyBonus, setTeamSynergyBonus] = useState<Record<SynergyStat, number>>({ hp: 0, atk: 0, def: 0, spd: 0, int: 0, crit: 0 });
   const RESET_GEM_COST = 50;
 
 
   const load = useCallback(async () => {
     if (!userId) return;
-    const [{ data: m }, { data: skins }, { data: inv }] = await Promise.all([
+    const [{ data: m }, { data: skins }, { data: inv }, { data: teamRows }] = await Promise.all([
       supabase.from("monsters").select("*").eq("id", id).eq("owner_id", userId).maybeSingle(),
       supabase.from("skins_owned").select("skin_id").eq("user_id", userId),
       supabase.from("inventory").select("quantity").eq("user_id", userId).eq("item_type", "ration").maybeSingle(),
+      supabase.from("monsters").select("species,in_team").eq("owner_id", userId).eq("in_team", true),
     ]);
     if (m) setMonster(m as MonsterRow);
     if (skins) setOwnedSkins(["default", ...skins.map((s) => s.skin_id)]);
     setRations(inv?.quantity ?? 0);
+    setTeamSynergyBonus(synergyStatBonuses((teamRows ?? []).map((r) => (r as { species: string }).species)));
   }, [id, userId]);
 
   useEffect(() => { if (userId) load(); }, [userId, load]);
