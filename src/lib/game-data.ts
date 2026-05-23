@@ -1353,7 +1353,9 @@ export function computeSynergies(speciesIds: string[]): SynergyEntry[] {
   }
   const out: SynergyEntry[] = [];
   for (const [category, count] of counts.entries()) {
-    const bonusPct = count >= 3 ? 10 : count >= 2 ? 5 : 0;
+    // Macacos é um trio raro e poderoso: bônus muito maior (15% / 35%)
+    let bonusPct = count >= 3 ? 10 : count >= 2 ? 5 : 0;
+    if (category === "macacos") bonusPct = count >= 3 ? 35 : count >= 2 ? 15 : 0;
     out.push({ category, count, bonusPct, active: count >= 2 });
   }
   // Ordena: ativos primeiro (maior bonus), depois inativos
