@@ -389,51 +389,6 @@ export function BattleScene({
     };
   }, [step, log, teamA, teamB]);
 
-  // === Cooldown atual da skill ativa de cada pet (mapeado por chave side:name) ===
-  const cooldowns = useMemo<Map<string, number>>(() => {
-    const cds = new Map<string, number>();
-    for (const m of teamA) cds.set(`a:${m.name}`, 1);
-    for (const m of teamB) cds.set(`b:${m.name}`, 1);
-    const upTo = Math.min(step, log.length - 1);
-    for (let i = 0; i <= upTo; i++) {
-      const entry = log[i];
-      const sideKey: "a" | "b" = entry.actor === "team_a" ? "a" : "b";
-      const team = sideKey === "a" ? teamA : teamB;
-      const actorMon = team.find((m) => m.name === entry.actorName);
-      if (!actorMon) continue;
-      const skill = getSkill(actorMon.species);
-      const msg = entry.message;
-      const actorKey = `${sideKey}:${entry.actorName}`;
-      // Passiva do Orangotango: "(Ritual Ancestral):" — não consome cd, mas reduz cd do alvo
-      const isPassiveRitual = msg.includes("(Ritual Ancestral)");
-      const usedActive = !isPassiveRitual && msg.includes("usou") && msg.includes(skill.name);
-      if (isPassiveRitual) {
-        // não altera cd do ator; apenas reduz cd dos targetNames
-        if (entry.targetNames?.length) {
-          for (const tn of entry.targetNames) {
-            const k = `${sideKey}:${tn}`;
-            cds.set(k, Math.max(0, (cds.get(k) ?? 0) - 1));
-          }
-        }
-        continue;
-      }
-      if (usedActive) {
-        cds.set(actorKey, skill.cooldown);
-        if (skill.kind === "cooldown_reduction" && entry.targetNames?.length) {
-          for (const tn of entry.targetNames) {
-            const k = `${sideKey}:${tn}`;
-            cds.set(k, Math.max(0, (cds.get(k) ?? 0) - 1));
-          }
-        }
-      } else {
-        // ação normal (ataque básico ou skill sem cd próprio) — apenas decrementa
-        cds.set(actorKey, Math.max(0, (cds.get(actorKey) ?? 0) - 1));
-      }
-    }
-    return cds;
-  }, [step, log, teamA, teamB]);
-
-
   return (
     <div
       className="relative rounded-2xl border-2 border-white/30 overflow-hidden shadow-2xl"
@@ -496,19 +451,18 @@ export function BattleScene({
       {/* === Cards (status) em cima === */}
       <div className="relative px-4 pt-3 pb-2 bg-gradient-to-b from-black/50 to-transparent">
         <div className="grid grid-cols-2 gap-3">
-          <SideColumn team={teamA} side="a" hp={hp} baseHp={initialHp} shields={shields} fx={fx} statuses={statuses} cooldowns={cooldowns} />
-          <SideColumn team={teamB} side="b" hp={hp} baseHp={initialHp} shields={shields} fx={fx} statuses={statuses} cooldowns={cooldowns} mirrored />
+          <SideColumn team={teamA} side="a" hp={hp} baseHp={initialHp} shields={shields} fx={fx} statuses={statuses} />
+          <SideColumn team={teamB} side="b" hp={hp} baseHp={initialHp} shields={shields} fx={fx} statuses={statuses} mirrored />
         </div>
       </div>
 
       {/* === ARENA: pets na grama embaixo === */}
       <div className="relative px-4 pt-2 pb-16">
         <div className="grid grid-cols-2 gap-3 items-end min-h-[140px]">
-          <ArenaLineup team={teamA} side="a" hp={hp} fx={fx} cooldowns={cooldowns} />
-          <ArenaLineup team={teamB} side="b" hp={hp} fx={fx} cooldowns={cooldowns} mirrored />
+          <ArenaLineup team={teamA} side="a" hp={hp} fx={fx} />
+          <ArenaLineup team={teamB} side="b" hp={hp} fx={fx} mirrored />
         </div>
       </div>
-
 
 
       {/* Overlay central de efeito */}
@@ -606,14 +560,12 @@ function ArenaLineup({
   side,
   hp,
   fx,
-  cooldowns,
   mirrored,
 }: {
   team: Team;
   side: "a" | "b";
   hp: HpMap;
   fx: Fx;
-  cooldowns: Map<string, number>;
   mirrored?: boolean;
 }) {
   return (
@@ -626,9 +578,6 @@ function ArenaLineup({
         const key = `${side}:${m.name}`;
         const h = hp.get(key) ?? { cur: 0, max: 1 };
         const dead = h.cur <= 0;
-        const cd = cooldowns.get(key) ?? 0;
-        const skillReady = !dead && cd <= 0;
-
         const isActor = fx.actor === key && !dead;
         const isTarget = fx.target === key || (fx.skillFx === "cooldown" && fx.targets.includes(key));
         const hasSkillFx = fx.skillFx && (fx.targets.includes(key) || (isActor && (fx.skillFx === "fury" || fx.skillFx === "shield")));
@@ -650,28 +599,10 @@ function ArenaLineup({
             key={m.id}
             className={`relative transition-all duration-300 ease-out ${cameraZoom} ${lunge} ${
               dead ? "opacity-20 grayscale rotate-90" : ""
-            } ${isTarget ? "animate-battle-shake" : ""} ${skillReady ? "drop-shadow-[0_0_18px_rgba(250,204,21,0.85)]" : ""}`}
+            } ${isTarget ? "animate-battle-shake" : ""}`}
           >
             {/* Plataforma circular */}
             <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-16 h-3 rounded-full bg-black/40 blur-sm" />
-            {/* Badge de cooldown da skill */}
-            {!dead && (
-              <div
-                className={`absolute -top-1 ${mirrored ? "-left-1" : "-right-1"} z-30 pointer-events-none`}
-                title={skillReady ? "Skill pronta!" : `Skill em ${cd} turno(s)`}
-              >
-                {skillReady ? (
-                  <div className="px-1.5 py-0.5 rounded-full bg-gradient-to-br from-yellow-300 to-amber-500 border border-yellow-100 text-black text-[10px] font-black shadow-[0_0_10px_rgba(250,204,21,0.95)] animate-pulse">
-                    ⚡
-                  </div>
-                ) : (
-                  <div className="w-6 h-6 rounded-full bg-black/80 border border-white/40 text-white text-[11px] font-black flex items-center justify-center shadow">
-                    {cd}
-                  </div>
-                )}
-              </div>
-            )}
-
             <img
               src={sp.image}
               alt={m.name}
@@ -1047,7 +978,6 @@ function SideColumn({
   shields,
   fx,
   statuses,
-  cooldowns,
   mirrored,
 }: {
   team: Team;
@@ -1057,7 +987,6 @@ function SideColumn({
   shields: ShieldMap;
   fx: Fx;
   statuses: StatusMap;
-  cooldowns: Map<string, number>;
   mirrored?: boolean;
 }) {
   return (
@@ -1076,8 +1005,6 @@ function SideColumn({
         const isActor = fx.actor === key && !dead;
         const isTarget = fx.target === key || (fx.skillFx === "cooldown" && fx.targets.includes(key));
         const lunge = isActor ? (mirrored ? "-translate-x-3" : "translate-x-3") : "";
-        const cd = cooldowns.get(key) ?? 0;
-        const skillReady = !dead && cd <= 0;
         const hpColor =
           pct > 50
             ? "from-green-400 to-emerald-500"
@@ -1099,23 +1026,6 @@ function SideColumn({
               dead ? "opacity-30 grayscale" : ""
             } ${lunge} ${isTarget ? "animate-battle-shake" : ""}`}
           >
-            {/* Badge de cooldown da skill */}
-            {!dead && (
-              <div
-                className={`absolute -top-1.5 ${mirrored ? "-left-1.5" : "-right-1.5"} z-30 pointer-events-none`}
-                title={skillReady ? "Skill pronta!" : `Skill em ${cd} turno(s)`}
-              >
-                {skillReady ? (
-                  <div className="px-1.5 py-0.5 rounded-full bg-gradient-to-br from-yellow-300 to-amber-500 border border-yellow-100 text-black text-[10px] font-black shadow-[0_0_10px_rgba(250,204,21,0.95)] animate-pulse">
-                    ⚡
-                  </div>
-                ) : (
-                  <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-black/80 border border-white/40 text-white text-[10px] sm:text-[11px] font-black flex items-center justify-center shadow">
-                    {cd}
-                  </div>
-                )}
-              </div>
-            )}
             <div
               className={`flex items-center gap-1.5 sm:gap-2 p-1 sm:p-2 rounded-lg bg-gradient-to-r ${
                 ELEMENT_COLORS[sp.element]
@@ -1123,9 +1033,8 @@ function SideColumn({
                 (m.rank ?? 1) >= MAX_RANK ? "rank-max-glow" : ""
               } ${isTarget ? "ring-4 ring-red-400" : ""} ${
                 isActor ? "ring-4 ring-yellow-300" : ""
-              } ${skillReady && !isActor && !isTarget ? "ring-2 ring-yellow-300/80 shadow-[0_0_14px_rgba(250,204,21,0.7)]" : ""} transition-all`}
+              } transition-all`}
             >
-
               <img
                 src={sp.image}
                 alt=""
