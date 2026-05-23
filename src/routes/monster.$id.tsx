@@ -598,7 +598,7 @@ function MonsterPage() {
             <div className="text-center text-4xl mb-2">♻️</div>
             <div className="text-center font-extrabold text-lg mb-1">Resetar atributos?</div>
             <div className="text-center text-sm opacity-90 mb-4">
-              Todos os pontos distribuídos (HP, ATK, DEF, SPD, INT) voltarão pra você redistribuir.
+              Todos os pontos distribuídos (HP, ATK, DEF, SPD, INT, CRIT) voltarão pra você redistribuir.
               <br />
               <span className="text-xs opacity-70">Energia, moedas e diamantes gastos no treino <b>não</b> serão devolvidos.</span>
             </div>
