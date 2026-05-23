@@ -2059,7 +2059,7 @@ export function computeWinnerFromVisibleLog(
   type S = { hp: number; shield: number; maxHp: number; dead: boolean };
   const mk = (t: BattleMonster[]) => {
     const m = new Map<string, S>();
-    for (const x of t) m.set(x.name, { hp: x.maxHp, shield: 0, maxHp: x.maxHp, dead: false });
+    for (const x of t) m.set(x.name, { hp: x.hp, shield: 0, maxHp: x.hp, dead: false });
     return m;
   };
   const aState = mk(teamA);
