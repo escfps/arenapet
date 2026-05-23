@@ -70,11 +70,15 @@ function ArenaPage() {
   const [winner, setWinner] = useState<"team_a" | "team_b" | "draw" | null>(null);
   const [rewards, setRewards] = useState<{ coins: number; xp: number; gems: number; points: number; oldPoints: number; newPoints: number; promoMsg?: string; promoBefore?: PromoSeries | null; promoAfter?: PromoSeries | null } | null>(null);
   const [shownLog, setShownLog] = useState<BattleLogEntry[]>([]);
+  const [searchCountdown, setSearchCountdown] = useState(0);
+  const [battleTimer, setBattleTimer] = useState(120);
   const [promo, setPromo] = useState<PromoSeries | null>(null);
   const [autoRematch, setAutoRematch] = useState<number | null>(null);
   const [chestQueue, setChestQueue] = useState<PendingChest[]>([]);
   const pendingApplyRef = useRef<null | (() => Promise<void>)>(null);
+  const playbackStoppedRef = useRef(false);
   const [ranks, setRanks] = useState<{ mine: number | null; opp: number | null }>({ mine: null, opp: null });
+  const battleFinished = !!battleLog && (shownLog.length >= battleLog.length || battleTimer <= 0);
 
   // Compute ranking positions (1-based) when fight starts
   useEffect(() => {
@@ -99,17 +103,17 @@ function ArenaPage() {
   // pra não revelar o vencedor pelas atualizações de vitórias/derrotas no topo.
   useEffect(() => {
     if (!battleLog) return;
-    if (shownLog.length < battleLog.length) return;
+    if (!battleFinished) return;
     const apply = pendingApplyRef.current;
     if (!apply) return;
     pendingApplyRef.current = null;
     void apply();
-  }, [battleLog, shownLog.length]);
+  }, [battleLog, battleFinished]);
 
   // auto rematch: começa countdown de 10s quando a batalha termina
   useEffect(() => {
     if (!battleLog || !winner) return;
-    if (shownLog.length !== battleLog.length) return;
+    if (!battleFinished) return;
     setAutoRematch(10);
     if (winner === "team_a") playSfx("victory");
     else if (winner === "team_b") playSfx("defeat");
@@ -117,15 +121,15 @@ function ArenaPage() {
       setAutoRematch((v) => (v === null ? null : v - 1));
     }, 1000);
     return () => clearInterval(interval);
-  }, [battleLog, winner, shownLog.length]);
+  }, [battleLog, winner, battleFinished]);
 
   // Esconde o overlay do tutorial enquanto a batalha está rolando — volta a aparecer
   // quando a animação acaba (winner definido + log totalmente exibido).
   useEffect(() => {
-    const inBattle = !!battleLog && !(winner && shownLog.length >= battleLog.length);
+    const inBattle = !!battleLog && !battleFinished;
     window.dispatchEvent(new CustomEvent(inBattle ? "tutorial:hide" : "tutorial:show"));
     return () => { window.dispatchEvent(new CustomEvent("tutorial:show")); };
-  }, [battleLog, winner, shownLog.length]);
+  }, [battleLog, battleFinished]);
 
   // Trilha ambiente enquanto está na arena
   useEffect(() => {
