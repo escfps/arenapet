@@ -207,7 +207,7 @@ function ArenaPage() {
 
   // Timer regressivo de 2min durante a batalha (ao zerar, congela a cena no estado atual)
   useEffect(() => {
-    if (!battleLog) { setBattleTimer(10); return; }
+    if (!battleLog) { setBattleTimer(120); return; }
     if (battleFinished) return;
     const id = setInterval(() => {
       setBattleTimer((t) => {
