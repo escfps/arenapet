@@ -326,13 +326,15 @@ function DexCard({ sp, owned }: { sp: (typeof SPECIES)[string]; owned: boolean }
         {/* Stats reais (rank 1, com multiplicadores atuais) */}
         {(() => {
           const st = totalStats(sp.id, 1);
+          const baseCritPct = sp.role === "assassin" ? 35 : sp.id === "raposa_espectral" ? 30 : 12;
           return (
-            <div className="grid grid-cols-5 gap-0.5 text-center text-[9px] font-bold">
+            <div className="grid grid-cols-6 gap-0.5 text-center text-[9px] font-bold">
               <Stat label="HP" value={st.hp} color="text-rose-500" />
               <Stat label="ATK" value={st.atk} color="text-orange-500" />
               <Stat label="DEF" value={st.def} color="text-sky-500" />
               <Stat label="SPD" value={st.spd} color="text-emerald-500" />
               <Stat label="INT" value={st.int} color="text-violet-500" />
+              <Stat label="CRIT" value={`${baseCritPct}%`} color="text-yellow-500" />
             </div>
           );
         })()}
