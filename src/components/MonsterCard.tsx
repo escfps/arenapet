@@ -9,6 +9,7 @@ export type MonsterRow = {
   def: number;
   spd: number;
   int: number;
+  crit?: number;
   hunger: number;
   energy: number;
   happiness: number;

@@ -1,0 +1,1 @@
+ALTER TABLE public.monsters ADD COLUMN IF NOT EXISTS crit integer NOT NULL DEFAULT 0;

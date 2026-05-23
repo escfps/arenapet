@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { SPECIES, ITEMS, SKINS, ELEMENT_COLORS, ROLE_INFO, getSkill, RARITY_INFO, skinFilter, rankStars, totalStats, computeBattleEnergy, MAX_BATTLE_ENERGY, hungerStatusLabel, getSpeciesCategories, CATEGORY_INFO } from "@/lib/game-data";
+import { SPECIES, ITEMS, SKINS, ELEMENT_COLORS, ROLE_INFO, getSkill, RARITY_INFO, skinFilter, rankStars, totalStats, computeBattleEnergy, MAX_BATTLE_ENERGY, hungerStatusLabel, getSpeciesCategories, CATEGORY_INFO, synergyStatBonuses, type SynergyStat } from "@/lib/game-data";
 import type { MonsterRow } from "@/components/MonsterCard";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
@@ -26,19 +26,22 @@ function MonsterPage() {
   const [rations, setRations] = useState<number>(0);
   const [tab, setTab] = useState<"care" | "train" | "skin">(initialTab ?? "care");
   const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [teamSynergyBonus, setTeamSynergyBonus] = useState<Record<SynergyStat, number>>({ hp: 0, atk: 0, def: 0, spd: 0, int: 0, crit: 0 });
   const RESET_GEM_COST = 50;
 
 
   const load = useCallback(async () => {
     if (!userId) return;
-    const [{ data: m }, { data: skins }, { data: inv }] = await Promise.all([
+    const [{ data: m }, { data: skins }, { data: inv }, { data: teamRows }] = await Promise.all([
       supabase.from("monsters").select("*").eq("id", id).eq("owner_id", userId).maybeSingle(),
       supabase.from("skins_owned").select("skin_id").eq("user_id", userId),
       supabase.from("inventory").select("quantity").eq("user_id", userId).eq("item_type", "ration").maybeSingle(),
+      supabase.from("monsters").select("species,in_team").eq("owner_id", userId).eq("in_team", true),
     ]);
     if (m) setMonster(m as MonsterRow);
     if (skins) setOwnedSkins(["default", ...skins.map((s) => s.skin_id)]);
     setRations(inv?.quantity ?? 0);
+    setTeamSynergyBonus(synergyStatBonuses((teamRows ?? []).map((r) => (r as { species: string }).species)));
   }, [id, userId]);
 
   useEffect(() => { if (userId) load(); }, [userId, load]);
@@ -90,11 +93,17 @@ function MonsterPage() {
 
   const TRAIN_GEM_COST = 4;
 
-  async function train(stat: "atk" | "def" | "spd" | "hp" | "int") {
+  async function train(stat: "atk" | "def" | "spd" | "hp" | "int" | "crit") {
     if (!profile || !monster) return;
-    const limit = (monster.rank ?? 1) * 10;
-    const used = monster.train_count ?? 0;
-    if (used >= limit) { toast.error("Limite de treinos atingido! Eleve o pet ⭐"); return; }
+    if (stat === "crit") {
+      const critLimit = monster.rank ?? 1;
+      const critUsed = monster.crit ?? 0;
+      if (critUsed >= critLimit) { toast.error("Limite de CRIT atingido! Eleve o pet ⭐"); return; }
+    } else {
+      const limit = (monster.rank ?? 1) * 10;
+      const used = monster.train_count ?? 0;
+      if (used >= limit) { toast.error("Limite de treinos atingido! Eleve o pet ⭐"); return; }
+    }
     const cost = 20 + (monster.rank ?? 1) * 10;
     if (profile.coins < cost) { toast.error("Moedas insuficientes!"); return; }
     if ((profile.gems ?? 0) < TRAIN_GEM_COST) { toast.error(`Faltam 💎 ${TRAIN_GEM_COST} diamantes!`); return; }
@@ -102,16 +111,23 @@ function MonsterPage() {
     if (e.energy < TRAIN_ENERGY_COST) { toast.error("Sem energia! Dê um energético ou espere regenerar."); return; }
     if (monster.hunger < 20) { toast.error("Está com fome! Alimente primeiro."); return; }
     await patch({ coins: profile.coins - cost, gems: (profile.gems ?? 0) - TRAIN_GEM_COST });
-    const gain = stat === "hp" ? 3 + Math.floor(Math.random() * 3) : 1 + Math.floor(Math.random() * 2);
     const updates: Partial<MonsterRow> = {
       battle_energy: e.energy - TRAIN_ENERGY_COST,
       battle_energy_at: e.nextStoredAt,
       hunger: monster.hunger - 5,
-      train_count: used + 1,
     };
-    updates[stat] = (monster[stat] ?? 0) + gain;
-    await patchMonster(updates);
-    toast.success(`+${gain} ${stat.toUpperCase()}! (${used + 1}/${limit})`);
+    if (stat === "crit") {
+      const newCrit = (monster.crit ?? 0) + 1;
+      updates.crit = newCrit;
+      await patchMonster(updates);
+      toast.success(`+2% CRIT! (${newCrit}/${monster.rank ?? 1})`);
+    } else {
+      const gain = stat === "hp" ? 3 + Math.floor(Math.random() * 3) : 1 + Math.floor(Math.random() * 2);
+      updates.train_count = (monster.train_count ?? 0) + 1;
+      updates[stat] = (monster[stat] ?? 0) + gain;
+      await patchMonster(updates);
+      toast.success(`+${gain} ${stat.toUpperCase()}! (${(monster.train_count ?? 0) + 1}/${(monster.rank ?? 1) * 10})`);
+    }
     window.dispatchEvent(new CustomEvent("tutorial:trained"));
   }
 
@@ -122,7 +138,7 @@ function MonsterPage() {
       setShowResetConfirm(false);
       return;
     }
-    if ((monster.train_count ?? 0) === 0) {
+    if ((monster.train_count ?? 0) === 0 && (monster.crit ?? 0) === 0) {
       toast.error("Nenhum ponto distribuído pra resetar.");
       setShowResetConfirm(false);
       return;
@@ -134,6 +150,7 @@ function MonsterPage() {
       def: sp.base.def,
       spd: sp.base.spd,
       int: sp.base.int,
+      crit: 0,
       train_count: 0,
     });
     setShowResetConfirm(false);
@@ -218,13 +235,32 @@ function MonsterPage() {
                       <Bar label="⚡ Energia" value={computeBattleEnergy(monster.battle_energy, monster.battle_energy_at).energy} max={MAX_BATTLE_ENERGY} color="bg-yellow-400" />
                       <Bar label="😊 Felicidade" value={monster.happiness} max={100} color="bg-pink-500" />
                     </div>
-                    <div className="mt-2 grid grid-cols-5 gap-1 text-xs font-bold bg-black/30 rounded-lg p-2">
-                      <span>❤️ {stats.hp}</span>
-                      <span>⚔️ {stats.atk}</span>
-                      <span>🛡️ {stats.def}</span>
-                      <span>💨 {stats.spd}</span>
-                      <span>🧠 {stats.int}</span>
-                    </div>
+                    {(() => {
+                      const sb = monster.in_team ? teamSynergyBonus : { hp: 0, atk: 0, def: 0, spd: 0, int: 0, crit: 0 };
+                      const baseCritPct = sp.role === "assassin" ? 35 : monster.species === "raposa_espectral" ? 30 : 12;
+                      const trainedCritPct = (monster.crit ?? 0) * 2;
+                      const critPct = Math.min(95, baseCritPct + trainedCritPct + (sb.crit ?? 0));
+                      const cls = (b: number) =>
+                        b > 0
+                          ? "text-yellow-300 font-extrabold drop-shadow-[0_0_4px_rgba(250,204,21,0.7)]"
+                          : "";
+                      const Tag = ({ stat, label, value }: { stat: SynergyStat; label: string; value: number | string }) => (
+                        <span className={`flex items-center gap-0.5 ${cls(sb[stat] ?? 0)}`} title={(sb[stat] ?? 0) > 0 ? `+${sb[stat]}% por sinergia ativa` : undefined}>
+                          {label} {value}
+                          {(sb[stat] ?? 0) > 0 && <span className="text-[9px] ml-0.5">+{sb[stat]}%</span>}
+                        </span>
+                      );
+                      return (
+                        <div className="mt-2 grid grid-cols-3 gap-1 text-xs font-bold bg-black/30 rounded-lg p-2">
+                          <Tag stat="hp" label="❤️" value={stats.hp} />
+                          <Tag stat="atk" label="⚔️" value={stats.atk} />
+                          <Tag stat="def" label="🛡️" value={stats.def} />
+                          <Tag stat="spd" label="💨" value={stats.spd} />
+                          <Tag stat="int" label="🧠" value={stats.int} />
+                          <Tag stat="crit" label="💢" value={`${critPct}%`} />
+                        </div>
+                      );
+                    })()}
                   </>
                 );
               })()}
@@ -483,14 +519,35 @@ function MonsterPage() {
                         </div>
                       </button>
                     ))}
+                    {(() => {
+                      const critLimit = monster.rank ?? 1;
+                      const critUsed = monster.crit ?? 0;
+                      const critReached = critUsed >= critLimit;
+                      return (
+                        <button
+                          onClick={() => train("crit")}
+                          disabled={critReached}
+                          className={`p-4 rounded-2xl bg-gradient-to-br from-yellow-400 to-amber-600 text-white font-extrabold transition shadow-lg ${critReached ? "opacity-40 cursor-not-allowed grayscale" : "hover:scale-105"}`}
+                        >
+                          <div className="text-3xl mb-1">💢</div>
+                          <div>Treinar CRIT</div>
+                          <div className="text-xs font-normal opacity-90 mt-1">
+                            🪙 {20 + monster.rank * 10} • 💎 {TRAIN_GEM_COST} • -{TRAIN_ENERGY_COST} energia • +2% CRIT
+                          </div>
+                          <div className="text-[10px] font-bold mt-1 bg-black/30 rounded-full px-2 py-0.5 inline-block">
+                            {critUsed}/{critLimit} ⭐
+                          </div>
+                        </button>
+                      );
+                    })()}
                   </div>
                 </>
               );
             })()}
             <button
               onClick={() => setShowResetConfirm(true)}
-              disabled={(monster.train_count ?? 0) === 0}
-              className={`mt-4 w-full p-3 rounded-2xl bg-gradient-to-br from-amber-500 to-rose-600 text-white font-extrabold transition shadow-lg ${(monster.train_count ?? 0) === 0 ? "opacity-40 cursor-not-allowed grayscale" : "hover:scale-[1.02]"}`}
+              disabled={(monster.train_count ?? 0) === 0 && (monster.crit ?? 0) === 0}
+              className={`mt-4 w-full p-3 rounded-2xl bg-gradient-to-br from-amber-500 to-rose-600 text-white font-extrabold transition shadow-lg ${(monster.train_count ?? 0) === 0 && (monster.crit ?? 0) === 0 ? "opacity-40 cursor-not-allowed grayscale" : "hover:scale-[1.02]"}`}
             >
               <div className="text-base">♻️ Resetar atributos distribuídos</div>
               <div className="text-xs font-normal opacity-90 mt-1">
@@ -541,7 +598,7 @@ function MonsterPage() {
             <div className="text-center text-4xl mb-2">♻️</div>
             <div className="text-center font-extrabold text-lg mb-1">Resetar atributos?</div>
             <div className="text-center text-sm opacity-90 mb-4">
-              Todos os pontos distribuídos (HP, ATK, DEF, SPD, INT) voltarão pra você redistribuir.
+              Todos os pontos distribuídos (HP, ATK, DEF, SPD, INT, CRIT) voltarão pra você redistribuir.
               <br />
               <span className="text-xs opacity-70">Energia, moedas e diamantes gastos no treino <b>não</b> serão devolvidos.</span>
             </div>

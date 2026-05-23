@@ -25,6 +25,7 @@ export type BattleMonster = {
   def: number;
   spd: number;
   int: number;
+  crit: number;
   role: Role;
   rarity: Rarity;
   position: number; // 0 frontline, 1 middle, 2 backline
@@ -60,6 +61,7 @@ export type DBMonster = {
   def: number;
   spd: number;
   int?: number;
+  crit?: number;
   rank?: number;
   hunger?: number;
   team_position?: number;
@@ -87,6 +89,7 @@ export function toBattleMonster(m: DBMonster): BattleMonster {
     def: Math.max(1, Math.round(stats.def * mult)),
     spd: Math.max(1, Math.round(stats.spd * mult)),
     int: Math.max(1, Math.round(stats.int * mult)),
+    crit: Math.max(0, m.crit ?? 0),
     role: sp?.role ?? "dps",
     rarity: sp?.rarity ?? "common",
     position: Math.max(0, Math.min(2, m.team_position ?? 0)),
@@ -1880,7 +1883,8 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
         const synCrit = side === "team_a" ? critBonusA : critBonusB;
         const baseCrit = attacker.role === "assassin" ? 0.35 : 0.12;
         const passiveCritFloor = attacker.species === "raposa_espectral" ? 0.3 : 0;
-        const critChance = Math.max(passiveCritFloor, Math.min(0.95, baseCrit + synCrit));
+        const trainedCrit = (attacker.crit || 0) * 0.02;
+        const critChance = Math.max(passiveCritFloor, Math.min(0.95, baseCrit + synCrit + trainedCrit));
         const crit = rand() < critChance;
         const defUsed = attacker.role === "mage" ? target.def * 0.4 : target.def;
         const atkStat = attacker.role === "mage" ? attacker.int : attacker.atk * phoenixAtkBonus(attacker);
