@@ -73,8 +73,14 @@ function LoginPage() {
     return raw;
   }
 
+  function showErr(msg: string) {
+    setErrorMsg(msg);
+    toast.error(msg);
+  }
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    setErrorMsg(null);
 
     // Validações locais antes de chamar a API
     const cleanEmail = email.trim();
