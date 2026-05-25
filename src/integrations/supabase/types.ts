@@ -545,17 +545,23 @@ export type Database = {
       skins_owned: {
         Row: {
           acquired_at: string
+          id: string
           skin_id: string
+          species: string | null
           user_id: string
         }
         Insert: {
           acquired_at?: string
+          id?: string
           skin_id: string
+          species?: string | null
           user_id: string
         }
         Update: {
           acquired_at?: string
+          id?: string
           skin_id?: string
+          species?: string | null
           user_id?: string
         }
         Relationships: []
