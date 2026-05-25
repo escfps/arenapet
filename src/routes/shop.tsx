@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  EGGS, SKINS, GEM_PACKS, SPECIES, ELEMENT_COLORS,
+  EGGS, GEM_PACKS, SPECIES, ELEMENT_COLORS,
   BATTLE_PASS_PRICE_BRL,
   rollEgg, skinFilter, isVip,
   MAX_BATTLE_ENERGY, ENERGY_REFILL_GEM_COST, ENERGY_REFILL_ALL_GEM_COST, computeBattleEnergy,
@@ -38,24 +38,18 @@ export const Route = createFileRoute("/shop")({
 function ShopPage() {
   const navigate = useNavigate();
   const { userId, profile, patch, reload, loading } = useProfile();
-  const [tab, setTab] = useState<"chests" | "skins" | "vip" | "gems" | "energy">("chests");
+  const [tab, setTab] = useState<"chests" | "vip" | "gems" | "energy">("chests");
   const claimBP = useServerFn(claimBattlePassDaily);
-  const [ownedSkins, setOwnedSkins] = useState<string[]>(["default"]);
   const [hatchResult, setHatchResult] = useState<string | null>(null);
   const [chestResult, setChestResult] = useState<{ tier: ChestTier; reward: ChestReward } | null>(null);
   const [pets, setPets] = useState<MonsterRow[]>([]);
 
-  const loadSkins = useCallback(async () => {
-    if (!userId) return;
-    const { data } = await supabase.from("skins_owned").select("skin_id").eq("user_id", userId);
-    if (data) setOwnedSkins(["default", ...data.map((s) => s.skin_id)]);
-  }, [userId]);
   const loadPets = useCallback(async () => {
     if (!userId) return;
     const { data } = await supabase.from("monsters").select("*").eq("owner_id", userId);
     if (data) setPets(data as MonsterRow[]);
   }, [userId]);
-  useEffect(() => { if (userId) { loadSkins(); loadPets(); } }, [userId, loadSkins, loadPets]);
+  useEffect(() => { if (userId) { loadPets(); } }, [userId, loadPets]);
 
   if (loading || !profile) return <div className="min-h-screen flex items-center justify-center text-white">Carregando...</div>;
 
@@ -176,17 +170,6 @@ function ShopPage() {
     toast.success(`📦 ${c.name} guardado no inventário!`);
   }
 
-  async function buySkin(skinId: string) {
-    if (!profile || !userId) return;
-    const sk = SKINS[skinId];
-    if (ownedSkins.includes(skinId)) { toast("Você já tem essa skin"); return; }
-    if (sk.vipOnly && !isVip(profile.vip_until)) { toast.error("Skin exclusiva pra VIPs!"); return; }
-    if (profile.gems < sk.priceGems) { toast.error("Gemas insuficientes!"); return; }
-    await patch({ gems: profile.gems - sk.priceGems });
-    await supabase.from("skins_owned").insert({ user_id: userId, skin_id: skinId });
-    setOwnedSkins([...ownedSkins, skinId]);
-    toast.success(`Skin ${sk.name} desbloqueada!`);
-  }
 
   async function subscribeBattlePass() {
     if (!profile || !userId) return;
@@ -283,13 +266,13 @@ function ShopPage() {
         </header>
 
         <div className="flex bg-white/10 backdrop-blur-md rounded-xl overflow-hidden border border-white/20">
-          {(["chests", "skins", "vip", "gems", "energy"] as const).map((t) => (
+          {(["chests", "vip", "gems", "energy"] as const).map((t) => (
             <button
               key={t}
               onClick={() => setTab(t)}
               className={`flex-1 py-2.5 text-[11px] font-bold transition ${tab === t ? "bg-white/30 text-white" : "text-white/70 hover:bg-white/15"}`}
             >
-              {t === "chests" ? "📦 Baús" : t === "skins" ? "🎨 Skins" : t === "vip" ? "🎟️ Passe" : t === "gems" ? "💎 Gemas" : "⚡ Energia"}
+              {t === "chests" ? "📦 Baús" : t === "vip" ? "🎟️ Passe" : t === "gems" ? "💎 Gemas" : "⚡ Energia"}
             </button>
           ))}
         </div>
@@ -420,30 +403,8 @@ function ShopPage() {
           </>
         )}
 
-        {tab === "skins" && (
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            {Object.values(SKINS).filter((s) => s.id !== "default").map((sk) => {
-              const owned = ownedSkins.includes(sk.id);
-              const previewSp = SPECIES.flarepup;
-              return (
-                <div key={sk.id} className="rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 p-3 text-white text-center">
-                  <div className="aspect-square bg-black/30 rounded-xl flex items-center justify-center mb-2">
-                    <img src={previewSp.image} alt="" className="h-3/4" style={{ filter: skinFilter(sk.id) }} />
-                  </div>
-                  <div className="font-extrabold text-sm">{sk.name}{sk.vipOnly && " 👑"}</div>
-                  <div className="text-[10px] opacity-80 mb-2 h-8">{sk.description}</div>
-                  <button
-                    onClick={() => buySkin(sk.id)}
-                    disabled={owned}
-                    className="w-full py-1.5 rounded-lg text-xs font-bold bg-fuchsia-500 hover:bg-fuchsia-400 disabled:bg-white/20"
-                  >
-                    {owned ? "✓ Possui" : sk.vipOnly ? "👑 Exclusiva VIP" : `💎 ${sk.priceGems}`}
-                  </button>
-                </div>
-              );
-            })}
-          </div>
-        )}
+
+
 
         {tab === "vip" && (() => {
           const bpActive = isVip(profile.vip_until);
