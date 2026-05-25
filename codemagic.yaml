@@ -36,6 +36,8 @@ workflows:
       - name: Add and sync iOS
         script: |
           ./node_modules/.bin/cap add ios
+          npm install @capacitor/assets --save-dev
+          npx @capacitor/assets generate --ios
           ./node_modules/.bin/cap copy ios
           ./node_modules/.bin/cap sync ios
       - name: Set up code signing
@@ -114,6 +116,8 @@ workflows:
       - name: Add and sync Android
         script: |
           ./node_modules/.bin/cap add android
+          npm install @capacitor/assets --save-dev
+          npx @capacitor/assets generate --android
           ./node_modules/.bin/cap sync android
           mkdir -p android/app/src/main/assets
           echo '{"appId":"com.arenapet.app","appName":"Arena Pet","webDir":"dist/client","server":{"url":"https://arenapet.lovable.app","cleartext":false}}' > android/app/src/main/assets/capacitor.config.json
