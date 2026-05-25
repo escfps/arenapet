@@ -422,7 +422,7 @@ export const SPECIES: Record<string, Species> = {
     emoji: "🦅", image: aguiaCegaImg,
     description: "Águia marrom ancestral das montanhas. Ágil e implacável: mergulha em alta velocidade e cega os inimigos com um clarão dourado.",
     base: { hp: 105, atk: 18, def: 9, spd: 22, int: 10 },
-    skill: { name: "Visão Ofuscante", emoji: "😵‍💫", kind: "blind_debuff", cooldown: 4, description: "Mergulha solta um clarão dourado: dano agora + cega TODOS os inimigos por 3 turnos (50% de chance de errar ataques básicos)." },
+    skill: { name: "Visão Ofuscante", emoji: "😵‍💫", kind: "blind_debuff", cooldown: 4, description: "Mergulha solta um clarão dourado: dano agora + cega TODOS os inimigos por 1 turno (50% de chance de errar ataques básicos)." },
   },
   lobo_lua_sangrenta: {
     id: "lobo_lua_sangrenta", name: "Lobo da Lua Sangrenta", element: "shadow", secondaryElement: "fire", role: "assassin", rarity: "epic",
