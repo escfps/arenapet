@@ -116,23 +116,13 @@ workflows:
       - name: Add and sync Android
         script: |
           ./node_modules/.bin/cap add android
+          npm install @capacitor/assets --save-dev
+          npx @capacitor/assets generate --android
+          ./node_modules/.bin/cap copy android
           ./node_modules/.bin/cap sync android
-          # Gera ícones Android usando ImageMagick
-          for size in 36 48 72 96 144 192; do
-            case $size in
-              36) folder="mipmap-ldpi" ;;
-              48) folder="mipmap-mdpi" ;;
-              72) folder="mipmap-hdpi" ;;
-              96) folder="mipmap-xhdpi" ;;
-              144) folder="mipmap-xxhdpi" ;;
-              192) folder="mipmap-xxxhdpi" ;;
-            esac
-            mkdir -p android/app/src/main/res/$folder
-            convert resources/icon.png -resize ${size}x${size} android/app/src/main/res/$folder/ic_launcher.png
-            convert resources/icon.png -resize ${size}x${size} android/app/src/main/res/$folder/ic_launcher_round.png
-          done
           mkdir -p android/app/src/main/assets
           echo '{"appId":"com.arenapet.app","appName":"Arena Pet","webDir":"dist/client","server":{"url":"https://arenapet.lovable.app","cleartext":false}}' > android/app/src/main/assets/capacitor.config.json
+
       - name: Set up Android signing
         script: |
           echo $CM_KEYSTORE | base64 --decode > /tmp/keystore.jks
