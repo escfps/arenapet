@@ -114,7 +114,6 @@ workflows:
       - name: Add and sync Android
         script: |
           ./node_modules/.bin/cap add android
-          ./node_modules/.bin/cap copy android
           ./node_modules/.bin/cap sync android
       - name: Set up Android signing
         script: |
@@ -140,8 +139,8 @@ workflows:
         script: |
           cd android
           cat app/build.gradle | grep -A5 "defaultConfig"
-          sed -i '' 's/versionCode [0-9]*/versionCode 3/' app/build.gradle || sed -i 's/versionCode [0-9]*/versionCode 3/' app/build.gradle
-          sed -i '' 's/versionName "[^"]*"/versionName "1.0.2"/' app/build.gradle || sed -i 's/versionName "[^"]*"/versionName "1.0.2"/' app/build.gradle
+          sed -i '' 's/versionCode [0-9]*/versionCode 4/' app/build.gradle || sed -i 's/versionCode [0-9]*/versionCode 4/' app/build.gradle
+          sed -i '' 's/versionName "[^"]*"/versionName "1.0.3"/' app/build.gradle || sed -i 's/versionName "[^"]*"/versionName "1.0.3"/' app/build.gradle
           cat app/build.gradle | grep -A5 "defaultConfig"
           ./gradlew bundleRelease
     artifacts:
