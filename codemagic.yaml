@@ -89,7 +89,7 @@ workflows:
       vars:
         PACKAGE_NAME: "com.arenapet.app"
       node: 22.12.0
-      java: 17
+      java: 21
     scripts:
       - name: Install dependencies
         script: npm install
