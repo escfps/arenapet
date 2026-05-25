@@ -180,6 +180,17 @@ function pickTarget(attacker: Live, enemies: Live[]): Live | null {
   return frontline[0];
 }
 
+/** SPD efetivo considerando passivas dependentes de HP (ex: Urubu Carniceiro). */
+function effectiveSpd(mon: Live): number {
+  let s = mon.spd;
+  if (mon.species === "urubu_carniceiro" && mon.maxHp > 0) {
+    const lostPct = 1 - mon.current / mon.maxHp; // 0..1
+    const steps = Math.min(10, Math.floor(lostPct * 10)); // cada 10% perdido
+    s = Math.round(s * (1 + steps * 0.07));
+  }
+  return s;
+}
+
 function applyDamage(target: Live, raw: number): number {
   let dmg = raw;
   if (target.dmgReductionPct > 0) {
@@ -348,7 +359,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
       ...b.map((mon) => ({ mon, side: "team_b" as const })),
     ]
       .filter((x) => x.mon.current > 0)
-      .sort((x, y) => y.mon.spd - x.mon.spd);
+      .sort((x, y) => effectiveSpd(y.mon) - effectiveSpd(x.mon));
 
     for (const { mon: attacker, side } of order) {
       // Wrap em IIFE pra garantir que sweepDeathExplosions rode mesmo
@@ -1479,6 +1490,26 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
             return;
           }
 
+          if (skill.kind === "terror_screech") {
+            const targets = enemies.filter((e) => e.current > 0);
+            for (const t of targets) {
+              t.atkDebuffPct = Math.max(t.atkDebuffPct, 0.20);
+              t.atkDebuffTurns = Math.max(t.atkDebuffTurns, 3); // 3 pra durar 2 turnos completos após o decremento inicial
+            }
+            log.push({
+              turn,
+              actor: side,
+              actorName: attacker.name,
+              targetName: attacker.name,
+              damage: 0,
+              crit: false,
+              effective: 1,
+              remainingHp: attacker.current,
+              message: `${skill.emoji} ${attacker.name} soltou ${skill.name}! Todos os inimigos -20% ATK por 2 turnos 😱`,
+            });
+            return;
+          }
+
           if (skill.kind === "spectral_hunger") {
             for (let hit = 0; hit < 2; hit++) {
               const aliveEnemies = enemies.filter((e) => e.current > 0);
@@ -1898,7 +1929,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
 
         // Esquiva por velocidade: 5% base + 3.5% por ponto de SPD a mais que o atacante
         // mínimo 5% (sempre há chance), máximo 55%
-        const spdDiff = target.spd - attacker.spd;
+        const spdDiff = effectiveSpd(target) - effectiveSpd(attacker);
         const dodgeChance = Math.max(0.05, Math.min(0.55, 0.05 + spdDiff * 0.035));
         if (rand() < dodgeChance) {
           log.push({

@@ -54,6 +54,7 @@ import fantasminhaImg from "@/assets/monsters/fantasminha.png";
 import raposaEspectralImg from "@/assets/monsters/raposa_espectral.png";
 import orangotangoImg from "@/assets/monsters/orangotango.png";
 import porcoEspinhoImg from "@/assets/monsters/porco_espinho.png";
+import urubuCarniceiroImg from "@/assets/monsters/urubu_carniceiro.png";
 
 export type Element = "fire" | "water" | "grass" | "electric" | "shadow" | "earth";
 export type Role = "tank" | "dps" | "assassin" | "mage" | "healer";
@@ -129,7 +130,8 @@ export type SkillKind =
   | "spectral_hunger"   // mage — dano mágico no mais fraco ignorando DEF / PASSIVA: se matar, ataca novamente o próximo (máx 2)
   | "spectral_pounce"    // assassin — crítico garantido no mais fraco (2× dano) ignorando 60% DEF / PASSIVA: ataque básico 50% chance de critar
   | "cooldown_reduction" // healer mítico — reduz 1 turno de cooldown de todos aliados / PASSIVA: cada turno reduz cd do aliado mais travado
-  | "thorn_burst";       // tank — ataca todos os inimigos com 1.0× ATK físico / PASSIVA: reflete 10% do dano recebido
+  | "thorn_burst"       // tank — ataca todos os inimigos com 1.0× ATK físico / PASSIVA: reflete 10% do dano recebido
+  | "terror_screech";    // dps/suporte — reduz ATK de todos inimigos em 20% por 2 turnos / PASSIVA (urubu): +7% SPD a cada 10% HP perdido (máx +70%)
 
 export type Skill = {
   name: string;
@@ -578,6 +580,13 @@ export const SPECIES: Record<string, Species> = {
     description: "Pequeno mas intocável. Cada espinho é uma punição para quem ousa atacá-lo.",
     base: { hp: 58, atk: 10, def: 16, spd: 9, int: 7 },
     skill: { name: "Chuva de Espinhos", emoji: "🦔", kind: "thorn_burst", cooldown: 4, description: "Dispara espinhos em todos os inimigos (1.0× dano cada). PASSIVA: todo inimigo que atacar o Porco-Espinho recebe 10% do dano de volta." },
+  },
+  urubu_carniceiro: {
+    id: "urubu_carniceiro", name: "Urubu Carniceiro", element: "shadow", secondaryElement: "shadow", role: "dps", rarity: "super_rare",
+    emoji: "🦅", image: urubuCarniceiroImg,
+    description: "Ave necrófaga das sombras. Quanto mais ferido fica, mais rápido se torna — e seu grito gela o sangue dos inimigos.",
+    base: { hp: 62, atk: 22, def: 9, spd: 18, int: 12 },
+    skill: { name: "Grito Aterrorizante", emoji: "🦅", kind: "terror_screech", cooldown: 4, description: "ATIVA: reduz o ATK de TODOS os inimigos em 20% por 2 turnos. PASSIVA: a cada 10% de HP perdido ganha +7% de SPD (até +70% com 1 HP)." },
   },
 };
 
@@ -1343,6 +1352,7 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   raposa_espectral: ["felinos", "sombras"],
   orangotango: ["floresta", "macacos"],
   porco_espinho: ["floresta", "pedra"],
+  urubu_carniceiro: ["aves", "sombras"],
 };
 
 export function getSpeciesCategories(speciesId: string): Category[] {
