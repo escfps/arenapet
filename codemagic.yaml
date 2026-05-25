@@ -135,8 +135,10 @@ workflows:
       - name: Build Android AAB
         script: |
           cd android
-          sed -i 's/versionCode 1/versionCode 2/' app/build.gradle
-          sed -i 's/versionName "1.0"/versionName "1.0.1"/' app/build.gradle
+          cat app/build.gradle | grep -A5 "defaultConfig"
+          sed -i '' 's/versionCode [0-9]*/versionCode 2/' app/build.gradle || sed -i 's/versionCode [0-9]*/versionCode 2/' app/build.gradle
+          sed -i '' 's/versionName "[^"]*"/versionName "1.0.1"/' app/build.gradle || sed -i 's/versionName "[^"]*"/versionName "1.0.1"/' app/build.gradle
+          cat app/build.gradle | grep -A5 "defaultConfig"
           ./gradlew bundleRelease
     artifacts:
       - android/app/build/outputs/bundle/release/*.aab
