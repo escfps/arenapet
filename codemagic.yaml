@@ -60,7 +60,9 @@ workflows:
             CODE_SIGN_STYLE=Manual \
             PROVISIONING_PROFILE_SPECIFIER="Arena Pet Appstore" \
             CODE_SIGN_IDENTITY="Apple Distribution" \
-            DEVELOPMENT_TEAM="8Q7D6F63F2"
+            DEVELOPMENT_TEAM="8Q7D6F63F2" \
+            CURRENT_PROJECT_VERSION=2 \
+            MARKETING_VERSION=1.0.1
           /usr/libexec/PlistBuddy -c "Add :method string app-store" /tmp/ExportOptions.plist
           /usr/libexec/PlistBuddy -c "Add :teamID string 8Q7D6F63F2" /tmp/ExportOptions.plist
           /usr/libexec/PlistBuddy -c "Add :signingStyle string manual" /tmp/ExportOptions.plist
