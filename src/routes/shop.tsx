@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  EGGS, SKINS, GEM_PACKS, SPECIES, ELEMENT_COLORS,
+  EGGS, GEM_PACKS, SPECIES, ELEMENT_COLORS,
   BATTLE_PASS_PRICE_BRL,
   rollEgg, skinFilter, isVip,
   MAX_BATTLE_ENERGY, ENERGY_REFILL_GEM_COST, ENERGY_REFILL_ALL_GEM_COST, computeBattleEnergy,
