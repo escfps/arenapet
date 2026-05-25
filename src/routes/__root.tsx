@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import appCss from "../styles.css?url";
 import { TutorialProvider } from "@/lib/use-tutorial";
 import { TutorialSpotlight } from "@/components/TutorialSpotlight";
+import { Toaster } from "@/components/ui/sonner";
 
 function PWARegister() {
   useEffect(() => {
@@ -156,6 +157,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <PWARegister />
       <TutorialRoot />
+      <Toaster position="top-center" richColors closeButton />
     </QueryClientProvider>
   );
 }
