@@ -225,7 +225,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
     dmgReductionTurns: 0,
     dmgReductionPct: 0,
     stunTurns: 0,
-    thornsPct: m.species === "triceratops_colossal" ? 0.15 : 0,
+    thornsPct: m.species === "triceratops_colossal" ? 0.15 : m.species === "porco_espinho" ? 0.10 : 0,
     killStacks: 0,
     lastFallenAt: 0,
   });
@@ -1443,6 +1443,42 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
             return;
           }
 
+          if (skill.kind === "thorn_burst") {
+            const targets = enemies.filter((e) => e.current > 0);
+            for (const t of targets) {
+              const eff = defensiveMultiplier(getElement(attacker.species), t.species);
+              const base = Math.max(1, attacker.atk - t.def * 0.5);
+              const dmg = Math.max(1, Math.round(base * eff * 1.0 * skillMult));
+              applyDamage(t, dmg);
+              log.push({
+                turn,
+                actor: side,
+                actorName: attacker.name,
+                targetName: t.name,
+                damage: dmg,
+                crit: false,
+                effective: eff,
+                remainingHp: t.current,
+                targetShield: t.shield,
+                message: `${skill.emoji} ${attacker.name} → ${t.name}: ${dmg} de dano de espinhos`,
+              });
+              if (t.current <= 0) {
+                log.push({
+                  turn,
+                  actor: side,
+                  actorName: attacker.name,
+                  targetName: t.name,
+                  damage: 0,
+                  crit: false,
+                  effective: 1,
+                  remainingHp: 0,
+                  message: `💀 ${t.name} foi derrotado!`,
+                });
+              }
+            }
+            return;
+          }
+
           if (skill.kind === "spectral_hunger") {
             for (let hit = 0; hit < 2; hit++) {
               const aliveEnemies = enemies.filter((e) => e.current > 0);
@@ -1938,7 +1974,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
         if (frozenByPassive) msg += ` ❄️ ${target.name} congelou por 2 turnos!`;
         if (stunnedByPassive) msg += ` ⚡ ${target.name} paralisou por 1 turno!`;
         if (lifestealHealed > 0) msg += ` 🩸 (+${lifestealHealed} HP roubado)`;
-        if (reflected > 0) msg += ` 🦕 (refletiu ${reflected})`;
+        if (reflected > 0) msg += ` ${target.species === "porco_espinho" ? "🦔" : "🦕"} (refletiu ${reflected})`;
 
         log.push({
           turn,
