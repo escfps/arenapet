@@ -170,17 +170,6 @@ function ShopPage() {
     toast.success(`📦 ${c.name} guardado no inventário!`);
   }
 
-  async function buySkin(skinId: string) {
-    if (!profile || !userId) return;
-    const sk = SKINS[skinId];
-    if (ownedSkins.includes(skinId)) { toast("Você já tem essa skin"); return; }
-    if (sk.vipOnly && !isVip(profile.vip_until)) { toast.error("Skin exclusiva pra VIPs!"); return; }
-    if (profile.gems < sk.priceGems) { toast.error("Gemas insuficientes!"); return; }
-    await patch({ gems: profile.gems - sk.priceGems });
-    await supabase.from("skins_owned").insert({ user_id: userId, skin_id: skinId });
-    setOwnedSkins([...ownedSkins, skinId]);
-    toast.success(`Skin ${sk.name} desbloqueada!`);
-  }
 
   async function subscribeBattlePass() {
     if (!profile || !userId) return;
