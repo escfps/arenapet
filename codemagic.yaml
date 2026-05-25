@@ -30,7 +30,9 @@ workflows:
             echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Arena Pet</title></head><body><div id="root"></div></body></html>' > dist/client/index.html
           fi
       - name: Init Capacitor
-        script: ./node_modules/.bin/cap init "Arena Pet" com.arenapet.app --web-dir dist/client
+        script: |
+          ./node_modules/.bin/cap init "Arena Pet" com.arenapet.app --web-dir dist/client
+          echo '{"appId":"com.arenapet.app","appName":"Arena Pet","webDir":"dist/client","server":{"url":"https://arenapet.lovable.app","cleartext":false}}' > capacitor.config.json
       - name: Add and sync iOS
         script: |
           ./node_modules/.bin/cap add ios
@@ -106,7 +108,9 @@ workflows:
             echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Arena Pet</title></head><body><div id="root"></div></body></html>' > dist/client/index.html
           fi
       - name: Init Capacitor
-        script: ./node_modules/.bin/cap init "Arena Pet" com.arenapet.app --web-dir dist/client
+        script: |
+          ./node_modules/.bin/cap init "Arena Pet" com.arenapet.app --web-dir dist/client
+          echo '{"appId":"com.arenapet.app","appName":"Arena Pet","webDir":"dist/client","server":{"url":"https://arenapet.lovable.app","cleartext":false}}' > capacitor.config.json
       - name: Add and sync Android
         script: |
           ./node_modules/.bin/cap add android
