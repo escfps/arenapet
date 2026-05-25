@@ -7,8 +7,8 @@
   "id": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#1a0a3e",
-  "theme_color": "#7c3aed",
+  "background_color": "#d9a82a",
+  "theme_color": "#d9a82a",
   "lang": "pt-BR",
   "categories": ["games", "entertainment"],
   "icons": [

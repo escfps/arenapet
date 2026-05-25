@@ -115,7 +115,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:description", content: "🐾 Colecione pets, evolua criaturas raras e lute em batalhas épicas na arena! Suba de rank, desbloqueie pets lendários e torne-se o mestre definitivo do Pet Are" },
       { property: "og:image", content: "https://arenapet.lovable.app/og-image.jpg" },
       { name: "twitter:image", content: "https://arenapet.lovable.app/og-image.jpg" },
-      { name: "theme-color", content: "#7c3aed" },
+      { name: "theme-color", content: "#d9a82a" },
       { name: "mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
