@@ -78,3 +78,66 @@ workflows:
         submit_to_testflight: true
         submit_to_app_store: true
         release_type: AFTER_APPROVAL
+
+  android-playstore:
+    name: Android Play Store Release
+    max_build_duration: 90
+    instance_type: linux_x2
+    environment:
+      groups:
+        - android_signing
+      vars:
+        PACKAGE_NAME: "com.arenapet.app"
+      node: 22.12.0
+      java: 17
+    scripts:
+      - name: Install dependencies
+        script: npm install
+      - name: Install Capacitor deps
+        script: npm install @capacitor/core @capacitor/android @capacitor/cli
+      - name: Build web assets
+        script: |
+          npm run build
+          ls dist/client/
+          if [ ! -f dist/client/index.html ]; then
+            cp dist/client/$(ls dist/client/ | grep -i 'index\|app' | head -1) dist/client/index.html 2>/dev/null || \
+            echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Arena Pet</title></head><body><div id="root"></div></body></html>' > dist/client/index.html
+          fi
+      - name: Init Capacitor
+        script: ./node_modules/.bin/cap init "Arena Pet" com.arenapet.app --web-dir dist/client
+      - name: Add and sync Android
+        script: |
+          ./node_modules/.bin/cap add android
+          ./node_modules/.bin/cap copy android
+          ./node_modules/.bin/cap sync android
+      - name: Set up Android signing
+        script: |
+          echo $CM_KEYSTORE | base64 --decode > /tmp/keystore.jks
+          cat >> android/app/build.gradle << EOF
+          android {
+              signingConfigs {
+                  release {
+                      storeFile file('/tmp/keystore.jks')
+                      storePassword '$CM_KEYSTORE_PASSWORD'
+                      keyAlias '$CM_KEY_ALIAS'
+                      keyPassword '$CM_KEY_PASSWORD'
+                  }
+              }
+              buildTypes {
+                  release {
+                      signingConfig signingConfigs.release
+                  }
+              }
+          }
+          EOF
+      - name: Build Android AAB
+        script: |
+          cd android
+          ./gradlew bundleRelease
+    artifacts:
+      - android/app/build/outputs/bundle/release/*.aab
+    publishing:
+      google_play:
+        credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
+        track: internal
+        submit_as_draft: true
