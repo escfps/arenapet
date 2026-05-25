@@ -157,6 +157,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <PWARegister />
       <TutorialRoot />
+      <Toaster position="top-center" richColors closeButton />
     </QueryClientProvider>
   );
 }
