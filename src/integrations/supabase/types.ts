@@ -826,6 +826,7 @@ export type Database = {
         Args: { p_a: string; p_b: string; p_winner: string }
         Returns: Json
       }
+      _bot_max_rank_for_rarity: { Args: { r: string }; Returns: number }
       _bot_pick_chest_rarity: {
         Args: { p_arena_points: number }
         Returns: string
