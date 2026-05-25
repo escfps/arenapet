@@ -79,21 +79,21 @@ function LoginPage() {
     // Validações locais antes de chamar a API
     const cleanEmail = email.trim();
     if (cleanEmail !== email) setEmail(cleanEmail);
-    if (!cleanEmail) { toast.error("Digite seu email."); return; }
-    if (/\s/.test(cleanEmail)) { toast.error("O email não pode ter espaços."); return; }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) { toast.error("Email inválido. Ex: nome@exemplo.com"); return; }
-    if (!password) { toast.error("Digite sua senha."); return; }
-    if (/\s/.test(password)) { toast.error("A senha não pode ter espaços."); return; }
-    if (password.length < 6) { toast.error("A senha precisa ter no mínimo 6 caracteres."); return; }
+    if (!cleanEmail) { showErr("Digite seu email."); return; }
+    if (/\s/.test(cleanEmail)) { showErr("O email não pode ter espaços."); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) { showErr("Email inválido. Ex: nome@exemplo.com"); return; }
+    if (!password) { showErr("Digite sua senha."); return; }
+    if (/\s/.test(password)) { showErr("A senha não pode ter espaços."); return; }
+    if (password.length < 6) { showErr("A senha precisa ter no mínimo 6 caracteres."); return; }
 
     if (mode === "signup") {
       const uname = username.trim();
       if (uname) {
-        if (uname.length < 3) { toast.error("O nome do treinador precisa ter ao menos 3 caracteres."); return; }
-        if (uname.length > 20) { toast.error("O nome do treinador deve ter no máximo 20 caracteres."); return; }
-        if (/\s/.test(uname)) { toast.error("O nome do treinador não pode ter espaços."); return; }
+        if (uname.length < 3) { showErr("O nome do treinador precisa ter ao menos 3 caracteres."); return; }
+        if (uname.length > 20) { showErr("O nome do treinador deve ter no máximo 20 caracteres."); return; }
+        if (/\s/.test(uname)) { showErr("O nome do treinador não pode ter espaços."); return; }
         if (!/^[a-zA-Z0-9_.-]+$/.test(uname)) {
-          toast.error("Use só letras, números, _ . - no nome do treinador (sem acentos/símbolos).");
+          showErr("Use só letras, números, _ . - no nome do treinador (sem acentos/símbolos).");
           return;
         }
       }
@@ -102,7 +102,7 @@ function LoginPage() {
     setBusy(true);
     const watchdog = setTimeout(() => {
       setBusy(false);
-      toast.error("A operação demorou muito. Tente novamente.");
+      showErr("A operação demorou muito. Tente novamente.");
     }, 20000);
     try {
       if (mode === "signup") {
@@ -142,7 +142,7 @@ function LoginPage() {
     } catch (err) {
       console.error("[auth submit]", err);
       const raw = err instanceof Error ? err.message : "Erro ao processar";
-      toast.error(translateAuthError(raw));
+      showErr(translateAuthError(raw));
     } finally {
       clearTimeout(watchdog);
       setBusy(false);
@@ -153,7 +153,7 @@ function LoginPage() {
     setBusy(true);
     const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
     if (result.error) {
-      toast.error("Falha no login Google");
+      showErr("Falha no login Google");
       setBusy(false);
     }
   }
