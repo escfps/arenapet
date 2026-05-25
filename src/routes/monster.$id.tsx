@@ -34,12 +34,22 @@ function MonsterPage() {
     if (!userId) return;
     const [{ data: m }, { data: skins }, { data: inv }, { data: teamRows }] = await Promise.all([
       supabase.from("monsters").select("*").eq("id", id).eq("owner_id", userId).maybeSingle(),
-      supabase.from("skins_owned").select("skin_id").eq("user_id", userId),
+      supabase.from("skins_owned").select("skin_id,species").eq("user_id", userId),
       supabase.from("inventory").select("quantity").eq("user_id", userId).eq("item_type", "ration").maybeSingle(),
       supabase.from("monsters").select("species,in_team").eq("owner_id", userId).eq("in_team", true),
     ]);
-    if (m) setMonster(m as MonsterRow);
-    if (skins) setOwnedSkins(["default", ...skins.map((s) => s.skin_id)]);
+    if (m) {
+      const mRow = m as MonsterRow;
+      setMonster(mRow);
+      if (skins) {
+        const owned = (skins as { skin_id: string; species: string | null }[])
+          .filter((s) => s.species == null || s.species === mRow.species)
+          .map((s) => s.skin_id);
+        setOwnedSkins(["default", ...owned]);
+      }
+    } else if (skins) {
+      setOwnedSkins(["default", ...(skins as { skin_id: string }[]).map((s) => s.skin_id)]);
+    }
     setRations(inv?.quantity ?? 0);
     setTeamSynergyBonus(synergyStatBonuses((teamRows ?? []).map((r) => (r as { species: string }).species)));
   }, [id, userId]);
@@ -175,6 +185,25 @@ function MonsterPage() {
     if (!monster) return;
     await patchMonster({ skin: skinId });
     toast.success("Skin equipada!");
+  }
+
+  async function buyAndEquipSkin(skinId: string) {
+    if (!monster || !profile || !userId) return;
+    const sk = SKINS[skinId];
+    if (!sk) return;
+    if (sk.vipOnly) { toast.error("Skin exclusiva VIP."); return; }
+    if ((profile.gems ?? 0) < sk.priceGems) { toast.error("Diamantes insuficientes!"); return; }
+    const { error } = await supabase
+      .from("skins_owned")
+      .insert({ user_id: userId, skin_id: skinId, species: monster.species });
+    if (error) {
+      toast.error("Não foi possível comprar a skin.");
+      return;
+    }
+    await patch({ gems: (profile.gems ?? 0) - sk.priceGems });
+    await patchMonster({ skin: skinId });
+    setOwnedSkins((prev) => (prev.includes(skinId) ? prev : [...prev, skinId]));
+    toast.success(`${sk.name} desbloqueada e equipada! ✨`);
   }
 
   async function toggleTeam() {
@@ -578,10 +607,12 @@ function MonsterPage() {
                     </button>
                   ) : (
                     <button
-                      onClick={() => navigate({ to: "/shop" })}
-                      className="mt-1 w-full py-1 rounded text-[11px] font-bold bg-fuchsia-500 hover:bg-fuchsia-400"
+                      onClick={() => buyAndEquipSkin(sk.id)}
+                      disabled={sk.vipOnly || (profile.gems ?? 0) < sk.priceGems}
+                      className="mt-1 w-full py-1 rounded text-[11px] font-bold bg-fuchsia-500 hover:bg-fuchsia-400 disabled:opacity-40 disabled:cursor-not-allowed text-white"
+                      title={sk.vipOnly ? "Exclusiva VIP" : `Comprar só para ${sp.name}`}
                     >
-                      💎 {sk.priceGems}
+                      💎 {sk.priceGems} {sk.vipOnly ? "VIP" : "· Comprar"}
                     </button>
                   )}
                 </div>
