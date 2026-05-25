@@ -403,30 +403,8 @@ function ShopPage() {
           </>
         )}
 
-        {tab === "skins" && (
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            {Object.values(SKINS).filter((s) => s.id !== "default").map((sk) => {
-              const owned = ownedSkins.includes(sk.id);
-              const previewSp = SPECIES.flarepup;
-              return (
-                <div key={sk.id} className="rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 p-3 text-white text-center">
-                  <div className="aspect-square bg-black/30 rounded-xl flex items-center justify-center mb-2">
-                    <img src={previewSp.image} alt="" className="h-3/4" style={{ filter: skinFilter(sk.id) }} />
-                  </div>
-                  <div className="font-extrabold text-sm">{sk.name}{sk.vipOnly && " 👑"}</div>
-                  <div className="text-[10px] opacity-80 mb-2 h-8">{sk.description}</div>
-                  <button
-                    onClick={() => buySkin(sk.id)}
-                    disabled={owned}
-                    className="w-full py-1.5 rounded-lg text-xs font-bold bg-fuchsia-500 hover:bg-fuchsia-400 disabled:bg-white/20"
-                  >
-                    {owned ? "✓ Possui" : sk.vipOnly ? "👑 Exclusiva VIP" : `💎 ${sk.priceGems}`}
-                  </button>
-                </div>
-              );
-            })}
-          </div>
-        )}
+
+
 
         {tab === "vip" && (() => {
           const bpActive = isVip(profile.vip_until);
