@@ -65,8 +65,8 @@ workflows:
             PROVISIONING_PROFILE_SPECIFIER="Arena Pet Appstore" \
             CODE_SIGN_IDENTITY="Apple Distribution" \
             DEVELOPMENT_TEAM="8Q7D6F63F2" \
-            CURRENT_PROJECT_VERSION=4 \
-            MARKETING_VERSION=1.0.3
+            CURRENT_PROJECT_VERSION=5 \
+            MARKETING_VERSION=1.0.4
           /usr/libexec/PlistBuddy -c "Add :method string app-store" /tmp/ExportOptions.plist
           /usr/libexec/PlistBuddy -c "Add :teamID string 8Q7D6F63F2" /tmp/ExportOptions.plist
           /usr/libexec/PlistBuddy -c "Add :signingStyle string manual" /tmp/ExportOptions.plist
@@ -147,8 +147,8 @@ workflows:
         script: |
           cd android
           cat app/build.gradle | grep -A5 "defaultConfig"
-          sed -i '' 's/versionCode [0-9]*/versionCode 7/' app/build.gradle || sed -i 's/versionCode [0-9]*/versionCode 7/' app/build.gradle
-          sed -i '' 's/versionName "[^"]*"/versionName "1.0.6"/' app/build.gradle || sed -i 's/versionName "[^"]*"/versionName "1.0.6"/' app/build.gradle
+          sed -i '' 's/versionCode [0-9]*/versionCode 8/' app/build.gradle || sed -i 's/versionCode [0-9]*/versionCode 8/' app/build.gradle
+          sed -i '' 's/versionName "[^"]*"/versionName "1.0.7"/' app/build.gradle || sed -i 's/versionName "[^"]*"/versionName "1.0.7"/' app/build.gradle
           cat app/build.gradle | grep -A5 "defaultConfig"
           ./gradlew bundleRelease
     artifacts:
