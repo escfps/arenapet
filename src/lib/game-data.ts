@@ -585,7 +585,7 @@ export const SPECIES: Record<string, Species> = {
     id: "urubu_carniceiro", name: "Urubu Carniceiro", element: "shadow", secondaryElement: "shadow", role: "dps", rarity: "epic",
     emoji: "🦅", image: urubuCarniceiroImg,
     description: "Ave necrófaga das sombras. Quanto mais ferido fica, mais rápido se torna — e seu grito gela o sangue dos inimigos.",
-    base: { hp: 78, atk: 28, def: 12, spd: 22, int: 15 },
+    base: { hp: 108, atk: 28, def: 12, spd: 22, int: 15 },
     skill: { name: "Grito Aterrorizante", emoji: "🦅", kind: "terror_screech", cooldown: 4, description: "ATIVA: reduz o ATK de TODOS os inimigos em 20% por 2 turnos. PASSIVA: a cada 10% de HP perdido ganha +7% de SPD (até +70% com 1 HP)." },
   },
 };
