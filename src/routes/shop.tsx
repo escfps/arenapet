@@ -266,13 +266,13 @@ function ShopPage() {
         </header>
 
         <div className="flex bg-white/10 backdrop-blur-md rounded-xl overflow-hidden border border-white/20">
-          {(["chests", "skins", "vip", "gems", "energy"] as const).map((t) => (
+          {(["chests", "vip", "gems", "energy"] as const).map((t) => (
             <button
               key={t}
               onClick={() => setTab(t)}
               className={`flex-1 py-2.5 text-[11px] font-bold transition ${tab === t ? "bg-white/30 text-white" : "text-white/70 hover:bg-white/15"}`}
             >
-              {t === "chests" ? "📦 Baús" : t === "skins" ? "🎨 Skins" : t === "vip" ? "🎟️ Passe" : t === "gems" ? "💎 Gemas" : "⚡ Energia"}
+              {t === "chests" ? "📦 Baús" : t === "vip" ? "🎟️ Passe" : t === "gems" ? "💎 Gemas" : "⚡ Energia"}
             </button>
           ))}
         </div>
