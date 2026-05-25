@@ -53,6 +53,7 @@ import triceratopsColossalImg from "@/assets/monsters/triceratops_colossal.png";
 import fantasminhaImg from "@/assets/monsters/fantasminha.png";
 import raposaEspectralImg from "@/assets/monsters/raposa_espectral.png";
 import orangotangoImg from "@/assets/monsters/orangotango.png";
+import porcoEspinhoImg from "@/assets/monsters/porco_espinho.png";
 
 export type Element = "fire" | "water" | "grass" | "electric" | "shadow" | "earth";
 export type Role = "tank" | "dps" | "assassin" | "mage" | "healer";
@@ -127,7 +128,8 @@ export type SkillKind =
   | "horn_charge"       // tank — provoca todos 2 turnos + escudo 35% / PASSIVA: refletir 15% do dano recebido
   | "spectral_hunger"   // mage — dano mágico no mais fraco ignorando DEF / PASSIVA: se matar, ataca novamente o próximo (máx 2)
   | "spectral_pounce"    // assassin — crítico garantido no mais fraco (2× dano) ignorando 60% DEF / PASSIVA: ataque básico 50% chance de critar
-  | "cooldown_reduction"; // healer mítico — reduz 1 turno de cooldown de todos aliados / PASSIVA: cada turno reduz cd do aliado mais travado
+  | "cooldown_reduction" // healer mítico — reduz 1 turno de cooldown de todos aliados / PASSIVA: cada turno reduz cd do aliado mais travado
+  | "thorn_burst";       // tank — ataca todos os inimigos com 1.0× ATK físico / PASSIVA: reflete 10% do dano recebido
 
 export type Skill = {
   name: string;
@@ -569,6 +571,13 @@ export const SPECIES: Record<string, Species> = {
     description: "Sábio ancestral da floresta. Manipula o fluxo do tempo dos aliados, fazendo suas habilidades fluírem mais rápido.",
     base: { hp: 82, atk: 9, def: 14, spd: 8, int: 28 },
     skill: { name: "Ritual Ancestral", emoji: "🦧", kind: "cooldown_reduction", cooldown: 3, description: "ATIVA: reduz 1 turno de cooldown de TODOS os aliados — o time inteiro solta skill mais rápido. PASSIVA: a cada turno reduz 1 cooldown do aliado mais travado (maior cd acumulado)." },
+  },
+  porco_espinho: {
+    id: "porco_espinho", name: "Porco-Espinho", element: "earth", role: "tank", rarity: "rare",
+    emoji: "🦔", image: porcoEspinhoImg,
+    description: "Pequeno mas intocável. Cada espinho é uma punição para quem ousa atacá-lo.",
+    base: { hp: 58, atk: 10, def: 16, spd: 9, int: 7 },
+    skill: { name: "Chuva de Espinhos", emoji: "🦔", kind: "thorn_burst", cooldown: 4, description: "Dispara espinhos em todos os inimigos (1.0× dano cada). PASSIVA: todo inimigo que atacar o Porco-Espinho recebe 10% do dano de volta." },
   },
 };
 
@@ -1333,6 +1342,7 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   fantasminha: ["sombras"],
   raposa_espectral: ["felinos", "sombras"],
   orangotango: ["floresta", "macacos"],
+  porco_espinho: ["floresta", "pedra"],
 };
 
 export function getSpeciesCategories(speciesId: string): Category[] {
