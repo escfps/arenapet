@@ -1088,7 +1088,7 @@ export function rollEgg(eggId: string): string {
 export function skinFilter(skinId: string): string {
   const s = SKINS[skinId];
   if (!s || skinId === "default") return "none";
-  if (skinId === "dark") return "brightness(0.45) contrast(1.8) saturate(0.4) sepia(0.9) hue-rotate(-55deg) saturate(4) drop-shadow(0 0 4px rgba(220,20,20,0.95)) drop-shadow(0 0 14px rgba(140,0,0,0.85)) drop-shadow(0 0 24px rgba(80,0,0,0.6))";
+  if (skinId === "dark") return "brightness(0.6) contrast(1.25) saturate(0.5) sepia(0.4) hue-rotate(-30deg) drop-shadow(0 0 5px rgba(220,30,30,0.85)) drop-shadow(0 0 14px rgba(150,0,0,0.7))";
   return `hue-rotate(${s.hueRotate}deg) saturate(${s.saturate ?? 1})`;
 }
 
