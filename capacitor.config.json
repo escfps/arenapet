@@ -1,0 +1,9 @@
+{
+  "appId": "com.arenapet.app",
+  "appName": "Arena Pet",
+  "webDir": "dist/client",
+  "server": {
+    "url": "https://arenapet.lovable.app",
+    "cleartext": false
+  }
+}
