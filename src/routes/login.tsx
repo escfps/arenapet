@@ -220,6 +220,13 @@ function LoginPage() {
               >Criar conta</button>
             </div>
 
+            {errorMsg && (
+              <div role="alert" className="mb-3 rounded-xl border-2 border-red-400/60 bg-red-500/15 px-3 py-2.5 text-sm font-semibold text-red-100 flex items-start gap-2">
+                <span className="text-base leading-none mt-0.5">⚠️</span>
+                <span className="flex-1">{errorMsg}</span>
+                <button type="button" onClick={() => setErrorMsg(null)} className="text-red-200/70 hover:text-white text-xs font-bold">✕</button>
+              </div>
+            )}
             <form onSubmit={submit} className="space-y-3">
               {mode === "signup" && (
                 <div className="relative">
