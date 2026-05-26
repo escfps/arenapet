@@ -17,6 +17,28 @@ function ProfilePage() {
   const [newName, setNewName] = useState("");
   const [busy, setBusy] = useState(false);
   const [trophies, setTrophies] = useState<SeasonTrophy[]>([]);
+  const [pwd, setPwd] = useState("");
+  const [pwd2, setPwd2] = useState("");
+  const [pwdBusy, setPwdBusy] = useState(false);
+
+  async function changePassword(e: React.FormEvent) {
+    e.preventDefault();
+    if (pwd.length < 6) { toast.error("A senha precisa ter no mínimo 6 caracteres."); return; }
+    if (pwd !== pwd2) { toast.error("As senhas não coincidem."); return; }
+    setPwdBusy(true);
+    try {
+      const { supabase } = await import("@/integrations/supabase/client");
+      const { error } = await supabase.auth.updateUser({ password: pwd });
+      if (error) throw error;
+      try { localStorage.removeItem("arenapet:remember"); } catch {}
+      toast.success("Senha alterada com sucesso! 🔐");
+      setPwd(""); setPwd2("");
+    } catch (err: any) {
+      toast.error(err?.message ?? "Erro ao alterar senha");
+    } finally {
+      setPwdBusy(false);
+    }
+  }
 
   useEffect(() => {
     if (profile) {
