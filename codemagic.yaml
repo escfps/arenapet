@@ -43,6 +43,17 @@ workflows:
           npx @capacitor/assets generate --ios
           ./node_modules/.bin/cap copy ios
           ./node_modules/.bin/cap sync ios
+      - name: Patch iOS Info.plist for Google Sign-In
+        script: |
+          PLIST="ios/App/App/Info.plist"
+          REVERSED_IOS_CLIENT_ID="com.googleusercontent.apps.486152638398-fb6bpnfo14rr5ditb967ft0841fl0bal"
+          /usr/libexec/PlistBuddy -c "Delete :CFBundleURLTypes" "$PLIST" 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Add :CFBundleURLTypes array" "$PLIST"
+          /usr/libexec/PlistBuddy -c "Add :CFBundleURLTypes:0 dict" "$PLIST"
+          /usr/libexec/PlistBuddy -c "Add :CFBundleURLTypes:0:CFBundleURLSchemes array" "$PLIST"
+          /usr/libexec/PlistBuddy -c "Add :CFBundleURLTypes:0:CFBundleURLSchemes:0 string $REVERSED_IOS_CLIENT_ID" "$PLIST"
+          /usr/libexec/PlistBuddy -c "Print :CFBundleURLTypes" "$PLIST"
+
       - name: Set up code signing
         script: |
           keychain initialize
