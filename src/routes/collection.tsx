@@ -87,8 +87,9 @@ function CollectionPage() {
     });
   }, [allSpecies, ownedSpecies, filter, rarityFilter, elementFilter, search]);
 
+  const visibleSpecies = useMemo(() => allSpecies.filter((s) => !s.hidden || ownedSpecies.has(s.id)), [allSpecies, ownedSpecies]);
   const ownedCount = ownedSpecies.size;
-  const totalCount = allSpecies.length;
+  const totalCount = visibleSpecies.length;
   const pct = totalCount > 0 ? Math.round((ownedCount / totalCount) * 100) : 0;
 
   return (
