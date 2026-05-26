@@ -369,6 +369,30 @@ function LoginPage() {
           </p>
         </footer>
       </div>
+      {forgotOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4" onClick={() => !forgotBusy && setForgotOpen(false)}>
+          <div className="relative w-full max-w-sm rounded-2xl bg-[oklch(0.18_0.06_290)] border-2 border-fuchsia-400/40 p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-xl font-extrabold text-white mb-1 flex items-center gap-2">🔑 Esqueci minha senha</h3>
+            <p className="text-white/60 text-xs mb-4">Digite seu email e enviaremos um link para redefinir sua senha.</p>
+            <form onSubmit={sendReset} className="space-y-3">
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-lg">📧</span>
+                <input
+                  type="email" required autoFocus value={forgotEmail} onChange={(e) => setForgotEmail(e.target.value)}
+                  placeholder="seu@email.com"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-black/40 border-2 border-white/10 text-white placeholder:text-white/40 focus:border-fuchsia-400 outline-none transition"
+                />
+              </div>
+              <div className="flex gap-2">
+                <button type="button" onClick={() => setForgotOpen(false)} disabled={forgotBusy} className="flex-1 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-white font-bold text-sm transition disabled:opacity-50">Cancelar</button>
+                <button type="submit" disabled={forgotBusy} className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-fuchsia-500 to-purple-600 text-white font-extrabold text-sm shadow-lg disabled:opacity-50 transition">
+                  {forgotBusy ? "Enviando..." : "Enviar link"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
