@@ -637,7 +637,7 @@ export const SPECIES: Record<string, Species> = {
     emoji: "🐯", image: tigreRelampagoImg, hidden: true,
     description: "Predador feito de raios. Quanto mais rápido fica, mais devastadora é sua investida elétrica.",
     base: { hp: 100, atk: 24, def: 10, spd: 26, int: 12 },
-    skill: { name: "Investida Voltaica", emoji: "⚡", kind: "lightning_charge", cooldown: 3, description: "Investida elétrica no mais forte (2× dano), 60% de chance de paralisar. PASSIVA: ataque básico tem 30% de chance de paralisar." },
+    skill: { name: "Blitz Relâmpago", emoji: "⚡", kind: "lightning_charge", cooldown: 4, description: "Avança contra o alvo causando 130% do ATK. Se tiver SPD maior que o alvo, desfere um segundo golpe de 70% do ATK. PASSIVA: ganha +4% de Esquiva a cada 10 pontos de SPD." },
   },
   leopardo_fantasma: {
     id: "leopardo_fantasma", name: "Leopardo Fantasma", element: "shadow", role: "assassin", rarity: "epic",
