@@ -3,6 +3,10 @@ import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
+const ADMIN_USER_IDS = new Set<string>([
+  "9efcc279-b110-4feb-862e-deea6acf858e",
+]);
+
 const bottomItems = [
   { to: "/", label: "Início", emoji: "🏠" },
   { to: "/arena", label: "Arena", emoji: "⚔️" },
@@ -42,6 +46,13 @@ export function MobileDrawerButton({ onOpen }: { onOpen: () => void }) {
 export function MobileNav({ open, onClose }: { open: boolean; onClose: () => void }) {
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      setIsAdmin(!!data.user && ADMIN_USER_IDS.has(data.user.id));
+    });
+  }, []);
 
   // Close drawer on route change
   useEffect(() => { onClose(); }, [pathname]); // eslint-disable-line
@@ -136,6 +147,22 @@ export function MobileNav({ open, onClose }: { open: boolean; onClose: () => voi
                   </li>
                 );
               })}
+              {isAdmin && (
+                <li>
+                  <Link
+                    to="/admin"
+                    onClick={onClose}
+                    className={`flex items-center gap-3 px-4 py-3 rounded-xl text-base font-bold transition border border-fuchsia-400/30 mt-2 ${
+                      pathname.startsWith("/admin")
+                        ? "bg-fuchsia-500/30 text-fuchsia-200"
+                        : "bg-fuchsia-500/10 text-fuchsia-200 hover:bg-fuchsia-500/20"
+                    }`}
+                  >
+                    <span className="text-2xl">🛠️</span>
+                    <span>Admin (Testes)</span>
+                  </Link>
+                </li>
+              )}
             </ul>
             <div className="p-3 border-t border-white/10">
               <button
