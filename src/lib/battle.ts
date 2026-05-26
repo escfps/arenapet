@@ -2084,6 +2084,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
               fallen.shield = 0;
               fallen.burnTurns = 0;
               fallen.bleedTurns = 0;
+              fallen.poisonTurns = 0; fallen.poisonDmg = 0;
               fallen.blindTurns = 0;
               fallen.sleepTurns = 0;
               fallen.freezeTurns = 0;
