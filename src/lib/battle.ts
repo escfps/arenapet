@@ -151,6 +151,8 @@ type Live = BattleMonster & {
   defDebuffPct: number; // ex: 0.2 = -20% DEF
   atkDebuffTurns: number; // redução de ATK temporária (chill_heal)
   atkDebuffPct: number; // ex: 0.15 = -15% ATK
+  spdBuffTurns: number; // bônus temporário de SPD (night_mark)
+  spdBuffPct: number; // ex: 0.15 = +15% SPD
   dmgReductionTurns: number; // reduz todo dano recebido por X turnos (turtle_shell)
   dmgReductionPct: number; // ex: 0.2 = -20% de dano recebido
   stunTurns: number; // se >0, pula o turno (atordoado ⚡)
@@ -158,6 +160,7 @@ type Live = BattleMonster & {
   killStacks: number; // T-Rex: acumulador permanente de kills (+15% ATK por kill)
   lastFallenAt: number; // turno em que morreu (pra revive_ally)
   markTurns: number; // 🏴 Marca da Morte: +25% dano sofrido e não pode esquivar
+  markPassiveProcessed: boolean; // controle: passiva da Coruja Branca já processou morte
 };
 
 function pickTarget(attacker: Live, enemies: Live[]): Live | null {
@@ -188,6 +191,9 @@ function effectiveSpd(mon: Live): number {
     const lostPct = 1 - mon.current / mon.maxHp; // 0..1
     const steps = Math.min(10, Math.floor(lostPct * 10)); // cada 10% perdido
     s = Math.round(s * (1 + steps * 0.07));
+  }
+  if (mon.spdBuffTurns > 0 && mon.spdBuffPct > 0) {
+    s = Math.round(s * (1 + mon.spdBuffPct));
   }
   return s;
 }
@@ -252,6 +258,9 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
     killStacks: 0,
     lastFallenAt: 0,
     markTurns: 0,
+    markPassiveProcessed: false,
+    spdBuffTurns: 0,
+    spdBuffPct: 0,
   });
   const a: Live[] = teamA.map(mkLive);
   const b: Live[] = teamB.map(mkLive);
@@ -365,6 +374,49 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
     }
   }
 
+  // PASSIVA Coruja Branca "Olhos da Noite": ao morrer um inimigo marcado,
+  // o aliado com menor HP da equipe da Coruja recupera 12% do HP máximo.
+  function sweepOwlPassive() {
+    const sides = [
+      { team: a, opp: b, deadSide: "team_a" as const, healSide: "team_b" as const },
+      { team: b, opp: a, deadSide: "team_b" as const, healSide: "team_a" as const },
+    ];
+    for (const { team, opp, healSide } of sides) {
+      for (const dead of team) {
+        if (dead.current > 0) continue;
+        if (dead.markTurns <= 0) continue;
+        if (dead.markPassiveProcessed) continue;
+        dead.markPassiveProcessed = true;
+        const owls = opp.filter((m) => m.species === "coruja_branca" && m.current > 0);
+        if (owls.length === 0) continue;
+        const aliveAllies = opp.filter((m) => m.current > 0);
+        if (aliveAllies.length === 0) continue;
+        const lowest = aliveAllies.reduce((x, y) =>
+          x.current / x.maxHp < y.current / y.maxHp ? x : y,
+        );
+        const heal = Math.round(lowest.maxHp * 0.12);
+        const before = lowest.current;
+        lowest.current = Math.min(lowest.maxHp, lowest.current + heal);
+        const healed = lowest.current - before;
+        if (healed > 0) {
+          log.push({
+            turn,
+            actor: healSide,
+            actorName: owls[0].name,
+            targetName: lowest.name,
+            damage: 0,
+            crit: false,
+            effective: 1,
+            remainingHp: lowest.current,
+            message: `✨ Olhos da Noite: ${owls[0].name} curou ${lowest.name} em ${healed} HP (marca consumida em ${dead.name})`,
+          });
+        }
+      }
+    }
+  }
+
+
+
   while (a.some((m) => m.current > 0) && b.some((m) => m.current > 0) && turn <= MAX_TURNS) {
     type Actor = { mon: Live; side: "team_a" | "team_b" };
     const order: Actor[] = [
@@ -461,6 +513,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
               message: `💀 ${attacker.name} foi consumido pelas chamas!`,
             });
             sweepDeathExplosions();
+            sweepOwlPassive();
             return;
           }
         }
@@ -493,6 +546,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
               message: `💀 ${attacker.name} sucumbiu à hemorragia!`,
             });
             sweepDeathExplosions();
+            sweepOwlPassive();
             return;
           }
         }
@@ -518,6 +572,11 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
         if (attacker.atkDebuffTurns > 0) {
           attacker.atkDebuffTurns -= 1;
           if (attacker.atkDebuffTurns === 0) attacker.atkDebuffPct = 0;
+        }
+        // tick spd buff
+        if (attacker.spdBuffTurns > 0) {
+          attacker.spdBuffTurns -= 1;
+          if (attacker.spdBuffTurns === 0) attacker.spdBuffPct = 0;
         }
         // tick dmg reduction
         if (attacker.dmgReductionTurns > 0) {
@@ -1624,6 +1683,39 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
             return;
           }
 
+          if (skill.kind === "night_mark") {
+            // Coruja Branca: aplica 🏴 Marca da Morte em todos os inimigos por 2 turnos
+            // e concede +15% SPD a todos os aliados por 2 turnos (efeito de revelar fraquezas).
+            const targets = enemies.filter((e) => e.current > 0);
+            const markedNames: string[] = [];
+            for (const t of targets) {
+              if (!isCCImmune(t)) {
+                t.markTurns = Math.max(t.markTurns, 2);
+                t.markPassiveProcessed = false;
+                markedNames.push(t.name);
+              }
+            }
+            const aliveAllies = allies.filter((m) => m.current > 0);
+            for (const m of aliveAllies) {
+              m.spdBuffPct = Math.max(m.spdBuffPct, 0.15);
+              m.spdBuffTurns = Math.max(m.spdBuffTurns, 2);
+            }
+            log.push({
+              turn,
+              actor: side,
+              actorName: attacker.name,
+              targetName: attacker.name,
+              damage: 0,
+              crit: false,
+              effective: 1,
+              remainingHp: attacker.current,
+              message: `${skill.emoji} ${attacker.name} usou ${skill.name}: 🏴 marcou ${markedNames.length ? markedNames.join(", ") : "ninguém"} por 2 turnos + aliados ganham +15% SPD por 2 turnos`,
+            });
+            return;
+          }
+
+
+
           if (skill.kind === "cleanse_shield") {
             const shield = Math.round(attacker.maxHp * 0.25 * skillMult);
             attacker.shield += shield;
@@ -2303,6 +2395,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
       })();
       // PASSIVA Rato Bomba: detona explosão APÓS cada ator (skill ou ataque)
       sweepDeathExplosions();
+      sweepOwlPassive();
     }
     turn += 1;
   }
