@@ -1357,23 +1357,39 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
             const target = aliveEnemies.length ? aliveEnemies.reduce((x, y) => (x.atk > y.atk ? x : y)) : null;
             if (target) {
               const eff = defensiveMultiplier(getElement(attacker.species), target.species);
-              const base = Math.max(1, effAtk * 2 - tgtEffDef(target));
-              const dmg = Math.max(1, Math.round(base * eff * 2.0 * skillMult));
-              applyDamage(target, dmg);
-              const stunned = rand() < 0.6 && target.current > 0;
-              if (stunned && !isCCImmune(target)) target.stunTurns = Math.max(target.stunTurns, 1);
+              const base1 = Math.max(1, effAtk * 1.3 - tgtEffDef(target));
+              const dmg1 = Math.max(1, Math.round(base1 * eff * skillMult));
+              applyDamage(target, dmg1);
               log.push({
                 turn,
                 actor: side,
                 actorName: attacker.name,
                 targetName: target.name,
-                damage: dmg,
-                crit: true,
+                damage: dmg1,
+                crit: false,
                 effective: eff,
                 remainingHp: target.current,
                 targetShield: target.shield,
-                message: `${skill.emoji} ${attacker.name} usou ${skill.name}: ${dmg} em ${target.name}${stunned ? ` + ⚡ paralisou por 1 turno!` : ""}`,
+                message: `${skill.emoji} ${attacker.name} usou ${skill.name}: ${dmg1} em ${target.name}`,
               });
+              // Segundo golpe se for mais rápido
+              if (target.current > 0 && effectiveSpd(attacker) > effectiveSpd(target)) {
+                const base2 = Math.max(1, effAtk * 0.7 - tgtEffDef(target));
+                const dmg2 = Math.max(1, Math.round(base2 * eff * skillMult));
+                applyDamage(target, dmg2);
+                log.push({
+                  turn,
+                  actor: side,
+                  actorName: attacker.name,
+                  targetName: target.name,
+                  damage: dmg2,
+                  crit: false,
+                  effective: eff,
+                  remainingHp: target.current,
+                  targetShield: target.shield,
+                  message: `⚡ ${attacker.name} é mais rápido e desfere um segundo golpe: ${dmg2} em ${target.name}`,
+                });
+              }
               if (target.current <= 0) {
                 target.lastFallenAt = turn;
                 log.push({
@@ -2139,7 +2155,11 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
         // Esquiva por velocidade: 5% base + 3.5% por ponto de SPD a mais que o atacante
         // mínimo 5% (sempre há chance), máximo 55%
         const spdDiff = effectiveSpd(target) - effectiveSpd(attacker);
-        const baseDodge = Math.max(0.05, Math.min(0.55, 0.05 + spdDiff * 0.035));
+        // PASSIVA Tigre Relâmpago: +4% de esquiva a cada 10 pontos de SPD
+        const tigerDodgeBonus = target.species === "tigre_relampago"
+          ? Math.floor(effectiveSpd(target) / 10) * 0.04
+          : 0;
+        const baseDodge = Math.max(0.05, Math.min(0.75, 0.05 + spdDiff * 0.035 + tigerDodgeBonus));
         // 🏴 Marca da Morte: zera a esquiva contra ataques básicos
         const dodgeChance = target.markTurns > 0 ? 0 : baseDodge;
         if (dodgeChance > 0 && rand() < dodgeChance) {
