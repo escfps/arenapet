@@ -78,7 +78,10 @@ function statusesFromMessage(msg: string): StatusKind[] {
   if (msg.includes("congelou") || msg.includes("congelado") || msg.includes("❄️")) out.push("freeze");
   if (msg.includes("silenciou") || msg.includes("silencia próxima") || msg.includes("silenciado")) out.push("silence");
   if (msg.includes("atordoou") || msg.includes("paralisou") || msg.includes("atordoado")) out.push("stun");
-  if (msg.includes("🏴") || msg.includes("Marca da Morte") || msg.includes("Marca da Caça") || msg.includes("marcou") || msg.includes("alvo marcado") || msg.includes("alvo já marcado")) out.push("mark");
+  // Só marca como Marca da Morte/Caça quando a bandeira 🏴 aparece no log
+  // (mensagens como "Marca Final" da Coruja Negra ou "alvo marcado" no log de cura
+  //  NÃO devem marcar o atacante).
+  if (msg.includes("🏴")) out.push("mark");
   if (msg.includes("fúria") || msg.includes("ATK por 3 turnos")) out.push("rage");
   if (msg.includes("DEF por") && msg.includes("escudo")) out.push("shield");
   return out;
