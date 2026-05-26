@@ -1501,6 +1501,58 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           }
 
 
+          if (skill.kind === "hyena_hunt") {
+            // Investida da Hiena: 140% ATK em alvo único + 🏴 Marca da Caça (2 turnos)
+            const aliveEnemies = enemies.filter((e) => e.current > 0);
+            // Prioriza o alvo com menos HP atual (instinto predador)
+            const target = aliveEnemies.length ? aliveEnemies.reduce((x, y) => (x.current < y.current ? x : y)) : null;
+            if (target) {
+              const wasMarked = target.markTurns > 0;
+              const eff = defensiveMultiplier(getElement(attacker.species), target.species);
+              const base = Math.max(1, effAtk * 1.4 - tgtEffDef(target));
+              const dmg = Math.max(1, Math.round(base * eff * skillMult));
+              applyDamage(target, dmg);
+              if (!isCCImmune(target)) {
+                target.markTurns = Math.max(target.markTurns, 2);
+                target.markPassiveProcessed = false;
+              }
+              // PASSIVA Frenesi do Predador: se o alvo já estava marcado, ganha +20% SPD no próximo turno
+              let frenzy = false;
+              if (wasMarked && attacker.current > 0) {
+                attacker.spdBuffPct = Math.max(attacker.spdBuffPct, 0.2);
+                attacker.spdBuffTurns = Math.max(attacker.spdBuffTurns, 1);
+                frenzy = true;
+              }
+              log.push({
+                turn,
+                actor: side,
+                actorName: attacker.name,
+                targetName: target.name,
+                damage: dmg,
+                crit: false,
+                effective: eff,
+                remainingHp: target.current,
+                targetShield: target.shield,
+                message: `${skill.emoji} ${attacker.name} usou ${skill.name}: ${dmg} em ${target.name} + 🏴 Marca da Caça (2 turnos)${frenzy ? " 🐺 (+20% SPD — Frenesi do Predador)" : ""}`,
+              });
+              if (target.current <= 0) {
+                target.lastFallenAt = turn;
+                log.push({
+                  turn,
+                  actor: side,
+                  actorName: attacker.name,
+                  targetName: target.name,
+                  damage: 0,
+                  crit: false,
+                  effective: 1,
+                  remainingHp: 0,
+                  message: `💀 ${target.name} foi derrotado!`,
+                });
+              }
+            }
+            return;
+          }
+
 
           if (skill.kind === "spectral_pounce") {
             const aliveEnemies = enemies.filter((e) => e.current > 0);
