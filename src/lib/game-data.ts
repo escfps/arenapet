@@ -493,10 +493,10 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Chama Gelada", emoji: "❄️", kind: "heal_lowest", cooldown: 3, description: "Cura o aliado mais ferido (~INT×1.2)." },
   },
   dragao_fogo: {
-    id: "dragao_fogo", name: "Dragão de Fogo", element: "fire", secondaryElement: "shadow", role: "mage", rarity: "common",
+    id: "dragao_fogo", name: "Dragão de Fogo", element: "fire", secondaryElement: "shadow", role: "mage", rarity: "rare",
     emoji: "🐲", image: dragaoFogoImg,
     description: "Filhote de dragão de escamas em brasa. Cospe cinzas que corroem a armadura dos inimigos.",
-    base: { hp: 100, atk: 9, def: 10, spd: 11, int: 20 },
+    base: { hp: 110, atk: 11, def: 11, spd: 12, int: 23 },
     skill: { name: "Baforada de Cinzas", emoji: "🌋", kind: "ash_breath", cooldown: 3, description: "Dano mágico (~INT×1.5) e reduz a DEF do alvo em 20% por 2 turnos." },
   },
   foca_glacial: {
