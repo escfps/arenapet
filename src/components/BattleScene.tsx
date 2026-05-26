@@ -310,6 +310,9 @@ export function BattleScene({
       skillFx = "bite";
     } else if (skillKind === "true_damage_nuke") {
       skillFx = "magic";
+    } else if (entry.damage > 0 && targetKey) {
+      // Fallback: ataque básico — mostra impacto genérico
+      skillFx = "impact";
     }
 
     // ===== Detecta ganho de escudo na mensagem =====
