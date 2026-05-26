@@ -57,8 +57,11 @@ workflows:
           # Auto-incrementa o build number pegando o último do App Store Connect + 1
           LATEST_BUILD_NUMBER=$(app-store-connect get-latest-app-store-build-number "$APP_STORE_APPLE_ID" 2>/dev/null || echo "0")
           NEW_BUILD_NUMBER=$(($LATEST_BUILD_NUMBER + 1))
+          # Lê a versão visível do package.json
+          APP_VERSION=$(node -p "require('./package.json').version")
           echo "Último build no App Store Connect: $LATEST_BUILD_NUMBER"
           echo "Novo build number: $NEW_BUILD_NUMBER"
+          echo "Marketing version (do package.json): $APP_VERSION"
 
           WORKSPACE=$(find ios -name "*.xcworkspace" | grep -v xcodeproj | head -1)
           if [ -z "$WORKSPACE" ]; then
@@ -76,7 +79,7 @@ workflows:
             CODE_SIGN_IDENTITY="Apple Distribution" \
             DEVELOPMENT_TEAM="8Q7D6F63F2" \
             CURRENT_PROJECT_VERSION=$NEW_BUILD_NUMBER \
-            MARKETING_VERSION=1.0.5
+            MARKETING_VERSION=$APP_VERSION
           /usr/libexec/PlistBuddy -c "Add :method string app-store" /tmp/ExportOptions.plist
           /usr/libexec/PlistBuddy -c "Add :teamID string 8Q7D6F63F2" /tmp/ExportOptions.plist
           /usr/libexec/PlistBuddy -c "Add :signingStyle string manual" /tmp/ExportOptions.plist
