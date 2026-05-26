@@ -667,7 +667,7 @@ export const SPECIES: Record<string, Species> = {
     emoji: "🦂", image: escorpiaoDesertoImg, hidden: true,
     description: "Ferrão venenoso vindo das dunas. Um único golpe pode paralisar a presa mais corajosa.",
     base: { hp: 88, atk: 21, def: 10, spd: 19, int: 10 },
-    skill: { name: "Ferrão Paralisante", emoji: "🦂", kind: "pounce_stun", cooldown: 3, description: "Crítico garantido no mais fraco com chance de atordoar por 1 turno. (placeholder: veneno DOT em desenvolvimento)" },
+    skill: { name: "Ferroada Venenosa", emoji: "🦂", kind: "scorpion_sting", cooldown: 3, description: "Ferroada no inimigo mais fraco causando 110% do ATK + aplica 🏴 Marca da Morte e ☠️ Veneno por 2 turnos. Se o alvo já estiver marcado, causa 130% do ATK e o veneno dura +1 turno. PASSIVA — Veneno Rastreador: inimigos com 🏴 Marca da Morte sofrem +15% de dano de veneno." },
   },
   coruja_negra: {
     id: "coruja_negra", name: "Coruja Negra", element: "shadow", role: "mage", rarity: "epic",
