@@ -642,7 +642,7 @@ export const SPECIES: Record<string, Species> = {
     id: "leopardo_fantasma", name: "Leopardo Fantasma", element: "shadow", role: "assassin", rarity: "epic",
     emoji: "🐆", image: leopardoFantasmaImg, hidden: true,
     description: "Caçador silencioso vindo do reino das sombras. Aparece atrás do mais frágil e crava o bote final.",
-    base: { hp: 105, atk: 28, def: 11, spd: 24, int: 13 },
+    base: { hp: 135, atk: 28, def: 11, spd: 24, int: 13 },
     skill: { name: "Bote Espectral", emoji: "🐆", kind: "spectral_pounce", cooldown: 3, description: "Crítico garantido no mais fraco (2× dano) ignorando 60% da DEF. PASSIVA: ataque básico tem 50% de chance de critar." },
   },
   hiena_carniceira: {
