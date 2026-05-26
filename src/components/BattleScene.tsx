@@ -358,7 +358,7 @@ export function BattleScene({
     const eff = detectEffect(entry);
     if (eff) setBanner(eff);
 
-    // ===== Status persistentes no alvo =====
+    // ===== Status persistentes no alvo (ficam visíveis até morte/cleanse/expiração explícita) =====
     const st = statusFromMessage(entry.message);
     if (st) {
       const key = st === "rage" ? actorKey : (targetKey ?? actorKey);
@@ -369,21 +369,35 @@ export function BattleScene({
         next.set(key, cur);
         return next;
       });
-      // expira após algumas etapas
-      const stepsToClear = st === "silence" ? 2 : 3;
-      const clearTimer = setTimeout(() => {
+    }
+
+    // Limpa status quando o monstro morre
+    if (entry.message.includes("foi derrotado") || entry.message.includes("foi consumido") || entry.message.includes("sucumbiu")) {
+      const deadKey = targetKey ?? actorKey;
+      if (deadKey) {
         setStatuses((prev) => {
           const next = new Map(prev);
-          const cur = new Set(next.get(key) ?? []);
-          cur.delete(st);
-          if (cur.size === 0) next.delete(key);
-          else next.set(key, cur);
+          next.delete(deadKey);
           return next;
         });
-      }, 650 * stepsToClear);
-      // não retornamos esse timer pra não atrapalhar o cleanup principal
-      void clearTimer;
+      }
     }
+
+    // Limpa todos os debuffs do alvo quando há cleanse explícito
+    if (entry.message.includes("dissipou") || entry.message.includes("Purificação") || entry.message.includes("removeu os debuffs")) {
+      const cleanseKey = targetKey ?? actorKey;
+      if (cleanseKey) {
+        setStatuses((prev) => {
+          const next = new Map(prev);
+          const cur = new Set(next.get(cleanseKey) ?? []);
+          (["burn", "poison", "bleed", "blind", "sleep", "freeze", "silence", "stun", "mark"] as StatusKind[]).forEach((s) => cur.delete(s));
+          if (cur.size === 0) next.delete(cleanseKey);
+          else next.set(cleanseKey, cur);
+          return next;
+        });
+      }
+    }
+
 
     const t = setTimeout(
       () => setFx({ actor: null, target: null, dmg: null, shieldGain: null, crit: false, skillFx: null, targets: [], miss: null }),
