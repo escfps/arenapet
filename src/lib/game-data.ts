@@ -682,7 +682,7 @@ export const SPECIES: Record<string, Species> = {
     emoji: "🦉", image: corujaPsiquicaImg, hidden: true,
     description: "Coruja psíquica que dobra colheres com o pensamento e manipula o tempo com seu cronômetro. Sua mente é uma arma de destruição em massa.",
     base: { hp: 115, atk: 12, def: 12, spd: 18, int: 36 },
-    skill: { name: "Explosão Psíquica", emoji: "🧠", kind: "aoe_magic", cooldown: 5, description: "Causa INT×2.5 de dano psíquico em TODOS os inimigos com 40% de chance de silenciar por 1 turno. PASSIVA: ao entrar em batalha, concede +100 de escudo para si e para os 2 aliados." },
+    skill: { name: "Explosão Psíquica", emoji: "🧠", kind: "aoe_magic", cooldown: 6, description: "Causa INT×1.6 de dano psíquico em TODOS os inimigos com 40% de chance de silenciar por 1 turno. PASSIVA: ao entrar em batalha, concede +100 de escudo para si e para os 2 aliados." },
   },
 };
 

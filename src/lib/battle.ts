@@ -780,7 +780,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
 
           if (skill.kind === "aoe_magic") {
             const isPsychic = attacker.species === "coruja_psiquica";
-            const intMult = isPsychic ? 2.5 : 2.2;
+            const intMult = isPsychic ? 1.6 : 2.2;
             const flatMult = isPsychic ? 1.0 : 1.2;
             const silenceChance = isPsychic ? 0.4 : 0;
             const targets = enemies.filter((e) => e.current > 0);
@@ -2487,7 +2487,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
         // PASSIVA Leopardo Fantasma: crítico garantido se for mais rápido que o alvo
         const leopardFaster = attacker.species === "leopardo_fantasma" && effectiveSpd(attacker) > effectiveSpd(target);
         const crit = leopardFaster || rand() < critChance;
-        const defUsed = attacker.role === "mage" ? target.def * 0.4 : target.def;
+        const defUsed = attacker.role === "mage" ? target.def * 0.85 : target.def;
         const atkStat = attacker.role === "mage" ? attacker.int : attacker.atk * phoenixAtkBonus(attacker);
         let base = Math.max(1, atkStat * 2 - defUsed);
         if (attacker.role === "dps") base *= 1.15;
