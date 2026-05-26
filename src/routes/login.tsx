@@ -213,9 +213,12 @@ function LoginPage() {
         } catch (e) {
           console.warn("[googleSignIn native] initialize warn", e);
         }
+        const rawNonce = Array.from(crypto.getRandomValues(new Uint8Array(16)))
+          .map((b) => b.toString(16).padStart(2, "0"))
+          .join("");
         const res = await SocialLogin.login({
           provider: "google",
-          options: { scopes: ["email", "profile"] },
+          options: { scopes: ["email", "profile"], nonce: rawNonce },
         });
         const result = res?.result as { idToken?: string } | undefined;
         const idToken = result?.idToken;
@@ -227,6 +230,7 @@ function LoginPage() {
         const { error } = await supabase.auth.signInWithIdToken({
           provider: "google",
           token: idToken,
+          nonce: rawNonce,
         });
         if (error) {
           console.error("[googleSignIn native] supabase error", error);
