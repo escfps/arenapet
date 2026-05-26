@@ -513,6 +513,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
               message: `💀 ${attacker.name} foi consumido pelas chamas!`,
             });
             sweepDeathExplosions();
+            sweepOwlPassive();
             return;
           }
         }
@@ -545,6 +546,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
               message: `💀 ${attacker.name} sucumbiu à hemorragia!`,
             });
             sweepDeathExplosions();
+            sweepOwlPassive();
             return;
           }
         }
