@@ -4,11 +4,9 @@ import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
-import { getTier, nextTierProgress, SPECIES, RARITY_INFO, skinFilter, ARENA_WIN_POINTS, ARENA_LOSS_POINTS, rankStars, MAX_RANK } from "@/lib/game-data";
-import { getPlayerBattles } from "@/lib/battles.functions";
+import { getTier, nextTierProgress, SPECIES, RARITY_INFO, skinFilter, rankStars, MAX_RANK } from "@/lib/game-data";
 import { getCurrentSeason, type SeasonInfo } from "@/lib/seasons.functions";
 import { SEASON_REWARDS } from "@/lib/season-rewards";
-import { BattleDetailModal, type BattleRow } from "@/components/BattleDetailModal";
 import { SynergyBadges } from "@/components/SynergyBadges";
 import arenaBg from "@/assets/arena-bg.jpg";
 
