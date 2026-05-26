@@ -243,7 +243,7 @@ function CollectionPage() {
                 </h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                   {list.map((sp) => (
-                    <DexCard key={sp.id} sp={sp} owned={ownedSpecies.has(sp.id)} />
+                    <DexCard key={sp.id} sp={sp} owned={ownedSpecies.has(sp.id)} locked={!!sp.hidden && !ownedSpecies.has(sp.id)} />
                   ))}
                 </div>
               </section>
