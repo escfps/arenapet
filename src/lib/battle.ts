@@ -303,6 +303,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
         actor: side,
         actorName: psychic.name,
         targetName: m.name,
+        targetTeam: "actor",
         damage: 0,
         crit: false,
         effective: 1,
