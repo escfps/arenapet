@@ -149,7 +149,7 @@ export type SkillKind =
   | "cooldown_reduction" // healer mítico — reduz 1 turno de cooldown de todos aliados / PASSIVA: cada turno reduz cd do aliado mais travado
   | "thorn_burst"       // tank — ataca todos os inimigos com 1.0× ATK físico / PASSIVA: reflete 10% do dano recebido
   | "terror_screech"    // dps/suporte — reduz ATK de todos inimigos em 20% por 2 turnos / PASSIVA (urubu): +7% SPD a cada 10% HP perdido (máx +70%)
-  | "arcane_mark"       // mago — AoE arcano + aplica 🏴 Marca da Morte (3 turnos) em todos; consome marca pra +50% dano
+  | "arcane_mark"       // mago — explosão arcana em área (INT×1.5 distribuído); dobra dano em alvos com 🏴 Marca da Morte. PASSIVA Marca Final: ao atacar marcado (skill ou básico), Coruja Negra recupera 25% do HP máx
   | "night_mark"        // healer — aplica 🏴 Marca da Morte em todos os inimigos por 2 turnos + aliados ganham +15% SPD por 2 turnos; PASSIVA: ao morrer marcado, aliado com menor HP cura 12% do HP máx
   | "cleanse_shield"    // tank — remove TODOS os debuffs dos aliados + escudo 25% HP máx
   | "corsair_volley"    // dps — 3 investidas em alvos aleatórios (podem repetir) com 20% de chance de sangrar por hit (máx 1 stack)
