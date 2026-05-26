@@ -162,14 +162,17 @@ workflows:
           EOF
       - name: Build Android AAB
         script: |
-          cd android
+          # Lê a versão visível do package.json (na raiz do projeto)
+          APP_VERSION=$(node -p "require('./package.json').version")
           # Auto-incrementa o versionCode usando o build number do Codemagic + offset
           # (offset 8 garante que não conflite com builds já enviadas manualmente)
           NEW_VERSION_CODE=$(($BUILD_NUMBER + 8))
           echo "Novo versionCode: $NEW_VERSION_CODE"
+          echo "versionName (do package.json): $APP_VERSION"
+          cd android
           cat app/build.gradle | grep -A5 "defaultConfig"
           sed -i '' "s/versionCode [0-9]*/versionCode $NEW_VERSION_CODE/" app/build.gradle || sed -i "s/versionCode [0-9]*/versionCode $NEW_VERSION_CODE/" app/build.gradle
-          sed -i '' 's/versionName "[^"]*"/versionName "1.0.7"/' app/build.gradle || sed -i 's/versionName "[^"]*"/versionName "1.0.7"/' app/build.gradle
+          sed -i '' "s/versionName \"[^\"]*\"/versionName \"$APP_VERSION\"/" app/build.gradle || sed -i "s/versionName \"[^\"]*\"/versionName \"$APP_VERSION\"/" app/build.gradle
           cat app/build.gradle | grep -A5 "defaultConfig"
           ./gradlew bundleRelease
     artifacts:
