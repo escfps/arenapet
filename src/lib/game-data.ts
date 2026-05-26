@@ -1385,6 +1385,7 @@ export const CATEGORY_INFO: Record<Category, { name: string; emoji: string; stat
   pedra:     { name: "Pedra",     emoji: "🪨", stat: "def",  statLabel: "DEF" },
   relampago: { name: "Relâmpago", emoji: "⚡", stat: "spd",  statLabel: "SPD" },
   macacos:   { name: "Macacos",   emoji: "🦧", stat: "spd",  statLabel: "SPD" },
+  corujas:   { name: "Corujas",   emoji: "🦉", stat: "int",  statLabel: "INT" },
 };
 
 export const SPECIES_CATEGORIES: Record<string, Category[]> = {
