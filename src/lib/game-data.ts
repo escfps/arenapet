@@ -658,8 +658,8 @@ export type Egg = {
 };
 
 // Helpers to build weight tables
-const ALL_COMMON = Object.values(SPECIES).filter((s) => s.rarity === "common").map((s) => s.id);
-const ALL_RARE = Object.values(SPECIES).filter((s) => s.rarity === "rare").map((s) => s.id);
+const ALL_COMMON = Object.values(SPECIES).filter((s) => s.rarity === "common" && !s.hidden).map((s) => s.id);
+const ALL_RARE = Object.values(SPECIES).filter((s) => s.rarity === "rare" && !s.hidden).map((s) => s.id);
 
 function makeWeights(commonW: number, rareW: number): Record<string, number> {
   const w: Record<string, number> = {};
