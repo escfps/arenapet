@@ -55,6 +55,15 @@ import raposaEspectralImg from "@/assets/monsters/raposa_espectral.png";
 import orangotangoImg from "@/assets/monsters/orangotango.png";
 import porcoEspinhoImg from "@/assets/monsters/porco_espinho.png";
 import urubuCarniceiroImg from "@/assets/monsters/urubu_carniceiro.png";
+import rinoceronteGuardiaoImg from "@/assets/monsters/rinoceronte_guardiao.png";
+import elefanteAncestralImg from "@/assets/monsters/elefante_ancestral.png";
+import araraCorsariaImg from "@/assets/monsters/arara_corsaria.png";
+import tigreRelampagoImg from "@/assets/monsters/tigre_relampago.png";
+import leopardoFantasmaImg from "@/assets/monsters/leopardo_fantasma.png";
+import hienaCarniceiraImg from "@/assets/monsters/hiena_carniceira.png";
+import corujaBrancaImg from "@/assets/monsters/coruja_branca.png";
+import escorpiaoDesertoImg from "@/assets/monsters/escorpiao_deserto.png";
+import corujaNegraImg from "@/assets/monsters/coruja_negra.png";
 
 export type Element = "fire" | "water" | "grass" | "electric" | "shadow" | "earth";
 export type Role = "tank" | "dps" | "assassin" | "mage" | "healer";
@@ -594,6 +603,71 @@ export const SPECIES: Record<string, Species> = {
     description: "Ave necrófaga das sombras. Quanto mais ferido fica, mais rápido se torna — e seu grito gela o sangue dos inimigos.",
     base: { hp: 108, atk: 28, def: 12, spd: 22, int: 15 },
     skill: { name: "Grito Aterrorizante", emoji: "🦅", kind: "terror_screech", cooldown: 4, description: "ATIVA: reduz o ATK de TODOS os inimigos em 20% por 2 turnos. PASSIVA: a cada 10% de HP perdido ganha +7% de SPD (até +70% com 1 HP)." },
+  },
+
+  // ===== PETS OCULTOS (em testes — só aparecem na conta admin) =====
+  rinoceronte_guardiao: {
+    id: "rinoceronte_guardiao", name: "Rinoceronte Guardião", element: "earth", role: "tank", rarity: "super_rare",
+    emoji: "🦏", image: rinoceronteGuardiaoImg, hidden: true,
+    description: "Guardião da floresta de pedra. Sua investida purifica os aliados e ergue uma muralha vinda das entranhas da terra.",
+    base: { hp: 145, atk: 14, def: 22, spd: 9, int: 8 },
+    skill: { name: "Investida Purificadora", emoji: "🦏", kind: "turtle_shell", cooldown: 3, description: "Ganha escudo de 25% do HP máx e reduz dano recebido em 20% por 2 turnos. (placeholder: remoção de debuffs em desenvolvimento)" },
+  },
+  elefante_ancestral: {
+    id: "elefante_ancestral", name: "Elefante Ancestral", element: "earth", role: "tank", rarity: "legendary",
+    emoji: "🐘", image: elefanteAncestralImg, hidden: true,
+    description: "Colosso milenar imune a controle de massa. Provoca o campo inteiro com um trompetear que faz a terra tremer.",
+    base: { hp: 170, atk: 16, def: 24, spd: 7, int: 10 },
+    skill: { name: "Trompete Ancião", emoji: "🐘", kind: "shield_taunt", cooldown: 4, description: "Provoca todos por 2 turnos e ganha 35% HP de escudo. (placeholder: imunidade total a CC em desenvolvimento)" },
+  },
+  arara_corsaria: {
+    id: "arara_corsaria", name: "Arara Corsária", element: "fire", secondaryElement: "fire", role: "dps", rarity: "rare",
+    emoji: "🦜", image: araraCorsariaImg, hidden: true,
+    description: "Pirata dos céus. Ataca em rajadas múltiplas, sempre roubando o brilho dos inimigos.",
+    base: { hp: 92, atk: 22, def: 9, spd: 20, int: 11 },
+    skill: { name: "Rajada Corsária", emoji: "🦜", kind: "double_strike", cooldown: 3, description: "Dispara 2 golpes no alvo de maior ATK (1.2× cada). (placeholder: multi-hit escalável em desenvolvimento)" },
+  },
+  tigre_relampago: {
+    id: "tigre_relampago", name: "Tigre Relâmpago", element: "electric", role: "assassin", rarity: "super_rare",
+    emoji: "🐯", image: tigreRelampagoImg, hidden: true,
+    description: "Predador feito de raios. Quanto mais rápido fica, mais devastadora é sua investida elétrica.",
+    base: { hp: 100, atk: 24, def: 10, spd: 26, int: 12 },
+    skill: { name: "Investida Voltaica", emoji: "⚡", kind: "lightning_charge", cooldown: 3, description: "Investida elétrica no mais forte (2× dano), 60% de chance de paralisar. PASSIVA: ataque básico tem 30% de chance de paralisar." },
+  },
+  leopardo_fantasma: {
+    id: "leopardo_fantasma", name: "Leopardo Fantasma", element: "shadow", role: "assassin", rarity: "epic",
+    emoji: "🐆", image: leopardoFantasmaImg, hidden: true,
+    description: "Caçador silencioso vindo do reino das sombras. Aparece atrás do mais frágil e crava o bote final.",
+    base: { hp: 105, atk: 28, def: 11, spd: 24, int: 13 },
+    skill: { name: "Bote Espectral", emoji: "🐆", kind: "spectral_pounce", cooldown: 3, description: "Crítico garantido no mais fraco (2× dano) ignorando 60% da DEF. PASSIVA: ataque básico tem 50% de chance de critar." },
+  },
+  hiena_carniceira: {
+    id: "hiena_carniceira", name: "Hiena Carniceira", element: "shadow", role: "dps", rarity: "rare",
+    emoji: "🐺", image: hienaCarniceiraImg, hidden: true,
+    description: "Necrófaga das sombras. Sente o cheiro do moribundo e termina o serviço com uma mordida devastadora.",
+    base: { hp: 96, atk: 23, def: 10, spd: 17, int: 9 },
+    skill: { name: "Mordida Carniceira", emoji: "🦷", kind: "execute", cooldown: 3, description: "Execução: alvos com <30% HP recebem dano TRIPLO. Senão, 1.8× dano. (placeholder: cura ao executar em desenvolvimento)" },
+  },
+  coruja_branca: {
+    id: "coruja_branca", name: "Coruja Branca", element: "water", secondaryElement: "water", role: "healer", rarity: "super_rare",
+    emoji: "🦉", image: corujaBrancaImg, hidden: true,
+    description: "Sábia do inverno eterno. Suas penas geladas restauram aliados e congelam a fúria inimiga.",
+    base: { hp: 95, atk: 8, def: 12, spd: 14, int: 26 },
+    skill: { name: "Bênção Glacial", emoji: "❄️", kind: "chill_heal", cooldown: 3, description: "Cura o aliado mais ferido (INT×1.3) e reduz ATK do inimigo mais forte por 2 turnos." },
+  },
+  escorpiao_deserto: {
+    id: "escorpiao_deserto", name: "Escorpião do Deserto", element: "earth", role: "assassin", rarity: "rare",
+    emoji: "🦂", image: escorpiaoDesertoImg, hidden: true,
+    description: "Ferrão venenoso vindo das dunas. Um único golpe pode paralisar a presa mais corajosa.",
+    base: { hp: 88, atk: 21, def: 10, spd: 19, int: 10 },
+    skill: { name: "Ferrão Paralisante", emoji: "🦂", kind: "pounce_stun", cooldown: 3, description: "Crítico garantido no mais fraco com chance de atordoar por 1 turno. (placeholder: veneno DOT em desenvolvimento)" },
+  },
+  coruja_negra: {
+    id: "coruja_negra", name: "Coruja Negra", element: "shadow", role: "mage", rarity: "epic",
+    emoji: "🦉", image: corujaNegraImg, hidden: true,
+    description: "Arcanista das sombras. Marca suas presas e detona ataques arcanos que reverberam pelo campo inteiro.",
+    base: { hp: 100, atk: 12, def: 11, spd: 16, int: 28 },
+    skill: { name: "Julgamento Arcano", emoji: "🌑", kind: "aoe_magic", cooldown: 4, description: "Explosão arcana em todos os inimigos (1.15× cada, ignora 60% DEF). (placeholder: Marca da Morte em desenvolvimento)" },
   },
 };
 
@@ -1360,6 +1434,16 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   orangotango: ["floresta", "macacos"],
   porco_espinho: ["floresta", "pedra"],
   urubu_carniceiro: ["aves", "sombras"],
+  // ===== PETS OCULTOS =====
+  rinoceronte_guardiao: ["floresta", "pedra"],
+  elefante_ancestral: ["floresta", "pedra"],
+  arara_corsaria: ["aves", "fogo"],
+  tigre_relampago: ["felinos", "relampago"],
+  leopardo_fantasma: ["felinos", "sombras"],
+  hiena_carniceira: ["sombras"],
+  coruja_branca: ["aves", "gelo"],
+  escorpiao_deserto: ["pedra", "sombras"],
+  coruja_negra: ["aves", "sombras"],
 };
 
 export function getSpeciesCategories(speciesId: string): Category[] {
