@@ -272,9 +272,6 @@ function RankingPage() {
         </div>
       </div>
 
-      {historyOf && (
-        <PlayerHistoryModal player={historyOf} viewerId={profile.id} onClose={() => setHistoryOf(null)} />
-      )}
     </main>
   );
 }
