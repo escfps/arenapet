@@ -192,7 +192,7 @@ function effectiveSpd(mon: Live): number {
   return s;
 }
 
-/** Elefante Ancestral: imunidade total a CC (sono, congelamento, silêncio, cegueira, atordoamento, marca, queimadura, sangramento). */
+/** Elefante Ancestral: PASSIVA — completamente imune a sono, marca, congelamento, silêncio, queimadura e cegueira durante toda a batalha. */
 function isCCImmune(mon: Live): boolean {
   return mon.species === "elefante_ancestral";
 }
