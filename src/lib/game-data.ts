@@ -848,7 +848,7 @@ export function rollChest(tier: ChestTier, forceRarity?: Rarity): ChestReward {
         if (r <= 0) { chosenRarity = rarity as Rarity; break; }
       }
     }
-    const pool = Object.values(SPECIES).filter((s) => s.rarity === chosenRarity);
+    const pool = Object.values(SPECIES).filter((s) => s.rarity === chosenRarity && !s.hidden);
     if (pool.length > 0) {
       petSpecies = pool[Math.floor(Math.random() * pool.length)].id;
     }
