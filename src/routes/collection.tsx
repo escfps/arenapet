@@ -76,6 +76,8 @@ function CollectionPage() {
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     return allSpecies.filter((s) => {
+      // Pets ocultos só aparecem se o jogador já tiver um (testes admin)
+      if (s.hidden && !ownedSpecies.has(s.id)) return false;
       if (filter === "owned" && !ownedSpecies.has(s.id)) return false;
       if (filter === "missing" && ownedSpecies.has(s.id)) return false;
       if (rarityFilter !== "all" && s.rarity !== rarityFilter) return false;
