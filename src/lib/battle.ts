@@ -1779,7 +1779,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
               const base = Math.max(1, effInt * 1.6 - target.def * 0.3);
               const dmg = Math.max(1, Math.round(base * eff * 1.1 * skillMult));
               applyDamage(target, dmg);
-              target.silenceTurns = Math.max(target.silenceTurns, 2);
+              if (!isCCImmune(target)) target.silenceTurns = Math.max(target.silenceTurns, 2);
               log.push({
                 turn,
                 actor: side,
