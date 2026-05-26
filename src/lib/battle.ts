@@ -1946,8 +1946,10 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
         // Esquiva por velocidade: 5% base + 3.5% por ponto de SPD a mais que o atacante
         // mínimo 5% (sempre há chance), máximo 55%
         const spdDiff = effectiveSpd(target) - effectiveSpd(attacker);
-        const dodgeChance = Math.max(0.05, Math.min(0.55, 0.05 + spdDiff * 0.035));
-        if (rand() < dodgeChance) {
+        const baseDodge = Math.max(0.05, Math.min(0.55, 0.05 + spdDiff * 0.035));
+        // 🏴 Marca da Morte: zera a esquiva contra ataques básicos
+        const dodgeChance = target.markTurns > 0 ? 0 : baseDodge;
+        if (dodgeChance > 0 && rand() < dodgeChance) {
           log.push({
             turn,
             actor: side,
