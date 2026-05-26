@@ -184,10 +184,13 @@ function LoginPage() {
 
   async function googleSignIn() {
     setBusy(true);
-    const isNative = window.location.protocol === "capacitor:" || /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) && window.location.hostname !== "arenapet.lovable.app";
-    const redirectUri = isNative ? "com.arenapet.app://login" : window.location.origin;
-    const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: redirectUri });
-    if (result.error) {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: "https://arenapet.lovable.app/login",
+      },
+    });
+    if (error) {
       showErr("Falha no login Google");
       setBusy(false);
     }
