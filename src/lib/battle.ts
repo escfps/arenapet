@@ -960,7 +960,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
               applyDamage(target, dmg);
               const alive = enemies.filter((e) => e.current > 0);
               for (const e of alive) {
-                e.blindTurns = Math.max(e.blindTurns, 1);
+                if (!isCCImmune(e)) e.blindTurns = Math.max(e.blindTurns, 1);
               }
               log.push({
                 turn,
