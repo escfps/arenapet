@@ -642,7 +642,7 @@ export const SPECIES: Record<string, Species> = {
     id: "leopardo_fantasma", name: "Leopardo Fantasma", element: "shadow", role: "assassin", rarity: "epic",
     emoji: "🐆", image: leopardoFantasmaImg, hidden: true,
     description: "Caçador silencioso vindo do reino das sombras. Aparece atrás do mais frágil e crava o bote final.",
-    base: { hp: 105, atk: 28, def: 11, spd: 24, int: 13 },
+    base: { hp: 135, atk: 28, def: 11, spd: 24, int: 13 },
     skill: { name: "Bote Espectral", emoji: "🐆", kind: "spectral_pounce", cooldown: 3, description: "Crítico garantido no mais fraco (2× dano) ignorando 60% da DEF. PASSIVA: ataque básico tem 50% de chance de critar." },
   },
   hiena_carniceira: {
@@ -670,7 +670,7 @@ export const SPECIES: Record<string, Species> = {
     id: "coruja_negra", name: "Coruja Negra", element: "shadow", role: "mage", rarity: "epic",
     emoji: "🦉", image: corujaNegraImg, hidden: true,
     description: "Arcanista das sombras. Marca suas presas e detona ataques arcanos que reverberam pelo campo inteiro.",
-    base: { hp: 100, atk: 12, def: 11, spd: 16, int: 28 },
+    base: { hp: 130, atk: 12, def: 11, spd: 16, int: 28 },
     skill: { name: "Julgamento Arcano", emoji: "🏴", kind: "arcane_mark", cooldown: 4, description: "Explosão arcana em todos os inimigos (INT×1.4, ignora 60% DEF) + aplica 🏴 Marca da Morte por 3 turnos (alvos marcados sofrem +25% de dano e não conseguem esquivar). Inimigos já marcados sofrem +50% e a marca é consumida." },
   },
   coruja_psiquica: {
