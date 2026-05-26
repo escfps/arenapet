@@ -628,7 +628,7 @@ export const SPECIES: Record<string, Species> = {
     id: "arara_corsaria", name: "Arara Corsária", element: "fire", secondaryElement: "fire", role: "dps", rarity: "rare",
     emoji: "🦜", image: araraCorsariaImg, hidden: true,
     description: "Pirata dos céus. Ataca em rajadas múltiplas, sempre roubando o brilho dos inimigos.",
-    base: { hp: 92, atk: 22, def: 9, spd: 20, int: 11 },
+    base: { hp: 92, atk: 30, def: 9, spd: 20, int: 11 },
     skill: { name: "Rajada Corsária", emoji: "🦜", kind: "corsair_volley", cooldown: 3, description: "Dispara 3 investidas em alvos ALEATÓRIOS (podem repetir no mesmo alvo). Cada hit causa ATK×0.9 e tem 20% de chance de aplicar 🩸 sangramento por 3 turnos (máx 1 stack por alvo)." },
   },
   tigre_relampago: {
@@ -649,7 +649,7 @@ export const SPECIES: Record<string, Species> = {
     id: "hiena_carniceira", name: "Hiena Carniceira", element: "shadow", role: "dps", rarity: "rare",
     emoji: "🐺", image: hienaCarniceiraImg, hidden: true,
     description: "Necrófaga das sombras. Sente o cheiro do moribundo e termina o serviço com uma mordida devastadora.",
-    base: { hp: 96, atk: 23, def: 10, spd: 17, int: 9 },
+    base: { hp: 96, atk: 27, def: 10, spd: 17, int: 9 },
     skill: { name: "Mordida Carniceira", emoji: "🦷", kind: "execute", cooldown: 3, description: "Execução: alvos com <30% HP recebem dano TRIPLO. Senão, 1.8× dano. (placeholder: cura ao executar em desenvolvimento)" },
   },
   coruja_branca: {
