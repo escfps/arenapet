@@ -1453,10 +1453,10 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   tigre_relampago: ["felinos", "relampago"],
   leopardo_fantasma: ["felinos", "sombras"],
   hiena_carniceira: ["sombras"],
-  coruja_branca: ["aves", "gelo"],
+  coruja_branca: ["aves", "gelo", "corujas"],
   escorpiao_deserto: ["pedra", "sombras"],
-  coruja_negra: ["aves", "sombras"],
-  coruja_psiquica: ["aves", "sombras"],
+  coruja_negra: ["aves", "sombras", "corujas"],
+  coruja_psiquica: ["aves", "sombras", "corujas"],
 };
 
 export function getSpeciesCategories(speciesId: string): Category[] {
