@@ -76,8 +76,13 @@ function CollectionPage() {
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     return allSpecies.filter((s) => {
-      // Pets ocultos só aparecem se o jogador já tiver um (testes admin)
-      if (s.hidden && !ownedSpecies.has(s.id)) return false;
+      const isLocked = !!s.hidden && !ownedSpecies.has(s.id);
+      // Pets ocultos aparecem como silhueta (não somem); ignoram filtros de busca/elemento
+      if (isLocked) {
+        if (filter === "owned") return false;
+        if (rarityFilter !== "all" && s.rarity !== rarityFilter) return false;
+        return true;
+      }
       if (filter === "owned" && !ownedSpecies.has(s.id)) return false;
       if (filter === "missing" && ownedSpecies.has(s.id)) return false;
       if (rarityFilter !== "all" && s.rarity !== rarityFilter) return false;
@@ -87,9 +92,10 @@ function CollectionPage() {
     });
   }, [allSpecies, ownedSpecies, filter, rarityFilter, elementFilter, search]);
 
-  const visibleSpecies = useMemo(() => allSpecies.filter((s) => !s.hidden || ownedSpecies.has(s.id)), [allSpecies, ownedSpecies]);
-  const ownedCount = ownedSpecies.size;
-  const totalCount = visibleSpecies.length;
+  // Progresso não conta pets ocultos (ainda não lançados)
+  const releasedSpecies = useMemo(() => allSpecies.filter((s) => !s.hidden), [allSpecies]);
+  const ownedCount = useMemo(() => releasedSpecies.filter((s) => ownedSpecies.has(s.id)).length, [releasedSpecies, ownedSpecies]);
+  const totalCount = releasedSpecies.length;
   const pct = totalCount > 0 ? Math.round((ownedCount / totalCount) * 100) : 0;
 
   return (
