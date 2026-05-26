@@ -365,6 +365,12 @@ function MonsterPage() {
             const exec = Math.round(atk * 2 * 3.0 * skillMult);
             currentLabel = `☠️ ~${normal} normal / ~${exec} se alvo <30% HP`;
             perPointLabel = `+1 ⚔️ ATK ≈ +${(2 * 3.0 * skillMult).toFixed(2)} dano na execução`;
+          } else if (skill.kind === "hyena_hunt") {
+            scaleStat = "ATK";
+            const dmg = Math.round(atk * 2 * 1.4 * skillMult);
+            const marked = Math.round(dmg * 1.25);
+            currentLabel = `🦷 ~${dmg} de dano + 🏴 Marca da Caça (2t) — ~${marked} em alvos marcados`;
+            perPointLabel = `+1 ⚔️ ATK ≈ +${(2 * 1.4 * skillMult).toFixed(2)} dano · Passiva: +20% SPD ao acertar marcados`;
           } else if (skill.kind === "burn_dot") {
             scaleStat = "INT";
             const hit = Math.round((int * 1.4 + atk * 0.8) * skillMult);
