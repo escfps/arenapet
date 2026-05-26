@@ -670,6 +670,13 @@ export const SPECIES: Record<string, Species> = {
     base: { hp: 100, atk: 12, def: 11, spd: 16, int: 28 },
     skill: { name: "Julgamento Arcano", emoji: "🌑", kind: "aoe_magic", cooldown: 4, description: "Explosão arcana em todos os inimigos (1.15× cada, ignora 60% DEF). (placeholder: Marca da Morte em desenvolvimento)" },
   },
+  coruja_psiquica: {
+    id: "coruja_psiquica", name: "Coruja Psíquica", element: "shadow", secondaryElement: "shadow", role: "mage", rarity: "mythic",
+    emoji: "🦉", image: corujaPsiquicaImg, hidden: true,
+    description: "Coruja psíquica que dobra colheres com o pensamento e manipula o tempo com seu cronômetro. Sua mente é uma arma de destruição em massa.",
+    base: { hp: 115, atk: 12, def: 12, spd: 18, int: 36 },
+    skill: { name: "Explosão Psíquica", emoji: "🧠", kind: "aoe_magic", cooldown: 5, description: "Causa INT×2.5 de dano psíquico em TODOS os inimigos com chance de silenciar por 1 turno. PASSIVA: ao entrar em batalha, concede 100 de escudo para si e para os 2 aliados. (placeholder: passiva de escudo + silêncio em desenvolvimento)" },
+  },
 };
 
 export const ELEMENT_COLORS: Record<Element, string> = {
