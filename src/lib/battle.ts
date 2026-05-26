@@ -1319,7 +1319,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
               const dmg = Math.max(1, Math.round(base * eff * 2.0 * skillMult));
               applyDamage(target, dmg);
               const stunned = rand() < 0.6 && target.current > 0;
-              if (stunned) target.stunTurns = Math.max(target.stunTurns, 1);
+              if (stunned && !isCCImmune(target)) target.stunTurns = Math.max(target.stunTurns, 1);
               log.push({
                 turn,
                 actor: side,
