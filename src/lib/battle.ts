@@ -138,6 +138,8 @@ type Live = BattleMonster & {
   burnTurns: number;
   bleedDmg: number; // dano físico por turno enquanto bleedTurns > 0
   bleedTurns: number;
+  poisonDmg: number; // dano de veneno por turno enquanto poisonTurns > 0
+  poisonTurns: number;
   blindTurns: number; // se >0, ataques básicos têm chance de errar
   sleepTurns: number; // se >0, pula o turno (dormindo zzz)
   freezeTurns: number; // se >0, pula o turno (congelado ❄️)
@@ -238,6 +240,8 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
     burnTurns: 0,
     bleedDmg: 0,
     bleedTurns: 0,
+    poisonDmg: 0,
+    poisonTurns: 0,
     blindTurns: 0,
     sleepTurns: 0,
     freezeTurns: 0,
@@ -548,7 +552,43 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
             sweepDeathExplosions();
             sweepOwlPassive();
             return;
+        }
+        // tick poison (DoT venenoso — Escorpião)
+        if (attacker.poisonTurns > 0 && attacker.current > 0) {
+          let pdmg = attacker.poisonDmg;
+          // Passiva Veneno Rastreador: +15% dano de veneno em alvos marcados
+          if (attacker.markTurns > 0) pdmg = Math.max(1, Math.round(pdmg * 1.15));
+          applyDamage(attacker, pdmg);
+          log.push({
+            turn,
+            actor: side,
+            actorName: attacker.name,
+            targetName: attacker.name,
+            damage: pdmg,
+            crit: false,
+            effective: 1,
+            remainingHp: attacker.current,
+            message: `☠️ ${attacker.name} sofreu ${pdmg} de veneno`,
+          });
+          attacker.poisonTurns -= 1;
+          if (attacker.current <= 0) {
+            attacker.lastFallenAt = turn;
+            log.push({
+              turn,
+              actor: side,
+              actorName: attacker.name,
+              targetName: attacker.name,
+              damage: 0,
+              crit: false,
+              effective: 1,
+              remainingHp: 0,
+              message: `💀 ${attacker.name} foi consumido pelo veneno!`,
+            });
+            sweepDeathExplosions();
+            sweepOwlPassive();
+            return;
           }
+        }
         }
         // tick rage
         if (attacker.rageTurns > 0) {
@@ -1373,6 +1413,59 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
             return;
           }
 
+          if (skill.kind === "scorpion_sting") {
+            const aliveEnemies = enemies.filter((e) => e.current > 0);
+            const target = aliveEnemies.length ? aliveEnemies.reduce((x, y) => (x.current < y.current ? x : y)) : null;
+            if (target) {
+              const alreadyMarked = target.markTurns > 0;
+              const eff = defensiveMultiplier(getElement(attacker.species), target.species);
+              const mult = alreadyMarked ? 1.3 : 1.1;
+              const base = Math.max(1, effAtk * mult - tgtEffDef(target));
+              const dmg = Math.max(1, Math.round(base * eff * skillMult));
+              applyDamage(target, dmg);
+              // Aplica Marca da Morte (2 turnos) se não imune
+              if (!isCCImmune(target)) {
+                target.markTurns = Math.max(target.markTurns, 2);
+              }
+              // Aplica Veneno (2 turnos base, +1 se já estava marcado antes)
+              const poisonDuration = alreadyMarked ? 3 : 2;
+              const poisonDot = Math.max(1, Math.round(effAtk * 0.3 * skillMult));
+              if (target.current > 0) {
+                target.poisonDmg = Math.max(target.poisonDmg, poisonDot);
+                target.poisonTurns = Math.max(target.poisonTurns, poisonDuration);
+              }
+              log.push({
+                turn,
+                actor: side,
+                actorName: attacker.name,
+                targetName: target.name,
+                damage: dmg,
+                crit: false,
+                effective: eff,
+                remainingHp: target.current,
+                targetShield: target.shield,
+                message: `${skill.emoji} ${attacker.name} usou ${skill.name}: ${dmg} em ${target.name}${alreadyMarked ? " (alvo já marcado — golpe potente!)" : ""} + 🏴 Marca + ☠️ Veneno (${poisonDot}/turno por ${poisonDuration} turnos)`,
+              });
+              if (target.current <= 0) {
+                target.lastFallenAt = turn;
+                log.push({
+                  turn,
+                  actor: side,
+                  actorName: attacker.name,
+                  targetName: target.name,
+                  damage: 0,
+                  crit: false,
+                  effective: 1,
+                  remainingHp: 0,
+                  message: `💀 ${target.name} foi derrotado!`,
+                });
+              }
+            }
+            return;
+          }
+
+
+
           if (skill.kind === "spectral_pounce") {
             const aliveEnemies = enemies.filter((e) => e.current > 0);
             const target = aliveEnemies.length ? aliveEnemies.reduce((x, y) => (x.current < y.current ? x : y)) : null;
@@ -1724,7 +1817,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
               const had =
                 m.sleepTurns > 0 || m.freezeTurns > 0 || m.silenceTurns > 0 ||
                 m.blindTurns > 0 || m.stunTurns > 0 || m.markTurns > 0 ||
-                m.burnTurns > 0 || m.bleedTurns > 0 ||
+                m.burnTurns > 0 || m.bleedTurns > 0 || m.poisonTurns > 0 ||
                 m.defDebuffTurns > 0 || m.atkDebuffTurns > 0;
               if (had) {
                 m.sleepTurns = 0;
@@ -1735,6 +1828,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
                 m.markTurns = 0;
                 m.burnTurns = 0; m.burnDmg = 0;
                 m.bleedTurns = 0; m.bleedDmg = 0;
+                m.poisonTurns = 0; m.poisonDmg = 0;
                 m.defDebuffTurns = 0; m.defDebuffPct = 0;
                 m.atkDebuffTurns = 0; m.atkDebuffPct = 0;
                 cleansed.push(m.name);
@@ -2043,6 +2137,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
               fallen.shield = 0;
               fallen.burnTurns = 0;
               fallen.bleedTurns = 0;
+              fallen.poisonTurns = 0; fallen.poisonDmg = 0;
               fallen.blindTurns = 0;
               fallen.sleepTurns = 0;
               fallen.freezeTurns = 0;

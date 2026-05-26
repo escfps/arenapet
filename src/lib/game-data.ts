@@ -153,6 +153,7 @@ export type SkillKind =
   | "night_mark"        // healer — aplica 🏴 Marca da Morte em todos os inimigos por 2 turnos + aliados ganham +15% SPD por 2 turnos; PASSIVA: ao morrer marcado, aliado com menor HP cura 12% do HP máx
   | "cleanse_shield"    // tank — remove TODOS os debuffs dos aliados + escudo 25% HP máx
   | "corsair_volley"    // dps — 3 investidas em alvos aleatórios (podem repetir) com 20% de chance de sangrar por hit (máx 1 stack)
+  | "scorpion_sting"    // assassin — ferroada venenosa: 110% ATK + 🏴 Marca da Morte (2t) + ☠️ Veneno (2t); se já marcado: 130% ATK e veneno +1 turno. PASSIVA: veneno +15% em marcados
   | "aoe_strike_def_down"; // tank — golpe físico em AoE (1.3× cada) + reduz DEF de todos em 15% por 2 turnos
 
 export type Skill = {
@@ -666,7 +667,7 @@ export const SPECIES: Record<string, Species> = {
     emoji: "🦂", image: escorpiaoDesertoImg, hidden: true,
     description: "Ferrão venenoso vindo das dunas. Um único golpe pode paralisar a presa mais corajosa.",
     base: { hp: 88, atk: 21, def: 10, spd: 19, int: 10 },
-    skill: { name: "Ferrão Paralisante", emoji: "🦂", kind: "pounce_stun", cooldown: 3, description: "Crítico garantido no mais fraco com chance de atordoar por 1 turno. (placeholder: veneno DOT em desenvolvimento)" },
+    skill: { name: "Ferroada Venenosa", emoji: "🦂", kind: "scorpion_sting", cooldown: 3, description: "Ferroada no inimigo mais fraco causando 110% do ATK + aplica 🏴 Marca da Morte e ☠️ Veneno por 2 turnos. Se o alvo já estiver marcado, causa 130% do ATK e o veneno dura +1 turno. PASSIVA — Veneno Rastreador: inimigos com 🏴 Marca da Morte sofrem +15% de dano de veneno." },
   },
   coruja_negra: {
     id: "coruja_negra", name: "Coruja Negra", element: "shadow", role: "mage", rarity: "epic",
