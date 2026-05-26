@@ -274,50 +274,61 @@ function CollectionPage() {
   );
 }
 
-function DexCard({ sp, owned }: { sp: (typeof SPECIES)[string]; owned: boolean }) {
+function DexCard({ sp, owned, locked = false }: { sp: (typeof SPECIES)[string]; owned: boolean; locked?: boolean }) {
   const gradient = ELEMENT_COLORS[sp.element];
   const cats = getSpeciesCategories(sp.id);
   return (
     <div
       className={`relative rounded-2xl overflow-hidden border-2 shadow-xl transition ${
         owned ? `border-yellow-300/60 ring-2 ${RARITY_INFO[sp.rarity].ringColor}` : `border-white/20 ring-1 ${RARITY_INFO[sp.rarity].ringColor}`
-      }`}
-      title={sp.description}
+      } ${locked ? "opacity-90" : ""}`}
+      title={locked ? "Em breve…" : sp.description}
     >
       <span className={`absolute top-2 left-2 z-10 px-2 py-0.5 rounded-full ${RARITY_INFO[sp.rarity].color} text-[10px] font-extrabold shadow`}>
         {RARITY_INFO[sp.rarity].emoji}
       </span>
-      <span className={`absolute top-2 right-2 z-10 px-2 py-0.5 rounded-full ${ROLE_INFO[sp.role].color} text-white text-[10px] font-extrabold shadow`}>
-        {ROLE_INFO[sp.role].emoji}
-      </span>
+      {!locked && (
+        <span className={`absolute top-2 right-2 z-10 px-2 py-0.5 rounded-full ${ROLE_INFO[sp.role].color} text-white text-[10px] font-extrabold shadow`}>
+          {ROLE_INFO[sp.role].emoji}
+        </span>
+      )}
+      {locked && (
+        <span className="absolute top-2 right-2 z-10 px-2 py-0.5 rounded-full bg-black/70 text-white text-[10px] font-extrabold shadow border border-white/20">
+          🔒 EM BREVE
+        </span>
+      )}
       {owned && (
         <span className="absolute bottom-2 right-2 z-10 px-1.5 py-0.5 rounded bg-yellow-400 text-yellow-950 text-[9px] font-extrabold shadow">
           ✓ TENHO
         </span>
       )}
 
-      <div className={`bg-gradient-to-br ${gradient} p-3`}>
+      <div className={`bg-gradient-to-br ${locked ? "from-slate-800 to-slate-950" : gradient} p-3`}>
         <div className="flex items-center justify-center h-28">
           <img
             src={sp.image}
-            alt={sp.name}
+            alt={locked ? "???" : sp.name}
             loading="lazy"
-            className="h-full w-auto object-contain drop-shadow-2xl"
+            className={`h-full w-auto object-contain drop-shadow-2xl ${locked ? "" : ""}`}
+            style={locked ? { filter: "brightness(0) saturate(0)", opacity: 0.55 } : undefined}
           />
         </div>
       </div>
 
       <div className="p-2 bg-card/95 backdrop-blur-sm space-y-1.5">
         <div className="text-center">
-          <div className="font-extrabold text-sm truncate">{sp.name}</div>
+          <div className="font-extrabold text-sm truncate">{locked ? "???" : sp.name}</div>
           <div className="text-[10px] text-muted-foreground truncate">
-            {sp.emoji} {ELEMENT_NAMES[sp.element]}
-            {sp.secondaryElement ? ` / ${ELEMENT_NAMES[sp.secondaryElement]}` : ""}
+            {locked ? "Pet misterioso — em breve" : (
+              <>
+                {sp.emoji} {ELEMENT_NAMES[sp.element]}
+                {sp.secondaryElement ? ` / ${ELEMENT_NAMES[sp.secondaryElement]}` : ""}
+              </>
+            )}
           </div>
         </div>
 
-        {/* Categorias / Sinergias */}
-        {cats.length > 0 && (
+        {!locked && cats.length > 0 && (
           <div className="flex flex-wrap justify-center gap-1">
             {cats.map((c) => (
               <span
@@ -332,8 +343,7 @@ function DexCard({ sp, owned }: { sp: (typeof SPECIES)[string]; owned: boolean }
           </div>
         )}
 
-        {/* Stats reais (rank 1, com multiplicadores atuais) */}
-        {(() => {
+        {!locked && (() => {
           const st = totalStats(sp.id, 1);
           const baseCritPct = sp.role === "assassin" ? 35 : sp.id === "raposa_espectral" ? 30 : 12;
           return (
@@ -348,13 +358,18 @@ function DexCard({ sp, owned }: { sp: (typeof SPECIES)[string]; owned: boolean }
           );
         })()}
 
-        {/* Skill */}
-        {sp.skill && (
+        {!locked && sp.skill && (
           <div className="rounded-md bg-muted/60 px-1.5 py-1 text-[9px] leading-tight">
             <div className="font-extrabold truncate">
               {sp.skill.emoji} {sp.skill.name} <span className="opacity-60 font-normal">• CD {sp.skill.cooldown}</span>
             </div>
             <div className="text-muted-foreground line-clamp-2">{sp.skill.description}</div>
+          </div>
+        )}
+
+        {locked && (
+          <div className="rounded-md bg-muted/60 px-1.5 py-1 text-[9px] leading-tight text-center text-muted-foreground italic">
+            Habilidade desconhecida…
           </div>
         )}
       </div>
