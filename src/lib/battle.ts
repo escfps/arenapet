@@ -2432,6 +2432,14 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           lifestealHealed = Math.round(damage * 0.30);
           attacker.current = Math.min(attacker.maxHp, attacker.current + lifestealHealed);
         }
+        // PASSIVA Coruja Negra (Marca Final): ao atacar um inimigo com 🏴 Marca da Morte, recupera 25% do HP máx
+        let corujaNegraHeal = 0;
+        if (attacker.species === "coruja_negra" && target.markTurns > 0 && damage > 0) {
+          const heal = Math.round(attacker.maxHp * 0.25);
+          const before = attacker.current;
+          attacker.current = Math.min(attacker.maxHp, attacker.current + heal);
+          corujaNegraHeal = attacker.current - before;
+        }
 
         // PASSIVA Triceratops Colossal: reflete 15% do dano recebido em ataques básicos
         let reflected = 0;
