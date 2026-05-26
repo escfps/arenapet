@@ -28,7 +28,7 @@ function ProfilePage() {
     if (pwd !== pwd2) { toast.error("As senhas não coincidem."); return; }
     setPwdBusy(true);
     try {
-      const { supabase } = await import("@/integrations/supabase/client");
+      
       const { error } = await supabase.auth.updateUser({ password: pwd });
       if (error) throw error;
       try { localStorage.removeItem("arenapet:remember"); } catch {}
