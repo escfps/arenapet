@@ -116,10 +116,12 @@ export function MobileNav({ open, onClose }: { open: boolean; onClose: () => voi
             <ul className="flex-1 overflow-y-auto p-2">
               {drawerItems.map((item) => {
                 const active = pathname.startsWith(item.to);
+                const hash = "hash" in item ? (item as { hash?: string }).hash : undefined;
                 return (
-                  <li key={item.to}>
+                  <li key={`${item.to}-${item.label}`}>
                     <Link
                       to={item.to}
+                      hash={hash}
                       data-tutorial-nav={item.to}
                       onClick={onClose}
                       className={`flex items-center gap-3 px-4 py-3 rounded-xl text-base font-bold transition ${
