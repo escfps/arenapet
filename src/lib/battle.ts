@@ -2458,6 +2458,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
         if (frozenByPassive) msg += ` ❄️ ${target.name} congelou por 2 turnos!`;
         if (stunnedByPassive) msg += ` ⚡ ${target.name} paralisou por 1 turno!`;
         if (lifestealHealed > 0) msg += ` 🩸 (+${lifestealHealed} HP roubado)`;
+        if (corujaNegraHeal > 0) msg += ` 🔮 (+${corujaNegraHeal} HP — Marca Final)`;
         if (reflected > 0) msg += ` ${target.species === "porco_espinho" ? "🦔" : "🦕"} (refletiu ${reflected})`;
 
         log.push({
