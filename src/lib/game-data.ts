@@ -604,6 +604,75 @@ export const SPECIES: Record<string, Species> = {
     base: { hp: 108, atk: 28, def: 12, spd: 22, int: 15 },
     skill: { name: "Grito Aterrorizante", emoji: "🦅", kind: "terror_screech", cooldown: 4, description: "ATIVA: reduz o ATK de TODOS os inimigos em 20% por 2 turnos. PASSIVA: a cada 10% de HP perdido ganha +7% de SPD (até +70% com 1 HP)." },
   },
+
+  // ===== PETS OCULTOS (em testes — hidden:true) =====
+  // Aparecem na Coleção pública como silhueta "???" e NÃO caem em baús
+  // até serem lançados (basta remover hidden:true). Usam mecânicas existentes
+  // mais próximas das descritas no design — refino completo (Marca da Morte
+  // dedicada, multi-hit da Arara, escala de SPD do Leopardo, etc) virá depois.
+  rinoceronte_guardiao: {
+    id: "rinoceronte_guardiao", name: "Rinoceronte Guardião", element: "earth", role: "tank", rarity: "super_rare",
+    emoji: "🦏", image: rinoceronteGuardiaoImg, hidden: true,
+    description: "Guardião de pedra e floresta. Avança purificando o time e ergue uma muralha de couro grosso.",
+    base: { hp: 138, atk: 11, def: 20, spd: 9, int: 9 },
+    skill: { name: "Investida Purificadora", emoji: "🦏", kind: "turtle_shell", cooldown: 3, description: "Avança e ganha escudo de 25% HP máx + reduz dano recebido por 2 turnos. (Em breve: limpará debuffs dos aliados.)" },
+  },
+  elefante_ancestral: {
+    id: "elefante_ancestral", name: "Elefante Ancestral", element: "earth", role: "tank", rarity: "mythic",
+    emoji: "🐘", image: elefanteAncestralImg, hidden: true,
+    description: "Colosso ancestral da floresta. Sua presença é tão imponente que nenhum efeito mental ousa tocá-lo.",
+    base: { hp: 150, atk: 14, def: 20, spd: 8, int: 12 },
+    skill: { name: "Tromba Devastadora", emoji: "🐘", kind: "horn_charge", cooldown: 4, description: "PASSIVA: imune total a sono, marca, congelamento, silêncio, queimadura e cegueira. ATIVA: provoca todos por 2 turnos e ganha escudo de 35% HP máx." },
+  },
+  arara_corsaria: {
+    id: "arara_corsaria", name: "Arara Corsária", element: "electric", role: "assassin", rarity: "super_rare",
+    emoji: "🦜", image: araraCorsariaImg, hidden: true,
+    description: "Pirata dos céus tempestuosos. Voa em alta velocidade e despeja golpes elétricos consecutivos nos inimigos.",
+    base: { hp: 96, atk: 14, def: 8, spd: 26, int: 8 },
+    skill: { name: "Corte Corsário", emoji: "⚡", kind: "double_strike", cooldown: 3, description: "Ataca 2× o alvo de maior ATK (1.3× cada). (Em breve: 3 investidas aleatórias com chance de sangramento.)" },
+  },
+  tigre_relampago: {
+    id: "tigre_relampago", name: "Tigre Relâmpago", element: "electric", role: "assassin", rarity: "mythic",
+    emoji: "⚡", image: tigreRelampagoImg, hidden: true,
+    description: "Tigre branco com listras de pura eletricidade. Sua velocidade absurda transforma cada bote em um relâmpago.",
+    base: { hp: 110, atk: 22, def: 12, spd: 25, int: 14 },
+    skill: { name: "Blitz Relâmpago", emoji: "⚡", kind: "lightning_charge", cooldown: 4, description: "Investida elétrica no inimigo mais forte (2× dano) + 60% de paralisar. (Em breve: segundo golpe quando o SPD for maior + esquiva por SPD.)" },
+  },
+  leopardo_fantasma: {
+    id: "leopardo_fantasma", name: "Leopardo Fantasma", element: "shadow", role: "assassin", rarity: "epic",
+    emoji: "👻", image: leopardoFantasmaImg, hidden: true,
+    description: "Atravessa as sombras e surge atrás do alvo num bote letal. Quanto mais rápido, mais devastador.",
+    base: { hp: 100, atk: 16, def: 9, spd: 23, int: 10 },
+    skill: { name: "Caçada Sombria", emoji: "🌑", kind: "spectral_pounce", cooldown: 3, description: "Bote crítico garantido no inimigo mais fraco ignorando 60% DEF. PASSIVA: ataques básicos têm 30% de chance de critar. (Em breve: escala de dano por diferença de SPD.)" },
+  },
+  hiena_carniceira: {
+    id: "hiena_carniceira", name: "Hiena Carniceira", element: "shadow", role: "assassin", rarity: "legendary",
+    emoji: "🐺", image: hienaCarniceiraImg, hidden: true,
+    description: "Predadora implacável de mandíbula sombria. Caça presas enfraquecidas e dilacera com fome insaciável.",
+    base: { hp: 105, atk: 19, def: 10, spd: 21, int: 10 },
+    skill: { name: "Caçada Sangrenta", emoji: "🩸", kind: "execute", cooldown: 3, description: "Execução: alvos com menos de 30% HP recebem dano TRIPLO. Senão, 1.75× dano. (Em breve: aplicará Marca da Morte e ganhará SPD ao atacar marcados.)" },
+  },
+  coruja_branca: {
+    id: "coruja_branca", name: "Coruja Branca", element: "electric", role: "healer", rarity: "epic",
+    emoji: "🦉", image: corujaBrancaImg, hidden: true,
+    description: "Coruja celestial de olhos dourados. Revela as fraquezas do inimigo e revigora o time inteiro.",
+    base: { hp: 112, atk: 8, def: 12, spd: 16, int: 22 },
+    skill: { name: "Visão do Predador", emoji: "✨", kind: "crystal_resonance", cooldown: 4, description: "Cura todos os aliados (~INT×1.2) e aumenta a DEF do time em 15% por 2 turnos. (Em breve: aplicará Marca da Morte e curará ao matar marcados.)" },
+  },
+  escorpiao_deserto: {
+    id: "escorpiao_deserto", name: "Escorpião do Deserto", element: "grass", secondaryElement: "shadow", role: "mage", rarity: "epic",
+    emoji: "🦂", image: escorpiaoDesertoImg, hidden: true,
+    description: "Escorpião gigante de cauda venenosa. Cada ferroada corrói lentamente a carne do inimigo.",
+    base: { hp: 102, atk: 12, def: 11, spd: 18, int: 22 },
+    skill: { name: "Ferrão do Caçador", emoji: "☠️", kind: "burn_dot", cooldown: 3, description: "Ferroada venenosa: dano agora + veneno por 3 turnos. (Em breve: aplicará Marca da Morte e bônus contra marcados.)" },
+  },
+  coruja_negra: {
+    id: "coruja_negra", name: "Coruja Negra", element: "shadow", role: "mage", rarity: "legendary",
+    emoji: "🔮", image: corujaNegraImg, hidden: true,
+    description: "Arcanista das sombras. Libera explosões mágicas devastadoras que executam inimigos enfraquecidos.",
+    base: { hp: 100, atk: 16, def: 10, spd: 14, int: 25 },
+    skill: { name: "Julgamento Arcano", emoji: "🔮", kind: "aoe_magic", cooldown: 3, description: "Explosão arcana em todos os inimigos (1.2× dano mágico cada, ignora defesa). (Em breve: dano dobrado em alvos com Marca da Morte + sustain.)" },
+  },
 };
 
 export const ELEMENT_COLORS: Record<Element, string> = {
