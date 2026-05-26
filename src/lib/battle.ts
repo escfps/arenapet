@@ -1764,7 +1764,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
               const had =
                 m.sleepTurns > 0 || m.freezeTurns > 0 || m.silenceTurns > 0 ||
                 m.blindTurns > 0 || m.stunTurns > 0 || m.markTurns > 0 ||
-                m.burnTurns > 0 || m.bleedTurns > 0 ||
+                m.burnTurns > 0 || m.bleedTurns > 0 || m.poisonTurns > 0 ||
                 m.defDebuffTurns > 0 || m.atkDebuffTurns > 0;
               if (had) {
                 m.sleepTurns = 0;
@@ -1775,6 +1775,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
                 m.markTurns = 0;
                 m.burnTurns = 0; m.burnDmg = 0;
                 m.bleedTurns = 0; m.bleedDmg = 0;
+                m.poisonTurns = 0; m.poisonDmg = 0;
                 m.defDebuffTurns = 0; m.defDebuffPct = 0;
                 m.atkDebuffTurns = 0; m.atkDebuffPct = 0;
                 cleansed.push(m.name);
