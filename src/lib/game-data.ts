@@ -1368,7 +1368,7 @@ export function rollArenaPoints(currentPoints: number): { win: number; loss: num
 // ===== SINERGIA POR CATEGORIA =====
 export type Category =
   | "fogo" | "floresta" | "sombras" | "felinos" | "repteis"
-  | "abyssal" | "dragoes" | "gelo" | "aves" | "pedra" | "relampago" | "macacos";
+  | "abyssal" | "dragoes" | "gelo" | "aves" | "pedra" | "relampago" | "macacos" | "corujas";
 
 export type SynergyStat = "hp" | "atk" | "def" | "spd" | "int" | "crit";
 
@@ -1385,6 +1385,7 @@ export const CATEGORY_INFO: Record<Category, { name: string; emoji: string; stat
   pedra:     { name: "Pedra",     emoji: "🪨", stat: "def",  statLabel: "DEF" },
   relampago: { name: "Relâmpago", emoji: "⚡", stat: "spd",  statLabel: "SPD" },
   macacos:   { name: "Macacos",   emoji: "🦧", stat: "spd",  statLabel: "SPD" },
+  corujas:   { name: "Corujas",   emoji: "🦉", stat: "int",  statLabel: "INT" },
 };
 
 export const SPECIES_CATEGORIES: Record<string, Category[]> = {
@@ -1452,10 +1453,10 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   tigre_relampago: ["felinos", "relampago"],
   leopardo_fantasma: ["felinos", "sombras"],
   hiena_carniceira: ["sombras"],
-  coruja_branca: ["aves", "gelo"],
+  coruja_branca: ["aves", "gelo", "corujas"],
   escorpiao_deserto: ["pedra", "sombras"],
-  coruja_negra: ["aves", "sombras"],
-  coruja_psiquica: ["aves", "sombras"],
+  coruja_negra: ["aves", "sombras", "corujas"],
+  coruja_psiquica: ["aves", "sombras", "corujas"],
 };
 
 export function getSpeciesCategories(speciesId: string): Category[] {
