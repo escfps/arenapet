@@ -62,25 +62,26 @@ function detectEffect(entry: BattleLogEntry): EffectBanner {
   return null;
 }
 
-// Detecta status persistentes pela mensagem
-function statusFromMessage(msg: string): StatusKind | null {
-  if (msg.includes("sangrando") && msg.includes("turnos")) return "bleed";
-  if (msg.includes("sangrou")) return "bleed";
-  if (msg.includes("☠️") || msg.includes("Veneno") || msg.includes("veneno") || msg.includes("Envenenado")) return "poison";
+// Detecta status persistentes pela mensagem (pode haver múltiplos)
+function statusesFromMessage(msg: string): StatusKind[] {
+  const out: StatusKind[] = [];
+  if ((msg.includes("sangrando") && msg.includes("turnos")) || msg.includes("sangrou")) out.push("bleed");
+  if (msg.includes("☠️") || msg.includes("Veneno") || msg.includes("veneno") || msg.includes("Envenenado")) out.push("poison");
   if (msg.includes("queimando") && msg.includes("turnos")) {
-    if (msg.includes("Tinta Venenosa")) return "poison";
-    return "burn";
+    if (msg.includes("Tinta Venenosa")) {
+      if (!out.includes("poison")) out.push("poison");
+    } else out.push("burn");
   }
-  if (msg.includes("queimadura")) return "burn";
-  if (msg.includes("cegou") || msg.includes("cegueira")) return "blind";
-  if (msg.includes("adormeceu") || msg.includes("dormindo") || msg.includes("💤")) return "sleep";
-  if (msg.includes("congelou") || msg.includes("congelado") || msg.includes("❄️")) return "freeze";
-  if (msg.includes("silenciou") || msg.includes("silencia próxima") || msg.includes("silenciado")) return "silence";
-  if (msg.includes("atordoou") || msg.includes("paralisou") || msg.includes("atordoado")) return "stun";
-  if (msg.includes("🏴") || msg.includes("Marca da Morte") || msg.includes("marcado")) return "mark";
-  if (msg.includes("fúria") || msg.includes("ATK por 3 turnos")) return "rage";
-  if (msg.includes("DEF por") && msg.includes("escudo")) return "shield";
-  return null;
+  if (msg.includes("queimadura")) out.push("burn");
+  if (msg.includes("cegou") || msg.includes("cegueira")) out.push("blind");
+  if (msg.includes("adormeceu") || msg.includes("dormindo") || msg.includes("💤")) out.push("sleep");
+  if (msg.includes("congelou") || msg.includes("congelado") || msg.includes("❄️")) out.push("freeze");
+  if (msg.includes("silenciou") || msg.includes("silencia próxima") || msg.includes("silenciado")) out.push("silence");
+  if (msg.includes("atordoou") || msg.includes("paralisou") || msg.includes("atordoado")) out.push("stun");
+  if (msg.includes("🏴") || msg.includes("Marca da Morte") || msg.includes("Marca da Caça") || msg.includes("marcou") || msg.includes("alvo marcado") || msg.includes("alvo já marcado")) out.push("mark");
+  if (msg.includes("fúria") || msg.includes("ATK por 3 turnos")) out.push("rage");
+  if (msg.includes("DEF por") && msg.includes("escudo")) out.push("shield");
+  return out;
 }
 
 export function BattleScene({
