@@ -615,7 +615,7 @@ export const SPECIES: Record<string, Species> = {
     emoji: "🦏", image: rinoceronteGuardiaoImg, hidden: true,
     description: "Muralha viva da floresta de pedra. Sua presença atrai todos os ataques inimigos enquanto sua casca grossa absorve tudo.",
     base: { hp: 200, atk: 14, def: 32, spd: 9, int: 8 },
-    skill: { name: "Postura Imbatível", emoji: "🦏", kind: "shield_taunt", cooldown: 3, description: "PASSIVA: provoca — inimigos atacam ele primeiro. ATIVA: reforça a postura, provocando todos por 2 turnos e ganhando escudo de 30% do HP máx." },
+    skill: { name: "Investida Purificadora", emoji: "🦏", kind: "cleanse_shield", cooldown: 3, description: "PASSIVA: provoca — inimigos atacam ele primeiro. ATIVA: remove TODOS os debuffs (sono, congelamento, silêncio, cegueira, atordoamento, queimadura, sangramento, marca, DEF/ATK reduzidos) de todos os aliados e ganha escudo de 25% do HP máx." },
   },
   elefante_ancestral: {
     id: "elefante_ancestral", name: "Elefante Ancestral", element: "earth", role: "tank", rarity: "legendary",
