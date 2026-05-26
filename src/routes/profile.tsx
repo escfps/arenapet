@@ -131,6 +131,38 @@ function ProfilePage() {
           </div>
         </div>
 
+        {/* Change password */}
+        <div className="rounded-3xl bg-[oklch(0.18_0.06_290)]/90 backdrop-blur-xl border-2 border-cyan-400/30 p-6 shadow-2xl">
+          <h2 className="text-lg font-extrabold text-white mb-1 flex items-center gap-2">🔐 Alterar senha</h2>
+          <p className="text-white/60 text-xs mb-3">Escolha uma nova senha (mín. 6 caracteres).</p>
+          <form onSubmit={changePassword} className="space-y-3">
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-lg">🔒</span>
+              <input
+                type="password" required minLength={6} value={pwd} onChange={(e) => setPwd(e.target.value)}
+                placeholder="Nova senha"
+                className="w-full pl-10 pr-3 py-3 rounded-xl bg-black/40 border-2 border-white/10 focus:border-cyan-400 text-white text-sm font-bold outline-none transition"
+              />
+            </div>
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-lg">🔒</span>
+              <input
+                type="password" required minLength={6} value={pwd2} onChange={(e) => setPwd2(e.target.value)}
+                placeholder="Confirme a nova senha"
+                className="w-full pl-10 pr-3 py-3 rounded-xl bg-black/40 border-2 border-white/10 focus:border-cyan-400 text-white text-sm font-bold outline-none transition"
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={pwdBusy}
+              className="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-extrabold shadow-[0_4px_0_oklch(0.35_0.15_240)] active:translate-y-0.5 active:shadow-[0_1px_0_oklch(0.35_0.15_240)] transition disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {pwdBusy ? "Salvando..." : "🔐 Alterar senha"}
+            </button>
+          </form>
+        </div>
+
+
         {/* Season trophies (permanent) */}
         <div className="rounded-3xl bg-[oklch(0.18_0.06_290)]/90 backdrop-blur-xl border-2 border-amber-400/30 p-6 shadow-2xl">
           <h2 className="text-lg font-extrabold text-white mb-1 flex items-center gap-2">
