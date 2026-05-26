@@ -11,7 +11,7 @@ type ShieldMap = Map<string, number>;
 type SkillFxKind = "heal" | "bite" | "explosion" | "lightning" | "fire" | "shield" | "slash" | "skull" | "fury" | "silence" | "magic" | "revive" | "true" | "cooldown" | "impact";
 type MissLabel = { key: string; kind: "dodge" | "miss" } | null;
 type Fx = { actor: string | null; target: string | null; dmg: number | null; shieldGain: number | null; crit: boolean; skillFx: SkillFxKind | null; targets: string[]; miss: MissLabel };
-type StatusKind = "burn" | "poison" | "bleed" | "blind" | "sleep" | "freeze" | "silence" | "rage" | "shield";
+type StatusKind = "burn" | "poison" | "bleed" | "blind" | "sleep" | "freeze" | "silence" | "rage" | "shield" | "stun" | "mark";
 type StatusMap = Map<string, Set<StatusKind>>;
 type EffectBanner = {
   id: number;
@@ -65,15 +65,19 @@ function detectEffect(entry: BattleLogEntry): EffectBanner {
 // Detecta status persistentes pela mensagem
 function statusFromMessage(msg: string): StatusKind | null {
   if (msg.includes("sangrando") && msg.includes("turnos")) return "bleed";
+  if (msg.includes("sangrou")) return "bleed";
+  if (msg.includes("☠️") || msg.includes("Veneno") || msg.includes("veneno") || msg.includes("Envenenado")) return "poison";
   if (msg.includes("queimando") && msg.includes("turnos")) {
-    // Polvo Venenoso usa burn_dot mas visualmente é veneno
-    if (msg.includes("Tinta Venenosa") || msg.includes("☠️") || msg.includes("veneno")) return "poison";
+    if (msg.includes("Tinta Venenosa")) return "poison";
     return "burn";
   }
+  if (msg.includes("queimadura")) return "burn";
   if (msg.includes("cegou") || msg.includes("cegueira")) return "blind";
   if (msg.includes("adormeceu") || msg.includes("dormindo") || msg.includes("💤")) return "sleep";
   if (msg.includes("congelou") || msg.includes("congelado") || msg.includes("❄️")) return "freeze";
-  if (msg.includes("silenciou") || msg.includes("silencia próxima")) return "silence";
+  if (msg.includes("silenciou") || msg.includes("silencia próxima") || msg.includes("silenciado")) return "silence";
+  if (msg.includes("atordoou") || msg.includes("paralisou") || msg.includes("atordoado")) return "stun";
+  if (msg.includes("🏴") || msg.includes("Marca da Morte") || msg.includes("marcado")) return "mark";
   if (msg.includes("fúria") || msg.includes("ATK por 3 turnos")) return "rage";
   if (msg.includes("DEF por") && msg.includes("escudo")) return "shield";
   return null;
@@ -354,7 +358,7 @@ export function BattleScene({
     const eff = detectEffect(entry);
     if (eff) setBanner(eff);
 
-    // ===== Status persistentes no alvo =====
+    // ===== Status persistentes no alvo (ficam visíveis até morte/cleanse/expiração explícita) =====
     const st = statusFromMessage(entry.message);
     if (st) {
       const key = st === "rage" ? actorKey : (targetKey ?? actorKey);
@@ -365,21 +369,35 @@ export function BattleScene({
         next.set(key, cur);
         return next;
       });
-      // expira após algumas etapas
-      const stepsToClear = st === "silence" ? 2 : 3;
-      const clearTimer = setTimeout(() => {
+    }
+
+    // Limpa status quando o monstro morre
+    if (entry.message.includes("foi derrotado") || entry.message.includes("foi consumido") || entry.message.includes("sucumbiu")) {
+      const deadKey = targetKey ?? actorKey;
+      if (deadKey) {
         setStatuses((prev) => {
           const next = new Map(prev);
-          const cur = new Set(next.get(key) ?? []);
-          cur.delete(st);
-          if (cur.size === 0) next.delete(key);
-          else next.set(key, cur);
+          next.delete(deadKey);
           return next;
         });
-      }, 650 * stepsToClear);
-      // não retornamos esse timer pra não atrapalhar o cleanup principal
-      void clearTimer;
+      }
     }
+
+    // Limpa todos os debuffs do alvo quando há cleanse explícito
+    if (entry.message.includes("dissipou") || entry.message.includes("Purificação") || entry.message.includes("removeu os debuffs")) {
+      const cleanseKey = targetKey ?? actorKey;
+      if (cleanseKey) {
+        setStatuses((prev) => {
+          const next = new Map(prev);
+          const cur = new Set(next.get(cleanseKey) ?? []);
+          (["burn", "poison", "bleed", "blind", "sleep", "freeze", "silence", "stun", "mark"] as StatusKind[]).forEach((s) => cur.delete(s));
+          if (cur.size === 0) next.delete(cleanseKey);
+          else next.set(cleanseKey, cur);
+          return next;
+        });
+      }
+    }
+
 
     const t = setTimeout(
       () => setFx({ actor: null, target: null, dmg: null, shieldGain: null, crit: false, skillFx: null, targets: [], miss: null }),
@@ -1110,6 +1128,8 @@ function SideColumn({
                   {st?.has("sleep") && <span className="px-1 rounded bg-indigo-600/80 animate-pulse" title="Dormindo (pula o turno)">💤</span>}
                   {st?.has("freeze") && <span className="px-1 rounded bg-cyan-500/80 animate-pulse" title="Congelado (pula o turno)">❄️</span>}
                   {st?.has("silence") && <span className="px-1 rounded bg-violet-500/80 animate-pulse" title="Silenciado">🤐</span>}
+                  {st?.has("stun") && <span className="px-1 rounded bg-yellow-400/90 text-black animate-pulse" title="Atordoado / paralisado">⚡</span>}
+                  {st?.has("mark") && <span className="px-1 rounded bg-black/80 ring-1 ring-red-400 animate-pulse" title="Marca da Morte (+25% dano sofrido)">🏴</span>}
                   {st?.has("rage") && <span className="px-1 rounded bg-red-600/80 animate-pulse" title="Em fúria">😡</span>}
                   {st?.has("shield") && <span className="px-1 rounded bg-cyan-500/80 animate-pulse" title="Buff de DEF">✨</span>}
                   {negraHpBonusPct > 0 && (
