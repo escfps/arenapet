@@ -1504,7 +1504,94 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
               }
             }
             return;
+
+          if (skill.kind === "arcane_mark") {
+            const targets = enemies.filter((e) => e.current > 0);
+            const markedNames: string[] = [];
+            const consumedNames: string[] = [];
+            for (const t of targets) {
+              const eff = defensiveMultiplier(getElement(attacker.species), t.species);
+              const base = Math.max(1, attacker.int * 1.4 - t.def * 0.4);
+              const wasMarked = t.markTurns > 0;
+              const markBonus = wasMarked ? 1.5 : 1.0;
+              const dmg = Math.max(1, Math.round(base * eff * markBonus * skillMult));
+              applyDamage(t, dmg);
+              if (wasMarked) {
+                t.markTurns = 0; // consome a marca
+                consumedNames.push(t.name);
+              } else if (t.current > 0) {
+                t.markTurns = 3; // aplica a marca por 3 turnos
+                markedNames.push(t.name);
+              }
+              log.push({
+                turn,
+                actor: side,
+                actorName: attacker.name,
+                targetName: t.name,
+                damage: dmg,
+                crit: wasMarked,
+                effective: eff,
+                remainingHp: t.current,
+                targetShield: t.shield,
+                message: `${skill.emoji} ${attacker.name} → ${t.name}: ${dmg} de dano arcano${wasMarked ? " 💥 (marca detonada +50%)" : " 🏴 (marcado)"}`,
+              });
+              if (t.current <= 0) {
+                log.push({
+                  turn,
+                  actor: side,
+                  actorName: attacker.name,
+                  targetName: t.name,
+                  damage: 0,
+                  crit: false,
+                  effective: 1,
+                  remainingHp: 0,
+                  message: `💀 ${t.name} foi derrotado!`,
+                });
+              }
+            }
+            return;
           }
+
+          if (skill.kind === "cleanse_shield") {
+            const shield = Math.round(attacker.maxHp * 0.25 * skillMult);
+            attacker.shield += shield;
+            const cleansed: string[] = [];
+            for (const m of allies.filter((x) => x.current > 0)) {
+              const had =
+                m.sleepTurns > 0 || m.freezeTurns > 0 || m.silenceTurns > 0 ||
+                m.blindTurns > 0 || m.stunTurns > 0 || m.markTurns > 0 ||
+                m.burnTurns > 0 || m.bleedTurns > 0 ||
+                m.defDebuffTurns > 0 || m.atkDebuffTurns > 0;
+              if (had) {
+                m.sleepTurns = 0;
+                m.freezeTurns = 0;
+                m.silenceTurns = 0;
+                m.blindTurns = 0;
+                m.stunTurns = 0;
+                m.markTurns = 0;
+                m.burnTurns = 0; m.burnDmg = 0;
+                m.bleedTurns = 0; m.bleedDmg = 0;
+                m.defDebuffTurns = 0; m.defDebuffPct = 0;
+                m.atkDebuffTurns = 0; m.atkDebuffPct = 0;
+                cleansed.push(m.name);
+              }
+            }
+            log.push({
+              turn,
+              actor: side,
+              actorName: attacker.name,
+              targetName: attacker.name,
+              damage: 0,
+              crit: false,
+              effective: 1,
+              remainingHp: attacker.current,
+              targetShield: attacker.shield,
+              message: `${skill.emoji} ${attacker.name} usou ${skill.name}! ${cleansed.length ? `Purificou ${cleansed.join(", ")} e ganhou` : "Ganhou"} ${shield} de escudo`,
+            });
+            return;
+          }
+
+
 
           if (skill.kind === "terror_screech") {
             const targets = enemies.filter((e) => e.current > 0);
