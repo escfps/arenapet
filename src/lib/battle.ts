@@ -157,6 +157,7 @@ type Live = BattleMonster & {
   thornsPct: number; // refletir % do dano recebido em ataques básicos
   killStacks: number; // T-Rex: acumulador permanente de kills (+15% ATK por kill)
   lastFallenAt: number; // turno em que morreu (pra revive_ally)
+  markTurns: number; // 🏴 Marca da Morte: +25% dano sofrido e não pode esquivar
 };
 
 function pickTarget(attacker: Live, enemies: Live[]): Live | null {
@@ -193,6 +194,10 @@ function effectiveSpd(mon: Live): number {
 
 function applyDamage(target: Live, raw: number): number {
   let dmg = raw;
+  // 🏴 Marca da Morte: +25% de dano sofrido
+  if (target.markTurns > 0) {
+    dmg = Math.round(dmg * 1.25);
+  }
   if (target.dmgReductionPct > 0) {
     dmg = Math.max(1, Math.round(dmg * (1 - target.dmgReductionPct)));
   }
@@ -239,6 +244,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
     thornsPct: m.species === "triceratops_colossal" ? 0.15 : m.species === "porco_espinho" ? 0.10 : 0,
     killStacks: 0,
     lastFallenAt: 0,
+    markTurns: 0,
   });
   const a: Live[] = teamA.map(mkLive);
   const b: Live[] = teamB.map(mkLive);
@@ -510,6 +516,10 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
         if (attacker.dmgReductionTurns > 0) {
           attacker.dmgReductionTurns -= 1;
           if (attacker.dmgReductionTurns === 0) attacker.dmgReductionPct = 0;
+        }
+        // tick 🏴 Marca da Morte
+        if (attacker.markTurns > 0) {
+          attacker.markTurns -= 1;
         }
         const allies = side === "team_a" ? a : b;
         const enemies = side === "team_a" ? b : a;
@@ -1496,6 +1506,94 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
             return;
           }
 
+          if (skill.kind === "arcane_mark") {
+            const targets = enemies.filter((e) => e.current > 0);
+            const markedNames: string[] = [];
+            const consumedNames: string[] = [];
+            for (const t of targets) {
+              const eff = defensiveMultiplier(getElement(attacker.species), t.species);
+              const base = Math.max(1, attacker.int * 1.4 - t.def * 0.4);
+              const wasMarked = t.markTurns > 0;
+              const markBonus = wasMarked ? 1.5 : 1.0;
+              const dmg = Math.max(1, Math.round(base * eff * markBonus * skillMult));
+              applyDamage(t, dmg);
+              if (wasMarked) {
+                t.markTurns = 0; // consome a marca
+                consumedNames.push(t.name);
+              } else if (t.current > 0) {
+                t.markTurns = 3; // aplica a marca por 3 turnos
+                markedNames.push(t.name);
+              }
+              log.push({
+                turn,
+                actor: side,
+                actorName: attacker.name,
+                targetName: t.name,
+                damage: dmg,
+                crit: wasMarked,
+                effective: eff,
+                remainingHp: t.current,
+                targetShield: t.shield,
+                message: `${skill.emoji} ${attacker.name} → ${t.name}: ${dmg} de dano arcano${wasMarked ? " 💥 (marca detonada +50%)" : " 🏴 (marcado)"}`,
+              });
+              if (t.current <= 0) {
+                log.push({
+                  turn,
+                  actor: side,
+                  actorName: attacker.name,
+                  targetName: t.name,
+                  damage: 0,
+                  crit: false,
+                  effective: 1,
+                  remainingHp: 0,
+                  message: `💀 ${t.name} foi derrotado!`,
+                });
+              }
+            }
+            return;
+          }
+
+          if (skill.kind === "cleanse_shield") {
+            const shield = Math.round(attacker.maxHp * 0.25 * skillMult);
+            attacker.shield += shield;
+            const cleansed: string[] = [];
+            for (const m of allies.filter((x) => x.current > 0)) {
+              const had =
+                m.sleepTurns > 0 || m.freezeTurns > 0 || m.silenceTurns > 0 ||
+                m.blindTurns > 0 || m.stunTurns > 0 || m.markTurns > 0 ||
+                m.burnTurns > 0 || m.bleedTurns > 0 ||
+                m.defDebuffTurns > 0 || m.atkDebuffTurns > 0;
+              if (had) {
+                m.sleepTurns = 0;
+                m.freezeTurns = 0;
+                m.silenceTurns = 0;
+                m.blindTurns = 0;
+                m.stunTurns = 0;
+                m.markTurns = 0;
+                m.burnTurns = 0; m.burnDmg = 0;
+                m.bleedTurns = 0; m.bleedDmg = 0;
+                m.defDebuffTurns = 0; m.defDebuffPct = 0;
+                m.atkDebuffTurns = 0; m.atkDebuffPct = 0;
+                cleansed.push(m.name);
+              }
+            }
+            log.push({
+              turn,
+              actor: side,
+              actorName: attacker.name,
+              targetName: attacker.name,
+              damage: 0,
+              crit: false,
+              effective: 1,
+              remainingHp: attacker.current,
+              targetShield: attacker.shield,
+              message: `${skill.emoji} ${attacker.name} usou ${skill.name}! ${cleansed.length ? `Purificou ${cleansed.join(", ")} e ganhou` : "Ganhou"} ${shield} de escudo`,
+            });
+            return;
+          }
+
+
+
           if (skill.kind === "terror_screech") {
             const targets = enemies.filter((e) => e.current > 0);
             for (const t of targets) {
@@ -1936,8 +2034,10 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
         // Esquiva por velocidade: 5% base + 3.5% por ponto de SPD a mais que o atacante
         // mínimo 5% (sempre há chance), máximo 55%
         const spdDiff = effectiveSpd(target) - effectiveSpd(attacker);
-        const dodgeChance = Math.max(0.05, Math.min(0.55, 0.05 + spdDiff * 0.035));
-        if (rand() < dodgeChance) {
+        const baseDodge = Math.max(0.05, Math.min(0.55, 0.05 + spdDiff * 0.035));
+        // 🏴 Marca da Morte: zera a esquiva contra ataques básicos
+        const dodgeChance = target.markTurns > 0 ? 0 : baseDodge;
+        if (dodgeChance > 0 && rand() < dodgeChance) {
           log.push({
             turn,
             actor: side,

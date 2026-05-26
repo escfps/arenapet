@@ -148,7 +148,9 @@ export type SkillKind =
   | "spectral_pounce"    // assassin — crítico garantido no mais fraco (2× dano) ignorando 60% DEF / PASSIVA: ataque básico 50% chance de critar
   | "cooldown_reduction" // healer mítico — reduz 1 turno de cooldown de todos aliados / PASSIVA: cada turno reduz cd do aliado mais travado
   | "thorn_burst"       // tank — ataca todos os inimigos com 1.0× ATK físico / PASSIVA: reflete 10% do dano recebido
-  | "terror_screech";    // dps/suporte — reduz ATK de todos inimigos em 20% por 2 turnos / PASSIVA (urubu): +7% SPD a cada 10% HP perdido (máx +70%)
+  | "terror_screech"    // dps/suporte — reduz ATK de todos inimigos em 20% por 2 turnos / PASSIVA (urubu): +7% SPD a cada 10% HP perdido (máx +70%)
+  | "arcane_mark"       // mago — AoE arcano + aplica 🏴 Marca da Morte (3 turnos) em todos; consome marca pra +50% dano
+  | "cleanse_shield";   // tank — remove TODOS os debuffs dos aliados + escudo 25% HP máx
 
 export type Skill = {
   name: string;
@@ -612,7 +614,7 @@ export const SPECIES: Record<string, Species> = {
     emoji: "🦏", image: rinoceronteGuardiaoImg, hidden: true,
     description: "Guardião da floresta de pedra. Sua investida purifica os aliados e ergue uma muralha vinda das entranhas da terra.",
     base: { hp: 145, atk: 14, def: 22, spd: 9, int: 8 },
-    skill: { name: "Investida Purificadora", emoji: "🦏", kind: "turtle_shell", cooldown: 3, description: "Ganha escudo de 25% do HP máx e reduz dano recebido em 20% por 2 turnos. (placeholder: remoção de debuffs em desenvolvimento)" },
+    skill: { name: "Investida Purificadora", emoji: "🦏", kind: "cleanse_shield", cooldown: 3, description: "Remove TODOS os debuffs (sono, congelamento, silêncio, cegueira, atordoamento, queimadura, sangramento, marca, DEF/ATK reduzidos) de todos os aliados e ganha escudo de 25% do HP máx." },
   },
   elefante_ancestral: {
     id: "elefante_ancestral", name: "Elefante Ancestral", element: "earth", role: "tank", rarity: "legendary",
@@ -668,7 +670,7 @@ export const SPECIES: Record<string, Species> = {
     emoji: "🦉", image: corujaNegraImg, hidden: true,
     description: "Arcanista das sombras. Marca suas presas e detona ataques arcanos que reverberam pelo campo inteiro.",
     base: { hp: 100, atk: 12, def: 11, spd: 16, int: 28 },
-    skill: { name: "Julgamento Arcano", emoji: "🌑", kind: "aoe_magic", cooldown: 4, description: "Explosão arcana em todos os inimigos (1.15× cada, ignora 60% DEF). (placeholder: Marca da Morte em desenvolvimento)" },
+    skill: { name: "Julgamento Arcano", emoji: "🏴", kind: "arcane_mark", cooldown: 4, description: "Explosão arcana em todos os inimigos (INT×1.4, ignora 60% DEF) + aplica 🏴 Marca da Morte por 3 turnos (alvos marcados sofrem +25% de dano e não conseguem esquivar). Inimigos já marcados sofrem +50% e a marca é consumida." },
   },
   coruja_psiquica: {
     id: "coruja_psiquica", name: "Coruja Psíquica", element: "shadow", secondaryElement: "shadow", role: "mage", rarity: "mythic",
