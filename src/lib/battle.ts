@@ -688,6 +688,46 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
             return;
           }
 
+          if (skill.kind === "aoe_strike_def_down") {
+            const targets = enemies.filter((e) => e.current > 0);
+            for (const t of targets) {
+              const eff = defensiveMultiplier(getElement(attacker.species), t.species);
+              const base = Math.max(1, attacker.atk * 1.3 - t.def * 0.5);
+              const dmg = Math.max(1, Math.round(base * eff * skillMult));
+              applyDamage(t, dmg);
+              t.defDebuffPct = Math.max(t.defDebuffPct, 0.15);
+              t.defDebuffTurns = Math.max(t.defDebuffTurns, 2);
+              log.push({
+                turn,
+                actor: side,
+                actorName: attacker.name,
+                targetName: t.name,
+                damage: dmg,
+                crit: false,
+                effective: eff,
+                remainingHp: t.current,
+                targetShield: t.shield,
+                message: `${skill.emoji} ${attacker.name} → ${t.name}: ${dmg} de dano e -15% DEF (2 turnos)`,
+              });
+              if (t.current <= 0) {
+                log.push({
+                  turn,
+                  actor: side,
+                  actorName: attacker.name,
+                  targetName: t.name,
+                  damage: 0,
+                  crit: false,
+                  effective: 1,
+                  remainingHp: 0,
+                  message: `💀 ${t.name} foi derrotado!`,
+                });
+              }
+            }
+            return;
+          }
+
+
+
           if (skill.kind === "heavy_strike") {
             const target = pickTarget(attacker, enemies);
             if (target) {

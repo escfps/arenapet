@@ -151,7 +151,8 @@ export type SkillKind =
   | "terror_screech"    // dps/suporte — reduz ATK de todos inimigos em 20% por 2 turnos / PASSIVA (urubu): +7% SPD a cada 10% HP perdido (máx +70%)
   | "arcane_mark"       // mago — AoE arcano + aplica 🏴 Marca da Morte (3 turnos) em todos; consome marca pra +50% dano
   | "cleanse_shield"    // tank — remove TODOS os debuffs dos aliados + escudo 25% HP máx
-  | "corsair_volley";   // dps — 3 investidas em alvos aleatórios (podem repetir) com 20% de chance de sangrar por hit (máx 1 stack)
+  | "corsair_volley"    // dps — 3 investidas em alvos aleatórios (podem repetir) com 20% de chance de sangrar por hit (máx 1 stack)
+  | "aoe_strike_def_down"; // tank — golpe físico em AoE (1.3× cada) + reduz DEF de todos em 15% por 2 turnos
 
 export type Skill = {
   name: string;
@@ -622,7 +623,7 @@ export const SPECIES: Record<string, Species> = {
     emoji: "🐘", image: elefanteAncestralImg, hidden: true,
     description: "Colosso milenar imune a controle de massa. Provoca o campo inteiro com um trompetear que faz a terra tremer.",
     base: { hp: 170, atk: 16, def: 24, spd: 7, int: 10 },
-    skill: { name: "Trompete Ancião", emoji: "🐘", kind: "shield_taunt", cooldown: 4, description: "Provoca todos por 2 turnos e ganha 35% HP de escudo. (placeholder: imunidade total a CC em desenvolvimento)" },
+    skill: { name: "Trompete Ancião", emoji: "🐘", kind: "aoe_strike_def_down", cooldown: 4, description: "Golpe de tromba em todos os inimigos (1.3× dano cada) e reduz a DEF de todos em 15% por 2 turnos." },
   },
   arara_corsaria: {
     id: "arara_corsaria", name: "Arara Corsária", element: "fire", secondaryElement: "fire", role: "dps", rarity: "rare",
