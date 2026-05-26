@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { HUD } from "@/components/HUD";
+import { supabase } from "@/integrations/supabase/client";
 import { useProfile } from "@/lib/use-profile";
 import { changeUsername, NICK_CHANGE_COST_GEMS } from "@/lib/profile.functions";
 import { getUserTrophies, type SeasonTrophy } from "@/lib/seasons.functions";
