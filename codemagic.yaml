@@ -31,7 +31,6 @@ workflows:
           fi
       - name: Verify Capacitor config
         script: |
-          # Preserve repo capacitor.config.json (contains allowNavigation for OAuth fix)
           if [ ! -f capacitor.config.json ]; then
             ./node_modules/.bin/cap init "Arena Pet" com.arenapet.app --web-dir dist/client
           fi
@@ -54,10 +53,8 @@ workflows:
           cp /tmp/profile.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
       - name: Build iOS
         script: |
-          # Auto-incrementa o build number pegando o último do App Store Connect + 1
           LATEST_BUILD_NUMBER=$(app-store-connect get-latest-app-store-build-number "$APP_STORE_APPLE_ID" 2>/dev/null || echo "0")
           NEW_BUILD_NUMBER=$(($LATEST_BUILD_NUMBER + 1))
-          # Lê a versão visível do package.json
           APP_VERSION=$(node -p "require('./package.json').version")
           echo "Último build no App Store Connect: $LATEST_BUILD_NUMBER"
           echo "Novo build number: $NEW_BUILD_NUMBER"
@@ -124,7 +121,6 @@ workflows:
           fi
       - name: Verify Capacitor config
         script: |
-          # Preserve repo capacitor.config.json (contains allowNavigation for OAuth fix)
           if [ ! -f capacitor.config.json ]; then
             ./node_modules/.bin/cap init "Arena Pet" com.arenapet.app --web-dir dist/client
           fi
@@ -162,10 +158,7 @@ workflows:
           EOF
       - name: Build Android AAB
         script: |
-          # Lê a versão visível do package.json (na raiz do projeto)
           APP_VERSION=$(node -p "require('./package.json').version")
-          # Auto-incrementa o versionCode usando o build number do Codemagic + offset
-          # (offset 8 garante que não conflite com builds já enviadas manualmente)
           NEW_VERSION_CODE=$(($BUILD_NUMBER + 8))
           echo "Novo versionCode: $NEW_VERSION_CODE"
           echo "versionName (do package.json): $APP_VERSION"
