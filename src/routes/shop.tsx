@@ -19,6 +19,7 @@ import { useProfile } from "@/lib/use-profile";
 import { toast, Toaster } from "sonner";
 import { initializePaddle, getPaddlePriceId } from "@/lib/paddle";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
+import { isIos, purchaseIosGemsPack } from "@/lib/iap";
 import arenaBg from "@/assets/arena-bg.jpg";
 
 const PADDLE_PRICE_IDS: Record<string, string> = {
@@ -222,6 +223,27 @@ function ShopPage() {
 
   async function buyGems(pack: typeof GEM_PACKS[number]) {
     if (!profile || !userId) return;
+
+    // iOS: usa StoreKit (obrigatório pela App Store).
+    if (isIos()) {
+      try {
+        toast.loading("Abrindo App Store...", { id: "pay" });
+        const res = await purchaseIosGemsPack(pack.id);
+        toast.dismiss("pay");
+        if (res.credited) {
+          toast.success(`+${res.gems} 💎 creditadas!`);
+          await reload();
+        }
+      } catch (e: any) {
+        toast.dismiss("pay");
+        const msg = e?.message ?? String(e);
+        if (msg.includes("cancelada")) return;
+        toast.error(`Erro na compra: ${msg}`);
+      }
+      return;
+    }
+
+    // Android / Web: Paddle
     const priceId = PADDLE_PRICE_IDS[pack.id];
     if (!priceId) { toast.error("Pacote indisponível"); return; }
     try {
