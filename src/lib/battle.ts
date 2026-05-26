@@ -1413,6 +1413,59 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
             return;
           }
 
+          if (skill.kind === "scorpion_sting") {
+            const aliveEnemies = enemies.filter((e) => e.current > 0);
+            const target = aliveEnemies.length ? aliveEnemies.reduce((x, y) => (x.current < y.current ? x : y)) : null;
+            if (target) {
+              const alreadyMarked = target.markTurns > 0;
+              const eff = defensiveMultiplier(getElement(attacker.species), target.species);
+              const mult = alreadyMarked ? 1.3 : 1.1;
+              const base = Math.max(1, effAtk * mult - tgtEffDef(target));
+              const dmg = Math.max(1, Math.round(base * eff * skillMult));
+              applyDamage(target, dmg);
+              // Aplica Marca da Morte (2 turnos) se não imune
+              if (!isCCImmune(target)) {
+                target.markTurns = Math.max(target.markTurns, 2);
+              }
+              // Aplica Veneno (2 turnos base, +1 se já estava marcado antes)
+              const poisonDuration = alreadyMarked ? 3 : 2;
+              const poisonDot = Math.max(1, Math.round(effAtk * 0.3 * skillMult));
+              if (target.current > 0) {
+                target.poisonDmg = Math.max(target.poisonDmg, poisonDot);
+                target.poisonTurns = Math.max(target.poisonTurns, poisonDuration);
+              }
+              log.push({
+                turn,
+                actor: side,
+                actorName: attacker.name,
+                targetName: target.name,
+                damage: dmg,
+                crit: false,
+                effective: eff,
+                remainingHp: target.current,
+                targetShield: target.shield,
+                message: `${skill.emoji} ${attacker.name} usou ${skill.name}: ${dmg} em ${target.name}${alreadyMarked ? " (alvo já marcado — golpe potente!)" : ""} + 🏴 Marca + ☠️ Veneno (${poisonDot}/turno por ${poisonDuration} turnos)`,
+              });
+              if (target.current <= 0) {
+                target.lastFallenAt = turn;
+                log.push({
+                  turn,
+                  actor: side,
+                  actorName: attacker.name,
+                  targetName: target.name,
+                  damage: 0,
+                  crit: false,
+                  effective: 1,
+                  remainingHp: 0,
+                  message: `💀 ${target.name} foi derrotado!`,
+                });
+              }
+            }
+            return;
+          }
+
+
+
           if (skill.kind === "spectral_pounce") {
             const aliveEnemies = enemies.filter((e) => e.current > 0);
             const target = aliveEnemies.length ? aliveEnemies.reduce((x, y) => (x.current < y.current ? x : y)) : null;
