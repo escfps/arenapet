@@ -62,11 +62,32 @@ workflows:
           echo $CM_PROVISIONING_PROFILE | base64 --decode > /tmp/profile.mobileprovision
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp /tmp/profile.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
+      - name: Inject signing settings only into App target
+        script: |
+          # Resource bundles dos pacotes SPM (GTM, Facebook, Alamofire, etc.)
+          # NÃO suportam provisioning profile. Se passarmos PROVISIONING_PROFILE_SPECIFIER
+          # na linha do xcodebuild, vira global e o archive falha em todos eles.
+          # Solução: gravar a config de assinatura SÓ no target "App" via xcodeproj gem.
+          gem install xcodeproj --no-document
+          ruby <<'RUBY'
+          require 'xcodeproj'
+          project = Xcodeproj::Project.open('ios/App/App.xcodeproj')
+          app = project.targets.find { |t| t.name == 'App' }
+          raise "App target not found" unless app
+          app.build_configurations.each do |config|
+            config.build_settings['CODE_SIGN_STYLE'] = 'Manual'
+            config.build_settings['DEVELOPMENT_TEAM'] = '8Q7D6F63F2'
+            config.build_settings['CODE_SIGN_IDENTITY'] = 'Apple Distribution'
+            config.build_settings['CODE_SIGN_IDENTITY[sdk=iphoneos*]'] = 'Apple Distribution'
+            config.build_settings['PROVISIONING_PROFILE_SPECIFIER'] = 'Arena Pet Appstore'
+          end
+          project.save
+          puts "Signing injected into App target only."
+          RUBY
       - name: Build iOS
         script: |
           NEW_BUILD_NUMBER=10
           APP_VERSION=$(node -p "require('./package.json').version")
-          echo "Último build no App Store Connect: $LATEST_BUILD_NUMBER"
           echo "Novo build number: $NEW_BUILD_NUMBER"
           echo "Marketing version (do package.json): $APP_VERSION"
 
@@ -76,15 +97,14 @@ workflows:
           fi
           echo "Workspace: $WORKSPACE"
           xcodebuild -workspace $WORKSPACE -list 2>&1 | head -20
+          # NÃO passar PROVISIONING_PROFILE_SPECIFIER / CODE_SIGN_IDENTITY aqui.
+          # Eles já estão no target App. Passar na linha aplicaria a TODOS os
+          # targets (inclusive bundles SPM que não suportam) e quebra o archive.
           xcodebuild -workspace $WORKSPACE \
             -scheme App \
             -configuration Release \
             -archivePath ios/App/build/App.xcarchive \
             archive \
-            CODE_SIGN_STYLE=Manual \
-            PROVISIONING_PROFILE_SPECIFIER="Arena Pet Appstore" \
-            CODE_SIGN_IDENTITY="Apple Distribution" \
-            DEVELOPMENT_TEAM="8Q7D6F63F2" \
             CURRENT_PROJECT_VERSION=$NEW_BUILD_NUMBER \
             MARKETING_VERSION=$APP_VERSION
           /usr/libexec/PlistBuddy -c "Add :method string app-store" /tmp/ExportOptions.plist
