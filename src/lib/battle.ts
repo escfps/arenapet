@@ -192,6 +192,9 @@ function effectiveSpd(mon: Live): number {
     const steps = Math.min(10, Math.floor(lostPct * 10)); // cada 10% perdido
     s = Math.round(s * (1 + steps * 0.07));
   }
+  if (mon.spdBuffTurns > 0 && mon.spdBuffPct > 0) {
+    s = Math.round(s * (1 + mon.spdBuffPct));
+  }
   return s;
 }
 
