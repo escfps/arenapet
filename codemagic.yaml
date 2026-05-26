@@ -43,6 +43,17 @@ workflows:
           npx @capacitor/assets generate --ios
           ./node_modules/.bin/cap copy ios
           ./node_modules/.bin/cap sync ios
+      - name: Patch iOS Info.plist for Google Sign-In
+        script: |
+          PLIST="ios/App/App/Info.plist"
+          REVERSED_IOS_CLIENT_ID="com.googleusercontent.apps.486152638398-fb6bpnfo14rr5ditb967ft0841fl0bal"
+          /usr/libexec/PlistBuddy -c "Delete :CFBundleURLTypes" "$PLIST" 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Add :CFBundleURLTypes array" "$PLIST"
+          /usr/libexec/PlistBuddy -c "Add :CFBundleURLTypes:0 dict" "$PLIST"
+          /usr/libexec/PlistBuddy -c "Add :CFBundleURLTypes:0:CFBundleURLSchemes array" "$PLIST"
+          /usr/libexec/PlistBuddy -c "Add :CFBundleURLTypes:0:CFBundleURLSchemes:0 string $REVERSED_IOS_CLIENT_ID" "$PLIST"
+          /usr/libexec/PlistBuddy -c "Print :CFBundleURLTypes" "$PLIST"
+
       - name: Set up code signing
         script: |
           keychain initialize
@@ -134,6 +145,17 @@ workflows:
           ./node_modules/.bin/cap sync android
           mkdir -p android/app/src/main/assets
           cp capacitor.config.json android/app/src/main/assets/capacitor.config.json
+      - name: Patch Android strings.xml for Google Sign-In
+        script: |
+          STRINGS="android/app/src/main/res/values/strings.xml"
+          SERVER_CLIENT_ID="486152638398-rk8rqgq0b2fhdcnok8s25oijqneqnqjk.apps.googleusercontent.com"
+          if grep -q "server_client_id" "$STRINGS"; then
+            echo "server_client_id already present"
+          else
+            sed -i "s|</resources>|    <string name=\"server_client_id\">$SERVER_CLIENT_ID</string>\n</resources>|" "$STRINGS"
+          fi
+          cat "$STRINGS"
+
 
       - name: Set up Android signing
         script: |
