@@ -887,6 +887,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      cleanup_battles: { Args: never; Returns: undefined }
       close_tournament_registration: {
         Args: { p_tournament_id: string }
         Returns: undefined
