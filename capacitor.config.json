@@ -4,6 +4,20 @@
   "webDir": "dist/client",
   "server": {
     "url": "https://arenapet.lovable.app",
-    "cleartext": false
+    "cleartext": false,
+    "allowNavigation": [
+      "arenapet.lovable.app",
+      "*.lovable.app",
+      "*.lovableproject.com",
+      "oauth.lovable.app",
+      "accounts.google.com",
+      "*.google.com",
+      "*.googleusercontent.com",
+      "appleid.apple.com",
+      "*.supabase.co"
+    ]
+  },
+  "android": {
+    "allowMixedContent": false
   }
 }
