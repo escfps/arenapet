@@ -64,6 +64,7 @@ import hienaCarniceiraImg from "@/assets/monsters/hiena_carniceira.png";
 import corujaBrancaImg from "@/assets/monsters/coruja_branca.png";
 import escorpiaoDesertoImg from "@/assets/monsters/escorpiao_deserto.png";
 import corujaNegraImg from "@/assets/monsters/coruja_negra.png";
+import corujaPsiquicaImg from "@/assets/monsters/coruja_psiquica.png";
 
 export type Element = "fire" | "water" | "grass" | "electric" | "shadow" | "earth";
 export type Role = "tank" | "dps" | "assassin" | "mage" | "healer";
