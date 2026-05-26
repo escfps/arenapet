@@ -157,22 +157,7 @@ type Live = BattleMonster & {
   thornsPct: number; // refletir % do dano recebido em ataques básicos
   killStacks: number; // T-Rex: acumulador permanente de kills (+15% ATK por kill)
   lastFallenAt: number; // turno em que morreu (pra revive_ally)
-  // === NOVOS: Marca da Morte + buff de SPD temporário ===
-  markTurns: number;     // se >0, sofre +20% de dano e -10% esquiva
-  spdBuffTurns: number;  // duração do buff de SPD temporário (Hiena/Coruja Branca)
-  spdBuffPct: number;    // ex: 0.20 = +20% SPD
 };
-
-// Espécies imunes a algum CC específico
-type CCKind = "sleep" | "freeze" | "silence" | "blind" | "burn" | "mark";
-function isCCImmune(target: Live, kind: CCKind): boolean {
-  // Elefante Ancestral: imune total a sono, marca, congelamento, silêncio, queimadura e cegueira
-  if (target.species === "elefante_ancestral") {
-    return kind === "sleep" || kind === "freeze" || kind === "silence" || kind === "blind" || kind === "burn" || kind === "mark";
-  }
-  return false;
-}
-
 
 function pickTarget(attacker: Live, enemies: Live[]): Live | null {
   const alive = enemies.filter((e) => e.current > 0);
@@ -254,11 +239,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
     thornsPct: m.species === "triceratops_colossal" ? 0.15 : m.species === "porco_espinho" ? 0.10 : 0,
     killStacks: 0,
     lastFallenAt: 0,
-    markTurns: 0,
-    spdBuffTurns: 0,
-    spdBuffPct: 0,
   });
-
   const a: Live[] = teamA.map(mkLive);
   const b: Live[] = teamB.map(mkLive);
   const rand = rng(seed);
