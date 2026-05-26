@@ -2079,19 +2079,19 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
 
         // PASSIVA Borboleta Sonífera: 50% de chance de adormecer o alvo por 2 turnos
         let sleptByPassive = false;
-        if (attacker.species === "borboleta_sonifera" && target.current > 0 && rand() < 0.5) {
+        if (attacker.species === "borboleta_sonifera" && target.current > 0 && !isCCImmune(target) && rand() < 0.5) {
           target.sleepTurns = Math.max(target.sleepTurns, 2);
           sleptByPassive = true;
         }
         // PASSIVA Urso Polar: 50% de chance de congelar o alvo por 2 turnos
         let frozenByPassive = false;
-        if (attacker.species === "urso_polar" && target.current > 0 && rand() < 0.5) {
+        if (attacker.species === "urso_polar" && target.current > 0 && !isCCImmune(target) && rand() < 0.5) {
           target.freezeTurns = Math.max(target.freezeTurns, 2);
           frozenByPassive = true;
         }
         // PASSIVA Leoa Trovão: 30% de chance de paralisar o alvo por 1 turno
         let stunnedByPassive = false;
-        if (attacker.species === "leoa_trovao" && target.current > 0 && rand() < 0.3) {
+        if (attacker.species === "leoa_trovao" && target.current > 0 && !isCCImmune(target) && rand() < 0.3) {
           target.stunTurns = Math.max(target.stunTurns, 1);
           stunnedByPassive = true;
         }
