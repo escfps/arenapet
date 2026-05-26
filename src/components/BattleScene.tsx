@@ -832,6 +832,39 @@ function SkillFxOverlay({ kind, keyId }: { kind: SkillFxKind; keyId: string }) {
         </>
       )}
 
+      {kind === "impact" && (
+        <>
+          {/* Flash branco */}
+          <div className="absolute inset-0 bg-white/40 mix-blend-overlay animate-skill-flash rounded-full" />
+          {/* Shockwave anel */}
+          <div className="absolute left-1/2 top-1/2 w-20 h-20 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white/80 animate-skill-shockwave" />
+          {/* Slash diagonal */}
+          <div
+            className="absolute left-1/2 top-1/2 w-28 h-1.5 bg-gradient-to-r from-transparent via-white to-transparent animate-skill-slash-line"
+            style={{
+              transform: "translate(-50%, -50%) rotate(-25deg)",
+              boxShadow: "0 0 10px rgba(255,255,255,0.95)",
+            }}
+          />
+          {/* Estrelinha de impacto */}
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-4xl animate-skill-pop">
+            💥
+          </div>
+          {/* Mini partículas */}
+          {[0, 72, 144, 216, 288].map((deg, i) => (
+            <div
+              key={i}
+              className="absolute left-1/2 top-1/2 w-1.5 h-1.5 bg-yellow-200 rounded-full animate-skill-spark"
+              style={{
+                transform: `translate(-50%, -50%) rotate(${deg}deg) translateY(-32px)`,
+                animationDelay: `${i * 0.03}s`,
+                boxShadow: "0 0 6px rgba(253,224,71,0.95)",
+              }}
+            />
+          ))}
+        </>
+      )}
+
       {kind === "slash" && (
         <>
           {[-30, 0, 30].map((deg, i) => (
