@@ -194,6 +194,10 @@ function effectiveSpd(mon: Live): number {
 
 function applyDamage(target: Live, raw: number): number {
   let dmg = raw;
+  // 🏴 Marca da Morte: +25% de dano sofrido
+  if (target.markTurns > 0) {
+    dmg = Math.round(dmg * 1.25);
+  }
   if (target.dmgReductionPct > 0) {
     dmg = Math.max(1, Math.round(dmg * (1 - target.dmgReductionPct)));
   }
