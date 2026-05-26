@@ -1683,6 +1683,39 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
             return;
           }
 
+          if (skill.kind === "night_mark") {
+            // Coruja Branca: aplica 🏴 Marca da Morte em todos os inimigos por 2 turnos
+            // e concede +15% SPD a todos os aliados por 2 turnos (efeito de revelar fraquezas).
+            const targets = enemies.filter((e) => e.current > 0);
+            const markedNames: string[] = [];
+            for (const t of targets) {
+              if (!isCCImmune(t)) {
+                t.markTurns = Math.max(t.markTurns, 2);
+                t.markPassiveProcessed = false;
+                markedNames.push(t.name);
+              }
+            }
+            const aliveAllies = allies.filter((m) => m.current > 0);
+            for (const m of aliveAllies) {
+              m.spdBuffPct = Math.max(m.spdBuffPct, 0.15);
+              m.spdBuffTurns = Math.max(m.spdBuffTurns, 2);
+            }
+            log.push({
+              turn,
+              actor: side,
+              actorName: attacker.name,
+              targetName: attacker.name,
+              damage: 0,
+              crit: false,
+              effective: 1,
+              remainingHp: attacker.current,
+              message: `${skill.emoji} ${attacker.name} usou ${skill.name}: 🏴 marcou ${markedNames.length ? markedNames.join(", ") : "ninguém"} por 2 turnos + aliados ganham +15% SPD por 2 turnos`,
+            });
+            return;
+          }
+
+
+
           if (skill.kind === "cleanse_shield") {
             const shield = Math.round(attacker.maxHp * 0.25 * skillMult);
             attacker.shield += shield;
