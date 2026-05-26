@@ -38,7 +38,21 @@ export const Route = createFileRoute("/shop")({
 function ShopPage() {
   const navigate = useNavigate();
   const { userId, profile, patch, reload, loading } = useProfile();
-  const [tab, setTab] = useState<"chests" | "vip" | "gems" | "energy">("chests");
+  const [tab, setTab] = useState<"chests" | "vip" | "gems" | "energy">(() => {
+    if (typeof window !== "undefined") {
+      const h = window.location.hash.replace("#", "");
+      if (h === "vip" || h === "gems" || h === "energy" || h === "chests") return h;
+    }
+    return "chests";
+  });
+  useEffect(() => {
+    function syncTabFromHash() {
+      const h = window.location.hash.replace("#", "");
+      if (h === "vip" || h === "gems" || h === "energy" || h === "chests") setTab(h);
+    }
+    window.addEventListener("hashchange", syncTabFromHash);
+    return () => window.removeEventListener("hashchange", syncTabFromHash);
+  }, []);
   const claimBP = useServerFn(claimBattlePassDaily);
   const [hatchResult, setHatchResult] = useState<string | null>(null);
   const [chestResult, setChestResult] = useState<{ tier: ChestTier; reward: ChestReward } | null>(null);
