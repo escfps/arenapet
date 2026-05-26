@@ -290,6 +290,15 @@ function LoginPage() {
                 />
                 Lembrar de mim (entrar automático)
               </label>
+              {mode === "signin" && (
+                <button
+                  type="button"
+                  onClick={() => { setForgotEmail(email); setForgotOpen(true); }}
+                  className="text-fuchsia-300 hover:text-fuchsia-200 text-xs font-bold underline self-start"
+                >
+                  Esqueci minha senha
+                </button>
+              )}
               <button
                 type="submit" disabled={busy}
                 className="w-full py-3.5 mt-2 rounded-xl bg-gradient-to-b from-fuchsia-500 via-purple-600 to-indigo-700 text-white font-black tracking-wide text-base shadow-[0_6px_0_oklch(0.35_0.18_290)] hover:translate-y-[2px] hover:shadow-[0_4px_0_oklch(0.35_0.18_290)] active:translate-y-[6px] active:shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
