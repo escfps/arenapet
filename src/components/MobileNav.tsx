@@ -147,6 +147,22 @@ export function MobileNav({ open, onClose }: { open: boolean; onClose: () => voi
                   </li>
                 );
               })}
+              {isAdmin && (
+                <li>
+                  <Link
+                    to="/admin"
+                    onClick={onClose}
+                    className={`flex items-center gap-3 px-4 py-3 rounded-xl text-base font-bold transition border border-fuchsia-400/30 mt-2 ${
+                      pathname.startsWith("/admin")
+                        ? "bg-fuchsia-500/30 text-fuchsia-200"
+                        : "bg-fuchsia-500/10 text-fuchsia-200 hover:bg-fuchsia-500/20"
+                    }`}
+                  >
+                    <span className="text-2xl">🛠️</span>
+                    <span>Admin (Testes)</span>
+                  </Link>
+                </li>
+              )}
             </ul>
             <div className="p-3 border-t border-white/10">
               <button
