@@ -370,7 +370,7 @@ export const SPECIES: Record<string, Species> = {
     emoji: "🦈", image: tubaraoAbissalImg,
     description: "Predador das profundezas azuis. Mordida feroz que rasga qualquer presa.",
     base: { hp: 110, atk: 17, def: 11, spd: 13, int: 8 },
-    skill: { name: "Mordida Sanguinária", emoji: "🦈", kind: "lifesteal_strike", cooldown: 3, description: "Crava os dentes (2× dano) e cura o tubarão em 55% do dano causado." },
+    skill: { name: "Mordida Sanguinária", emoji: "🦈", kind: "lifesteal_strike", cooldown: 3, description: "Crava os dentes (2× dano) e cura o tubarão em 25% do dano causado." },
   },
   polvo_venenoso: {
     id: "polvo_venenoso", name: "Polvo Venenoso", element: "water", secondaryElement: "shadow", role: "mage", rarity: "super_rare",
