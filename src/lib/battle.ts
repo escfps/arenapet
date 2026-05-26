@@ -1039,7 +1039,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
               const dmg = Math.max(1, Math.round((effAtk * 1.6 - tgtEffDef(target) * 0.5) * eff * skillMult));
               applyDamage(target, dmg);
               const frozen = rand() < 0.8 && target.current > 0;
-              if (frozen) target.freezeTurns = Math.max(target.freezeTurns, 2);
+              if (frozen && !isCCImmune(target)) target.freezeTurns = Math.max(target.freezeTurns, 2);
               log.push({
                 turn,
                 actor: side,
