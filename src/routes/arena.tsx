@@ -551,17 +551,8 @@ function ArenaPage() {
 
         const displayedAttackerDelta = isDraw ? 0 : (won ? myWinPts : -myLossPts);
         const displayedDefenderDelta = isDraw ? 0 : (won ? -Math.min(oppLossPts, opp.arenaPoints) : oppWinPts);
-
-        await supabase.from("battles").insert({
-          attacker_id: userId,
-          defender_id: opp.ownerId,
-          winner_id: won ? userId : opp.ownerId,
-          log: JSON.parse(JSON.stringify(result.log)),
-          coins_reward: rew.coins,
-          xp_reward: rew.xp,
-          attacker_points_delta: displayedAttackerDelta,
-          defender_points_delta: displayedDefenderDelta,
-        });
+        void displayedAttackerDelta; void displayedDefenderDelta;
+        // Histórico de batalhas removido para reduzir carga no banco.
         if (typeof window !== "undefined") {
           window.dispatchEvent(new CustomEvent("tutorial:battle-finished"));
         }
