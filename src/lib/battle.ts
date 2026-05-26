@@ -780,7 +780,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
 
           if (skill.kind === "aoe_magic") {
             const isPsychic = attacker.species === "coruja_psiquica";
-            const intMult = isPsychic ? 2.5 : 2.2;
+            const intMult = isPsychic ? 1.6 : 2.2;
             const flatMult = isPsychic ? 1.0 : 1.2;
             const silenceChance = isPsychic ? 0.4 : 0;
             const targets = enemies.filter((e) => e.current > 0);
