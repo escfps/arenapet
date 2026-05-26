@@ -64,7 +64,7 @@ workflows:
           cp /tmp/profile.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
       - name: Build iOS
         script: |
-          NEW_BUILD_NUMBER=9
+          NEW_BUILD_NUMBER=10
           APP_VERSION=$(node -p "require('./package.json').version")
           echo "Último build no App Store Connect: $LATEST_BUILD_NUMBER"
           echo "Novo build number: $NEW_BUILD_NUMBER"
@@ -180,7 +180,7 @@ workflows:
       - name: Build Android AAB
         script: |
           APP_VERSION=$(node -p "require('./package.json').version")
-          NEW_VERSION_CODE=$(($BUILD_NUMBER + 9))
+          NEW_VERSION_CODE=$(($BUILD_NUMBER + 10))
           echo "Novo versionCode: $NEW_VERSION_CODE"
           echo "versionName (do package.json): $APP_VERSION"
           cd android
