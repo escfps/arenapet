@@ -775,12 +775,21 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           }
 
           if (skill.kind === "aoe_magic") {
+            const isPsychic = attacker.species === "coruja_psiquica";
+            const intMult = isPsychic ? 2.5 : 2.2;
+            const flatMult = isPsychic ? 1.0 : 1.2;
+            const silenceChance = isPsychic ? 0.4 : 0;
             const targets = enemies.filter((e) => e.current > 0);
             for (const t of targets) {
               const eff = defensiveMultiplier(getElement(attacker.species), t.species);
-              const base = Math.max(1, attacker.int * 2.2 - t.def * 0.3);
-              const dmg = Math.max(1, Math.round(base * eff * 1.2 * skillMult));
+              const base = Math.max(1, attacker.int * intMult - t.def * 0.3);
+              const dmg = Math.max(1, Math.round(base * eff * flatMult * skillMult));
               applyDamage(t, dmg);
+              let silenced = false;
+              if (silenceChance > 0 && t.current > 0 && !isCCImmune(t) && rand() < silenceChance) {
+                t.silenceTurns = Math.max(t.silenceTurns, 1);
+                silenced = true;
+              }
               log.push({
                 turn,
                 actor: side,
@@ -791,7 +800,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
                 effective: eff,
                 remainingHp: t.current,
                 targetShield: t.shield,
-                message: `${skill.emoji} ${attacker.name} → ${t.name}: ${dmg} de dano arcano`,
+                message: `${skill.emoji} ${attacker.name} → ${t.name}: ${dmg} de dano ${isPsychic ? "psíquico" : "arcano"}${silenced ? " 🤐 (silenciado 1 turno)" : ""}`,
               });
               if (t.current <= 0) {
                 log.push({
