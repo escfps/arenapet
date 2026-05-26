@@ -55,6 +55,15 @@ import raposaEspectralImg from "@/assets/monsters/raposa_espectral.png";
 import orangotangoImg from "@/assets/monsters/orangotango.png";
 import porcoEspinhoImg from "@/assets/monsters/porco_espinho.png";
 import urubuCarniceiroImg from "@/assets/monsters/urubu_carniceiro.png";
+import rinoceronteGuardiaoImg from "@/assets/monsters/rinoceronte_guardiao.png";
+import elefanteAncestralImg from "@/assets/monsters/elefante_ancestral.png";
+import araraCorsariaImg from "@/assets/monsters/arara_corsaria.png";
+import tigreRelampagoImg from "@/assets/monsters/tigre_relampago.png";
+import leopardoFantasmaImg from "@/assets/monsters/leopardo_fantasma.png";
+import hienaCarniceiraImg from "@/assets/monsters/hiena_carniceira.png";
+import corujaBrancaImg from "@/assets/monsters/coruja_branca.png";
+import escorpiaoDesertoImg from "@/assets/monsters/escorpiao_deserto.png";
+import corujaNegraImg from "@/assets/monsters/coruja_negra.png";
 
 export type Element = "fire" | "water" | "grass" | "electric" | "shadow" | "earth";
 export type Role = "tank" | "dps" | "assassin" | "mage" | "healer";
