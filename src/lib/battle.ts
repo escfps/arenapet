@@ -1987,10 +1987,10 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           stunnedByPassive = true;
         }
 
-        // PASSIVA Lobo da Lua Sangrenta: cura 40% do dano causado a cada ataque básico
+        // PASSIVA Lobo da Lua Sangrenta: cura 30% do dano causado a cada ataque básico
         let lifestealHealed = 0;
         if (attacker.species === "lobo_lua_sangrenta" && damage > 0) {
-          lifestealHealed = Math.round(damage * 0.25);
+          lifestealHealed = Math.round(damage * 0.30);
           attacker.current = Math.min(attacker.maxHp, attacker.current + lifestealHealed);
         }
 
