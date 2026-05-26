@@ -102,7 +102,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { title: "Lovable App" },
       { name: "description", content: "🐾 Colecione pets, evolua criaturas raras e lute em batalhas épicas na arena! Suba de rank, desbloqueie pets lendários e torne-se o mestre definitivo do Pet Are" },
       { name: "author", content: "Lovable" },
