@@ -46,6 +46,13 @@ export function MobileDrawerButton({ onOpen }: { onOpen: () => void }) {
 export function MobileNav({ open, onClose }: { open: boolean; onClose: () => void }) {
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      setIsAdmin(!!data.user && ADMIN_USER_IDS.has(data.user.id));
+    });
+  }, []);
 
   // Close drawer on route change
   useEffect(() => { onClose(); }, [pathname]); // eslint-disable-line
