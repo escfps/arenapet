@@ -374,6 +374,49 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
     }
   }
 
+  // PASSIVA Coruja Branca "Olhos da Noite": ao morrer um inimigo marcado,
+  // o aliado com menor HP da equipe da Coruja recupera 12% do HP máximo.
+  function sweepOwlPassive() {
+    const sides = [
+      { team: a, opp: b, deadSide: "team_a" as const, healSide: "team_b" as const },
+      { team: b, opp: a, deadSide: "team_b" as const, healSide: "team_a" as const },
+    ];
+    for (const { team, opp, healSide } of sides) {
+      for (const dead of team) {
+        if (dead.current > 0) continue;
+        if (dead.markTurns <= 0) continue;
+        if (dead.markPassiveProcessed) continue;
+        dead.markPassiveProcessed = true;
+        const owls = opp.filter((m) => m.species === "coruja_branca" && m.current > 0);
+        if (owls.length === 0) continue;
+        const aliveAllies = opp.filter((m) => m.current > 0);
+        if (aliveAllies.length === 0) continue;
+        const lowest = aliveAllies.reduce((x, y) =>
+          x.current / x.maxHp < y.current / y.maxHp ? x : y,
+        );
+        const heal = Math.round(lowest.maxHp * 0.12);
+        const before = lowest.current;
+        lowest.current = Math.min(lowest.maxHp, lowest.current + heal);
+        const healed = lowest.current - before;
+        if (healed > 0) {
+          log.push({
+            turn,
+            actor: healSide,
+            actorName: owls[0].name,
+            targetName: lowest.name,
+            damage: 0,
+            crit: false,
+            effective: 1,
+            remainingHp: lowest.current,
+            message: `✨ Olhos da Noite: ${owls[0].name} curou ${lowest.name} em ${healed} HP (marca consumida em ${dead.name})`,
+          });
+        }
+      }
+    }
+  }
+
+
+
   while (a.some((m) => m.current > 0) && b.some((m) => m.current > 0) && turn <= MAX_TURNS) {
     type Actor = { mon: Live; side: "team_a" | "team_b" };
     const order: Actor[] = [
