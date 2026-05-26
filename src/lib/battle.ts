@@ -192,6 +192,13 @@ function effectiveSpd(mon: Live): number {
   return s;
 }
 
+/** Elefante Ancestral: imunidade total a CC (sono, congelamento, silêncio, cegueira, atordoamento, marca, queimadura, sangramento). */
+function isCCImmune(mon: Live): boolean {
+  return mon.species === "elefante_ancestral";
+}
+
+
+
 function applyDamage(target: Live, raw: number): number {
   let dmg = raw;
   // 🏴 Marca da Morte: +25% de dano sofrido
@@ -871,8 +878,10 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
               const baseHit = Math.max(1, Math.round((effInt * 1.4 + effAtk * 0.8) * eff * skillMult));
               applyDamage(target, baseHit);
               const dot = Math.max(1, Math.round((effInt * 0.6 + attacker.atk * 0.3) * skillMult));
-              target.burnDmg = Math.max(target.burnDmg, dot);
-              target.burnTurns = Math.max(target.burnTurns, 3);
+              if (!isCCImmune(target)) {
+                target.burnDmg = Math.max(target.burnDmg, dot);
+                target.burnTurns = Math.max(target.burnTurns, 3);
+              }
               log.push({
                 turn,
                 actor: side,
@@ -910,8 +919,10 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
               const baseHit = Math.max(1, Math.round((effAtk * 1.1 - tgtEffDef(target) * 0.6) * eff * skillMult));
               applyDamage(target, baseHit);
               const dot = Math.max(1, Math.round(effAtk * 0.35 * skillMult));
-              target.bleedDmg = Math.max(target.bleedDmg, dot);
-              target.bleedTurns = Math.max(target.bleedTurns, 3);
+              if (!isCCImmune(target)) {
+                target.bleedDmg = Math.max(target.bleedDmg, dot);
+                target.bleedTurns = Math.max(target.bleedTurns, 3);
+              }
               log.push({
                 turn,
                 actor: side,
@@ -951,7 +962,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
               applyDamage(target, dmg);
               const alive = enemies.filter((e) => e.current > 0);
               for (const e of alive) {
-                e.blindTurns = Math.max(e.blindTurns, 1);
+                if (!isCCImmune(e)) e.blindTurns = Math.max(e.blindTurns, 1);
               }
               log.push({
                 turn,
@@ -991,7 +1002,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
               const dmg = Math.max(1, Math.round((effInt * 1.8 - tgtEffDef(target) * 0.4) * eff * skillMult));
               applyDamage(target, dmg);
               const slept = rand() < 0.8 && target.current > 0;
-              if (slept) target.sleepTurns = Math.max(target.sleepTurns, 2);
+              if (slept && !isCCImmune(target)) target.sleepTurns = Math.max(target.sleepTurns, 2);
               log.push({
                 turn,
                 actor: side,
@@ -1030,7 +1041,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
               const dmg = Math.max(1, Math.round((effAtk * 1.6 - tgtEffDef(target) * 0.5) * eff * skillMult));
               applyDamage(target, dmg);
               const frozen = rand() < 0.8 && target.current > 0;
-              if (frozen) target.freezeTurns = Math.max(target.freezeTurns, 2);
+              if (frozen && !isCCImmune(target)) target.freezeTurns = Math.max(target.freezeTurns, 2);
               log.push({
                 turn,
                 actor: side,
@@ -1146,7 +1157,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
               const dmg = Math.max(1, Math.round(base * eff * 1.8 * 1.7 * skillMult));
               applyDamage(target, dmg);
               const frozen = rand() < 0.4 && target.current > 0;
-              if (frozen) target.freezeTurns = Math.max(target.freezeTurns, 1);
+              if (frozen && !isCCImmune(target)) target.freezeTurns = Math.max(target.freezeTurns, 1);
               log.push({
                 turn,
                 actor: side,
@@ -1232,7 +1243,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
               applyDamage(target, dmg);
               const stunChance = attacker.species === "pterossauro" ? 0.4 : 0.3;
               const stunned = rand() < stunChance && target.current > 0;
-              if (stunned) target.stunTurns = Math.max(target.stunTurns, 1);
+              if (stunned && !isCCImmune(target)) target.stunTurns = Math.max(target.stunTurns, 1);
               log.push({
                 turn,
                 actor: side,
@@ -1310,7 +1321,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
               const dmg = Math.max(1, Math.round(base * eff * 2.0 * skillMult));
               applyDamage(target, dmg);
               const stunned = rand() < 0.6 && target.current > 0;
-              if (stunned) target.stunTurns = Math.max(target.stunTurns, 1);
+              if (stunned && !isCCImmune(target)) target.stunTurns = Math.max(target.stunTurns, 1);
               log.push({
                 turn,
                 actor: side,
@@ -1520,7 +1531,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
               if (wasMarked) {
                 t.markTurns = 0; // consome a marca
                 consumedNames.push(t.name);
-              } else if (t.current > 0) {
+              } else if (t.current > 0 && !isCCImmune(t)) {
                 t.markTurns = 3; // aplica a marca por 3 turnos
                 markedNames.push(t.name);
               }
@@ -1770,7 +1781,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
               const base = Math.max(1, effInt * 1.6 - target.def * 0.3);
               const dmg = Math.max(1, Math.round(base * eff * 1.1 * skillMult));
               applyDamage(target, dmg);
-              target.silenceTurns = Math.max(target.silenceTurns, 2);
+              if (!isCCImmune(target)) target.silenceTurns = Math.max(target.silenceTurns, 2);
               log.push({
                 turn,
                 actor: side,
@@ -2070,19 +2081,19 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
 
         // PASSIVA Borboleta Sonífera: 50% de chance de adormecer o alvo por 2 turnos
         let sleptByPassive = false;
-        if (attacker.species === "borboleta_sonifera" && target.current > 0 && rand() < 0.5) {
+        if (attacker.species === "borboleta_sonifera" && target.current > 0 && !isCCImmune(target) && rand() < 0.5) {
           target.sleepTurns = Math.max(target.sleepTurns, 2);
           sleptByPassive = true;
         }
         // PASSIVA Urso Polar: 50% de chance de congelar o alvo por 2 turnos
         let frozenByPassive = false;
-        if (attacker.species === "urso_polar" && target.current > 0 && rand() < 0.5) {
+        if (attacker.species === "urso_polar" && target.current > 0 && !isCCImmune(target) && rand() < 0.5) {
           target.freezeTurns = Math.max(target.freezeTurns, 2);
           frozenByPassive = true;
         }
         // PASSIVA Leoa Trovão: 30% de chance de paralisar o alvo por 1 turno
         let stunnedByPassive = false;
-        if (attacker.species === "leoa_trovao" && target.current > 0 && rand() < 0.3) {
+        if (attacker.species === "leoa_trovao" && target.current > 0 && !isCCImmune(target) && rand() < 0.3) {
           target.stunTurns = Math.max(target.stunTurns, 1);
           stunnedByPassive = true;
         }
