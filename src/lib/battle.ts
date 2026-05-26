@@ -1000,7 +1000,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
               const dmg = Math.max(1, Math.round((effInt * 1.8 - tgtEffDef(target) * 0.4) * eff * skillMult));
               applyDamage(target, dmg);
               const slept = rand() < 0.8 && target.current > 0;
-              if (slept) target.sleepTurns = Math.max(target.sleepTurns, 2);
+              if (slept && !isCCImmune(target)) target.sleepTurns = Math.max(target.sleepTurns, 2);
               log.push({
                 turn,
                 actor: side,
