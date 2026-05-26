@@ -385,11 +385,14 @@ function AdminPage() {
                 <div className="flex-1 min-w-[160px]">
                   <label className="text-xs opacity-70 block">Espécie</label>
                   <select value={newSpecies} onChange={(e) => setNewSpecies(e.target.value)} className="w-full px-2 py-1 rounded bg-black/40 border border-white/10 text-sm">
-                    {Object.values(SPECIES).map((sp) => (
-                      <option key={sp.id} value={sp.id}>
-                        {sp.name} ({RARITY_INFO[sp.rarity].name})
-                      </option>
-                    ))}
+                    {Object.values(SPECIES)
+                      .slice()
+                      .sort((a, b) => Number(!!b.hidden) - Number(!!a.hidden))
+                      .map((sp) => (
+                        <option key={sp.id} value={sp.id}>
+                          {sp.hidden ? "🔒 " : ""}{sp.name} ({RARITY_INFO[sp.rarity].name}){sp.hidden ? " — OCULTO" : ""}
+                        </option>
+                      ))}
                   </select>
                 </div>
                 <div>

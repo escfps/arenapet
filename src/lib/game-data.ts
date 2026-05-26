@@ -72,6 +72,13 @@ export type Species = {
   description: string;
   base: { hp: number; atk: number; def: number; spd: number; int: number };
   skill?: Skill; // unique skill per species (overrides ROLE_SKILLS)
+  /**
+   * Pets ocultos: NÃO aparecem em baús, baú de boas-vindas, nem na Coleção
+   * pública (a menos que o jogador já tenha um). Servem para testes em conta
+   * admin antes do lançamento oficial. Para "soltar" o pet pra todos, basta
+   * remover esta flag (ou setar para false) e publicar.
+   */
+  hidden?: boolean;
 };
 
 export const ROLE_INFO: Record<Role, { name: string; emoji: string; description: string; color: string }> = {
@@ -651,8 +658,8 @@ export type Egg = {
 };
 
 // Helpers to build weight tables
-const ALL_COMMON = Object.values(SPECIES).filter((s) => s.rarity === "common").map((s) => s.id);
-const ALL_RARE = Object.values(SPECIES).filter((s) => s.rarity === "rare").map((s) => s.id);
+const ALL_COMMON = Object.values(SPECIES).filter((s) => s.rarity === "common" && !s.hidden).map((s) => s.id);
+const ALL_RARE = Object.values(SPECIES).filter((s) => s.rarity === "rare" && !s.hidden).map((s) => s.id);
 
 function makeWeights(commonW: number, rareW: number): Record<string, number> {
   const w: Record<string, number> = {};
@@ -841,7 +848,7 @@ export function rollChest(tier: ChestTier, forceRarity?: Rarity): ChestReward {
         if (r <= 0) { chosenRarity = rarity as Rarity; break; }
       }
     }
-    const pool = Object.values(SPECIES).filter((s) => s.rarity === chosenRarity);
+    const pool = Object.values(SPECIES).filter((s) => s.rarity === chosenRarity && !s.hidden);
     if (pool.length > 0) {
       petSpecies = pool[Math.floor(Math.random() * pool.length)].id;
     }
@@ -865,7 +872,7 @@ export const PITY_COLUMN: Partial<Record<ChestTier, "pity_silver" | "pity_gold" 
 
 // Baú de boas-vindas: 2 comuns aleatórios + 1 raro aleatório
 export function rollWelcomeChest(): string[] {
-  const all = Object.values(SPECIES);
+  const all = Object.values(SPECIES).filter((s) => !s.hidden);
   const commons = all.filter((s) => s.rarity === "common");
   const rares = all.filter((s) => s.rarity === "rare");
   const pickN = <T,>(arr: T[], n: number): T[] => {
