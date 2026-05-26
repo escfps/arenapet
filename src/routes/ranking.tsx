@@ -47,7 +47,6 @@ function RankingPage() {
   const fetchSeason = useServerFn(getCurrentSeason);
   const [rows, setRows] = useState<Row[]>([]);
   const [myRank, setMyRank] = useState<number | null>(null);
-  const [historyOf, setHistoryOf] = useState<Row | null>(null);
   const [season, setSeason] = useState<SeasonInfo | null>(null);
 
   useEffect(() => {
