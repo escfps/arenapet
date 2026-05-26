@@ -185,28 +185,16 @@ function LoginPage() {
   async function googleSignIn() {
     setBusy(true);
     try {
-      // Detecta se está rodando dentro do app nativo (Capacitor)
-      const isNative = typeof window !== "undefined" &&
-        (window as unknown as { Capacitor?: { isNativePlatform?: () => boolean } }).Capacitor?.isNativePlatform?.();
-
-      if (isNative) {
-        // Login nativo: abre a tela de contas do Google e devolve idToken direto
-        const { GoogleAuth } = await import("@codetrix-studio/capacitor-google-auth");
-        try { await GoogleAuth.initialize(); } catch {}
-        const result = await GoogleAuth.signIn();
-        const idToken = result.authentication?.idToken;
-        if (!idToken) throw new Error("Sem idToken do Google");
-        const { error } = await supabase.auth.signInWithIdToken({ provider: "google", token: idToken });
-        if (error) throw error;
-        navigate({ to: "/" });
-        return;
-      }
-
-      // Web: usa o broker da Lovable (fluxo OAuth no próprio WebView/aba)
+      // Usa o broker OAuth da Lovable em todos os ambientes (web e native).
+      // No app nativo, o WebView já aponta pro domínio arenapet.lovable.app,
+      // então o redirect funciona normalmente — e evita o problema de
+      // "audience mismatch" do idToken nativo (aud = iosClientId/androidClientId)
+      // que o Supabase rejeita quando só o Web Client ID está configurado.
       const result = await lovable.auth.signInWithOAuth("google", {
         redirect_uri: "https://arenapet.lovable.app/login",
       });
       if (result.error) {
+        console.error("[googleSignIn] broker error", result.error);
         showErr("Falha no login Google");
         setBusy(false);
         return;
@@ -221,6 +209,7 @@ function LoginPage() {
       setBusy(false);
     }
   }
+
 
   return (
     <main className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden bg-gradient-to-br from-[oklch(0.25_0.12_290)] via-[oklch(0.18_0.10_310)] to-[oklch(0.22_0.14_260)]">
