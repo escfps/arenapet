@@ -11,7 +11,7 @@ type ShieldMap = Map<string, number>;
 type SkillFxKind = "heal" | "bite" | "explosion" | "lightning" | "fire" | "shield" | "slash" | "skull" | "fury" | "silence" | "magic" | "revive" | "true" | "cooldown" | "impact";
 type MissLabel = { key: string; kind: "dodge" | "miss" } | null;
 type Fx = { actor: string | null; target: string | null; dmg: number | null; shieldGain: number | null; crit: boolean; skillFx: SkillFxKind | null; targets: string[]; miss: MissLabel };
-type StatusKind = "burn" | "poison" | "bleed" | "blind" | "sleep" | "freeze" | "silence" | "rage" | "shield";
+type StatusKind = "burn" | "poison" | "bleed" | "blind" | "sleep" | "freeze" | "silence" | "rage" | "shield" | "stun" | "mark";
 type StatusMap = Map<string, Set<StatusKind>>;
 type EffectBanner = {
   id: number;
