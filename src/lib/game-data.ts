@@ -72,6 +72,13 @@ export type Species = {
   description: string;
   base: { hp: number; atk: number; def: number; spd: number; int: number };
   skill?: Skill; // unique skill per species (overrides ROLE_SKILLS)
+  /**
+   * Pets ocultos: NÃO aparecem em baús, baú de boas-vindas, nem na Coleção
+   * pública (a menos que o jogador já tenha um). Servem para testes em conta
+   * admin antes do lançamento oficial. Para "soltar" o pet pra todos, basta
+   * remover esta flag (ou setar para false) e publicar.
+   */
+  hidden?: boolean;
 };
 
 export const ROLE_INFO: Record<Role, { name: string; emoji: string; description: string; color: string }> = {
