@@ -2155,7 +2155,11 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
         // Esquiva por velocidade: 5% base + 3.5% por ponto de SPD a mais que o atacante
         // mínimo 5% (sempre há chance), máximo 55%
         const spdDiff = effectiveSpd(target) - effectiveSpd(attacker);
-        const baseDodge = Math.max(0.05, Math.min(0.55, 0.05 + spdDiff * 0.035));
+        // PASSIVA Tigre Relâmpago: +4% de esquiva a cada 10 pontos de SPD
+        const tigerDodgeBonus = target.species === "tigre_relampago"
+          ? Math.floor(effectiveSpd(target) / 10) * 0.04
+          : 0;
+        const baseDodge = Math.max(0.05, Math.min(0.75, 0.05 + spdDiff * 0.035 + tigerDodgeBonus));
         // 🏴 Marca da Morte: zera a esquiva contra ataques básicos
         const dodgeChance = target.markTurns > 0 ? 0 : baseDodge;
         if (dodgeChance > 0 && rand() < dodgeChance) {
