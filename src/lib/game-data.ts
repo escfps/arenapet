@@ -408,7 +408,7 @@ export const SPECIES: Record<string, Species> = {
     emoji: "🐊", image: jacareAncestralImg,
     description: "Predador ancestral dos rios esmeralda. Mordida devastadora que ignora defesa leve.",
     base: { hp: 106, atk: 15, def: 10, spd: 11, int: 8 },
-    skill: { name: "Mordida Esmeralda", emoji: "🐊", kind: "lifesteal_strike", cooldown: 3, description: "Crava as mandíbulas (2.1× dano) e cura 60% do dano causado." },
+    skill: { name: "Mordida Esmeralda", emoji: "🐊", kind: "lifesteal_strike", cooldown: 3, description: "Crava as mandíbulas (2× dano) e cura 30% do dano causado." },
   },
   gorila_titan: {
     id: "gorila_titan", name: "Gorila Titã", element: "earth", role: "tank", rarity: "epic",
