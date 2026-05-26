@@ -148,7 +148,9 @@ export type SkillKind =
   | "spectral_pounce"    // assassin — crítico garantido no mais fraco (2× dano) ignorando 60% DEF / PASSIVA: ataque básico 50% chance de critar
   | "cooldown_reduction" // healer mítico — reduz 1 turno de cooldown de todos aliados / PASSIVA: cada turno reduz cd do aliado mais travado
   | "thorn_burst"       // tank — ataca todos os inimigos com 1.0× ATK físico / PASSIVA: reflete 10% do dano recebido
-  | "terror_screech";    // dps/suporte — reduz ATK de todos inimigos em 20% por 2 turnos / PASSIVA (urubu): +7% SPD a cada 10% HP perdido (máx +70%)
+  | "terror_screech"    // dps/suporte — reduz ATK de todos inimigos em 20% por 2 turnos / PASSIVA (urubu): +7% SPD a cada 10% HP perdido (máx +70%)
+  | "arcane_mark"       // mago — AoE arcano + aplica 🏴 Marca da Morte (3 turnos) em todos; consome marca pra +50% dano
+  | "cleanse_shield";   // tank — remove TODOS os debuffs dos aliados + escudo 25% HP máx
 
 export type Skill = {
   name: string;
