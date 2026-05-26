@@ -613,9 +613,9 @@ export const SPECIES: Record<string, Species> = {
   rinoceronte_guardiao: {
     id: "rinoceronte_guardiao", name: "Rinoceronte Guardião", element: "earth", role: "tank", rarity: "super_rare",
     emoji: "🦏", image: rinoceronteGuardiaoImg, hidden: true,
-    description: "Guardião da floresta de pedra. Sua investida purifica os aliados e ergue uma muralha vinda das entranhas da terra.",
-    base: { hp: 145, atk: 14, def: 22, spd: 9, int: 8 },
-    skill: { name: "Investida Purificadora", emoji: "🦏", kind: "cleanse_shield", cooldown: 3, description: "Remove TODOS os debuffs (sono, congelamento, silêncio, cegueira, atordoamento, queimadura, sangramento, marca, DEF/ATK reduzidos) de todos os aliados e ganha escudo de 25% do HP máx." },
+    description: "Muralha viva da floresta de pedra. Sua presença atrai todos os ataques inimigos enquanto sua casca grossa absorve tudo.",
+    base: { hp: 200, atk: 14, def: 32, spd: 9, int: 8 },
+    skill: { name: "Postura Imbatível", emoji: "🦏", kind: "shield_taunt", cooldown: 3, description: "PASSIVA: provoca — inimigos atacam ele primeiro. ATIVA: reforça a postura, provocando todos por 2 turnos e ganhando escudo de 30% do HP máx." },
   },
   elefante_ancestral: {
     id: "elefante_ancestral", name: "Elefante Ancestral", element: "earth", role: "tank", rarity: "legendary",
