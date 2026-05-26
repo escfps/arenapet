@@ -240,6 +240,8 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
     burnTurns: 0,
     bleedDmg: 0,
     bleedTurns: 0,
+    poisonDmg: 0,
+    poisonTurns: 0,
     blindTurns: 0,
     sleepTurns: 0,
     freezeTurns: 0,
