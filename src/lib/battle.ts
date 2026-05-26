@@ -1319,8 +1319,12 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
             const target = aliveEnemies.length ? aliveEnemies.reduce((x, y) => (x.current < y.current ? x : y)) : null;
             if (target) {
               const eff = defensiveMultiplier(getElement(attacker.species), target.species);
-              const base = Math.max(1, effAtk * 2 - tgtEffDef(target));
-              const dmg = Math.max(1, Math.round(base * eff * 2.0 * skillMult));
+              // Escala de velocidade: +2% de dano por SPD a mais que o alvo, máx +60%
+              const spdAdvantage = Math.max(0, effectiveSpd(attacker) - effectiveSpd(target));
+              const spdBonus = Math.min(0.6, spdAdvantage * 0.02);
+              const mult = 1.2 + spdBonus;
+              const base = Math.max(1, effAtk * mult - tgtEffDef(target));
+              const dmg = Math.max(1, Math.round(base * eff * skillMult));
               applyDamage(target, dmg);
               log.push({
                 turn,
@@ -1328,11 +1332,11 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
                 actorName: attacker.name,
                 targetName: target.name,
                 damage: dmg,
-                crit: true,
+                crit: false,
                 effective: eff,
                 remainingHp: target.current,
                 targetShield: target.shield,
-                message: `${skill.emoji} ${attacker.name} usou ${skill.name}: ${dmg} CRÍTICO em ${target.name}`,
+                message: `${skill.emoji} ${attacker.name} usou ${skill.name}: ${dmg} em ${target.name}${spdBonus > 0 ? ` (+${Math.round(spdBonus * 100)}% por velocidade)` : ""}`,
               });
               if (target.current <= 0) {
                 target.lastFallenAt = turn;
