@@ -614,7 +614,7 @@ export const SPECIES: Record<string, Species> = {
     emoji: "🦏", image: rinoceronteGuardiaoImg, hidden: true,
     description: "Guardião da floresta de pedra. Sua investida purifica os aliados e ergue uma muralha vinda das entranhas da terra.",
     base: { hp: 145, atk: 14, def: 22, spd: 9, int: 8 },
-    skill: { name: "Investida Purificadora", emoji: "🦏", kind: "turtle_shell", cooldown: 3, description: "Ganha escudo de 25% do HP máx e reduz dano recebido em 20% por 2 turnos. (placeholder: remoção de debuffs em desenvolvimento)" },
+    skill: { name: "Investida Purificadora", emoji: "🦏", kind: "cleanse_shield", cooldown: 3, description: "Remove TODOS os debuffs (sono, congelamento, silêncio, cegueira, atordoamento, queimadura, sangramento, marca, DEF/ATK reduzidos) de todos os aliados e ganha escudo de 25% do HP máx." },
   },
   elefante_ancestral: {
     id: "elefante_ancestral", name: "Elefante Ancestral", element: "earth", role: "tank", rarity: "legendary",
