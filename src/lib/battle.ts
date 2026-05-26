@@ -2477,6 +2477,14 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           corujaNegraHeal = attacker.current - before;
         }
 
+        // PASSIVA Hiena Carniceira (Frenesi do Predador): ao acertar inimigo marcado, ganha +20% SPD no próximo turno
+        let hyenaFrenzy = false;
+        if (attacker.species === "hiena_carniceira" && target.markTurns > 0 && damage > 0) {
+          attacker.spdBuffPct = Math.max(attacker.spdBuffPct, 0.2);
+          attacker.spdBuffTurns = Math.max(attacker.spdBuffTurns, 1);
+          hyenaFrenzy = true;
+        }
+
         // PASSIVA Triceratops Colossal: reflete 15% do dano recebido em ataques básicos
         let reflected = 0;
         if (target.thornsPct > 0 && damage > 0 && attacker.current > 0 && attacker.species !== target.species) {
