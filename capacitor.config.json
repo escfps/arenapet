@@ -23,6 +23,13 @@
   "plugins": {
     "App": {
       "urlScheme": "com.arenapet.app"
+    },
+    "GoogleAuth": {
+      "scopes": ["profile", "email"],
+      "serverClientId": "486152638398-rk8rqgq0b2fhdcnok8s25oijqneqnqjk.apps.googleusercontent.com",
+      "forceCodeForRefreshToken": true,
+      "androidClientId": "486152638398-0ajhthb4piv8706kd7puearqfobu8sm9.apps.googleusercontent.com",
+      "iosClientId": "486152638398-fb6bpnfo14rr5ditb967ft0841fl0bal.apps.googleusercontent.com"
     }
   }
 }
