@@ -497,8 +497,8 @@ function ShopPage() {
 
         {tab === "gems" && (
           <div className="space-y-3">
-            <PaymentTestModeBanner />
-            <p className="text-white/80 text-xs text-center">💳 Pague no cartão — gemas creditadas automaticamente em segundos.</p>
+            {!isIos() && <PaymentTestModeBanner />}
+            {!isIos() && <p className="text-white/80 text-xs text-center">💳 Pague no cartão — gemas creditadas automaticamente em segundos.</p>}
             <div className="grid sm:grid-cols-2 gap-3">
               {GEM_PACKS.map((p) => (
                 <div key={p.id} className="rounded-2xl bg-gradient-to-br from-purple-600 to-fuchsia-700 border-2 border-purple-300 p-4 text-white">
@@ -509,7 +509,7 @@ function ShopPage() {
                     onClick={() => buyGems(p)}
                     className="mt-3 w-full flex items-center justify-center gap-2 py-2 rounded-lg bg-emerald-500 text-white font-extrabold hover:bg-emerald-600 transition"
                   >
-                    💳 R$ {p.priceBRL.toFixed(2).replace(".", ",")}
+                    {isIos() ? `💎 R$ ${p.priceBRL.toFixed(2).replace(".", ",")}` : `💳 R$ ${p.priceBRL.toFixed(2).replace(".", ",")}`}
                   </button>
                 </div>
 
