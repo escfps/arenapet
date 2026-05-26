@@ -1529,7 +1529,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
               if (wasMarked) {
                 t.markTurns = 0; // consome a marca
                 consumedNames.push(t.name);
-              } else if (t.current > 0) {
+              } else if (t.current > 0 && !isCCImmune(t)) {
                 t.markTurns = 3; // aplica a marca por 3 turnos
                 markedNames.push(t.name);
               }
