@@ -185,13 +185,44 @@ function LoginPage() {
   async function googleSignIn() {
     setBusy(true);
     try {
-      // Usa o broker OAuth da Lovable em todos os ambientes (web e native).
-      // No app nativo, o WebView já aponta pro domínio arenapet.lovable.app,
-      // então o redirect funciona normalmente — e evita o problema de
-      // "audience mismatch" do idToken nativo (aud = iosClientId/androidClientId)
-      // que o Supabase rejeita quando só o Web Client ID está configurado.
+      // Detecta ambiente nativo (Capacitor). No app, o broker da Lovable não
+      // funciona porque o redirect acontece dentro do WKWebView e o Google
+      // bloqueia com "Erro 403: disallowed_useragent". Por isso usamos o
+      // plugin nativo que abre o fluxo no navegador do sistema / SDK nativo
+      // do Google e devolve um idToken cujo `aud` é o `serverClientId`
+      // (= Web Client ID), que é exatamente o que o Supabase aceita.
+      const isNative =
+        typeof window !== "undefined" &&
+        (window as unknown as { Capacitor?: { isNativePlatform?: () => boolean } })
+          .Capacitor?.isNativePlatform?.() === true;
+
+      if (isNative) {
+        const { GoogleAuth } = await import("@codetrix-studio/capacitor-google-auth");
+        try { await GoogleAuth.initialize(); } catch {}
+        const res = await GoogleAuth.signIn();
+        const idToken = res?.authentication?.idToken;
+        if (!idToken) {
+          showErr("Não foi possível obter token do Google.");
+          setBusy(false);
+          return;
+        }
+        const { error } = await supabase.auth.signInWithIdToken({
+          provider: "google",
+          token: idToken,
+        });
+        if (error) {
+          console.error("[googleSignIn native] supabase error", error);
+          showErr(`Falha no login Google: ${error.message}`);
+          setBusy(false);
+          return;
+        }
+        navigate({ to: "/" });
+        return;
+      }
+
+      // Web: usa o broker OAuth da Lovable
       const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: "https://arenapet.lovable.app/login",
+        redirect_uri: `${window.location.origin}/login`,
       });
       if (result.error) {
         console.error("[googleSignIn] broker error", result.error);
@@ -205,10 +236,12 @@ function LoginPage() {
       navigate({ to: "/" });
     } catch (e) {
       console.error("[googleSignIn]", e);
-      showErr("Falha no login Google");
+      const msg = e instanceof Error ? e.message : "Falha no login Google";
+      showErr(msg);
       setBusy(false);
     }
   }
+
 
 
   return (
