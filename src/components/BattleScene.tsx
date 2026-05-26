@@ -8,7 +8,7 @@ import { playSfx } from "@/lib/sound";
 type Team = (MonsterRow & { owner_id: string })[];
 type HpMap = Map<string, { cur: number; max: number }>;
 type ShieldMap = Map<string, number>;
-type SkillFxKind = "heal" | "bite" | "explosion" | "lightning" | "fire" | "shield" | "slash" | "skull" | "fury" | "silence" | "magic" | "revive" | "true" | "cooldown";
+type SkillFxKind = "heal" | "bite" | "explosion" | "lightning" | "fire" | "shield" | "slash" | "skull" | "fury" | "silence" | "magic" | "revive" | "true" | "cooldown" | "impact";
 type MissLabel = { key: string; kind: "dodge" | "miss" } | null;
 type Fx = { actor: string | null; target: string | null; dmg: number | null; shieldGain: number | null; crit: boolean; skillFx: SkillFxKind | null; targets: string[]; miss: MissLabel };
 type StatusKind = "burn" | "poison" | "bleed" | "blind" | "sleep" | "freeze" | "silence" | "rage" | "shield";
@@ -310,6 +310,9 @@ export function BattleScene({
       skillFx = "bite";
     } else if (skillKind === "true_damage_nuke") {
       skillFx = "magic";
+    } else if (entry.damage > 0 && targetKey) {
+      // Fallback: ataque básico — mostra impacto genérico
+      skillFx = "impact";
     }
 
     // ===== Detecta ganho de escudo na mensagem =====
@@ -341,7 +344,7 @@ export function BattleScene({
       playSfx("debuff");
     } else if (entry.crit) {
       playSfx("crit");
-    } else if (skillFx && skillFx !== "heal") {
+    } else if (skillFx && skillFx !== "heal" && skillFx !== "impact") {
       playSfx("skill");
     } else if (entry.damage > 0) {
       playSfx("hit");
@@ -826,6 +829,39 @@ function SkillFxOverlay({ kind, keyId }: { kind: SkillFxKind; keyId: string }) {
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-5xl animate-skill-pop" style={{ textShadow: "0 0 14px rgba(132,204,22,0.95)" }}>
             ⏱️
           </div>
+        </>
+      )}
+
+      {kind === "impact" && (
+        <>
+          {/* Flash branco */}
+          <div className="absolute inset-0 bg-white/40 mix-blend-overlay animate-skill-flash rounded-full" />
+          {/* Shockwave anel */}
+          <div className="absolute left-1/2 top-1/2 w-20 h-20 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white/80 animate-skill-shockwave" />
+          {/* Slash diagonal */}
+          <div
+            className="absolute left-1/2 top-1/2 w-28 h-1.5 bg-gradient-to-r from-transparent via-white to-transparent animate-skill-slash-line"
+            style={{
+              transform: "translate(-50%, -50%) rotate(-25deg)",
+              boxShadow: "0 0 10px rgba(255,255,255,0.95)",
+            }}
+          />
+          {/* Estrelinha de impacto */}
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-4xl animate-skill-pop">
+            💥
+          </div>
+          {/* Mini partículas */}
+          {[0, 72, 144, 216, 288].map((deg, i) => (
+            <div
+              key={i}
+              className="absolute left-1/2 top-1/2 w-1.5 h-1.5 bg-yellow-200 rounded-full animate-skill-spark"
+              style={{
+                transform: `translate(-50%, -50%) rotate(${deg}deg) translateY(-32px)`,
+                animationDelay: `${i * 0.03}s`,
+                boxShadow: "0 0 6px rgba(253,224,71,0.95)",
+              }}
+            />
+          ))}
         </>
       )}
 

@@ -224,6 +224,13 @@
   }
   .animate-skill-shockwave { animation: skillShockwave 0.9s ease-out forwards; }
 
+  @keyframes skillSpark {
+    0% { opacity: 0; }
+    25% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  .animate-skill-spark { animation: skillSpark 0.55s ease-out forwards; }
+
   @keyframes skillShard {
     0% { opacity: 0; }
     20% { opacity: 1; }
