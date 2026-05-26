@@ -185,9 +185,24 @@ function LoginPage() {
   async function googleSignIn() {
     setBusy(true);
     try {
-      // Usa o broker gerenciado da Lovable: o fluxo OAuth acontece dentro
-      // do próprio WebView (mesma origem do server.url do Capacitor),
-      // sem abrir navegador externo nem precisar de deep link.
+      // Detecta se está rodando dentro do app nativo (Capacitor)
+      const isNative = typeof window !== "undefined" &&
+        (window as unknown as { Capacitor?: { isNativePlatform?: () => boolean } }).Capacitor?.isNativePlatform?.();
+
+      if (isNative) {
+        // Login nativo: abre a tela de contas do Google e devolve idToken direto
+        const { GoogleAuth } = await import("@codetrix-studio/capacitor-google-auth");
+        try { await GoogleAuth.initialize(); } catch {}
+        const result = await GoogleAuth.signIn();
+        const idToken = result.authentication?.idToken;
+        if (!idToken) throw new Error("Sem idToken do Google");
+        const { error } = await supabase.auth.signInWithIdToken({ provider: "google", token: idToken });
+        if (error) throw error;
+        navigate({ to: "/" });
+        return;
+      }
+
+      // Web: usa o broker da Lovable (fluxo OAuth no próprio WebView/aba)
       const result = await lovable.auth.signInWithOAuth("google", {
         redirect_uri: "https://arenapet.lovable.app/login",
       });
@@ -197,12 +212,11 @@ function LoginPage() {
         return;
       }
       if (result.redirected) {
-        // O WebView será redirecionado para o Google e voltará na mesma janela
         return;
       }
-      // Sessão já definida — navega para home
       navigate({ to: "/" });
     } catch (e) {
+      console.error("[googleSignIn]", e);
       showErr("Falha no login Google");
       setBusy(false);
     }
