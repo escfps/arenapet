@@ -670,7 +670,7 @@ export const SPECIES: Record<string, Species> = {
     id: "coruja_negra", name: "Coruja Negra", element: "shadow", role: "mage", rarity: "epic",
     emoji: "🦉", image: corujaNegraImg, hidden: true,
     description: "Arcanista das sombras. Marca suas presas e detona ataques arcanos que reverberam pelo campo inteiro.",
-    base: { hp: 100, atk: 12, def: 11, spd: 16, int: 28 },
+    base: { hp: 130, atk: 12, def: 11, spd: 16, int: 28 },
     skill: { name: "Julgamento Arcano", emoji: "🏴", kind: "arcane_mark", cooldown: 4, description: "Explosão arcana em todos os inimigos (INT×1.4, ignora 60% DEF) + aplica 🏴 Marca da Morte por 3 turnos (alvos marcados sofrem +25% de dano e não conseguem esquivar). Inimigos já marcados sofrem +50% e a marca é consumida." },
   },
   coruja_psiquica: {
