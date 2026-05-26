@@ -293,25 +293,28 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
 
   // PASSIVA Coruja Psíquica: ao entrar em batalha, concede 100 de escudo para si e para os 2 aliados
   const applyPsychicShield = (team: Live[], side: "team_a" | "team_b") => {
-    const hasPsychic = team.some((m) => m.species === "coruja_psiquica" && m.current > 0);
-    if (!hasPsychic) return;
+    const psychic = team.find((m) => m.species === "coruja_psiquica" && m.current > 0);
+    if (!psychic) return;
     for (const m of team) {
-      if (m.current > 0) m.shield += 100;
+      if (m.current <= 0) continue;
+      m.shield += 100;
+      log.push({
+        turn: 0,
+        actor: side,
+        actorName: psychic.name,
+        targetName: m.name,
+        damage: 0,
+        crit: false,
+        effective: 1,
+        remainingHp: m.current,
+        targetShield: m.shield,
+        message: `🧠 ${psychic.name} concedeu +100 de escudo a ${m.name} (Passiva Psíquica)`,
+      });
     }
-    log.push({
-      turn: 0,
-      actor: side,
-      actorName: "Coruja Psíquica",
-      targetName: "aliados",
-      damage: 0,
-      crit: false,
-      effective: 1,
-      remainingHp: 0,
-      message: `🧠 PASSIVA Coruja Psíquica: +100 de escudo para todo o time`,
-    });
   };
   applyPsychicShield(a, "team_a");
   applyPsychicShield(b, "team_b");
+
 
 
   // Log inicial das sinergias ativas
