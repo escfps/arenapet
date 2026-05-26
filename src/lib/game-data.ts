@@ -150,7 +150,8 @@ export type SkillKind =
   | "thorn_burst"       // tank — ataca todos os inimigos com 1.0× ATK físico / PASSIVA: reflete 10% do dano recebido
   | "terror_screech"    // dps/suporte — reduz ATK de todos inimigos em 20% por 2 turnos / PASSIVA (urubu): +7% SPD a cada 10% HP perdido (máx +70%)
   | "arcane_mark"       // mago — AoE arcano + aplica 🏴 Marca da Morte (3 turnos) em todos; consome marca pra +50% dano
-  | "cleanse_shield";   // tank — remove TODOS os debuffs dos aliados + escudo 25% HP máx
+  | "cleanse_shield"    // tank — remove TODOS os debuffs dos aliados + escudo 25% HP máx
+  | "corsair_volley";   // dps — 3 investidas em alvos aleatórios (podem repetir) com 20% de chance de sangrar por hit (máx 1 stack)
 
 export type Skill = {
   name: string;
