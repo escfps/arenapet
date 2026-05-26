@@ -254,7 +254,11 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
     thornsPct: m.species === "triceratops_colossal" ? 0.15 : m.species === "porco_espinho" ? 0.10 : 0,
     killStacks: 0,
     lastFallenAt: 0,
+    markTurns: 0,
+    spdBuffTurns: 0,
+    spdBuffPct: 0,
   });
+
   const a: Live[] = teamA.map(mkLive);
   const b: Live[] = teamB.map(mkLive);
   const rand = rng(seed);
