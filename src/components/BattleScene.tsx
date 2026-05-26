@@ -65,15 +65,19 @@ function detectEffect(entry: BattleLogEntry): EffectBanner {
 // Detecta status persistentes pela mensagem
 function statusFromMessage(msg: string): StatusKind | null {
   if (msg.includes("sangrando") && msg.includes("turnos")) return "bleed";
+  if (msg.includes("sangrou")) return "bleed";
+  if (msg.includes("☠️") || msg.includes("Veneno") || msg.includes("veneno") || msg.includes("Envenenado")) return "poison";
   if (msg.includes("queimando") && msg.includes("turnos")) {
-    // Polvo Venenoso usa burn_dot mas visualmente é veneno
-    if (msg.includes("Tinta Venenosa") || msg.includes("☠️") || msg.includes("veneno")) return "poison";
+    if (msg.includes("Tinta Venenosa")) return "poison";
     return "burn";
   }
+  if (msg.includes("queimadura")) return "burn";
   if (msg.includes("cegou") || msg.includes("cegueira")) return "blind";
   if (msg.includes("adormeceu") || msg.includes("dormindo") || msg.includes("💤")) return "sleep";
   if (msg.includes("congelou") || msg.includes("congelado") || msg.includes("❄️")) return "freeze";
-  if (msg.includes("silenciou") || msg.includes("silencia próxima")) return "silence";
+  if (msg.includes("silenciou") || msg.includes("silencia próxima") || msg.includes("silenciado")) return "silence";
+  if (msg.includes("atordoou") || msg.includes("paralisou") || msg.includes("atordoado")) return "stun";
+  if (msg.includes("🏴") || msg.includes("Marca da Morte") || msg.includes("marcado")) return "mark";
   if (msg.includes("fúria") || msg.includes("ATK por 3 turnos")) return "rage";
   if (msg.includes("DEF por") && msg.includes("escudo")) return "shield";
   return null;
