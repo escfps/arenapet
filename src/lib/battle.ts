@@ -157,6 +157,7 @@ type Live = BattleMonster & {
   thornsPct: number; // refletir % do dano recebido em ataques básicos
   killStacks: number; // T-Rex: acumulador permanente de kills (+15% ATK por kill)
   lastFallenAt: number; // turno em que morreu (pra revive_ally)
+  markTurns: number; // 🏴 Marca da Morte: +25% dano sofrido e não pode esquivar
 };
 
 function pickTarget(attacker: Live, enemies: Live[]): Live | null {
