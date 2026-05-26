@@ -151,6 +151,8 @@ type Live = BattleMonster & {
   defDebuffPct: number; // ex: 0.2 = -20% DEF
   atkDebuffTurns: number; // redução de ATK temporária (chill_heal)
   atkDebuffPct: number; // ex: 0.15 = -15% ATK
+  spdBuffTurns: number; // bônus temporário de SPD (night_mark)
+  spdBuffPct: number; // ex: 0.15 = +15% SPD
   dmgReductionTurns: number; // reduz todo dano recebido por X turnos (turtle_shell)
   dmgReductionPct: number; // ex: 0.2 = -20% de dano recebido
   stunTurns: number; // se >0, pula o turno (atordoado ⚡)
@@ -158,6 +160,7 @@ type Live = BattleMonster & {
   killStacks: number; // T-Rex: acumulador permanente de kills (+15% ATK por kill)
   lastFallenAt: number; // turno em que morreu (pra revive_ally)
   markTurns: number; // 🏴 Marca da Morte: +25% dano sofrido e não pode esquivar
+  markPassiveProcessed: boolean; // controle: passiva da Coruja Branca já processou morte
 };
 
 function pickTarget(attacker: Live, enemies: Live[]): Live | null {
