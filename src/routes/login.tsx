@@ -184,13 +184,25 @@ function LoginPage() {
 
   async function googleSignIn() {
     setBusy(true);
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: "https://arenapet.lovable.app/login",
-      },
-    });
-    if (error) {
+    try {
+      // Usa o broker gerenciado da Lovable: o fluxo OAuth acontece dentro
+      // do próprio WebView (mesma origem do server.url do Capacitor),
+      // sem abrir navegador externo nem precisar de deep link.
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: "https://arenapet.lovable.app/login",
+      });
+      if (result.error) {
+        showErr("Falha no login Google");
+        setBusy(false);
+        return;
+      }
+      if (result.redirected) {
+        // O WebView será redirecionado para o Google e voltará na mesma janela
+        return;
+      }
+      // Sessão já definida — navega para home
+      navigate({ to: "/" });
+    } catch (e) {
       showErr("Falha no login Google");
       setBusy(false);
     }
