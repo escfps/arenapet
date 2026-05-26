@@ -64,7 +64,7 @@ workflows:
           cp /tmp/profile.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
       - name: Build iOS
         script: |
-          NEW_BUILD_NUMBER=6
+          NEW_BUILD_NUMBER=7
           APP_VERSION=$(node -p "require('./package.json').version")
           echo "Último build no App Store Connect: $LATEST_BUILD_NUMBER"
           echo "Novo build number: $NEW_BUILD_NUMBER"
