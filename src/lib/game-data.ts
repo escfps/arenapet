@@ -154,7 +154,8 @@ export type SkillKind =
   | "cleanse_shield"    // tank — remove TODOS os debuffs dos aliados + escudo 25% HP máx
   | "corsair_volley"    // dps — 3 investidas em alvos aleatórios (podem repetir) com 20% de chance de sangrar por hit (máx 1 stack)
   | "scorpion_sting"    // assassin — ferroada venenosa: 110% ATK + 🏴 Marca da Morte (2t) + ☠️ Veneno (2t); se já marcado: 130% ATK e veneno +1 turno. PASSIVA: veneno +15% em marcados
-  | "aoe_strike_def_down"; // tank — golpe físico em AoE (1.3× cada) + reduz DEF de todos em 15% por 2 turnos
+  | "aoe_strike_def_down" // tank — golpe físico em AoE (1.3× cada) + reduz DEF de todos em 15% por 2 turnos
+  | "hyena_hunt";       // dps — 140% ATK + aplica 🏴 Marca da Caça (2t: +25% dano, sem esquiva). PASSIVA: ao atacar marcado, ganha +20% SPD no próximo turno
 
 export type Skill = {
   name: string;
