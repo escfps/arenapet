@@ -18,9 +18,9 @@ workflows:
       cocoapods: default
     scripts:
       - name: Install dependencies
-        script: npm install
+        script: npm install --legacy-peer-deps
       - name: Install Capacitor deps
-        script: npm install @capacitor/core @capacitor/ios @capacitor/cli
+        script: npm install --legacy-peer-deps @capacitor/core @capacitor/ios @capacitor/cli
       - name: Build web assets
         script: |
           npm run build
@@ -39,7 +39,7 @@ workflows:
       - name: Add and sync iOS
         script: |
           ./node_modules/.bin/cap add ios
-          npm install @capacitor/assets --save-dev
+          npm install --legacy-peer-deps @capacitor/assets --save-dev
           npx @capacitor/assets generate --ios
           ./node_modules/.bin/cap copy ios
           ./node_modules/.bin/cap sync ios
@@ -118,9 +118,9 @@ workflows:
       java: 21
     scripts:
       - name: Install dependencies
-        script: npm install
+        script: npm install --legacy-peer-deps
       - name: Install Capacitor deps
-        script: npm install @capacitor/core @capacitor/android @capacitor/cli
+        script: npm install --legacy-peer-deps @capacitor/core @capacitor/android @capacitor/cli
       - name: Build web assets
         script: |
           npm run build
@@ -139,7 +139,7 @@ workflows:
       - name: Add and sync Android
         script: |
           ./node_modules/.bin/cap add android
-          npm install @capacitor/assets --save-dev
+          npm install --legacy-peer-deps @capacitor/assets --save-dev
           npx @capacitor/assets generate --android
           ./node_modules/.bin/cap copy android
           ./node_modules/.bin/cap sync android
