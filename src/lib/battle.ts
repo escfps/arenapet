@@ -1241,7 +1241,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
               applyDamage(target, dmg);
               const stunChance = attacker.species === "pterossauro" ? 0.4 : 0.3;
               const stunned = rand() < stunChance && target.current > 0;
-              if (stunned) target.stunTurns = Math.max(target.stunTurns, 1);
+              if (stunned && !isCCImmune(target)) target.stunTurns = Math.max(target.stunTurns, 1);
               log.push({
                 turn,
                 actor: side,
