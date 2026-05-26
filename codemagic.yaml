@@ -145,6 +145,17 @@ workflows:
           ./node_modules/.bin/cap sync android
           mkdir -p android/app/src/main/assets
           cp capacitor.config.json android/app/src/main/assets/capacitor.config.json
+      - name: Patch Android strings.xml for Google Sign-In
+        script: |
+          STRINGS="android/app/src/main/res/values/strings.xml"
+          SERVER_CLIENT_ID="486152638398-rk8rqgq0b2fhdcnok8s25oijqneqnqjk.apps.googleusercontent.com"
+          if grep -q "server_client_id" "$STRINGS"; then
+            echo "server_client_id already present"
+          else
+            sed -i "s|</resources>|    <string name=\"server_client_id\">$SERVER_CLIENT_ID</string>\n</resources>|" "$STRINGS"
+          fi
+          cat "$STRINGS"
+
 
       - name: Set up Android signing
         script: |
