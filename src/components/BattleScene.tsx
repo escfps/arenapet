@@ -344,7 +344,7 @@ export function BattleScene({
       playSfx("debuff");
     } else if (entry.crit) {
       playSfx("crit");
-    } else if (skillFx && skillFx !== "heal") {
+    } else if (skillFx && skillFx !== "heal" && skillFx !== "impact") {
       playSfx("skill");
     } else if (entry.damage > 0) {
       playSfx("hit");
