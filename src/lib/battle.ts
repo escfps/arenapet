@@ -919,8 +919,10 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
               const baseHit = Math.max(1, Math.round((effAtk * 1.1 - tgtEffDef(target) * 0.6) * eff * skillMult));
               applyDamage(target, baseHit);
               const dot = Math.max(1, Math.round(effAtk * 0.35 * skillMult));
-              target.bleedDmg = Math.max(target.bleedDmg, dot);
-              target.bleedTurns = Math.max(target.bleedTurns, 3);
+              if (!isCCImmune(target)) {
+                target.bleedDmg = Math.max(target.bleedDmg, dot);
+                target.bleedTurns = Math.max(target.bleedTurns, 3);
+              }
               log.push({
                 turn,
                 actor: side,
