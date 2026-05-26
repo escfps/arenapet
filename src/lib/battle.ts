@@ -138,6 +138,8 @@ type Live = BattleMonster & {
   burnTurns: number;
   bleedDmg: number; // dano físico por turno enquanto bleedTurns > 0
   bleedTurns: number;
+  poisonDmg: number; // dano de veneno por turno enquanto poisonTurns > 0
+  poisonTurns: number;
   blindTurns: number; // se >0, ataques básicos têm chance de errar
   sleepTurns: number; // se >0, pula o turno (dormindo zzz)
   freezeTurns: number; // se >0, pula o turno (congelado ❄️)
