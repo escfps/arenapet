@@ -1504,6 +1504,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
               }
             }
             return;
+          }
 
           if (skill.kind === "arcane_mark") {
             const targets = enemies.filter((e) => e.current > 0);
