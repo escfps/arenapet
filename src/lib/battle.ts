@@ -528,6 +528,11 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           attacker.atkDebuffTurns -= 1;
           if (attacker.atkDebuffTurns === 0) attacker.atkDebuffPct = 0;
         }
+        // tick spd buff
+        if (attacker.spdBuffTurns > 0) {
+          attacker.spdBuffTurns -= 1;
+          if (attacker.spdBuffTurns === 0) attacker.spdBuffPct = 0;
+        }
         // tick dmg reduction
         if (attacker.dmgReductionTurns > 0) {
           attacker.dmgReductionTurns -= 1;
