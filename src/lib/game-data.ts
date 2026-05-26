@@ -644,7 +644,7 @@ export const SPECIES: Record<string, Species> = {
     emoji: "🐆", image: leopardoFantasmaImg, hidden: true,
     description: "Caçador silencioso vindo do reino das sombras. Aparece atrás do mais frágil e crava o bote final.",
     base: { hp: 135, atk: 28, def: 11, spd: 24, int: 13 },
-    skill: { name: "Bote Espectral", emoji: "🐆", kind: "spectral_pounce", cooldown: 3, description: "Crítico garantido no mais fraco (2× dano) ignorando 60% da DEF. PASSIVA: ataque básico tem 50% de chance de critar." },
+    skill: { name: "Caçada Sombria", emoji: "🌑", kind: "spectral_pounce", cooldown: 3, description: "Surge atrás do alvo mais fraco causando 120% do ATK, com +2% de dano para cada ponto de SPD a mais que o alvo (máx +60%, até 180% do ATK). PASSIVA: se agir antes do alvo, o ataque básico é crítico garantido (1.7× dano)." },
   },
   hiena_carniceira: {
     id: "hiena_carniceira", name: "Hiena Carniceira", element: "shadow", role: "dps", rarity: "rare",
