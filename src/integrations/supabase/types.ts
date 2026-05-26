@@ -260,6 +260,36 @@ export type Database = {
         }
         Relationships: []
       }
+      iap_transactions: {
+        Row: {
+          created_at: string
+          gems_credited: number
+          id: string
+          platform: string
+          product_id: string
+          transaction_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          gems_credited: number
+          id?: string
+          platform: string
+          product_id: string
+          transaction_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          gems_credited?: number
+          id?: string
+          platform?: string
+          product_id?: string
+          transaction_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       inventory: {
         Row: {
           item_type: string
