@@ -759,7 +759,11 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
             if (target) {
               const eff = defensiveMultiplier(getElement(attacker.species), target.species);
               const dmgMult = attacker.species === "lobo_lua_sangrenta" ? 1.6 : 2.0;
-              const lifestealPct = attacker.species === "lobo_lua_sangrenta" ? 0.40 : 0.55;
+              const lifestealPct =
+                attacker.species === "lobo_lua_sangrenta" ? 0.40 :
+                attacker.species === "jacare_ancestral" ? 0.30 :
+                attacker.species === "tubarao_abissal" ? 0.25 :
+                0.55;
               const base = Math.max(1, effAtk * 2 - tgtEffDef(target));
               const dmg = Math.max(1, Math.round(base * eff * dmgMult * skillMult));
               applyDamage(target, dmg);
@@ -1983,10 +1987,10 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           stunnedByPassive = true;
         }
 
-        // PASSIVA Lobo da Lua Sangrenta: cura 40% do dano causado a cada ataque básico
+        // PASSIVA Lobo da Lua Sangrenta: cura 30% do dano causado a cada ataque básico
         let lifestealHealed = 0;
         if (attacker.species === "lobo_lua_sangrenta" && damage > 0) {
-          lifestealHealed = Math.round(damage * 0.25);
+          lifestealHealed = Math.round(damage * 0.30);
           attacker.current = Math.min(attacker.maxHp, attacker.current + lifestealHealed);
         }
 
