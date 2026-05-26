@@ -359,15 +359,25 @@ export function BattleScene({
     const eff = detectEffect(entry);
     if (eff) setBanner(eff);
 
-    // ===== Status persistentes no alvo (ficam visíveis até morte/cleanse/expiração explícita) =====
-    const st = statusFromMessage(entry.message);
-    if (st) {
-      const key = st === "rage" ? actorKey : (targetKey ?? actorKey);
+    // ===== Status persistentes (ficam visíveis até morte/cleanse/expiração explícita) =====
+    const sts = statusesFromMessage(entry.message);
+    if (sts.length > 0) {
+      // Determina chaves alvo: múltiplos se houver targetNames (ex.: night_mark), senão alvo único
+      const keys: string[] =
+        namedTargetKeys.length > 0
+          ? namedTargetKeys
+          : [targetKey ?? actorKey].filter(Boolean) as string[];
       setStatuses((prev) => {
         const next = new Map(prev);
-        const cur = new Set(next.get(key) ?? []);
-        cur.add(st);
-        next.set(key, cur);
+        for (const s of sts) {
+          // rage é status do ATACANTE
+          const targets = s === "rage" ? [actorKey] : keys;
+          for (const k of targets) {
+            const cur = new Set(next.get(k) ?? []);
+            cur.add(s);
+            next.set(k, cur);
+          }
+        }
         return next;
       });
     }
