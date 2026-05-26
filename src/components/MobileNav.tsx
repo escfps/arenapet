@@ -3,6 +3,10 @@ import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
+const ADMIN_USER_IDS = new Set<string>([
+  "9efcc279-b110-4feb-862e-deea6acf858e",
+]);
+
 const bottomItems = [
   { to: "/", label: "Início", emoji: "🏠" },
   { to: "/arena", label: "Arena", emoji: "⚔️" },
