@@ -649,7 +649,7 @@ export const SPECIES: Record<string, Species> = {
     id: "hiena_carniceira", name: "Hiena Carniceira", element: "shadow", role: "dps", rarity: "rare",
     emoji: "🐺", image: hienaCarniceiraImg, hidden: true,
     description: "Necrófaga das sombras. Sente o cheiro do moribundo e termina o serviço com uma mordida devastadora.",
-    base: { hp: 96, atk: 23, def: 10, spd: 17, int: 9 },
+    base: { hp: 96, atk: 27, def: 10, spd: 17, int: 9 },
     skill: { name: "Mordida Carniceira", emoji: "🦷", kind: "execute", cooldown: 3, description: "Execução: alvos com <30% HP recebem dano TRIPLO. Senão, 1.8× dano. (placeholder: cura ao executar em desenvolvimento)" },
   },
   coruja_branca: {
