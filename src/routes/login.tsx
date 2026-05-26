@@ -21,6 +21,33 @@ function LoginPage() {
   const [remember, setRemember] = useState(true);
   const [busy, setBusy] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [forgotOpen, setForgotOpen] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotBusy, setForgotBusy] = useState(false);
+
+  async function sendReset(e: React.FormEvent) {
+    e.preventDefault();
+    const clean = forgotEmail.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clean)) {
+      toast.error("Email inválido. Ex: nome@exemplo.com");
+      return;
+    }
+    setForgotBusy(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(clean, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      if (error) throw error;
+      toast.success("Email de redefinição enviado! Verifique sua caixa de entrada ✉️");
+      setForgotOpen(false);
+      setForgotEmail("");
+    } catch (err) {
+      const raw = err instanceof Error ? err.message : "Erro ao enviar email";
+      toast.error(raw);
+    } finally {
+      setForgotBusy(false);
+    }
+  }
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -263,6 +290,15 @@ function LoginPage() {
                 />
                 Lembrar de mim (entrar automático)
               </label>
+              {mode === "signin" && (
+                <button
+                  type="button"
+                  onClick={() => { setForgotEmail(email); setForgotOpen(true); }}
+                  className="text-fuchsia-300 hover:text-fuchsia-200 text-xs font-bold underline self-start"
+                >
+                  Esqueci minha senha
+                </button>
+              )}
               <button
                 type="submit" disabled={busy}
                 className="w-full py-3.5 mt-2 rounded-xl bg-gradient-to-b from-fuchsia-500 via-purple-600 to-indigo-700 text-white font-black tracking-wide text-base shadow-[0_6px_0_oklch(0.35_0.18_290)] hover:translate-y-[2px] hover:shadow-[0_4px_0_oklch(0.35_0.18_290)] active:translate-y-[6px] active:shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
@@ -333,6 +369,30 @@ function LoginPage() {
           </p>
         </footer>
       </div>
+      {forgotOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4" onClick={() => !forgotBusy && setForgotOpen(false)}>
+          <div className="relative w-full max-w-sm rounded-2xl bg-[oklch(0.18_0.06_290)] border-2 border-fuchsia-400/40 p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-xl font-extrabold text-white mb-1 flex items-center gap-2">🔑 Esqueci minha senha</h3>
+            <p className="text-white/60 text-xs mb-4">Digite seu email e enviaremos um link para redefinir sua senha.</p>
+            <form onSubmit={sendReset} className="space-y-3">
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-lg">📧</span>
+                <input
+                  type="email" required autoFocus value={forgotEmail} onChange={(e) => setForgotEmail(e.target.value)}
+                  placeholder="seu@email.com"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-black/40 border-2 border-white/10 text-white placeholder:text-white/40 focus:border-fuchsia-400 outline-none transition"
+                />
+              </div>
+              <div className="flex gap-2">
+                <button type="button" onClick={() => setForgotOpen(false)} disabled={forgotBusy} className="flex-1 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-white font-bold text-sm transition disabled:opacity-50">Cancelar</button>
+                <button type="submit" disabled={forgotBusy} className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-fuchsia-500 to-purple-600 text-white font-extrabold text-sm shadow-lg disabled:opacity-50 transition">
+                  {forgotBusy ? "Enviando..." : "Enviar link"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

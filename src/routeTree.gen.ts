@@ -13,6 +13,7 @@ import { Route as TradeRouteImport } from './routes/trade'
 import { Route as TournamentRouteImport } from './routes/tournament'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as ShopRouteImport } from './routes/shop'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RefundsRouteImport } from './routes/refunds'
 import { Route as RedeemRouteImport } from './routes/redeem'
 import { Route as RankingRouteImport } from './routes/ranking'
@@ -54,6 +55,11 @@ const TermsRoute = TermsRouteImport.update({
 const ShopRoute = ShopRouteImport.update({
   id: '/shop',
   path: '/shop',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RefundsRoute = RefundsRouteImport.update({
@@ -187,6 +193,7 @@ export interface FileRoutesByFullPath {
   '/ranking': typeof RankingRoute
   '/redeem': typeof RedeemRoute
   '/refunds': typeof RefundsRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/shop': typeof ShopRoute
   '/terms': typeof TermsRoute
   '/tournament': typeof TournamentRoute
@@ -215,6 +222,7 @@ export interface FileRoutesByTo {
   '/ranking': typeof RankingRoute
   '/redeem': typeof RedeemRoute
   '/refunds': typeof RefundsRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/shop': typeof ShopRoute
   '/terms': typeof TermsRoute
   '/tournament': typeof TournamentRoute
@@ -244,6 +252,7 @@ export interface FileRoutesById {
   '/ranking': typeof RankingRoute
   '/redeem': typeof RedeemRoute
   '/refunds': typeof RefundsRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/shop': typeof ShopRoute
   '/terms': typeof TermsRoute
   '/tournament': typeof TournamentRoute
@@ -274,6 +283,7 @@ export interface FileRouteTypes {
     | '/ranking'
     | '/redeem'
     | '/refunds'
+    | '/reset-password'
     | '/shop'
     | '/terms'
     | '/tournament'
@@ -302,6 +312,7 @@ export interface FileRouteTypes {
     | '/ranking'
     | '/redeem'
     | '/refunds'
+    | '/reset-password'
     | '/shop'
     | '/terms'
     | '/tournament'
@@ -330,6 +341,7 @@ export interface FileRouteTypes {
     | '/ranking'
     | '/redeem'
     | '/refunds'
+    | '/reset-password'
     | '/shop'
     | '/terms'
     | '/tournament'
@@ -359,6 +371,7 @@ export interface RootRouteChildren {
   RankingRoute: typeof RankingRoute
   RedeemRoute: typeof RedeemRoute
   RefundsRoute: typeof RefundsRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   ShopRoute: typeof ShopRoute
   TermsRoute: typeof TermsRoute
   TournamentRoute: typeof TournamentRoute
@@ -396,6 +409,13 @@ declare module '@tanstack/react-router' {
       path: '/shop'
       fullPath: '/shop'
       preLoaderRoute: typeof ShopRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/refunds': {
@@ -585,6 +605,7 @@ const rootRouteChildren: RootRouteChildren = {
   RankingRoute: RankingRoute,
   RedeemRoute: RedeemRoute,
   RefundsRoute: RefundsRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   ShopRoute: ShopRoute,
   TermsRoute: TermsRoute,
   TournamentRoute: TournamentRoute,
