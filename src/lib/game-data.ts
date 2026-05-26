@@ -659,7 +659,7 @@ export const SPECIES: Record<string, Species> = {
     emoji: "🦉", image: corujaBrancaImg, hidden: true,
     description: "Sábia do inverno eterno. Suas penas geladas restauram aliados e congelam a fúria inimiga.",
     base: { hp: 95, atk: 8, def: 12, spd: 14, int: 26 },
-    skill: { name: "Bênção Glacial", emoji: "❄️", kind: "chill_heal", cooldown: 3, description: "Cura o aliado mais ferido (INT×1.3) e reduz ATK do inimigo mais forte por 2 turnos." },
+    skill: { name: "Olhar Penetrante", emoji: "🏴", kind: "night_mark", cooldown: 4, description: "Aplica 🏴 Marca da Morte em todos os inimigos por 2 turnos e concede +15% de SPD a todos os aliados por 2 turnos. PASSIVA — Olhos da Noite: sempre que um inimigo marcado é derrotado, o aliado com menor HP recupera 12% do HP máximo." },
   },
   escorpiao_deserto: {
     id: "escorpiao_deserto", name: "Escorpião do Deserto", element: "earth", role: "assassin", rarity: "rare",
