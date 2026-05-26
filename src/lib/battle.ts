@@ -192,6 +192,13 @@ function effectiveSpd(mon: Live): number {
   return s;
 }
 
+/** Elefante Ancestral: imunidade total a CC (sono, congelamento, silêncio, cegueira, atordoamento, marca, queimadura, sangramento). */
+function isCCImmune(mon: Live): boolean {
+  return mon.species === "elefante_ancestral";
+}
+
+
+
 function applyDamage(target: Live, raw: number): number {
   let dmg = raw;
   // 🏴 Marca da Morte: +25% de dano sofrido
