@@ -552,7 +552,43 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
             sweepDeathExplosions();
             sweepOwlPassive();
             return;
+        }
+        // tick poison (DoT venenoso — Escorpião)
+        if (attacker.poisonTurns > 0 && attacker.current > 0) {
+          let pdmg = attacker.poisonDmg;
+          // Passiva Veneno Rastreador: +15% dano de veneno em alvos marcados
+          if (attacker.markTurns > 0) pdmg = Math.max(1, Math.round(pdmg * 1.15));
+          applyDamage(attacker, pdmg);
+          log.push({
+            turn,
+            actor: side,
+            actorName: attacker.name,
+            targetName: attacker.name,
+            damage: pdmg,
+            crit: false,
+            effective: 1,
+            remainingHp: attacker.current,
+            message: `☠️ ${attacker.name} sofreu ${pdmg} de veneno`,
+          });
+          attacker.poisonTurns -= 1;
+          if (attacker.current <= 0) {
+            attacker.lastFallenAt = turn;
+            log.push({
+              turn,
+              actor: side,
+              actorName: attacker.name,
+              targetName: attacker.name,
+              damage: 0,
+              crit: false,
+              effective: 1,
+              remainingHp: 0,
+              message: `💀 ${attacker.name} foi consumido pelo veneno!`,
+            });
+            sweepDeathExplosions();
+            sweepOwlPassive();
+            return;
           }
+        }
         }
         // tick rage
         if (attacker.rageTurns > 0) {
