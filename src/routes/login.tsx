@@ -197,10 +197,28 @@ function LoginPage() {
           .Capacitor?.isNativePlatform?.() === true;
 
       if (isNative) {
-        const { GoogleAuth } = await import("@codetrix-studio/capacitor-google-auth");
-        try { await GoogleAuth.initialize(); } catch {}
-        const res = await GoogleAuth.signIn();
-        const idToken = res?.authentication?.idToken;
+        const { SocialLogin } = await import("@capgo/capacitor-social-login");
+        try {
+          await SocialLogin.initialize({
+            google: {
+              webClientId:
+                "486152638398-rk8rqgq0b2fhdcnok8s25oijqneqnqjk.apps.googleusercontent.com",
+              iOSClientId:
+                "486152638398-fb6bpnfo14rr5ditb967ft0841fl0bal.apps.googleusercontent.com",
+              iOSServerClientId:
+                "486152638398-rk8rqgq0b2fhdcnok8s25oijqneqnqjk.apps.googleusercontent.com",
+              mode: "online",
+            },
+          });
+        } catch (e) {
+          console.warn("[googleSignIn native] initialize warn", e);
+        }
+        const res = await SocialLogin.login({
+          provider: "google",
+          options: { scopes: ["email", "profile"] },
+        });
+        const result = res?.result as { idToken?: string } | undefined;
+        const idToken = result?.idToken;
         if (!idToken) {
           showErr("Não foi possível obter token do Google.");
           setBusy(false);

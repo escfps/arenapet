@@ -1,6 +1,6 @@
 {
   "name": "tanstack_start_ts",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "private": true,
   "sideEffects": false,
   "type": "module",
@@ -14,8 +14,8 @@
   },
   "dependencies": {
     "@capacitor/core": "^8.3.4",
+    "@capgo/capacitor-social-login": "^8.3.22",
     "@cloudflare/vite-plugin": "^1.25.5",
-    "@codetrix-studio/capacitor-google-auth": "^3.4.0-rc.4",
     "@hookform/resolvers": "^5.2.2",
     "@lovable.dev/cloud-auth-js": "^1.1.2",
     "@paddle/paddle-node-sdk": "^3.8.0",
