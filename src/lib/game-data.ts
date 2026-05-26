@@ -150,7 +150,8 @@ export type SkillKind =
   | "thorn_burst"       // tank — ataca todos os inimigos com 1.0× ATK físico / PASSIVA: reflete 10% do dano recebido
   | "terror_screech"    // dps/suporte — reduz ATK de todos inimigos em 20% por 2 turnos / PASSIVA (urubu): +7% SPD a cada 10% HP perdido (máx +70%)
   | "arcane_mark"       // mago — AoE arcano + aplica 🏴 Marca da Morte (3 turnos) em todos; consome marca pra +50% dano
-  | "cleanse_shield";   // tank — remove TODOS os debuffs dos aliados + escudo 25% HP máx
+  | "cleanse_shield"    // tank — remove TODOS os debuffs dos aliados + escudo 25% HP máx
+  | "corsair_volley";   // dps — 3 investidas em alvos aleatórios (podem repetir) com 20% de chance de sangrar por hit (máx 1 stack)
 
 export type Skill = {
   name: string;
@@ -628,7 +629,7 @@ export const SPECIES: Record<string, Species> = {
     emoji: "🦜", image: araraCorsariaImg, hidden: true,
     description: "Pirata dos céus. Ataca em rajadas múltiplas, sempre roubando o brilho dos inimigos.",
     base: { hp: 92, atk: 22, def: 9, spd: 20, int: 11 },
-    skill: { name: "Rajada Corsária", emoji: "🦜", kind: "double_strike", cooldown: 3, description: "Dispara 2 golpes no alvo de maior ATK (1.2× cada). (placeholder: multi-hit escalável em desenvolvimento)" },
+    skill: { name: "Rajada Corsária", emoji: "🦜", kind: "corsair_volley", cooldown: 3, description: "Dispara 3 investidas em alvos ALEATÓRIOS (podem repetir no mesmo alvo). Cada hit causa ATK×0.9 e tem 20% de chance de aplicar 🩸 sangramento por 3 turnos (máx 1 stack por alvo)." },
   },
   tigre_relampago: {
     id: "tigre_relampago", name: "Tigre Relâmpago", element: "electric", role: "assassin", rarity: "super_rare",

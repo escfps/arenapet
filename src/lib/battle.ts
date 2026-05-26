@@ -1706,6 +1706,60 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
             return;
           }
 
+          if (skill.kind === "corsair_volley") {
+            for (let hit = 0; hit < 3; hit++) {
+              const alive = enemies.filter((e) => e.current > 0);
+              if (alive.length === 0) break;
+              const target = alive[Math.floor(rand() * alive.length)];
+              const eff = defensiveMultiplier(getElement(attacker.species), target.species);
+              const base = Math.max(1, effAtk * 0.9 - tgtEffDef(target) * 0.5);
+              const dmg = Math.max(1, Math.round(base * eff * skillMult));
+              applyDamage(target, dmg);
+              // 20% chance de aplicar sangramento, sem refrescar stack existente
+              let bled = false;
+              if (
+                target.current > 0 &&
+                target.bleedTurns === 0 &&
+                !isCCImmune(target) &&
+                rand() < 0.20
+              ) {
+                const dot = Math.max(1, Math.round(effAtk * 0.35 * skillMult));
+                target.bleedDmg = dot;
+                target.bleedTurns = 3;
+                bled = true;
+              }
+              log.push({
+                turn,
+                actor: side,
+                actorName: attacker.name,
+                targetName: target.name,
+                damage: dmg,
+                crit: false,
+                effective: eff,
+                remainingHp: target.current,
+                targetShield: target.shield,
+                message: `${skill.emoji} ${attacker.name} ${skill.name} (rajada ${hit + 1}/3): ${dmg} em ${target.name}${bled ? " 🩸 (sangrando)" : ""}`,
+              });
+              if (target.current <= 0) {
+                target.lastFallenAt = turn;
+                log.push({
+                  turn,
+                  actor: side,
+                  actorName: attacker.name,
+                  targetName: target.name,
+                  damage: 0,
+                  crit: false,
+                  effective: 1,
+                  remainingHp: 0,
+                  message: `💀 ${target.name} foi derrotado!`,
+                });
+              }
+            }
+            return;
+          }
+
+
+
           if (skill.kind === "shield_ally") {
             const hurt =
               allies
