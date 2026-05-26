@@ -2360,6 +2360,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
       })();
       // PASSIVA Rato Bomba: detona explosão APÓS cada ator (skill ou ataque)
       sweepDeathExplosions();
+      sweepOwlPassive();
     }
     turn += 1;
   }
