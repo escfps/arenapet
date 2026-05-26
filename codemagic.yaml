@@ -29,10 +29,14 @@ workflows:
             cp dist/client/$(ls dist/client/ | grep -i 'index\|app' | head -1) dist/client/index.html 2>/dev/null || \
             echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Arena Pet</title></head><body><div id="root"></div></body></html>' > dist/client/index.html
           fi
-      - name: Init Capacitor
+      - name: Verify Capacitor config
         script: |
-          ./node_modules/.bin/cap init "Arena Pet" com.arenapet.app --web-dir dist/client
-          echo '{"appId":"com.arenapet.app","appName":"Arena Pet","webDir":"dist/client","server":{"url":"https://arenapet.lovable.app","cleartext":false}}' > capacitor.config.json
+          # Preserve repo capacitor.config.json (contains allowNavigation for OAuth fix)
+          if [ ! -f capacitor.config.json ]; then
+            ./node_modules/.bin/cap init "Arena Pet" com.arenapet.app --web-dir dist/client
+          fi
+          echo "Using capacitor.config.json:"
+          cat capacitor.config.json
       - name: Add and sync iOS
         script: |
           ./node_modules/.bin/cap add ios
@@ -109,10 +113,14 @@ workflows:
             cp dist/client/$(ls dist/client/ | grep -i 'index\|app' | head -1) dist/client/index.html 2>/dev/null || \
             echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Arena Pet</title></head><body><div id="root"></div></body></html>' > dist/client/index.html
           fi
-      - name: Init Capacitor
+      - name: Verify Capacitor config
         script: |
-          ./node_modules/.bin/cap init "Arena Pet" com.arenapet.app --web-dir dist/client
-          echo '{"appId":"com.arenapet.app","appName":"Arena Pet","webDir":"dist/client","server":{"url":"https://arenapet.lovable.app","cleartext":false}}' > capacitor.config.json
+          # Preserve repo capacitor.config.json (contains allowNavigation for OAuth fix)
+          if [ ! -f capacitor.config.json ]; then
+            ./node_modules/.bin/cap init "Arena Pet" com.arenapet.app --web-dir dist/client
+          fi
+          echo "Using capacitor.config.json:"
+          cat capacitor.config.json
       - name: Add and sync Android
         script: |
           ./node_modules/.bin/cap add android
@@ -121,7 +129,7 @@ workflows:
           ./node_modules/.bin/cap copy android
           ./node_modules/.bin/cap sync android
           mkdir -p android/app/src/main/assets
-          echo '{"appId":"com.arenapet.app","appName":"Arena Pet","webDir":"dist/client","server":{"url":"https://arenapet.lovable.app","cleartext":false}}' > android/app/src/main/assets/capacitor.config.json
+          cp capacitor.config.json android/app/src/main/assets/capacitor.config.json
 
       - name: Set up Android signing
         script: |
