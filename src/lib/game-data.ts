@@ -872,7 +872,7 @@ export const PITY_COLUMN: Partial<Record<ChestTier, "pity_silver" | "pity_gold" 
 
 // Baú de boas-vindas: 2 comuns aleatórios + 1 raro aleatório
 export function rollWelcomeChest(): string[] {
-  const all = Object.values(SPECIES);
+  const all = Object.values(SPECIES).filter((s) => !s.hidden);
   const commons = all.filter((s) => s.rarity === "common");
   const rares = all.filter((s) => s.rarity === "rare");
   const pickN = <T,>(arr: T[], n: number): T[] => {
