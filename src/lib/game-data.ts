@@ -491,7 +491,7 @@ export const SPECIES: Record<string, Species> = {
     emoji: "🔵🦅", image: fenixAzulImg,
     description: "Filhote de fênix de plumas azuis e chamas geladas. Cura aliados com brasas frias.",
     base: { hp: 112, atk: 10, def: 12, spd: 12, int: 23 },
-    skill: { name: "Chama Gelada", emoji: "❄️", kind: "heal_lowest", cooldown: 3, description: "Cura o aliado mais ferido (~INT×1.2)." },
+    skill: { name: "Chama Gelada", emoji: "❄️", kind: "heal_lowest", cooldown: 3, description: "Cura o aliado mais ferido (~INT×1.2). PASSIVA — Pluma Glacial: cada cura aplica um 🛡️ escudo de 15% do HP máx no alvo por 1 turno." },
   },
   dragao_fogo: {
     id: "dragao_fogo", name: "Dragão de Fogo", element: "fire", secondaryElement: "shadow", role: "mage", rarity: "rare",

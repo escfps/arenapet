@@ -163,6 +163,8 @@ type Live = BattleMonster & {
   lastFallenAt: number; // turno em que morreu (pra revive_ally)
   markTurns: number; // 🏴 Marca da Morte: +25% dano sofrido e não pode esquivar
   markPassiveProcessed: boolean; // controle: passiva da Coruja Branca já processou morte
+  tempShieldAmount: number; // escudo temporário ativo (subset de shield)
+  tempShieldTurns: number; // turnos restantes do escudo temporário
 };
 
 function pickTarget(attacker: Live, enemies: Live[]): Live | null {
@@ -265,6 +267,8 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
     markPassiveProcessed: false,
     spdBuffTurns: 0,
     spdBuffPct: 0,
+    tempShieldAmount: 0,
+    tempShieldTurns: 0,
   });
   const a: Live[] = teamA.map(mkLive);
   const b: Live[] = teamB.map(mkLive);
@@ -654,6 +658,15 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
         if (attacker.markTurns > 0) {
           attacker.markTurns -= 1;
         }
+        // tick escudo temporário (Fênix Azul etc.)
+        if (attacker.tempShieldTurns > 0) {
+          attacker.tempShieldTurns -= 1;
+          if (attacker.tempShieldTurns === 0 && attacker.tempShieldAmount > 0) {
+            const drop = Math.min(attacker.shield, attacker.tempShieldAmount);
+            attacker.shield -= drop;
+            attacker.tempShieldAmount = 0;
+          }
+        }
         const allies = side === "team_a" ? a : b;
         const enemies = side === "team_a" ? b : a;
         if (!enemies.some((e) => e.current > 0)) return;
@@ -741,7 +754,9 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
             const alive = allies.filter((m) => m.current > 0);
             const target = alive.slice().sort((a, b) => a.current / a.maxHp - b.current / b.maxHp)[0] ?? attacker;
             const heal = Math.round(attacker.int * 1.2 * skillMult);
+            const before = target.current;
             target.current = Math.min(target.maxHp, target.current + heal);
+            const healed = target.current - before;
             log.push({
               turn,
               actor: side,
@@ -753,6 +768,25 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
               remainingHp: target.current,
               message: `${skill.emoji} ${attacker.name} usou ${skill.name}! Curou ${target.name} em ${heal} HP`,
             });
+            // PASSIVA Fênix Azul: aplica escudo de 15% do HP máx por 1 turno no alvo curado
+            if (attacker.species === "fenix_azul" && healed > 0) {
+              const shieldAmt = Math.max(1, Math.round(target.maxHp * 0.15));
+              target.shield += shieldAmt;
+              target.tempShieldAmount += shieldAmt;
+              target.tempShieldTurns = Math.max(target.tempShieldTurns, 2);
+              log.push({
+                turn,
+                actor: side,
+                actorName: attacker.name,
+                targetName: target.name,
+                damage: 0,
+                crit: false,
+                effective: 1,
+                remainingHp: target.current,
+                targetShield: target.shield,
+                message: `🛡️ Pluma Glacial: ${target.name} ganhou ${shieldAmt} de escudo (1 turno)`,
+              });
+            }
             return;
           }
 
