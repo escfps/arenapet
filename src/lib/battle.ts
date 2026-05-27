@@ -163,6 +163,8 @@ type Live = BattleMonster & {
   lastFallenAt: number; // turno em que morreu (pra revive_ally)
   markTurns: number; // 🏴 Marca da Morte: +25% dano sofrido e não pode esquivar
   markPassiveProcessed: boolean; // controle: passiva da Coruja Branca já processou morte
+  tempShieldAmount: number; // escudo temporário ativo (subset de shield)
+  tempShieldTurns: number; // turnos restantes do escudo temporário
 };
 
 function pickTarget(attacker: Live, enemies: Live[]): Live | null {
