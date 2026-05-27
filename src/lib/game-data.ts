@@ -149,7 +149,7 @@ export type SkillKind =
   | "cooldown_reduction" // healer mítico — reduz 1 turno de cooldown de todos aliados / PASSIVA: cada turno reduz cd do aliado mais travado
   | "thorn_burst"       // tank — ataca todos os inimigos com 1.0× ATK físico / PASSIVA: reflete 10% do dano recebido
   | "terror_screech"    // dps/suporte — reduz ATK de todos inimigos em 20% por 2 turnos / PASSIVA (urubu): +7% SPD a cada 10% HP perdido (máx +70%)
-  | "arcane_mark"       // mago — explosão arcana em área (INT×1.5 distribuído); dobra dano em alvos com 🏴 Marca da Morte. PASSIVA Marca Final: ao atacar marcado (skill ou básico), Coruja Negra recupera 25% do HP máx
+  | "arcane_mark"       // mago — single target no inimigo com mais HP (INT×1.3); se marcado, INT×2.0 + 🤐 silêncio 1t. PASSIVA Marca Final: ao atacar marcado (skill ou básico), Coruja Negra recupera 25% do HP máx
   | "night_mark"        // healer — aplica 🏴 Marca da Morte em todos os inimigos por 2 turnos + aliados ganham +15% SPD por 2 turnos; PASSIVA: ao morrer marcado, aliado com menor HP cura 12% do HP máx
   | "cleanse_shield"    // tank — remove TODOS os debuffs dos aliados + escudo 25% HP máx
   | "corsair_volley"    // dps — 3 investidas em alvos aleatórios (podem repetir) com 20% de chance de sangrar por hit (máx 1 stack)
@@ -675,7 +675,7 @@ export const SPECIES: Record<string, Species> = {
     emoji: "🦉", image: corujaNegraImg, hidden: true,
     description: "Arcanista das sombras. Marca suas presas e detona ataques arcanos que reverberam pelo campo inteiro.",
     base: { hp: 130, atk: 12, def: 11, spd: 16, int: 28 },
-    skill: { name: "Julgamento Arcano", emoji: "🔮", kind: "arcane_mark", cooldown: 3, description: "Explosão mágica em área causando 150% do INT distribuído entre os inimigos. Alvos com 🏴 Marca da Morte sofrem o DOBRO de dano. PASSIVA — Marca Final: sempre que ataca (skill ou básico) um inimigo com 🏴 Marca da Morte, a Coruja Negra recupera 25% do HP máximo." },
+    skill: { name: "Julgamento Arcano", emoji: "🔮", kind: "arcane_mark", cooldown: 3, description: "Ataca o inimigo com mais HP causando 130% do INT. Se o alvo estiver com 🏴 Marca da Morte, causa 200% do INT e aplica 🤐 silêncio por 1 turno. PASSIVA — Marca Final: sempre que ataca (skill ou básico) um inimigo com 🏴 Marca da Morte, a Coruja Negra recupera 25% do HP máximo." },
   },
   coruja_psiquica: {
     id: "coruja_psiquica", name: "Coruja Psíquica", element: "shadow", secondaryElement: "shadow", role: "mage", rarity: "mythic",
