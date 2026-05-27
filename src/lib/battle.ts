@@ -658,6 +658,15 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
         if (attacker.markTurns > 0) {
           attacker.markTurns -= 1;
         }
+        // tick escudo temporário (Fênix Azul etc.)
+        if (attacker.tempShieldTurns > 0) {
+          attacker.tempShieldTurns -= 1;
+          if (attacker.tempShieldTurns === 0 && attacker.tempShieldAmount > 0) {
+            const drop = Math.min(attacker.shield, attacker.tempShieldAmount);
+            attacker.shield -= drop;
+            attacker.tempShieldAmount = 0;
+          }
+        }
         const allies = side === "team_a" ? a : b;
         const enemies = side === "team_a" ? b : a;
         if (!enemies.some((e) => e.current > 0)) return;
