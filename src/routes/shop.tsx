@@ -19,7 +19,7 @@ import { useProfile } from "@/lib/use-profile";
 import { toast, Toaster } from "sonner";
 import { initializePaddle, getPaddlePriceId } from "@/lib/paddle";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
-import { isIos, purchaseIosGemsPack } from "@/lib/iap";
+import { isIos, purchaseIosGemsPack, purchaseIosBattlePass } from "@/lib/iap";
 import arenaBg from "@/assets/arena-bg.jpg";
 
 const PADDLE_PRICE_IDS: Record<string, string> = {
@@ -207,6 +207,24 @@ function ShopPage() {
     } catch (e: any) {
       toast.dismiss("pay");
       toast.error(`Erro ao abrir pagamento: ${e?.message ?? e}`);
+    }
+  }
+
+  async function subscribeBattlePassIos() {
+    if (!profile || !userId) return;
+    try {
+      toast.loading("Abrindo App Store...", { id: "pay" });
+      const res = await purchaseIosBattlePass();
+      toast.dismiss("pay");
+      if (res.activated) {
+        toast.success("🎟️ Passe de Batalha ativado!");
+        await reload();
+      }
+    } catch (e: any) {
+      toast.dismiss("pay");
+      const msg = e?.message ?? String(e);
+      if (msg === "Compra cancelada") toast.info("Compra cancelada");
+      else toast.error(`Erro: ${msg}`);
     }
   }
 
@@ -483,9 +501,13 @@ function ShopPage() {
                     </button>
                   </div>
                 ) : isIos() ? (
-                  <div className="mt-5 w-full py-3 px-4 rounded-xl bg-yellow-950/10 border border-yellow-900/30 text-center text-sm text-yellow-950 font-bold">
-                    Assinatura disponível na versão Web
-                  </div>
+                  <button
+                    onClick={subscribeBattlePassIos}
+                    className="mt-5 w-full py-3 rounded-xl bg-yellow-950 text-yellow-300 font-extrabold text-lg hover:bg-yellow-900 transition shadow-lg"
+                  >
+                    🍎 Assinar por R$ {BATTLE_PASS_PRICE_BRL.toFixed(2).replace(".", ",")} / mês
+                  </button>
+
                 ) : (
                   <button
                     onClick={subscribeBattlePass}
