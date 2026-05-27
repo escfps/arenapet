@@ -1,7 +1,7 @@
 // StoreKit nativo (iOS) via @capgo/native-purchases. Em Android/Web cai em Paddle.
 import { Capacitor } from "@capacitor/core";
 import { NativePurchases, PURCHASE_TYPE } from "@capgo/native-purchases";
-import { creditIapGems } from "@/lib/iap.functions";
+import { creditIapGems, activateIosBattlePass, IOS_BATTLE_PASS_PRODUCT } from "@/lib/iap.functions";
 
 // Mapeia ID do pack interno -> product ID do StoreKit
 export const IOS_PRODUCT_IDS: Record<string, string> = {
