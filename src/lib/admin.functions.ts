@@ -194,3 +194,17 @@ export const adminDeletePet = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+// ---------- Launch reset (DESTRUCTIVE) ----------
+export const adminLaunchReset = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) =>
+    z.object({ confirm: z.literal("RESETAR LANCAMENTO") }).parse(input)
+  )
+  .handler(async ({ context }) => {
+    assertAdmin(context.userId);
+    const { data, error } = await supabaseAdmin.rpc("admin_launch_reset");
+    if (error) throw new Error(error.message);
+    return data as { ok: boolean; profiles_reset: number; bots_reset: number; new_season: number };
+  });
+
