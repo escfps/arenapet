@@ -64,3 +64,40 @@ export async function purchaseIosGemsPack(packId: string): Promise<{ credited: b
 
   return { credited: true, gems: res.gems ?? 0 };
 }
+
+/**
+ * Assina o Passe de Batalha via StoreKit (auto-renewable subscription).
+ */
+export async function purchaseIosBattlePass(): Promise<{ activated: boolean; vipUntil: string | null }> {
+  const productId = IOS_BATTLE_PASS_PRODUCT;
+
+  let transactionId: string;
+  try {
+    const result = await NativePurchases.purchaseProduct({
+      productIdentifier: productId,
+      productType: PURCHASE_TYPE.SUBS,
+      quantity: 1,
+    });
+    transactionId = String((result as any).transactionId ?? "");
+    if (!transactionId) throw new Error("Transação sem ID");
+  } catch (err: any) {
+    const msg = err?.message ?? String(err);
+    if (/cancel/i.test(msg)) throw new Error("Compra cancelada");
+    throw new Error(msg || "Erro no StoreKit");
+  }
+
+  const res = await activateIosBattlePass({
+    data: { productId, transactionId, platform: "ios" },
+  });
+
+  try {
+    await NativePurchases.acknowledgePurchase({
+      productIdentifier: productId,
+      productType: PURCHASE_TYPE.SUBS,
+    } as any);
+  } catch {
+    // servidor já ativou; idempotência cobre re-tentativas
+  }
+
+  return { activated: true, vipUntil: res.vip_until ?? null };
+}
