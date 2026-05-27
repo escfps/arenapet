@@ -19,7 +19,7 @@ import { useProfile } from "@/lib/use-profile";
 import { toast, Toaster } from "sonner";
 import { initializePaddle, getPaddlePriceId } from "@/lib/paddle";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
-import { isIos, purchaseIosGemsPack } from "@/lib/iap";
+import { isIos, purchaseIosGemsPack, purchaseIosBattlePass } from "@/lib/iap";
 import arenaBg from "@/assets/arena-bg.jpg";
 
 const PADDLE_PRICE_IDS: Record<string, string> = {
