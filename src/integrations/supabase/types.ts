@@ -904,6 +904,7 @@ export type Database = {
       }
       _tour_rank_mult: { Args: { r: number }; Returns: number }
       _tour_team_power: { Args: { uid: string }; Returns: number }
+      admin_launch_reset: { Args: never; Returns: Json }
       advance_tournament_round: {
         Args: { p_tournament_id: string }
         Returns: undefined
