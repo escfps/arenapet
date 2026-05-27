@@ -64,6 +64,8 @@ function AdminPage() {
   const createCodeFn = useServerFn(adminCreateRedeemCode);
   const listCodesFn = useServerFn(adminListRedeemCodes);
   const delCodeFn = useServerFn(adminDeleteRedeemCode);
+  const launchResetFn = useServerFn(adminLaunchReset);
+
 
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<ProfileRow[]>([]);
