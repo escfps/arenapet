@@ -2068,16 +2068,16 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
               if (alive.length === 0) break;
               const target = alive[Math.floor(rand() * alive.length)];
               const eff = defensiveMultiplier(getElement(attacker.species), target.species);
-              const base = Math.max(1, effAtk * 0.4 - tgtEffDef(target) * 0.5);
+              const base = Math.max(1, effAtk * 0.6 - tgtEffDef(target) * 0.5);
               const dmg = Math.max(1, Math.round(base * eff * skillMult));
               applyDamage(target, dmg);
-              // 20% chance de aplicar sangramento, sem refrescar stack existente
+              // 35% chance de aplicar sangramento, sem refrescar stack existente
               let bled = false;
               if (
                 target.current > 0 &&
                 target.bleedTurns === 0 &&
                 !isCCImmune(target) &&
-                rand() < 0.20
+                rand() < 0.35
               ) {
                 const dot = Math.max(1, Math.round(effAtk * 0.15 * skillMult));
                 target.bleedDmg = dot;

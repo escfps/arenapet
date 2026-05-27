@@ -633,7 +633,7 @@ export const SPECIES: Record<string, Species> = {
     emoji: "🦜", image: araraCorsariaImg, hidden: true,
     description: "Pirata dos céus. Ataca em rajadas múltiplas, sempre roubando o brilho dos inimigos.",
     base: { hp: 92, atk: 30, def: 9, spd: 20, int: 11 },
-    skill: { name: "Rajada Corsária", emoji: "🦜", kind: "corsair_volley", cooldown: 3, description: "Realiza 3 investidas rápidas em alvos ALEATÓRIOS (podem repetir no mesmo alvo, até as 3 no mesmo). Cada hit causa ATK×0.4 e tem 20% de chance de aplicar 🩸 sangramento por 2 turnos (15% do ATK por turno, máx 1 stack por alvo)." },
+    skill: { name: "Rajada Corsária", emoji: "🦜", kind: "corsair_volley", cooldown: 3, description: "Realiza 3 investidas rápidas em alvos ALEATÓRIOS (podem repetir no mesmo alvo, até as 3 no mesmo). Cada hit causa ATK×0.6 e tem 35% de chance de aplicar 🩸 sangramento por 2 turnos (15% do ATK por turno, máx 1 stack por alvo)." },
   },
   tigre_relampago: {
     id: "tigre_relampago", name: "Tigre Relâmpago", element: "electric", role: "assassin", rarity: "super_rare",
