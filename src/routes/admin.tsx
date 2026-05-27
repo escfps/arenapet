@@ -259,6 +259,25 @@ function AdminPage() {
     }
   }
 
+  async function doLaunchReset() {
+    const txt = prompt(
+      "⚠️ AÇÃO IRREVERSÍVEL ⚠️\n\nIsto vai:\n• Zerar arena_points, V/D de TODOS\n• Apagar pets dos bots e dar 2 comuns + 1 raro novos\n• Resetar bots pra nível 1, 3000🪙, 20💎\n• Encerrar a Season atual e iniciar a próxima\n\nPets, moedas, diamantes e baús dos JOGADORES REAIS ficam intactos.\n\nDigite RESETAR LANCAMENTO para confirmar:"
+    );
+    if (txt !== "RESETAR LANCAMENTO") {
+      if (txt !== null) toast.error("Confirmação incorreta. Nada foi feito.");
+      return;
+    }
+    setBusy(true);
+    try {
+      const r = await launchResetFn({ data: { confirm: "RESETAR LANCAMENTO" } });
+      toast.success(`✅ Reset OK — ${r.profiles_reset} perfis, ${r.bots_reset} bots, Season #${r.new_season}`);
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
   if (loading) return <div className="p-8 text-white">Carregando…</div>;
 
   return (
@@ -271,6 +290,23 @@ function AdminPage() {
             ← Voltar
           </button>
         </div>
+
+        <div className="rounded-2xl bg-gradient-to-br from-red-900/60 to-orange-900/60 border-2 border-red-500/60 p-4">
+          <h2 className="text-lg font-black flex items-center gap-2">🚀 Reset de Lançamento</h2>
+          <p className="text-sm opacity-90 mt-1">
+            Zera ranking de todos, transforma bots em "novos jogadores" (2 comuns + 1 raro, lv1) e inicia nova Season.
+            Pets/moedas/baús dos jogadores reais ficam intactos.
+          </p>
+          <button
+            disabled={busy}
+            onClick={doLaunchReset}
+            className="mt-3 px-4 py-2 rounded-lg bg-red-600 hover:bg-red-500 disabled:opacity-50 font-black text-sm shadow-lg"
+          >
+            🚀 Executar reset de lançamento
+          </button>
+        </div>
+
+
 
         <div className="rounded-2xl bg-white/10 backdrop-blur border border-white/20 p-4">
           <div className="flex gap-2">
