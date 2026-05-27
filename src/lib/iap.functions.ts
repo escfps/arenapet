@@ -104,18 +104,21 @@ export const activateIosBattlePass = createServerFn({ method: "POST" })
 
     // Se é uma nova assinatura (sem BP ativa), zera os contadores diários
     const isNewSubscription = !currentEnd || currentEnd < now;
-    const update: Record<string, unknown> = {
+    const update = {
       vip_until: newEnd,
       bp_subscription_id: data.transactionId,
       bp_status: "active",
+      ...(isNewSubscription
+        ? {
+            bp_started_at: new Date().toISOString(),
+            bp_last_claim_date: null,
+            bp_days_claimed: 0,
+            bp_silvers_given: 0,
+            bp_monthly_claimed: false,
+          }
+        : {}),
     };
-    if (isNewSubscription) {
-      update.bp_started_at = new Date().toISOString();
-      update.bp_last_claim_date = null;
-      update.bp_days_claimed = 0;
-      update.bp_silvers_given = 0;
-      update.bp_monthly_claimed = false;
-    }
+
 
     const { error: upErr } = await supabaseAdmin
       .from("profiles")
