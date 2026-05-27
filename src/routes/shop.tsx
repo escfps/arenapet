@@ -210,6 +210,24 @@ function ShopPage() {
     }
   }
 
+  async function subscribeBattlePassIos() {
+    if (!profile || !userId) return;
+    try {
+      toast.loading("Abrindo App Store...", { id: "pay" });
+      const res = await purchaseIosBattlePass();
+      toast.dismiss("pay");
+      if (res.activated) {
+        toast.success("🎟️ Passe de Batalha ativado!");
+        await reload();
+      }
+    } catch (e: any) {
+      toast.dismiss("pay");
+      const msg = e?.message ?? String(e);
+      if (msg === "Compra cancelada") toast.info("Compra cancelada");
+      else toast.error(`Erro: ${msg}`);
+    }
+  }
+
   async function claimDailyBP() {
     try {
       const res = await claimBP();
