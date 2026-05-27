@@ -1,5 +1,6 @@
-// StoreKit (iOS) via cordova-plugin-purchase. Em Android/Web cai em Paddle.
+// StoreKit nativo (iOS) via @capgo/native-purchases. Em Android/Web cai em Paddle.
 import { Capacitor } from "@capacitor/core";
+import { NativePurchases, PURCHASE_TYPE } from "@capgo/native-purchases";
 import { creditIapGems } from "@/lib/iap.functions";
 
 // Mapeia ID do pack interno -> product ID do StoreKit
@@ -18,103 +19,48 @@ export function isIos(): boolean {
   }
 }
 
-declare global {
-  interface Window {
-    CdvPurchase?: any;
-  }
-}
-
-let storeReady: Promise<any> | null = null;
-
-function getStore() {
-  const CdvPurchase = window.CdvPurchase;
-  if (!CdvPurchase) throw new Error("Plugin de compras não disponível");
-  return CdvPurchase.store;
-}
-
-async function initStore(): Promise<any> {
-  if (storeReady) return storeReady;
-  storeReady = (async () => {
-    // Aguarda o plugin Cordova ficar pronto
-    if (!window.CdvPurchase) {
-      await new Promise<void>((resolve) => {
-        const start = Date.now();
-        const i = setInterval(() => {
-          if (window.CdvPurchase || Date.now() - start > 5000) {
-            clearInterval(i);
-            resolve();
-          }
-        }, 100);
-      });
-    }
-    const { store, ProductType, Platform } = window.CdvPurchase;
-    if (!store) throw new Error("StoreKit indisponível");
-
-    // Registra todos os produtos (apenas uma vez)
-    const products = Object.values(IOS_PRODUCT_IDS).map((id) => ({
-      id,
-      type: ProductType.CONSUMABLE,
-      platform: Platform.APPLE_APPSTORE,
-    }));
-    store.register(products);
-
-    await store.initialize([Platform.APPLE_APPSTORE]);
-    return store;
-  })();
-  return storeReady;
-}
-
 /**
- * Compra um pack via StoreKit no iOS.
+ * Compra um pack via StoreKit no iOS usando o plugin nativo do Capacitor.
  * Retorna `{ credited: true, gems }` quando o servidor confirma o crédito.
  */
 export async function purchaseIosGemsPack(packId: string): Promise<{ credited: boolean; gems: number }> {
   const productId = IOS_PRODUCT_IDS[packId];
   if (!productId) throw new Error("Pacote indisponível no iOS");
 
-  const store = await initStore();
-  const product = store.get(productId);
-  if (!product) throw new Error("Produto não encontrado no StoreKit");
-  const offer = product.getOffer();
-  if (!offer) throw new Error("Oferta indisponível");
-
-  return await new Promise<{ credited: boolean; gems: number }>((resolve, reject) => {
-    let settled = false;
-    const done = (fn: () => void) => {
-      if (settled) return;
-      settled = true;
-      fn();
-    };
-
-    store
-      .when()
-      .approved(async (transaction: any) => {
-        try {
-          // Valida e credita no servidor (idempotente por transactionId)
-          const txId = transaction.transactionId || transaction.id;
-          const res = await creditIapGems({
-            data: {
-              productId,
-              transactionId: String(txId),
-              platform: "ios",
-            },
-          });
-          // Finaliza no StoreKit só depois que o servidor confirmou
-          await transaction.finish();
-          done(() => resolve({ credited: true, gems: res.gems ?? 0 }));
-        } catch (e) {
-          done(() => reject(e instanceof Error ? e : new Error(String(e))));
-        }
-      })
-      .cancelled(() => {
-        done(() => reject(new Error("Compra cancelada")));
-      })
-      .error((err: any) => {
-        done(() => reject(new Error(err?.message ?? "Erro no StoreKit")));
-      });
-
-    offer.order().catch((err: any) => {
-      done(() => reject(new Error(err?.message ?? "Falha ao iniciar compra")));
+  let transactionId: string;
+  try {
+    const result = await NativePurchases.purchaseProduct({
+      productIdentifier: productId,
+      productType: PURCHASE_TYPE.INAPP,
+      quantity: 1,
     });
+    transactionId = String((result as any).transactionId ?? "");
+    if (!transactionId) throw new Error("Transação sem ID");
+  } catch (err: any) {
+    // O usuário cancelar é um erro comum — propaga com mensagem clara
+    const msg = err?.message ?? String(err);
+    if (/cancel/i.test(msg)) throw new Error("Compra cancelada");
+    throw new Error(msg || "Erro no StoreKit");
+  }
+
+  // Valida e credita no servidor (idempotente por transactionId)
+  const res = await creditIapGems({
+    data: {
+      productId,
+      transactionId,
+      platform: "ios",
+    },
   });
+
+  // Finaliza a transação no StoreKit só depois do crédito confirmado
+  try {
+    await NativePurchases.acknowledgePurchase({
+      productIdentifier: productId,
+      productType: PURCHASE_TYPE.INAPP,
+    } as any);
+  } catch {
+    // não bloqueia: servidor já creditou, idempotência cobre re-tentativas
+  }
+
+  return { credited: true, gems: res.gems ?? 0 };
 }

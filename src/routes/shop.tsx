@@ -482,6 +482,10 @@ function ShopPage() {
                       {claimedToday ? "✓ Já reivindicado hoje — volte amanhã!" : "🎁 Reivindicar recompensa diária"}
                     </button>
                   </div>
+                ) : isIos() ? (
+                  <div className="mt-5 w-full py-3 px-4 rounded-xl bg-yellow-950/10 border border-yellow-900/30 text-center text-sm text-yellow-950 font-bold">
+                    Assinatura disponível na versão Web
+                  </div>
                 ) : (
                   <button
                     onClick={subscribeBattlePass}
