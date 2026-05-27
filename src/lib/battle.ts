@@ -754,7 +754,9 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
             const alive = allies.filter((m) => m.current > 0);
             const target = alive.slice().sort((a, b) => a.current / a.maxHp - b.current / b.maxHp)[0] ?? attacker;
             const heal = Math.round(attacker.int * 1.2 * skillMult);
+            const before = target.current;
             target.current = Math.min(target.maxHp, target.current + heal);
+            const healed = target.current - before;
             log.push({
               turn,
               actor: side,
@@ -766,6 +768,25 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
               remainingHp: target.current,
               message: `${skill.emoji} ${attacker.name} usou ${skill.name}! Curou ${target.name} em ${heal} HP`,
             });
+            // PASSIVA Fênix Azul: aplica escudo de 15% do HP máx por 1 turno no alvo curado
+            if (attacker.species === "fenix_azul" && healed > 0) {
+              const shieldAmt = Math.max(1, Math.round(target.maxHp * 0.15));
+              target.shield += shieldAmt;
+              target.tempShieldAmount += shieldAmt;
+              target.tempShieldTurns = Math.max(target.tempShieldTurns, 2);
+              log.push({
+                turn,
+                actor: side,
+                actorName: attacker.name,
+                targetName: target.name,
+                damage: 0,
+                crit: false,
+                effective: 1,
+                remainingHp: target.current,
+                targetShield: target.shield,
+                message: `🛡️ Pluma Glacial: ${target.name} ganhou ${shieldAmt} de escudo (1 turno)`,
+              });
+            }
             return;
           }
 
