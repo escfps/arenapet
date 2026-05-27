@@ -256,8 +256,8 @@ function ArenaPage() {
     setRewards(null);
     setAutoRematch(null);
 
-    // Temporizador aleatório 1–13s pra simular a busca (evita ficar dando scout)
-    const waitMs = (1 + Math.floor(Math.random() * 13)) * 1000;
+    // Temporizador aleatório 1–33s pra simular a busca (evita ficar dando scout)
+    const waitMs = (1 + Math.floor(Math.random() * 33)) * 1000;
     const startedAt = Date.now();
     setSearchCountdown(1);
     const tickId = window.setInterval(() => {
