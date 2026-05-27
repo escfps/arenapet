@@ -501,9 +501,13 @@ function ShopPage() {
                     </button>
                   </div>
                 ) : isIos() ? (
-                  <div className="mt-5 w-full py-3 px-4 rounded-xl bg-yellow-950/10 border border-yellow-900/30 text-center text-sm text-yellow-950 font-bold">
-                    Assinatura disponível na versão Web
-                  </div>
+                  <button
+                    onClick={subscribeBattlePassIos}
+                    className="mt-5 w-full py-3 rounded-xl bg-yellow-950 text-yellow-300 font-extrabold text-lg hover:bg-yellow-900 transition shadow-lg"
+                  >
+                    🍎 Assinar por R$ {BATTLE_PASS_PRICE_BRL.toFixed(2).replace(".", ",")} / mês
+                  </button>
+
                 ) : (
                   <button
                     onClick={subscribeBattlePass}
