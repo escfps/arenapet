@@ -1818,67 +1818,66 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           }
 
           if (skill.kind === "arcane_mark") {
-            // Explosão mágica em área: 150% do INT distribuído entre inimigos vivos.
-            // Alvos com 🏴 Marca da Morte sofrem o dobro do dano.
-            // PASSIVA Marca Final: para cada alvo marcado atingido, a Coruja Negra
-            // recupera 25% do HP máx (sustain).
-            const targets = enemies.filter((e) => e.current > 0);
-            const n = Math.max(1, targets.length);
-            const pool = effInt * 1.5 * skillMult;
-            const perTarget = pool / n;
-            let totalHeal = 0;
-            const doubledNames: string[] = [];
-            for (const t of targets) {
-              const eff = defensiveMultiplier(getElement(attacker.species), t.species);
-              const marked = t.markTurns > 0;
-              const mult = marked ? 2 : 1;
-              const base = Math.max(1, perTarget * mult - tgtEffDef(t) * 0.4);
-              const dmg = Math.max(1, Math.round(base * eff));
-              applyDamage(t, dmg);
-              if (marked && attacker.current > 0) {
-                const heal = Math.round(attacker.maxHp * 0.25);
-                const before = attacker.current;
-                attacker.current = Math.min(attacker.maxHp, attacker.current + heal);
-                totalHeal += attacker.current - before;
-                doubledNames.push(t.name);
-              }
+            // Single target: ataca o inimigo com MAIOR HP atual causando 130% do INT.
+            // Se o alvo estiver com 🏴 Marca da Morte: 200% do INT e silencia por 1 turno.
+            // PASSIVA Marca Final (atk básico) continua tratada na rotina de ataque básico.
+            const alive = enemies.filter((e) => e.current > 0);
+            if (alive.length === 0) return;
+            const target = alive.reduce((a, b) => (b.current > a.current ? b : a));
+            const marked = target.markTurns > 0;
+            const mult = marked ? 2.0 : 1.3;
+            const eff = defensiveMultiplier(getElement(attacker.species), target.species);
+            const base = Math.max(1, effInt * mult * skillMult - tgtEffDef(target) * 0.4);
+            const dmg = Math.max(1, Math.round(base * eff));
+            applyDamage(target, dmg);
+            let silenced = false;
+            if (marked && target.current > 0 && !isCCImmune(target)) {
+              target.silenceTurns = Math.max(target.silenceTurns, 1);
+              silenced = true;
+            }
+            let healAmt = 0;
+            if (marked && attacker.current > 0) {
+              const heal = Math.round(attacker.maxHp * 0.25);
+              const before = attacker.current;
+              attacker.current = Math.min(attacker.maxHp, attacker.current + heal);
+              healAmt = attacker.current - before;
+            }
+            log.push({
+              turn,
+              actor: side,
+              actorName: attacker.name,
+              targetName: target.name,
+              damage: dmg,
+              crit: marked,
+              effective: eff,
+              remainingHp: target.current,
+              targetShield: target.shield,
+              message: `${skill.emoji} ${attacker.name} → ${target.name}: ${dmg} de dano arcano${marked ? " 💥 (alvo marcado)" : ""}${silenced ? " 🤐 (silenciado 1 turno)" : ""}`,
+            });
+            if (target.current <= 0) {
               log.push({
                 turn,
                 actor: side,
                 actorName: attacker.name,
-                targetName: t.name,
-                damage: dmg,
-                crit: marked,
-                effective: eff,
-                remainingHp: t.current,
-                targetShield: t.shield,
-                message: `${skill.emoji} ${attacker.name} → ${t.name}: ${dmg} de dano arcano${marked ? " 💥 (dobrado em alvo marcado)" : ""}`,
+                targetName: target.name,
+                damage: 0,
+                crit: false,
+                effective: 1,
+                remainingHp: 0,
+                message: `💀 ${target.name} foi derrotado!`,
               });
-              if (t.current <= 0) {
-                log.push({
-                  turn,
-                  actor: side,
-                  actorName: attacker.name,
-                  targetName: t.name,
-                  damage: 0,
-                  crit: false,
-                  effective: 1,
-                  remainingHp: 0,
-                  message: `💀 ${t.name} foi derrotado!`,
-                });
-              }
             }
-            if (totalHeal > 0) {
+            if (healAmt > 0) {
               log.push({
                 turn,
                 actor: side,
                 actorName: attacker.name,
                 targetName: attacker.name,
-                damage: -totalHeal,
+                damage: -healAmt,
                 crit: false,
                 effective: 1,
                 remainingHp: attacker.current,
-                message: `🔮 Marca Final: ${attacker.name} recuperou ${totalHeal} de HP (${doubledNames.length}× alvo marcado)`,
+                message: `🔮 Marca Final: ${attacker.name} recuperou ${healAmt} de HP`,
               });
             }
             return;
