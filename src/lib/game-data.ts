@@ -826,7 +826,7 @@ export const SKINS: Record<string, Skin> = {
 };
 
 // ===== Battle Pass / Gem packs =====
-export const BATTLE_PASS_PRICE_BRL = 14.90;
+export const BATTLE_PASS_PRICE_BRL = 19.90;
 export const BATTLE_PASS_DAILY_GEMS = 5;
 export const BATTLE_PASS_DAILY_RATIONS = 1;
 
