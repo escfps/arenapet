@@ -28,6 +28,8 @@ const drawerItems = [
   { to: "/dicas", label: "Dicas", emoji: "💡" },
   { to: "/novidades", label: "Novidades", emoji: "📢" },
   { to: "/redeem", label: "Resgatar Código", emoji: "🎁" },
+  { to: "https://discord.gg/C4bsUaWhxq", label: "Discord", emoji: "💬", external: true },
+
 ] as const;
 
 export function MobileDrawerButton({ onOpen }: { onOpen: () => void }) {
