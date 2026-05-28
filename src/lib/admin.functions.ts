@@ -60,21 +60,44 @@ export const adminUpdatePetStat = createServerFn({ method: "POST" })
     assertAdmin(context.userId);
     const { data: pet } = await supabaseAdmin
       .from("monsters")
-      .select("hp, atk, def, spd, int, crit")
+      .select("hp, atk, def, spd, int, crit, rank, train_count")
       .eq("id", data.petId)
       .single();
     if (!pet) throw new Error("Pet não encontrado");
+    const rank = Math.max(1, Number(pet.rank ?? 1));
+    const perStatCap = rank * 10; // mesma regra do treino: 10 por estrela
+    const critCap = rank; // crit segue limite do jogo: 1 por estrela
     const current = Number((pet as Record<StatKey, number>)[data.stat] ?? 0);
-    const max = data.stat === "crit" ? 50 : 9999;
+    const max = data.stat === "crit" ? critCap : perStatCap;
+
     const next = Math.min(max, Math.max(0, current + data.delta));
-    const update = { [data.stat]: next } as Record<string, number>;
+    if (next === current) {
+      throw new Error(`Limite por estrela atingido (máx ${max} para rank ${rank}).`);
+    }
+    const update: Record<string, number> = { [data.stat]: next };
+    // mantém train_count coerente com a soma dos stats treináveis
+    const statTotals: Record<StatKey, number> = {
+      hp: Number(pet.hp ?? 0),
+      atk: Number(pet.atk ?? 0),
+      def: Number(pet.def ?? 0),
+      spd: Number(pet.spd ?? 0),
+      int: Number(pet.int ?? 0),
+      crit: Number(pet.crit ?? 0),
+    };
+    statTotals[data.stat] = next;
+    const newTrainCount = Math.min(
+      perStatCap,
+      statTotals.hp + statTotals.atk + statTotals.def + statTotals.spd + statTotals.int + statTotals.crit
+    );
+    update.train_count = newTrainCount;
     const { error } = await supabaseAdmin
       .from("monsters")
       .update(update as never)
       .eq("id", data.petId);
     if (error) throw new Error(error.message);
-    return { ok: true, value: next };
+    return { ok: true, value: next, max, rank };
   });
+
 
 // ---------- Grant resources ----------
 export const adminGrantResources = createServerFn({ method: "POST" })

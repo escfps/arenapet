@@ -490,15 +490,23 @@ function AdminPage() {
                         <button disabled={busy} onClick={() => delPet(pet.id)} className="px-2 py-1 rounded bg-red-700 hover:bg-red-600">🗑️</button>
                       </div>
                       <div className="flex flex-wrap items-center gap-1.5">
-                        {STAT_LABELS.map(({ key, icon }) => (
-                          <div key={key} className="flex items-center gap-0.5 bg-black/30 rounded px-1.5 py-0.5">
-                            <span className="text-xs opacity-80 w-12">{icon} {pet[key] ?? 0}{key === "crit" ? "" : ""}</span>
-                            <button disabled={busy || (pet[key] ?? 0) <= 0} onClick={() => bumpStat(pet.id, key, -1)} className="px-1.5 py-0.5 rounded bg-white/10 hover:bg-white/20 disabled:opacity-30 text-xs">−</button>
-                            <button disabled={busy} onClick={() => bumpStat(pet.id, key, 1)} className="px-1.5 py-0.5 rounded bg-emerald-600 hover:bg-emerald-500 font-bold text-xs">+1</button>
-                            <button disabled={busy} onClick={() => bumpStat(pet.id, key, 10)} className="px-1.5 py-0.5 rounded bg-emerald-700 hover:bg-emerald-600 font-bold text-xs">+10</button>
-                          </div>
-                        ))}
+                        {STAT_LABELS.map(({ key, icon }) => {
+                          const rank = Math.max(1, pet.rank ?? 1);
+                          const cap = key === "crit" ? rank : rank * 10;
+                          const val = pet[key] ?? 0;
+                          const atMax = val >= cap;
+                          const atMin = val <= 0;
+                          return (
+                            <div key={key} className="flex items-center gap-0.5 bg-black/30 rounded px-1.5 py-0.5">
+                              <span className={`text-xs w-16 ${atMax ? "text-amber-300 font-bold" : "opacity-80"}`}>{icon} {val}/{cap}</span>
+                              <button disabled={busy || atMin} onClick={() => bumpStat(pet.id, key, -1)} className="px-1.5 py-0.5 rounded bg-white/10 hover:bg-white/20 disabled:opacity-30 text-xs">−</button>
+                              <button disabled={busy || atMax} onClick={() => bumpStat(pet.id, key, 1)} className="px-1.5 py-0.5 rounded bg-emerald-600 hover:bg-emerald-500 font-bold text-xs disabled:opacity-30">+1</button>
+                              <button disabled={busy || atMax} onClick={() => bumpStat(pet.id, key, 10)} className="px-1.5 py-0.5 rounded bg-emerald-700 hover:bg-emerald-600 font-bold text-xs disabled:opacity-30">+10</button>
+                            </div>
+                          );
+                        })}
                       </div>
+
                     </div>
                   );
                 })}
