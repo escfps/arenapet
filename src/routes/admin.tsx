@@ -56,6 +56,7 @@ type PetRow = {
   spd: number;
   int: number;
   crit: number;
+  train_count?: number;
 };
 
 const STAT_LABELS: { key: "hp" | "atk" | "def" | "spd" | "int" | "crit"; icon: string }[] = [
@@ -489,23 +490,40 @@ function AdminPage() {
                         <button disabled={busy || pet.rank >= 10} onClick={() => rankPet(pet.id, 1)} className="px-2 py-1 rounded bg-yellow-600 hover:bg-yellow-500 font-bold disabled:opacity-30">+⭐</button>
                         <button disabled={busy} onClick={() => delPet(pet.id)} className="px-2 py-1 rounded bg-red-700 hover:bg-red-600">🗑️</button>
                       </div>
-                      <div className="flex flex-wrap items-center gap-1.5">
-                        {STAT_LABELS.map(({ key, icon }) => {
+                      <div className="flex flex-col gap-1.5">
+                        {(() => {
                           const rank = Math.max(1, pet.rank ?? 1);
-                          const cap = key === "crit" ? rank : rank * 10;
-                          const val = pet[key] ?? 0;
-                          const atMax = val >= cap;
-                          const atMin = val <= 0;
+                          const trainLimit = rank * 10;
+                          const trainUsed = pet.train_count ?? 0;
+                          const trainsLeft = Math.max(0, trainLimit - trainUsed);
                           return (
-                            <div key={key} className="flex items-center gap-0.5 bg-black/30 rounded px-1.5 py-0.5">
-                              <span className={`text-xs w-16 ${atMax ? "text-amber-300 font-bold" : "opacity-80"}`}>{icon} {val}/{cap}</span>
-                              <button disabled={busy || atMin} onClick={() => bumpStat(pet.id, key, -1)} className="px-1.5 py-0.5 rounded bg-white/10 hover:bg-white/20 disabled:opacity-30 text-xs">−</button>
-                              <button disabled={busy || atMax} onClick={() => bumpStat(pet.id, key, 1)} className="px-1.5 py-0.5 rounded bg-emerald-600 hover:bg-emerald-500 font-bold text-xs disabled:opacity-30">+1</button>
-                              <button disabled={busy || atMax} onClick={() => bumpStat(pet.id, key, 10)} className="px-1.5 py-0.5 rounded bg-emerald-700 hover:bg-emerald-600 font-bold text-xs disabled:opacity-30">+10</button>
+                            <div className="text-[11px] opacity-80">
+                              💪 Treinos: <span className={trainsLeft === 0 ? "text-amber-300 font-bold" : "font-bold"}>{trainUsed}/{trainLimit}</span>
+                              {trainsLeft === 0 && <span className="ml-1 text-amber-300">(suba ⭐ pra treinar mais)</span>}
                             </div>
                           );
-                        })}
+                        })()}
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          {STAT_LABELS.map(({ key, icon }) => {
+                            const rank = Math.max(1, pet.rank ?? 1);
+                            const trainLimit = rank * 10;
+                            const trainUsed = pet.train_count ?? 0;
+                            const noTrains = trainUsed >= trainLimit;
+                            const val = pet[key] ?? 0;
+                            const atCritMax = key === "crit" && val >= rank;
+                            const cantAdd = noTrains || atCritMax;
+                            return (
+                              <div key={key} className="flex items-center gap-0.5 bg-black/30 rounded px-1.5 py-0.5">
+                                <span className="text-xs w-12 opacity-80">{icon} {val}</span>
+                                <button disabled={busy || val <= 0} onClick={() => bumpStat(pet.id, key, -1)} className="px-1.5 py-0.5 rounded bg-white/10 hover:bg-white/20 disabled:opacity-30 text-xs">−1</button>
+                                <button disabled={busy || cantAdd} onClick={() => bumpStat(pet.id, key, 1)} className="px-1.5 py-0.5 rounded bg-emerald-600 hover:bg-emerald-500 font-bold text-xs disabled:opacity-30">+1🎲</button>
+                                <button disabled={busy || cantAdd} onClick={() => bumpStat(pet.id, key, 10)} className="px-1.5 py-0.5 rounded bg-emerald-700 hover:bg-emerald-600 font-bold text-xs disabled:opacity-30">+10🎲</button>
+                              </div>
+                            );
+                          })}
+                        </div>
                       </div>
+
 
                     </div>
                   );
