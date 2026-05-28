@@ -28,6 +28,8 @@ const drawerItems = [
   { to: "/dicas", label: "Dicas", emoji: "💡" },
   { to: "/novidades", label: "Novidades", emoji: "📢" },
   { to: "/redeem", label: "Resgatar Código", emoji: "🎁" },
+  { to: "https://discord.gg/C4bsUaWhxq", label: "Discord", emoji: "💬", external: true },
+
 ] as const;
 
 export function MobileDrawerButton({ onOpen }: { onOpen: () => void }) {
@@ -128,6 +130,23 @@ export function MobileNav({ open, onClose }: { open: boolean; onClose: () => voi
               {drawerItems.map((item) => {
                 const active = pathname.startsWith(item.to);
                 const hash = "hash" in item ? (item as { hash?: string }).hash : undefined;
+                const external = "external" in item ? (item as { external?: boolean }).external : false;
+                if (external) {
+                  return (
+                    <li key={`${item.to}-${item.label}`}>
+                      <a
+                        href={item.to}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={onClose}
+                        className="flex items-center gap-3 px-4 py-3 rounded-xl text-base font-bold transition text-white hover:bg-white/10"
+                      >
+                        <span className="text-2xl">{item.emoji}</span>
+                        <span>{item.label}</span>
+                      </a>
+                    </li>
+                  );
+                }
                 return (
                   <li key={`${item.to}-${item.label}`}>
                     <Link
@@ -147,6 +166,7 @@ export function MobileNav({ open, onClose }: { open: boolean; onClose: () => voi
                   </li>
                 );
               })}
+
               {isAdmin && (
                 <li>
                   <Link
