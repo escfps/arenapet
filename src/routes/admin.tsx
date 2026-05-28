@@ -74,6 +74,7 @@ function AdminPage() {
   const petsFn = useServerFn(adminGetPlayerPets);
   const grantFn = useServerFn(adminGrantResources);
   const rankUpFn = useServerFn(adminRankUpPet);
+  const updateStatFn = useServerFn(adminUpdatePetStat);
   const addPetFn = useServerFn(adminAddPet);
   const delPetFn = useServerFn(adminDeletePet);
   const updateProfileFn = useServerFn(adminUpdateProfile);
