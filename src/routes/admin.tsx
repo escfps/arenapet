@@ -248,6 +248,17 @@ function AdminPage() {
     }
   }
 
+  async function bumpStat(petId: string, stat: "hp" | "atk" | "def" | "spd" | "int" | "crit", delta: number) {
+    setBusy(true);
+    try {
+      await updateStatFn({ data: { petId, stat, delta } });
+      await reloadSelected();
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+
   async function addPet() {
     if (!selected) return;
     setBusy(true);
