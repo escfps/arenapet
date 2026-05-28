@@ -35,11 +35,44 @@ export const adminGetPlayerPets = createServerFn({ method: "POST" })
     assertAdmin(context.userId);
     const { data: pets } = await supabaseAdmin
       .from("monsters")
-      .select("id, name, species, rank, hp, atk, def, spd, int, in_team, team_position")
+      .select("id, name, species, rank, hp, atk, def, spd, int, crit, in_team, team_position")
       .eq("owner_id", data.userId)
       .order("in_team", { ascending: false })
       .order("rank", { ascending: false });
     return { pets: pets ?? [] };
+  });
+
+const STAT_KEYS = ["hp", "atk", "def", "spd", "int", "crit"] as const;
+type StatKey = (typeof STAT_KEYS)[number];
+
+export const adminUpdatePetStat = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) =>
+    z
+      .object({
+        petId: z.string().uuid(),
+        stat: z.enum(STAT_KEYS),
+        delta: z.number().int().min(-999).max(999),
+      })
+      .parse(input)
+  )
+  .handler(async ({ data, context }) => {
+    assertAdmin(context.userId);
+    const { data: pet } = await supabaseAdmin
+      .from("monsters")
+      .select("hp, atk, def, spd, int, crit")
+      .eq("id", data.petId)
+      .single();
+    if (!pet) throw new Error("Pet não encontrado");
+    const current = Number((pet as Record<StatKey, number>)[data.stat] ?? 0);
+    const max = data.stat === "crit" ? 50 : 9999;
+    const next = Math.min(max, Math.max(0, current + data.delta));
+    const { error } = await supabaseAdmin
+      .from("monsters")
+      .update({ [data.stat]: next })
+      .eq("id", data.petId);
+    if (error) throw new Error(error.message);
+    return { ok: true, value: next };
   });
 
 // ---------- Grant resources ----------
