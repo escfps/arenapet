@@ -115,6 +115,20 @@ function ArenaPage() {
     void apply();
   }, [battleLog, battleFinished]);
 
+  // Se o jogador sair da arena (navegar pra outra tela) com batalha rolando,
+  // conta como DERROTA — força o resultado e dispara o apply pendente.
+  useEffect(() => {
+    return () => {
+      const apply = pendingApplyRef.current;
+      if (!apply) return;
+      pendingApplyRef.current = null;
+      winnerRef.current = "team_b";
+      playbackStoppedRef.current = true;
+      void apply();
+    };
+  }, []);
+
+
   // auto rematch: começa countdown de 10s quando a batalha termina
   useEffect(() => {
     if (!battleLog || !winner) return;
