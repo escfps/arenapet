@@ -229,6 +229,19 @@ function ShopPage() {
     }
   }
 
+  async function restoreIosPurchases() {
+    try {
+      toast.loading("Restaurando compras...", { id: "restore" });
+      await NativePurchases.restorePurchases();
+      toast.dismiss("restore");
+      toast.success("Compras restauradas! ✅");
+      await reload();
+    } catch (e: any) {
+      toast.dismiss("restore");
+      toast.error(`Erro ao restaurar: ${e?.message ?? e}`);
+    }
+  }
+
   async function claimDailyBP() {
     try {
       const res = await claimBP();
