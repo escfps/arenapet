@@ -13,6 +13,7 @@ import {
   adminDeletePet,
   adminUpdateProfile,
   adminLaunchReset,
+  adminUpdatePetStat,
 } from "@/lib/admin.functions";
 
 import {
