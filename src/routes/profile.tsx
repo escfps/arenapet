@@ -15,14 +15,34 @@ export const Route = createFileRoute("/profile")({ component: ProfilePage });
 
 function ProfilePage() {
   const { profile, loading, reload } = useProfile();
+  const navigate = useNavigate();
   const changeNick = useServerFn(changeUsername);
   const fetchTrophies = useServerFn(getUserTrophies);
+  const deleteAccount = useServerFn(deleteMyAccount);
   const [newName, setNewName] = useState("");
   const [busy, setBusy] = useState(false);
   const [trophies, setTrophies] = useState<SeasonTrophy[]>([]);
   const [pwd, setPwd] = useState("");
   const [pwd2, setPwd2] = useState("");
   const [pwdBusy, setPwdBusy] = useState(false);
+  const [delOpen, setDelOpen] = useState(false);
+  const [delConfirm, setDelConfirm] = useState("");
+  const [delBusy, setDelBusy] = useState(false);
+
+  async function handleDeleteAccount() {
+    if (delConfirm !== "EXCLUIR") { toast.error('Digite "EXCLUIR" para confirmar.'); return; }
+    setDelBusy(true);
+    try {
+      await deleteAccount({ data: { confirm: "EXCLUIR" } });
+      try { localStorage.removeItem("arenapet:remember"); } catch {}
+      await supabase.auth.signOut();
+      toast.success("Conta excluída com sucesso");
+      navigate({ to: "/login" });
+    } catch (e: any) {
+      toast.error(e?.message ?? "Erro ao excluir conta");
+      setDelBusy(false);
+    }
+  }
 
   async function changePassword(e: React.FormEvent) {
     e.preventDefault();
