@@ -52,6 +52,8 @@ export const adminUpdatePetStat = createServerFn({ method: "POST" })
       .object({
         petId: z.string().uuid(),
         stat: z.enum(STAT_KEYS),
+        // positivo = nº de "treinos" a aplicar (ganho aleatório igual ao jogo)
+        // negativo = pontos a remover diretamente do stat
         delta: z.number().int().min(-999).max(999),
       })
       .parse(input)
@@ -65,37 +67,51 @@ export const adminUpdatePetStat = createServerFn({ method: "POST" })
       .single();
     if (!pet) throw new Error("Pet não encontrado");
     const rank = Math.max(1, Number(pet.rank ?? 1));
-    const perStatCap = rank * 10; // mesma regra do treino: 10 por estrela
-    const critCap = rank; // crit segue limite do jogo: 1 por estrela
+    const trainLimit = rank * 10; // total de treinos por estrela
+    const critCap = rank; // crit: 1 por estrela
     const current = Number((pet as Record<StatKey, number>)[data.stat] ?? 0);
-    const max = data.stat === "crit" ? critCap : perStatCap;
+    const trainUsed = Number(pet.train_count ?? 0);
 
-    const next = Math.min(max, Math.max(0, current + data.delta));
-    if (next === current) {
-      throw new Error(`Limite por estrela atingido (máx ${max} para rank ${rank}).`);
+    let nextValue = current;
+    let trainsApplied = 0;
+
+    if (data.delta < 0) {
+      nextValue = Math.max(0, current + data.delta);
+      if (nextValue === current) throw new Error("Stat já está em 0.");
+    } else if (data.delta > 0) {
+      const available = Math.max(0, trainLimit - trainUsed);
+      if (available <= 0) {
+        throw new Error(`Limite de treinos atingido (${trainLimit}/${trainLimit}). Suba de estrela ⭐`);
+      }
+      const toApply = Math.min(data.delta, available);
+      for (let i = 0; i < toApply; i++) {
+        if (data.stat === "crit") {
+          if (nextValue >= critCap) break;
+          nextValue += 1;
+        } else if (data.stat === "hp") {
+          nextValue += 3 + Math.floor(Math.random() * 3); // 3..5
+        } else {
+          nextValue += 1 + Math.floor(Math.random() * 2); // 1..2
+        }
+        trainsApplied += 1;
+      }
+      if (trainsApplied === 0) {
+        throw new Error(`Limite de CRIT atingido (${critCap}/${critCap}).`);
+      }
+    } else {
+      return { ok: true, value: current, rank, trainsApplied: 0 };
     }
-    const update: Record<string, number> = { [data.stat]: next };
-    // mantém train_count coerente com a soma dos stats treináveis
-    const statTotals: Record<StatKey, number> = {
-      hp: Number(pet.hp ?? 0),
-      atk: Number(pet.atk ?? 0),
-      def: Number(pet.def ?? 0),
-      spd: Number(pet.spd ?? 0),
-      int: Number(pet.int ?? 0),
-      crit: Number(pet.crit ?? 0),
-    };
-    statTotals[data.stat] = next;
-    const newTrainCount = Math.min(
-      perStatCap,
-      statTotals.hp + statTotals.atk + statTotals.def + statTotals.spd + statTotals.int + statTotals.crit
-    );
-    update.train_count = newTrainCount;
+
+    const update: Record<string, number> = { [data.stat]: nextValue };
+    if (trainsApplied > 0) {
+      update.train_count = Math.min(trainLimit, trainUsed + trainsApplied);
+    }
     const { error } = await supabaseAdmin
       .from("monsters")
       .update(update as never)
       .eq("id", data.petId);
     if (error) throw new Error(error.message);
-    return { ok: true, value: next, max, rank };
+    return { ok: true, value: nextValue, rank, trainsApplied };
   });
 
 
