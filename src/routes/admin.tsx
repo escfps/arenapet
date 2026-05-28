@@ -479,14 +479,26 @@ function AdminPage() {
                 {pets.map((pet) => {
                   const sp = SPECIES[pet.species];
                   return (
-                    <div key={pet.id} className="flex items-center gap-2 p-2 bg-black/30 rounded text-sm">
-                      <span className="font-bold flex-1 truncate">
-                        {sp?.name ?? pet.species} {pet.in_team && "⭐"}
-                        <span className="text-yellow-300 ml-2">{rankStars(pet.rank)}</span>
-                      </span>
-                      <button disabled={busy || pet.rank <= 1} onClick={() => rankPet(pet.id, -1)} className="px-2 py-1 rounded bg-white/10 hover:bg-white/20 disabled:opacity-30">−⭐</button>
-                      <button disabled={busy || pet.rank >= 10} onClick={() => rankPet(pet.id, 1)} className="px-2 py-1 rounded bg-yellow-600 hover:bg-yellow-500 font-bold disabled:opacity-30">+⭐</button>
-                      <button disabled={busy} onClick={() => delPet(pet.id)} className="px-2 py-1 rounded bg-red-700 hover:bg-red-600">🗑️</button>
+                    <div key={pet.id} className="p-2 bg-black/30 rounded text-sm space-y-2">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold flex-1 truncate">
+                          {sp?.name ?? pet.species} {pet.in_team && "⭐"}
+                          <span className="text-yellow-300 ml-2">{rankStars(pet.rank)}</span>
+                        </span>
+                        <button disabled={busy || pet.rank <= 1} onClick={() => rankPet(pet.id, -1)} className="px-2 py-1 rounded bg-white/10 hover:bg-white/20 disabled:opacity-30">−⭐</button>
+                        <button disabled={busy || pet.rank >= 10} onClick={() => rankPet(pet.id, 1)} className="px-2 py-1 rounded bg-yellow-600 hover:bg-yellow-500 font-bold disabled:opacity-30">+⭐</button>
+                        <button disabled={busy} onClick={() => delPet(pet.id)} className="px-2 py-1 rounded bg-red-700 hover:bg-red-600">🗑️</button>
+                      </div>
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        {STAT_LABELS.map(({ key, icon }) => (
+                          <div key={key} className="flex items-center gap-0.5 bg-black/30 rounded px-1.5 py-0.5">
+                            <span className="text-xs opacity-80 w-12">{icon} {pet[key] ?? 0}{key === "crit" ? "" : ""}</span>
+                            <button disabled={busy || (pet[key] ?? 0) <= 0} onClick={() => bumpStat(pet.id, key, -1)} className="px-1.5 py-0.5 rounded bg-white/10 hover:bg-white/20 disabled:opacity-30 text-xs">−</button>
+                            <button disabled={busy} onClick={() => bumpStat(pet.id, key, 1)} className="px-1.5 py-0.5 rounded bg-emerald-600 hover:bg-emerald-500 font-bold text-xs">+1</button>
+                            <button disabled={busy} onClick={() => bumpStat(pet.id, key, 10)} className="px-1.5 py-0.5 rounded bg-emerald-700 hover:bg-emerald-600 font-bold text-xs">+10</button>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   );
                 })}
