@@ -49,7 +49,22 @@ type PetRow = {
   species: string;
   rank: number;
   in_team: boolean;
+  hp: number;
+  atk: number;
+  def: number;
+  spd: number;
+  int: number;
+  crit: number;
 };
+
+const STAT_LABELS: { key: "hp" | "atk" | "def" | "spd" | "int" | "crit"; icon: string }[] = [
+  { key: "hp", icon: "❤️" },
+  { key: "atk", icon: "⚔️" },
+  { key: "def", icon: "🛡️" },
+  { key: "spd", icon: "💨" },
+  { key: "int", icon: "🧠" },
+  { key: "crit", icon: "💢" },
+];
 
 function AdminPage() {
   const navigate = useNavigate();
