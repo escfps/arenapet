@@ -35,7 +35,7 @@ export const adminGetPlayerPets = createServerFn({ method: "POST" })
     assertAdmin(context.userId);
     const { data: pets } = await supabaseAdmin
       .from("monsters")
-      .select("id, name, species, rank, hp, atk, def, spd, int, crit, in_team, team_position")
+      .select("id, name, species, rank, hp, atk, def, spd, int, crit, in_team, team_position, train_count")
       .eq("owner_id", data.userId)
       .order("in_team", { ascending: false })
       .order("rank", { ascending: false });
