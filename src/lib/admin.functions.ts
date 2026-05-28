@@ -66,8 +66,10 @@ export const adminUpdatePetStat = createServerFn({ method: "POST" })
     if (!pet) throw new Error("Pet não encontrado");
     const rank = Math.max(1, Number(pet.rank ?? 1));
     const perStatCap = rank * 10; // mesma regra do treino: 10 por estrela
+    const critCap = rank; // crit segue limite do jogo: 1 por estrela
     const current = Number((pet as Record<StatKey, number>)[data.stat] ?? 0);
-    const max = data.stat === "crit" ? Math.min(50, perStatCap) : perStatCap;
+    const max = data.stat === "crit" ? critCap : perStatCap;
+
     const next = Math.min(max, Math.max(0, current + data.delta));
     if (next === current) {
       throw new Error(`Limite por estrela atingido (máx ${max} para rank ${rank}).`);
