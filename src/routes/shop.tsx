@@ -20,6 +20,7 @@ import { toast, Toaster } from "sonner";
 import { initializePaddle, getPaddlePriceId } from "@/lib/paddle";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { isIos, purchaseIosGemsPack, purchaseIosBattlePass } from "@/lib/iap";
+import { NativePurchases } from "@capgo/native-purchases";
 import arenaBg from "@/assets/arena-bg.jpg";
 
 const PADDLE_PRICE_IDS: Record<string, string> = {
@@ -228,6 +229,19 @@ function ShopPage() {
     }
   }
 
+  async function restoreIosPurchases() {
+    try {
+      toast.loading("Restaurando compras...", { id: "restore" });
+      await NativePurchases.restorePurchases();
+      toast.dismiss("restore");
+      toast.success("Compras restauradas! ✅");
+      await reload();
+    } catch (e: any) {
+      toast.dismiss("restore");
+      toast.error(`Erro ao restaurar: ${e?.message ?? e}`);
+    }
+  }
+
   async function claimDailyBP() {
     try {
       const res = await claimBP();
@@ -313,7 +327,17 @@ function ShopPage() {
       <HUD profile={profile} />
 
       <div className="max-w-4xl mx-auto px-4 mt-4 space-y-4">
-        <button onClick={() => navigate({ to: "/" })} className="text-white/80 hover:text-white text-sm font-bold">← Home</button>
+        <div className="flex items-center justify-between gap-2">
+          <button onClick={() => navigate({ to: "/" })} className="text-white/80 hover:text-white text-sm font-bold">← Home</button>
+          {isIos() && (
+            <button
+              onClick={restoreIosPurchases}
+              className="text-white/80 hover:text-white text-xs font-bold underline"
+            >
+              🔄 Restaurar Compras
+            </button>
+          )}
+        </div>
 
         <header className="text-center text-white">
           <h1 className="text-4xl font-extrabold drop-shadow-lg">🛒 Loja</h1>
@@ -515,6 +539,35 @@ function ShopPage() {
                   >
                     💳 Assinar por R$ {BATTLE_PASS_PRICE_BRL.toFixed(2).replace(".", ",")} / mês
                   </button>
+                )}
+                {isIos() && (
+                  <div className="mt-4 pt-3 border-t border-yellow-900/30 space-y-2">
+                    <button
+                      onClick={restoreIosPurchases}
+                      className="w-full py-2 rounded-lg bg-yellow-950/20 hover:bg-yellow-950/30 text-yellow-950 text-xs font-extrabold transition"
+                    >
+                      🔄 Restaurar Compras
+                    </button>
+                    <div className="flex items-center justify-center gap-3 text-[11px] font-bold">
+                      <a
+                        href="https://arenapet.lovable.app/terms"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline hover:no-underline text-yellow-950/80 hover:text-yellow-950"
+                      >
+                        Termos de Uso
+                      </a>
+                      <span className="text-yellow-950/40">•</span>
+                      <a
+                        href="https://arenapet.lovable.app/privacy"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline hover:no-underline text-yellow-950/80 hover:text-yellow-950"
+                      >
+                        Política de Privacidade
+                      </a>
+                    </div>
+                  </div>
                 )}
               </div>
             </div>

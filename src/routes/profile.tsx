@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
@@ -6,6 +6,7 @@ import { HUD } from "@/components/HUD";
 import { supabase } from "@/integrations/supabase/client";
 import { useProfile } from "@/lib/use-profile";
 import { changeUsername, NICK_CHANGE_COST_GEMS } from "@/lib/profile.functions";
+import { deleteMyAccount } from "@/lib/account.functions";
 import { getUserTrophies, type SeasonTrophy } from "@/lib/seasons.functions";
 import { tierTrophyEmoji } from "@/lib/season-rewards";
 
@@ -13,14 +14,34 @@ export const Route = createFileRoute("/profile")({ component: ProfilePage });
 
 function ProfilePage() {
   const { profile, loading, reload } = useProfile();
+  const navigate = useNavigate();
   const changeNick = useServerFn(changeUsername);
   const fetchTrophies = useServerFn(getUserTrophies);
+  const deleteAccount = useServerFn(deleteMyAccount);
   const [newName, setNewName] = useState("");
   const [busy, setBusy] = useState(false);
   const [trophies, setTrophies] = useState<SeasonTrophy[]>([]);
   const [pwd, setPwd] = useState("");
   const [pwd2, setPwd2] = useState("");
   const [pwdBusy, setPwdBusy] = useState(false);
+  const [delOpen, setDelOpen] = useState(false);
+  const [delConfirm, setDelConfirm] = useState("");
+  const [delBusy, setDelBusy] = useState(false);
+
+  async function handleDeleteAccount() {
+    if (delConfirm !== "EXCLUIR") { toast.error('Digite "EXCLUIR" para confirmar.'); return; }
+    setDelBusy(true);
+    try {
+      await deleteAccount({ data: { confirm: "EXCLUIR" } });
+      try { localStorage.removeItem("arenapet:remember"); } catch {}
+      await supabase.auth.signOut();
+      toast.success("Conta excluída com sucesso");
+      navigate({ to: "/login" });
+    } catch (e: any) {
+      toast.error(e?.message ?? "Erro ao excluir conta");
+      setDelBusy(false);
+    }
+  }
 
   async function changePassword(e: React.FormEvent) {
     e.preventDefault();
@@ -202,7 +223,64 @@ function ProfilePage() {
             </div>
           )}
         </div>
+
+        {/* Danger zone */}
+        <div className="rounded-3xl bg-[oklch(0.18_0.06_290)]/90 backdrop-blur-xl border-2 border-red-500/30 p-6 shadow-2xl">
+          <h2 className="text-lg font-extrabold text-white mb-1 flex items-center gap-2">⚠️ Zona de perigo</h2>
+          <p className="text-white/60 text-xs mb-3">Esta ação é permanente. Todos os seus dados (pets, batalhas, compras) serão apagados.</p>
+          <button
+            onClick={() => { setDelConfirm(""); setDelOpen(true); }}
+            className="w-full py-2.5 rounded-xl bg-red-600/20 hover:bg-red-600/30 border border-red-500/40 text-red-300 hover:text-red-200 text-sm font-extrabold transition"
+          >
+            🗑️ Excluir minha conta
+          </button>
+        </div>
       </main>
+
+      {delOpen && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+          onClick={() => !delBusy && setDelOpen(false)}
+        >
+          <div
+            className="w-full max-w-sm rounded-3xl bg-[oklch(0.18_0.06_290)] border-2 border-red-500/50 p-6 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-xl font-extrabold text-white mb-2 flex items-center gap-2">⚠️ Excluir conta</h3>
+            <p className="text-white/70 text-sm mb-4">
+              Essa ação <b className="text-red-300">não pode ser desfeita</b>. Todos os seus pets, baús,
+              compras, amizades e progresso serão apagados permanentemente.
+            </p>
+            <p className="text-white/80 text-xs mb-2">
+              Para confirmar, digite <b className="text-red-300">EXCLUIR</b> abaixo:
+            </p>
+            <input
+              type="text"
+              value={delConfirm}
+              onChange={(e) => setDelConfirm(e.target.value)}
+              placeholder="EXCLUIR"
+              autoCapitalize="characters"
+              className="w-full px-3 py-3 rounded-xl bg-black/40 border-2 border-white/10 focus:border-red-400 text-white text-sm font-bold outline-none transition mb-4"
+            />
+            <div className="flex gap-2">
+              <button
+                onClick={() => setDelOpen(false)}
+                disabled={delBusy}
+                className="flex-1 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-sm font-extrabold transition disabled:opacity-50"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleDeleteAccount}
+                disabled={delBusy || delConfirm !== "EXCLUIR"}
+                className="flex-1 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-sm font-extrabold transition disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                {delBusy ? "Excluindo..." : "Excluir definitivamente"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
