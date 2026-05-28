@@ -67,9 +67,10 @@ export const adminUpdatePetStat = createServerFn({ method: "POST" })
     const current = Number((pet as Record<StatKey, number>)[data.stat] ?? 0);
     const max = data.stat === "crit" ? 50 : 9999;
     const next = Math.min(max, Math.max(0, current + data.delta));
+    const update = { [data.stat]: next } as Record<string, number>;
     const { error } = await supabaseAdmin
       .from("monsters")
-      .update({ [data.stat]: next })
+      .update(update as never)
       .eq("id", data.petId);
     if (error) throw new Error(error.message);
     return { ok: true, value: next };
