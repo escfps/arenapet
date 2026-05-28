@@ -56,6 +56,7 @@ type PetRow = {
   spd: number;
   int: number;
   crit: number;
+  train_count?: number;
 };
 
 const STAT_LABELS: { key: "hp" | "atk" | "def" | "spd" | "int" | "crit"; icon: string }[] = [
