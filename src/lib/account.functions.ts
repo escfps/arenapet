@@ -15,21 +15,21 @@ export const deleteMyAccount = createServerFn({ method: "POST" })
 
     // Limpa dados em todas as tabelas que referenciam o usuário.
     // Ordem: dependentes primeiro, profiles por último, auth no fim.
-    const cleanups: Array<Promise<unknown>> = [
-      supabaseAdmin.from("monsters").delete().eq("owner_id", userId),
-      supabaseAdmin.from("expeditions").delete().eq("user_id", userId),
-      supabaseAdmin.from("inventory").delete().eq("user_id", userId),
-      supabaseAdmin.from("skins_owned").delete().eq("user_id", userId),
-      supabaseAdmin.from("iap_transactions").delete().eq("user_id", userId),
-      supabaseAdmin.from("gem_purchases").delete().eq("user_id", userId),
-      supabaseAdmin.from("season_trophies").delete().eq("user_id", userId),
-      supabaseAdmin.from("tournament_entries").delete().eq("user_id", userId),
-      supabaseAdmin.from("friend_messages").delete().or(`sender_id.eq.${userId},receiver_id.eq.${userId}`),
-      supabaseAdmin.from("friend_gifts").delete().or(`sender_id.eq.${userId},receiver_id.eq.${userId}`),
-      supabaseAdmin.from("friend_challenges").delete().or(`challenger_id.eq.${userId},target_id.eq.${userId}`),
-      supabaseAdmin.from("friendships").delete().or(`user_a.eq.${userId},user_b.eq.${userId}`),
-      supabaseAdmin.from("trades").delete().or(`from_user_id.eq.${userId},to_user_id.eq.${userId}`),
-      supabaseAdmin.from("battles").delete().or(`attacker_id.eq.${userId},defender_id.eq.${userId}`),
+    const cleanups = [
+      supabaseAdmin.from("monsters").delete().eq("owner_id", userId).then(),
+      supabaseAdmin.from("expeditions").delete().eq("user_id", userId).then(),
+      supabaseAdmin.from("inventory").delete().eq("user_id", userId).then(),
+      supabaseAdmin.from("skins_owned").delete().eq("user_id", userId).then(),
+      supabaseAdmin.from("iap_transactions").delete().eq("user_id", userId).then(),
+      supabaseAdmin.from("gem_purchases").delete().eq("user_id", userId).then(),
+      supabaseAdmin.from("season_trophies").delete().eq("user_id", userId).then(),
+      supabaseAdmin.from("tournament_entries").delete().eq("user_id", userId).then(),
+      supabaseAdmin.from("friend_messages").delete().or(`sender_id.eq.${userId},receiver_id.eq.${userId}`).then(),
+      supabaseAdmin.from("friend_gifts").delete().or(`sender_id.eq.${userId},receiver_id.eq.${userId}`).then(),
+      supabaseAdmin.from("friend_challenges").delete().or(`challenger_id.eq.${userId},target_id.eq.${userId}`).then(),
+      supabaseAdmin.from("friendships").delete().or(`user_a.eq.${userId},user_b.eq.${userId}`).then(),
+      supabaseAdmin.from("trades").delete().or(`from_user_id.eq.${userId},to_user_id.eq.${userId}`).then(),
+      supabaseAdmin.from("battles").delete().or(`attacker_id.eq.${userId},defender_id.eq.${userId}`).then(),
     ];
     await Promise.allSettled(cleanups);
 
