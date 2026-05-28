@@ -6,8 +6,10 @@ import { HUD } from "@/components/HUD";
 import { supabase } from "@/integrations/supabase/client";
 import { useProfile } from "@/lib/use-profile";
 import { changeUsername, NICK_CHANGE_COST_GEMS } from "@/lib/profile.functions";
+import { deleteMyAccount } from "@/lib/account.functions";
 import { getUserTrophies, type SeasonTrophy } from "@/lib/seasons.functions";
 import { tierTrophyEmoji } from "@/lib/season-rewards";
+import { useNavigate } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/profile")({ component: ProfilePage });
 
