@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
@@ -9,7 +9,6 @@ import { changeUsername, NICK_CHANGE_COST_GEMS } from "@/lib/profile.functions";
 import { deleteMyAccount } from "@/lib/account.functions";
 import { getUserTrophies, type SeasonTrophy } from "@/lib/seasons.functions";
 import { tierTrophyEmoji } from "@/lib/season-rewards";
-import { useNavigate } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/profile")({ component: ProfilePage });
 
