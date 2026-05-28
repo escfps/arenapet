@@ -530,6 +530,35 @@ function ShopPage() {
                     💳 Assinar por R$ {BATTLE_PASS_PRICE_BRL.toFixed(2).replace(".", ",")} / mês
                   </button>
                 )}
+                {isIos() && (
+                  <div className="mt-4 pt-3 border-t border-yellow-900/30 space-y-2">
+                    <button
+                      onClick={restoreIosPurchases}
+                      className="w-full py-2 rounded-lg bg-yellow-950/20 hover:bg-yellow-950/30 text-yellow-950 text-xs font-extrabold transition"
+                    >
+                      🔄 Restaurar Compras
+                    </button>
+                    <div className="flex items-center justify-center gap-3 text-[11px] font-bold">
+                      <a
+                        href="https://arenapet.lovable.app/terms"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline hover:no-underline text-yellow-950/80 hover:text-yellow-950"
+                      >
+                        Termos de Uso
+                      </a>
+                      <span className="text-yellow-950/40">•</span>
+                      <a
+                        href="https://arenapet.lovable.app/privacy"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline hover:no-underline text-yellow-950/80 hover:text-yellow-950"
+                      >
+                        Política de Privacidade
+                      </a>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           );
