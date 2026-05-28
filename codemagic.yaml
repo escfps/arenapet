@@ -88,7 +88,7 @@ workflows:
           RUBY
       - name: Build iOS
         script: |
-          NEW_BUILD_NUMBER=16
+          NEW_BUILD_NUMBER=17
           APP_VERSION=$(node -p "require('./package.json').version")
           echo "Novo build number: $NEW_BUILD_NUMBER"
           echo "Marketing version (do package.json): $APP_VERSION"
