@@ -258,6 +258,9 @@ function AdminPage() {
     } finally {
       setBusy(false);
     }
+  }
+
+
 
   async function addPet() {
     if (!selected) return;
