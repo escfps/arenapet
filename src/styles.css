@@ -76,10 +76,16 @@
 
 @layer base {
   * { border-color: var(--color-border); }
+  html {
+    touch-action: manipulation;
+    -webkit-text-size-adjust: 100%;
+  }
   body {
     background: oklch(0.18 0.05 290);
     color: var(--color-foreground);
     font-family: 'Nunito', 'Quicksand', system-ui, sans-serif;
+    touch-action: manipulation;
+    -webkit-touch-callout: none;
   }
 }
 
