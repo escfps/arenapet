@@ -95,7 +95,7 @@ function ProfilePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[oklch(0.25_0.12_290)] via-[oklch(0.18_0.10_310)] to-[oklch(0.22_0.14_260)]">
       <HUD profile={profile} />
-      <main className="max-w-2xl mx-auto p-4 space-y-4">
+      <main className="max-w-2xl mx-auto p-4 space-y-4 pb-32" style={{ paddingBottom: "calc(8rem + env(safe-area-inset-bottom))" }}>
         <div className="flex items-center gap-2">
           <Link to="/" className="text-white/70 hover:text-white text-xs">← Voltar</Link>
         </div>
