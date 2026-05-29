@@ -13,6 +13,7 @@ import { Route as TradeRouteImport } from './routes/trade'
 import { Route as TournamentRouteImport } from './routes/tournament'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SupportRouteImport } from './routes/support'
+import { Route as SuporteRouteImport } from './routes/suporte'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RefundsRouteImport } from './routes/refunds'
@@ -55,6 +56,11 @@ const TermsRoute = TermsRouteImport.update({
 const SupportRoute = SupportRouteImport.update({
   id: '/support',
   path: '/support',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SuporteRoute = SuporteRouteImport.update({
+  id: '/suporte',
+  path: '/suporte',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ShopRoute = ShopRouteImport.update({
@@ -194,6 +200,7 @@ export interface FileRoutesByFullPath {
   '/refunds': typeof RefundsRoute
   '/reset-password': typeof ResetPasswordRoute
   '/shop': typeof ShopRoute
+  '/suporte': typeof SuporteRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
   '/tournament': typeof TournamentRoute
@@ -223,6 +230,7 @@ export interface FileRoutesByTo {
   '/refunds': typeof RefundsRoute
   '/reset-password': typeof ResetPasswordRoute
   '/shop': typeof ShopRoute
+  '/suporte': typeof SuporteRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
   '/tournament': typeof TournamentRoute
@@ -253,6 +261,7 @@ export interface FileRoutesById {
   '/refunds': typeof RefundsRoute
   '/reset-password': typeof ResetPasswordRoute
   '/shop': typeof ShopRoute
+  '/suporte': typeof SuporteRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
   '/tournament': typeof TournamentRoute
@@ -284,6 +293,7 @@ export interface FileRouteTypes {
     | '/refunds'
     | '/reset-password'
     | '/shop'
+    | '/suporte'
     | '/support'
     | '/terms'
     | '/tournament'
@@ -313,6 +323,7 @@ export interface FileRouteTypes {
     | '/refunds'
     | '/reset-password'
     | '/shop'
+    | '/suporte'
     | '/support'
     | '/terms'
     | '/tournament'
@@ -342,6 +353,7 @@ export interface FileRouteTypes {
     | '/refunds'
     | '/reset-password'
     | '/shop'
+    | '/suporte'
     | '/support'
     | '/terms'
     | '/tournament'
@@ -372,6 +384,7 @@ export interface RootRouteChildren {
   RefundsRoute: typeof RefundsRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   ShopRoute: typeof ShopRoute
+  SuporteRoute: typeof SuporteRoute
   SupportRoute: typeof SupportRoute
   TermsRoute: typeof TermsRoute
   TournamentRoute: typeof TournamentRoute
@@ -409,6 +422,13 @@ declare module '@tanstack/react-router' {
       path: '/support'
       fullPath: '/support'
       preLoaderRoute: typeof SupportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/suporte': {
+      id: '/suporte'
+      path: '/suporte'
+      fullPath: '/suporte'
+      preLoaderRoute: typeof SuporteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/shop': {
@@ -606,6 +626,7 @@ const rootRouteChildren: RootRouteChildren = {
   RefundsRoute: RefundsRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   ShopRoute: ShopRoute,
+  SuporteRoute: SuporteRoute,
   SupportRoute: SupportRoute,
   TermsRoute: TermsRoute,
   TournamentRoute: TournamentRoute,
@@ -617,3 +638,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
