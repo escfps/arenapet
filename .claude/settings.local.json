@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(git -C \"c:\\\\Users\\\\User\\\\Desktop\\\\arenapet-main\\\\arenapet-main\" push origin main)"
+    ]
+  }
+}
