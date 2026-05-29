@@ -28,7 +28,7 @@ const FAQ: { q: string; a: string }[] = [
   },
   {
     q: "Não recebi minhas gemas após a compra. O que faço?",
-    a: "Feche e abra o app novamente — quase sempre resolve. Se persistir, mande seu email de cadastro e o comprovante da App Store para suporte@arenapet.com que a gente regulariza.",
+    a: "Feche e abra o app novamente — quase sempre resolve. Se persistir, mande seu email de cadastro e o comprovante da App Store para suporte.arenapet@gmail.com que a gente regulariza.",
   },
   {
     q: "Posso jogar em mais de um dispositivo?",
@@ -71,13 +71,13 @@ function SupportPage() {
         {/* Canais de contato */}
         <div className="grid sm:grid-cols-2 gap-3">
           <a
-            href="mailto:suporte@arenapet.com"
+            href="mailto:suporte.arenapet@gmail.com"
             className="rounded-2xl bg-[oklch(0.18_0.06_290)]/90 backdrop-blur-xl border-2 border-cyan-400/30 p-5 shadow-2xl hover:border-cyan-300 transition group"
           >
             <div className="text-3xl mb-2">📧</div>
             <div className="text-white font-extrabold text-sm mb-1">Email</div>
             <div className="text-cyan-300 text-sm font-bold group-hover:underline break-all">
-              suporte@arenapet.com
+              suporte.arenapet@gmail.com
             </div>
             <div className="text-white/50 text-xs mt-1">Resposta em até 48h úteis</div>
           </a>
@@ -137,8 +137,8 @@ function SupportPage() {
         <div className="rounded-2xl bg-black/20 border border-white/10 p-4 text-center">
           <p className="text-white/60 text-xs">
             Ainda precisa de ajuda? Mande um email pra{" "}
-            <a href="mailto:suporte@arenapet.com" className="text-cyan-300 font-bold hover:underline">
-              suporte@arenapet.com
+            <a href="mailto:suporte.arenapet@gmail.com" className="text-cyan-300 font-bold hover:underline">
+              suporte.arenapet@gmail.com
             </a>{" "}
             com o seu nick e o que aconteceu — a gente responde rapidinho. 💜
           </p>
