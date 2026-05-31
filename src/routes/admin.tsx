@@ -653,18 +653,34 @@ function AdminPage() {
               } else if (c.reward_type === "coins") {
                 desc = `🪙 ${rd.amount} moedas`;
               }
+              const maxUses = c.max_uses ?? 1;
+              const usesCount = c.uses_count ?? 0;
+              const isMulti = maxUses > 1;
+              const exhausted = isMulti ? usesCount >= maxUses : !!c.used_at;
               return (
                 <div
                   key={c.id}
                   className={`flex items-center gap-2 p-2 rounded text-sm ${
-                    c.used_at ? "bg-red-900/30 opacity-70" : "bg-green-900/30"
+                    exhausted ? "bg-red-900/30 opacity-70" : "bg-green-900/30"
                   }`}
                 >
                   <span className="font-mono font-bold tracking-wider flex-1 truncate">
                     {c.code}
                   </span>
                   <span className="text-xs opacity-80 hidden sm:block">{desc}</span>
-                  {c.used_at ? (
+                  {isMulti ? (
+                    <>
+                      <span className="text-xs text-blue-300">
+                        {usesCount}/{maxUses} usos
+                      </span>
+                      <button
+                        onClick={() => viewUsages(c)}
+                        className="px-2 py-1 rounded bg-blue-700 hover:bg-blue-600 text-xs"
+                      >
+                        👥 Ver usos
+                      </button>
+                    </>
+                  ) : c.used_at ? (
                     <span className="text-xs text-red-300">
                       ✓ usado por {c.used_by_name ?? "?"}
                     </span>
@@ -692,6 +708,46 @@ function AdminPage() {
             )}
           </div>
         </div>
+
+        {usagesModal && (
+          <div
+            className="fixed inset-0 z-[90] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"
+            onClick={() => setUsagesModal(null)}
+          >
+            <div
+              className="w-full max-w-md rounded-2xl bg-slate-900 border border-white/20 p-4 max-h-[80vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="font-bold text-lg">
+                  👥 Usos de <span className="font-mono">{usagesModal.code}</span>
+                </h3>
+                <button
+                  onClick={() => setUsagesModal(null)}
+                  className="px-2 py-1 rounded bg-white/10 hover:bg-white/20 text-sm"
+                >
+                  ✕
+                </button>
+              </div>
+              <div className="text-xs opacity-70 mb-2">
+                Total: {usagesModal.uses.length} resgate{usagesModal.uses.length === 1 ? "" : "s"}
+              </div>
+              <div className="space-y-1">
+                {usagesModal.uses.map((u) => (
+                  <div key={u.id} className="flex items-center justify-between p-2 rounded bg-white/5 text-sm">
+                    <span className="font-bold">{u.username}</span>
+                    <span className="text-xs opacity-70">
+                      {new Date(u.used_at).toLocaleString("pt-BR")}
+                    </span>
+                  </div>
+                ))}
+                {usagesModal.uses.length === 0 && (
+                  <div className="opacity-60 text-sm p-2">Nenhum resgate ainda.</div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
