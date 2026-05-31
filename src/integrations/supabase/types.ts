@@ -850,10 +850,12 @@ export type Database = {
       }
     }
     Functions: {
+      _bot_age_days: { Args: { p_bot: string }; Returns: number }
       _bot_apply_levelup: {
         Args: { bot_id: string; from_lvl: number; to_lvl: number }
         Returns: undefined
       }
+      _bot_apply_star_stats: { Args: { p_monster: string }; Returns: undefined }
       _bot_award_xp: {
         Args: { bot_id: string; xp_amount: number }
         Returns: undefined
@@ -872,9 +874,14 @@ export type Database = {
         Returns: undefined
       }
       _bot_random_species: { Args: { rarity: string }; Returns: string }
+      _bot_rarity_allowed_for_age: {
+        Args: { age_days: number; r: string }
+        Returns: boolean
+      }
       _bot_rarity_weight: { Args: { r: string }; Returns: number }
       _bot_species_name: { Args: { sp: string }; Returns: string }
       _bot_species_rarity: { Args: { sp: string }; Returns: string }
+      _bot_species_role: { Args: { sp: string }; Returns: string }
       _bot_species_stats: {
         Args: { sp: string }
         Returns: {
@@ -884,6 +891,11 @@ export type Database = {
           spd: number
         }[]
       }
+      _bot_star_unlock_day: {
+        Args: { r: string; target_star: number }
+        Returns: number
+      }
+      _bot_team_top_rarity_count: { Args: { p_bot: string }; Returns: number }
       _bot_try_upgrade_team: {
         Args: { bot_id: string; new_species: string }
         Returns: undefined
