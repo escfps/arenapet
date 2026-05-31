@@ -237,7 +237,7 @@ export const SPECIES: Record<string, Species> = {
     id: "rato_bomba", name: "Rato Bomba", element: "fire", role: "dps", rarity: "rare",
     emoji: "💣", image: ratoBombaImg,
     description: "Ratinho kamikaze de pavio curto. Frágil, mas quando cai, explode em chamas — e leva o inimigo mais ferido junto.",
-    base: { hp: 32, atk: 16, def: 7, spd: 17, int: 8 },
+    base: { hp: 48, atk: 16, def: 7, spd: 17, int: 8 },
     skill: { name: "Pavio Aceso", emoji: "💣", kind: "heavy_strike", cooldown: 3, description: "Investida explosiva: 2.1× dano num alvo. PASSIVA: ao ser derrotado, EXPLODE e mata o inimigo com menos HP." },
   },
 
@@ -653,7 +653,7 @@ export const SPECIES: Record<string, Species> = {
     id: "hiena_carniceira", name: "Hiena Carniceira", element: "shadow", role: "dps", rarity: "rare",
     emoji: "🐺", image: hienaCarniceiraImg, hidden: true,
     description: "Necrófaga das sombras. Sente o cheiro do moribundo e termina o serviço com uma mordida devastadora.",
-    base: { hp: 62, atk: 27, def: 10, spd: 17, int: 9 },
+    base: { hp: 68, atk: 27, def: 10, spd: 17, int: 9 },
     skill: { name: "Investida Carniceira", emoji: "🦷", kind: "hyena_hunt", cooldown: 3, description: "Causa 140% do ATK no alvo e aplica 🏴 Marca da Caça por 2 turnos (alvos marcados: +25% dano recebido e não esquivam). PASSIVA — Frenesi do Predador: ao acertar inimigo marcado (skill ou básico), a Hiena ganha +20% SPD no próximo turno." },
   },
   coruja_branca: {
