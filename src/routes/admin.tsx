@@ -175,6 +175,15 @@ function AdminPage() {
     }
   }
 
+  async function viewUsages(c: CodeRow) {
+    try {
+      const r = await listUsagesFn({ data: { code_id: c.id } });
+      setUsagesModal({ code: c.code, uses: r.uses as CodeUse[] });
+    } catch (e) {
+      toast.error((e as Error).message);
+    }
+  }
+
   async function doSearch() {
     if (!query.trim()) return;
     try {
