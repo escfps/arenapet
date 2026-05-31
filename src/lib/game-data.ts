@@ -254,7 +254,7 @@ export const SPECIES: Record<string, Species> = {
     id: "emberleaf", name: "Emberleaf", element: "fire", secondaryElement: "grass", role: "dps", rarity: "common",
     emoji: "🍂", image: emberleafImg,
     description: "Raposa de folhas em brasa. DPS de outono.",
-    base: { hp: 26, atk: 13, def: 9, spd: 12, int: 7 },
+    base: { hp: 48, atk: 13, def: 9, spd: 12, int: 7 },
     skill: { name: "Tornado de Brasas", emoji: "🍂", kind: "heavy_strike", cooldown: 3, description: "Investida em redemoinho: 2.1× de dano num alvo." },
   },
   sparkpup: {
