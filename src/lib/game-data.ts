@@ -261,7 +261,7 @@ export const SPECIES: Record<string, Species> = {
     id: "sparkpup", name: "Sparkpup", element: "fire", secondaryElement: "electric", role: "assassin", rarity: "common",
     emoji: "⚡🔥", image: sparkpupImg,
     description: "Filhote chamuscado e elétrico. Assassino rápido.",
-    base: { hp: 26, atk: 12, def: 8, spd: 16, int: 6 },
+    base: { hp: 48, atk: 12, def: 8, spd: 16, int: 6 },
     skill: { name: "Estouro Elétrico", emoji: "💥", kind: "guaranteed_crit", cooldown: 3, description: "Crítico garantido no inimigo mais fraco, ignora 60% da DEF." },
   },
   cinderwisp: {
