@@ -71,7 +71,7 @@ export const adminListRedeemCodes = createServerFn({ method: "POST" })
     assertAdmin(context.userId);
     const { data: codes } = await supabaseAdmin
       .from("redeem_codes")
-      .select("id, code, reward_type, reward_data, created_at, used_at, used_by")
+      .select("id, code, reward_type, reward_data, created_at, used_at, used_by, max_uses, uses_count")
       .order("created_at", { ascending: false })
       .limit(200);
     const userIds = Array.from(
@@ -89,6 +89,33 @@ export const adminListRedeemCodes = createServerFn({ method: "POST" })
       codes: (codes ?? []).map((c) => ({
         ...c,
         used_by_name: c.used_by ? usernames[c.used_by] ?? null : null,
+      })),
+    };
+  });
+
+export const adminListCodeUsages = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) => z.object({ code_id: z.string().uuid() }).parse(input))
+  .handler(async ({ data, context }) => {
+    assertAdmin(context.userId);
+    const { data: uses } = await supabaseAdmin
+      .from("redeem_code_uses")
+      .select("id, user_id, used_at")
+      .eq("code_id", data.code_id)
+      .order("used_at", { ascending: false });
+    const ids = Array.from(new Set((uses ?? []).map((u) => u.user_id)));
+    let usernames: Record<string, string> = {};
+    if (ids.length > 0) {
+      const { data: users } = await supabaseAdmin
+        .from("profiles")
+        .select("id, username")
+        .in("id", ids);
+      usernames = Object.fromEntries((users ?? []).map((u) => [u.id, u.username]));
+    }
+    return {
+      uses: (uses ?? []).map((u) => ({
+        ...u,
+        username: usernames[u.user_id] ?? "?",
       })),
     };
   });
