@@ -107,13 +107,18 @@ function AdminPage() {
     created_at: string;
     used_at: string | null;
     used_by_name: string | null;
+    max_uses?: number;
+    uses_count?: number;
   };
+  type CodeUse = { id: string; user_id: string; used_at: string; username: string };
   const [codes, setCodes] = useState<CodeRow[]>([]);
   const [codeType, setCodeType] = useState<"pet" | "chest" | "gems" | "coins">("gems");
   const [codeSpecies, setCodeSpecies] = useState("flarepup");
   const [codeRank, setCodeRank] = useState(1);
   const [codeChest, setCodeChest] = useState<"wood" | "silver" | "gold" | "legendary">("gold");
   const [codeAmount, setCodeAmount] = useState(100);
+  const [usagesModal, setUsagesModal] = useState<{ code: string; uses: CodeUse[] } | null>(null);
+  const listUsagesFn = useServerFn(adminListCodeUsages);
 
   useEffect(() => {
     if (loading) return;
