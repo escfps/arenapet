@@ -268,7 +268,7 @@ export const SPECIES: Record<string, Species> = {
     id: "cinderwisp", name: "Cinderwisp", element: "fire", secondaryElement: "shadow", role: "mage", rarity: "common",
     emoji: "👻🔥", image: cinderwispImg,
     description: "Fantasminha de brasa. Mago ofensivo.",
-    base: { hp: 27, atk: 14, def: 9, spd: 11, int: 22 },
+    base: { hp: 49, atk: 14, def: 9, spd: 11, int: 22 },
     skill: { name: "Chuva de Cinzas", emoji: "🔥", kind: "aoe_magic", cooldown: 4, description: "Cobre o campo com cinzas mágicas: dano em todos inimigos (1.15× cada)." },
   },
   mossfin: {
