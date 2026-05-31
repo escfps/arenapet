@@ -47,7 +47,7 @@ function RedeemPage() {
           profile: profile as unknown as Record<string, unknown> & { coins: number; gems: number },
           patch: async (p) => {
             const { supabase } = await import("@/integrations/supabase/client");
-            await supabase.from("profiles").update(p).eq("id", userId);
+            await supabase.from("profiles").update(p as never).eq("id", userId);
           },
         });
         if ("error" in res) {
