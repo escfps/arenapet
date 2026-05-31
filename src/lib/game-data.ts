@@ -518,7 +518,7 @@ export const SPECIES: Record<string, Species> = {
     id: "tartaruga_ancestral", name: "Tartaruga Ancestral", element: "water", secondaryElement: "earth", role: "tank", rarity: "rare",
     emoji: "🐢", image: tartarugaAncestralImg,
     description: "Tartaruga milenar de carapaça rúnica. Encolhe na carapaça e se torna quase indestrutível.",
-    base: { hp: 81, atk: 9, def: 22, spd: 7, int: 10 },
+    base: { hp: 102, atk: 9, def: 22, spd: 7, int: 10 },
     skill: { name: "Carapaça Milenar", emoji: "🛡️", kind: "turtle_shell", cooldown: 3, description: "Ganha escudo de 30% do HP máx e reduz todo dano recebido em 20% por 2 turnos." },
   },
   corvo_sombras: {
