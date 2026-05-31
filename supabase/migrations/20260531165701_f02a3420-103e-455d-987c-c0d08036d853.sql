@@ -1,0 +1,1 @@
+UPDATE public.monsters SET hp = GREATEST(0, ROUND(hp * 0.65)::int);
