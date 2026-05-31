@@ -144,6 +144,24 @@ function AdminPage() {
     listCodesFn({}).then((r) => setCodes(r.codes as CodeRow[])).catch(() => {});
   }, [userId]); // eslint-disable-line
 
+  const loadNewUsers = async (days: number) => {
+    setLoadingUsers(true);
+    try {
+      const r = await listNewUsersFn({ data: { days } });
+      setNewUsers(r.users as NewUser[]);
+      setPerDay(r.perDay as DayBucket[]);
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setLoadingUsers(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!userId || !ADMIN_USER_IDS.has(userId)) return;
+    loadNewUsers(usersDays);
+  }, [userId, usersDays]); // eslint-disable-line
+
   async function reloadCodes() {
     const r = await listCodesFn({});
     setCodes(r.codes as CodeRow[]);
