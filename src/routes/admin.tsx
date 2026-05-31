@@ -20,6 +20,7 @@ import {
   adminCreateRedeemCode,
   adminListRedeemCodes,
   adminDeleteRedeemCode,
+  adminListCodeUsages,
 } from "@/lib/redeem.functions";
 
 const ADMIN_USER_IDS = new Set<string>([
