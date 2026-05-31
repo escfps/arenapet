@@ -382,6 +382,115 @@ function AdminPage() {
           </button>
         </div>
 
+        {/* New users / signups */}
+        <div className="rounded-2xl bg-white/10 backdrop-blur border border-white/20 p-4">
+          <div className="flex items-center justify-between flex-wrap gap-2 mb-3">
+            <h2 className="text-xl font-bold">📈 Novos cadastros</h2>
+            <div className="flex items-center gap-2">
+              <label className="text-xs opacity-70">Últimos</label>
+              <select
+                value={usersDays}
+                onChange={(e) => setUsersDays(Number(e.target.value))}
+                className="px-2 py-1 rounded bg-black/40 border border-white/10 text-sm"
+              >
+                <option value={1}>1 dia</option>
+                <option value={3}>3 dias</option>
+                <option value={7}>7 dias</option>
+                <option value={14}>14 dias</option>
+                <option value={30}>30 dias</option>
+                <option value={60}>60 dias</option>
+                <option value={90}>90 dias</option>
+              </select>
+              <button
+                onClick={() => loadNewUsers(usersDays)}
+                className="px-2 py-1 rounded bg-white/10 hover:bg-white/20 text-xs"
+              >
+                🔄
+              </button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-3">
+            <div className="rounded-lg bg-black/30 p-3">
+              <div className="text-xs opacity-70">Total no período</div>
+              <div className="text-2xl font-black">{loadingUsers ? "..." : newUsers.length}</div>
+            </div>
+            <div className="rounded-lg bg-black/30 p-3">
+              <div className="text-xs opacity-70">Hoje</div>
+              <div className="text-2xl font-black">
+                {loadingUsers ? "..." : (perDay[0]?.count ?? 0)}
+              </div>
+            </div>
+            <div className="rounded-lg bg-black/30 p-3">
+              <div className="text-xs opacity-70">Média/dia</div>
+              <div className="text-2xl font-black">
+                {loadingUsers || perDay.length === 0
+                  ? "..."
+                  : Math.round((newUsers.length / Math.max(1, perDay.length)) * 10) / 10}
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-lg bg-black/30 p-3 mb-3">
+            <div className="text-xs opacity-70 font-bold mb-2">Por dia</div>
+            <div className="space-y-1 max-h-56 overflow-y-auto">
+              {perDay.map((d) => {
+                const max = Math.max(1, ...perDay.map((x) => x.count));
+                const pct = (d.count / max) * 100;
+                return (
+                  <div key={d.day} className="flex items-center gap-2 text-sm">
+                    <div className="w-24 font-mono opacity-80">
+                      {new Date(d.day + "T12:00:00").toLocaleDateString("pt-BR", {
+                        day: "2-digit", month: "2-digit",
+                      })}
+                    </div>
+                    <div className="flex-1 h-4 rounded bg-white/5 overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-to-r from-fuchsia-500 to-purple-500"
+                        style={{ width: `${pct}%` }}
+                      />
+                    </div>
+                    <div className="w-10 text-right font-bold">{d.count}</div>
+                  </div>
+                );
+              })}
+              {!loadingUsers && perDay.length === 0 && (
+                <div className="opacity-60 text-sm">Nenhum cadastro no período.</div>
+              )}
+            </div>
+          </div>
+
+          <button
+            onClick={() => setShowUsersList((v) => !v)}
+            className="w-full px-3 py-2 rounded bg-white/10 hover:bg-white/20 text-sm font-bold"
+          >
+            {showUsersList ? "▲ Esconder lista de usuários" : `▼ Ver lista (${newUsers.length})`}
+          </button>
+
+          {showUsersList && (
+            <div className="mt-3 space-y-1 max-h-96 overflow-y-auto">
+              {newUsers.map((u) => (
+                <div
+                  key={u.id}
+                  className="flex items-center gap-2 p-2 rounded bg-white/5 text-sm"
+                >
+                  <span className="font-bold flex-1 truncate">{u.username}</span>
+                  <span className="text-xs opacity-80 truncate max-w-[200px]">
+                    {u.email ?? "—"}
+                  </span>
+                  <span className="text-xs opacity-60 whitespace-nowrap">
+                    {new Date(u.created_at).toLocaleString("pt-BR", {
+                      day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit",
+                    })}
+                  </span>
+                </div>
+              ))}
+              {newUsers.length === 0 && (
+                <div className="opacity-60 text-sm p-2">Nenhum usuário no período.</div>
+              )}
+            </div>
+          )}
+        </div>
 
 
         <div className="rounded-2xl bg-white/10 backdrop-blur border border-white/20 p-4">
