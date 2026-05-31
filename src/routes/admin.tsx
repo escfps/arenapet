@@ -100,6 +100,15 @@ function AdminPage() {
   const [newRank, setNewRank] = useState(1);
   const [busy, setBusy] = useState(false);
 
+  // New users
+  type NewUser = { id: string; username: string; email: string | null; created_at: string };
+  type DayBucket = { day: string; count: number };
+  const [newUsers, setNewUsers] = useState<NewUser[]>([]);
+  const [perDay, setPerDay] = useState<DayBucket[]>([]);
+  const [usersDays, setUsersDays] = useState(30);
+  const [showUsersList, setShowUsersList] = useState(false);
+  const [loadingUsers, setLoadingUsers] = useState(false);
+
   // Redeem codes
   type CodeRow = {
     id: string;
