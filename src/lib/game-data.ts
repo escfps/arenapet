@@ -296,7 +296,7 @@ export const SPECIES: Record<string, Species> = {
     id: "voltsprout", name: "Voltsprout", element: "grass", secondaryElement: "electric", role: "healer", rarity: "common",
     emoji: "🌱⚡", image: voltsproutImg,
     description: "Broto voltaico. Healer com punch.",
-    base: { hp: 33, atk: 9, def: 11, spd: 12, int: 20 },
+    base: { hp: 59, atk: 9, def: 11, spd: 12, int: 20 },
     skill: { name: "Seiva Restauradora", emoji: "🌱", kind: "team_heal", cooldown: 4, description: "Espalha seiva pelo time, curando todos os aliados (~INT×1.7 + 10% HP máx)." },
   },
   nightbloom: {
