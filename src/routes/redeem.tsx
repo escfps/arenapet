@@ -3,7 +3,10 @@ import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast, Toaster } from "sonner";
 import { redeemCode } from "@/lib/redeem.functions";
-import { SPECIES, RARITY_INFO, rankStars, CHESTS } from "@/lib/game-data";
+import { SPECIES, RARITY_INFO, rankStars } from "@/lib/game-data";
+import { useProfile } from "@/lib/use-profile";
+import { openStoredChest } from "@/lib/chest-inventory";
+import { ChestRewardPopup, type PendingChest } from "@/components/ChestRewardPopup";
 
 export const Route = createFileRoute("/redeem")({
   component: RedeemPage,
@@ -21,17 +24,43 @@ type RewardResult = {
 function RedeemPage() {
   const navigate = useNavigate();
   const redeemFn = useServerFn(redeemCode);
+  const { userId, profile, reload } = useProfile();
   const [code, setCode] = useState("");
   const [busy, setBusy] = useState(false);
   const [reward, setReward] = useState<RewardResult | null>(null);
+  const [chestQueue, setChestQueue] = useState<PendingChest[]>([]);
 
   async function doRedeem() {
     if (!code.trim()) return;
     setBusy(true);
     try {
       const r = await redeemFn({ data: { code: code.trim() } });
-      setReward(r.reward as RewardResult);
+      const rw = r.reward as RewardResult;
       setCode("");
+
+      // Chest: abre na hora em vez de mandar pro inventário
+      if (rw.type === "chest" && rw.chestTier && userId && profile) {
+        const tier = rw.chestTier as PendingChest["tier"];
+        const res = await openStoredChest({
+          userId,
+          tier,
+          profile: profile as unknown as Record<string, unknown> & { coins: number; gems: number },
+          patch: async (p) => {
+            const { supabase } = await import("@/integrations/supabase/client");
+            await supabase.from("profiles").update(p as never).eq("id", userId);
+          },
+        });
+        if ("error" in res) {
+          toast.error(res.error);
+        } else {
+          setChestQueue([{ id: crypto.randomUUID(), tier: res.tier, label: "Código resgatado", reward: res.reward }]);
+        }
+        await reload();
+        window.dispatchEvent(new Event("profile:reload"));
+      } else {
+        setReward(rw);
+        window.dispatchEvent(new Event("profile:reload"));
+      }
     } catch (e) {
       toast.error((e as Error).message);
     } finally {
@@ -40,7 +69,6 @@ function RedeemPage() {
   }
 
   const sp = reward?.species ? SPECIES[reward.species] : null;
-  const chest = reward?.chestTier ? CHESTS[reward.chestTier as keyof typeof CHESTS] : null;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-950 to-slate-900 p-4 text-white">
@@ -74,7 +102,12 @@ function RedeemPage() {
         </div>
       </div>
 
-      {reward && (
+      <ChestRewardPopup
+        queue={chestQueue}
+        onConsume={(id) => setChestQueue((q) => q.filter((c) => c.id !== id))}
+      />
+
+      {reward && reward.type !== "chest" && (
         <div
           className="fixed inset-0 z-[80] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"
           onClick={() => setReward(null)}
@@ -105,15 +138,6 @@ function RedeemPage() {
                 >
                   {RARITY_INFO[sp.rarity].emoji} {RARITY_INFO[sp.rarity].name}
                 </span>
-              </div>
-            )}
-
-            {chest && (
-              <div className="my-4 p-3 rounded-2xl bg-black/30 animate-fade-in">
-                <div className="text-[110px] my-3 drop-shadow-2xl animate-bounce leading-none">
-                  {chest.emoji}
-                </div>
-                <div className="font-extrabold text-base">{chest.name}</div>
               </div>
             )}
 
