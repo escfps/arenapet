@@ -275,7 +275,7 @@ export const SPECIES: Record<string, Species> = {
     id: "mossfin", name: "Mossfin", element: "water", secondaryElement: "grass", role: "healer", rarity: "common",
     emoji: "🐸", image: mossfinImg,
     description: "Sapinho do brejo. Healer rústico.",
-    base: { hp: 32, atk: 8, def: 12, spd: 10, int: 20 },
+    base: { hp: 56, atk: 8, def: 12, spd: 10, int: 20 },
     skill: { name: "Orvalho do Brejo", emoji: "🌧️", kind: "team_heal", cooldown: 4, description: "Cura todos os aliados (~INT×1.7 + 10% HP máx)." },
   },
   stormtad: {
