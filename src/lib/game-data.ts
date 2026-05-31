@@ -574,7 +574,7 @@ export const SPECIES: Record<string, Species> = {
     id: "triceratops_colossal", name: "Triceratops Colossal", element: "earth", role: "tank", rarity: "super_rare",
     emoji: "🦕", image: triceratopsColossalImg,
     description: "Couraça viva de chifres rúnicos. Quem ousar atacá-lo sente o impacto de volta.",
-    base: { hp: 97, atk: 11, def: 22, spd: 7, int: 9 },
+    base: { hp: 119, atk: 11, def: 22, spd: 7, int: 9 },
     skill: { name: "Investida de Chifres", emoji: "🦕", kind: "horn_charge", cooldown: 3, description: "Provoca todos os inimigos por 2 turnos e ganha escudo de 35% HP máx. PASSIVA: todo inimigo que atacar recebe 15% do dano de volta." },
   },
   fantasminha: {
