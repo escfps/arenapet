@@ -282,7 +282,7 @@ export const SPECIES: Record<string, Species> = {
     id: "stormtad", name: "Stormtad", element: "water", secondaryElement: "electric", role: "mage", rarity: "common",
     emoji: "⚡💧", image: stormtadImg,
     description: "Girino-relâmpago. Mago elétrico.",
-    base: { hp: 27, atk: 13, def: 8, spd: 14, int: 22 },
+    base: { hp: 51, atk: 13, def: 8, spd: 14, int: 22 },
     skill: { name: "Tempestade Elétrica", emoji: "⚡", kind: "aoe_magic", cooldown: 4, description: "Solta raios em todos os inimigos (1.15× cada, ignora defesa)." },
   },
   tidewraith: {
