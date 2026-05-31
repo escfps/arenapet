@@ -303,7 +303,7 @@ export const SPECIES: Record<string, Species> = {
     id: "nightbloom", name: "Nightbloom", element: "grass", secondaryElement: "shadow", role: "mage", rarity: "common",
     emoji: "🌸🌙", image: nightbloomImg,
     description: "Flor noturna. Mago de controle.",
-    base: { hp: 29, atk: 13, def: 10, spd: 10, int: 22 },
+    base: { hp: 51, atk: 13, def: 10, spd: 10, int: 22 },
     skill: { name: "Pólen Tóxico", emoji: "🌸", kind: "aoe_magic", cooldown: 4, description: "Nuvem tóxica em todos os inimigos (1.15× cada, ignora defesa)." },
   },
   voidspark: {
