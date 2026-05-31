@@ -116,21 +116,50 @@ export const redeemCode = createServerFn({ method: "POST" })
     const codeNorm = data.code.toUpperCase().trim();
     const { data: row } = await supabaseAdmin
       .from("redeem_codes")
-      .select("id, reward_type, reward_data, used_at")
+      .select("id, reward_type, reward_data, used_at, max_uses, uses_count")
       .eq("code", codeNorm)
       .maybeSingle();
     if (!row) throw new Error("Código inválido");
-    if (row.used_at) throw new Error("Esse código já foi resgatado");
+
+    const maxUses = (row as { max_uses?: number }).max_uses ?? 1;
+    const usesCount = (row as { uses_count?: number }).uses_count ?? 0;
+
+    if (maxUses <= 1) {
+      if (row.used_at) throw new Error("Esse código já foi resgatado");
+    } else {
+      if (usesCount >= maxUses) throw new Error("Esse código atingiu o limite de resgates");
+      // Já resgatou nessa conta?
+      const { data: prev } = await supabaseAdmin
+        .from("redeem_code_uses")
+        .select("id")
+        .eq("code_id", row.id)
+        .eq("user_id", context.userId)
+        .maybeSingle();
+      if (prev) throw new Error("Você já resgatou esse código nessa conta");
+    }
 
     // Atomically claim it
-    const { data: claimed, error: claimErr } = await supabaseAdmin
-      .from("redeem_codes")
-      .update({ used_at: new Date().toISOString(), used_by: context.userId })
-      .eq("id", row.id)
-      .is("used_at", null)
-      .select("id")
-      .maybeSingle();
-    if (claimErr || !claimed) throw new Error("Esse código já foi resgatado");
+    if (maxUses <= 1) {
+      const { data: claimed, error: claimErr } = await supabaseAdmin
+        .from("redeem_codes")
+        .update({ used_at: new Date().toISOString(), used_by: context.userId })
+        .eq("id", row.id)
+        .is("used_at", null)
+        .select("id")
+        .maybeSingle();
+      if (claimErr || !claimed) throw new Error("Esse código já foi resgatado");
+    } else {
+      // Insere o uso (unique constraint code_id+user_id garante 1x por conta)
+      const { error: useErr } = await supabaseAdmin
+        .from("redeem_code_uses")
+        .insert({ code_id: row.id, user_id: context.userId });
+      if (useErr) throw new Error("Você já resgatou esse código nessa conta");
+      // Incrementa o contador (best-effort; o gate principal é a tabela _uses)
+      await supabaseAdmin
+        .from("redeem_codes")
+        .update({ uses_count: usesCount + 1 })
+        .eq("id", row.id);
+    }
 
     const rd = row.reward_data as Record<string, unknown>;
     const result: {
@@ -184,33 +213,28 @@ export const redeemCode = createServerFn({ method: "POST" })
         .eq("id", context.userId);
       result.coins = amount;
     } else if (row.reward_type === "chest") {
-      // Salva como "baú pendente" via flag — aqui simplificamos: damos as recompensas equivalentes
-      // ao tier diretamente, e retornamos o tier para a animação.
+      // Entrega 1 baú do tier no inventário do jogador
       const tier = String(rd.chestTier);
-      result.chestTier = tier;
-      // Recompensa mínima de moedas/gemas para o tier
-      const reward: Record<string, { coins: number; gems: number }> = {
-        wood: { coins: 500, gems: 0 },
-        silver: { coins: 1500, gems: 3 },
-        gold: { coins: 4000, gems: 8 },
-        legendary: { coins: 10000, gems: 20 },
+      const itemType: Record<string, string> = {
+        wood: "wood_chest",
+        silver: "silver_chest",
+        gold: "gold_chest",
+        legendary: "legendary_chest",
       };
-      const r = reward[tier] ?? reward.wood;
-      const { data: p } = await supabaseAdmin
-        .from("profiles")
-        .select("coins, gems")
-        .eq("id", context.userId)
-        .single();
-      await supabaseAdmin
-        .from("profiles")
-        .update({
-          coins: (p?.coins ?? 0) + r.coins,
-          gems: (p?.gems ?? 0) + r.gems,
-        })
-        .eq("id", context.userId);
-      result.coins = r.coins;
-      result.gems = r.gems;
+      const item = itemType[tier] ?? "gold_chest";
+      const { data: inv } = await supabaseAdmin
+        .from("inventory")
+        .select("quantity")
+        .eq("user_id", context.userId)
+        .eq("item_type", item)
+        .maybeSingle();
+      await supabaseAdmin.from("inventory").upsert(
+        { user_id: context.userId, item_type: item, quantity: (inv?.quantity ?? 0) + 1 },
+        { onConflict: "user_id,item_type" },
+      );
+      result.chestTier = tier;
     }
 
     return { ok: true, reward: result };
   });
+
