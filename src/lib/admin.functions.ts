@@ -11,6 +11,64 @@ function assertAdmin(userId: string) {
   if (!ADMIN_USER_IDS.has(userId)) throw new Error("Acesso negado");
 }
 
+// ---------- New users (signups) ----------
+export const adminListNewUsers = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) =>
+    z.object({ days: z.number().int().min(1).max(90).default(30) }).parse(input ?? {})
+  )
+  .handler(async ({ data, context }) => {
+    assertAdmin(context.userId);
+    const since = new Date(Date.now() - data.days * 24 * 60 * 60 * 1000).toISOString();
+
+    // Pega profiles humanos criados desde "since"
+    const { data: profiles } = await supabaseAdmin
+      .from("profiles")
+      .select("id, username, created_at, is_bot")
+      .gte("created_at", since)
+      .eq("is_bot", false)
+      .order("created_at", { ascending: false })
+      .limit(2000);
+
+    const list = profiles ?? [];
+
+    // Busca emails via auth.admin
+    const emails: Record<string, string | null> = {};
+    // listUsers é paginado (max 1000 por chamada); buscamos as últimas páginas
+    for (let page = 1; page <= 5; page++) {
+      const { data: au } = await supabaseAdmin.auth.admin.listUsers({ page, perPage: 1000 });
+      const users = au?.users ?? [];
+      for (const u of users) emails[u.id] = u.email ?? null;
+      if (users.length < 1000) break;
+    }
+
+    const users = list.map((p) => ({
+      id: p.id,
+      username: p.username,
+      email: emails[p.id] ?? null,
+      created_at: p.created_at,
+    }));
+
+    // Agrupa por dia (UTC -3 / Brasil)
+    const byDay: Record<string, number> = {};
+    for (const u of users) {
+      const d = new Date(u.created_at);
+      // YYYY-MM-DD no fuso de São Paulo
+      const key = new Intl.DateTimeFormat("en-CA", {
+        timeZone: "America/Sao_Paulo",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      }).format(d);
+      byDay[key] = (byDay[key] ?? 0) + 1;
+    }
+    const perDay = Object.entries(byDay)
+      .map(([day, count]) => ({ day, count }))
+      .sort((a, b) => (a.day < b.day ? 1 : -1));
+
+    return { users, perDay, total: users.length };
+  });
+
 // ---------- Search ----------
 export const adminSearchPlayer = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
