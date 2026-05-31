@@ -14,6 +14,7 @@ import {
   adminUpdateProfile,
   adminLaunchReset,
   adminUpdatePetStat,
+  adminListNewUsers,
 } from "@/lib/admin.functions";
 
 import {
