@@ -61,10 +61,11 @@ type Match = {
 type ProfileLite = { id: string; username: string; is_bot: boolean };
 
 const ROUND_NAMES: Record<number, string> = {
-  1: "Oitavas de Final",
-  2: "Quartas de Final",
-  3: "Semifinal",
-  4: "Final",
+  1: "16-avos de Final",
+  2: "Oitavas de Final",
+  3: "Quartas de Final",
+  4: "Semifinal",
+  5: "Final",
 };
 
 function fmtCountdown(ms: number) {
@@ -530,7 +531,7 @@ function TournamentPage() {
                   {myActiveBracket && (
                     <div className="overflow-x-auto mt-2">
                       <div className="flex gap-3 min-w-fit">
-                        {[1, 2, 3, 4].map((r) => (
+                        {[1, 2, 3, 4, 5].map((r) => (
                           <div key={r} className="flex-shrink-0 w-44">
                             <div className="text-[10px] font-extrabold opacity-80 text-center mb-1">{ROUND_NAMES[r]}</div>
                             <div className="space-y-2" style={{ paddingTop: `${(Math.pow(2, r - 1) - 1) * 18}px` }}>
@@ -580,7 +581,7 @@ function TournamentPage() {
                   {lastBracket && (
                     <div className="overflow-x-auto">
                       <div className="flex gap-3 min-w-fit">
-                        {[1, 2, 3, 4].map((r) => (
+                        {[1, 2, 3, 4, 5].map((r) => (
                           <div key={r} className="flex-shrink-0 w-44">
                             <div className="text-[10px] font-extrabold opacity-80 text-center mb-1">{ROUND_NAMES[r]}</div>
                             <div className="space-y-2" style={{ paddingTop: `${(Math.pow(2, r - 1) - 1) * 18}px` }}>
