@@ -61,10 +61,11 @@ type Match = {
 type ProfileLite = { id: string; username: string; is_bot: boolean };
 
 const ROUND_NAMES: Record<number, string> = {
-  1: "Oitavas de Final",
-  2: "Quartas de Final",
-  3: "Semifinal",
-  4: "Final",
+  1: "16-avos de Final",
+  2: "Oitavas de Final",
+  3: "Quartas de Final",
+  4: "Semifinal",
+  5: "Final",
 };
 
 function fmtCountdown(ms: number) {
