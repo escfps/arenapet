@@ -312,10 +312,14 @@ function ArenaPage() {
     }
 
     const myPts = profile.arena_points ?? 0;
-    // Evita repetir os últimos oponentes (anti-rematch)
-    const recentKey = `recent_opps_${userId}`;
-    let recent: string[] = [];
-    try { recent = JSON.parse(localStorage.getItem(recentKey) ?? "[]"); } catch { recent = []; }
+    // Anti-rematch separado: humanos = últimos 20, bots = últimos 75
+    const recentBotsKey = `recent_opps_${userId}`;        // mantém a key antiga pra não resetar bots
+    const recentHumansKey = `recent_opps_humans_${userId}`;
+    let recentBots: string[] = [];
+    let recentHumans: string[] = [];
+    try { recentBots = JSON.parse(localStorage.getItem(recentBotsKey) ?? "[]"); } catch { recentBots = []; }
+    try { recentHumans = JSON.parse(localStorage.getItem(recentHumansKey) ?? "[]"); } catch { recentHumans = []; }
+    const recent = new Set<string>([...recentBots, ...recentHumans]);
     // Só considera oponentes com time COMPLETO (3 pets) e SEM espécies repetidas
     const allOwnersFull = Object.keys(byOwner).filter((id) => {
       const team = byOwner[id].team;
@@ -336,7 +340,7 @@ function ArenaPage() {
       return maxR <= rankCap;
     });
     const poolBase = allOwnersCapped.length > 0 ? allOwnersCapped : allOwnersFull;
-    const allOwners = poolBase.filter((id) => !recent.includes(id));
+    const allOwners = poolBase.filter((id) => !recent.has(id));
     // Pool sempre mista (bots + players reais). Anti-rematch de 25 partidas vale pra todos.
     const windows = [100, 200, 400, 800];
     let ownerList: string[] = [];
@@ -409,10 +413,16 @@ function ArenaPage() {
       pickRoll -= weights[i];
       if (pickRoll <= 0) { chosen = ownerList[i]; break; }
     }
-    // grava nos recentes (mantém últimos 75 — evita cair no mesmo oponente por ~75 partidas)
+    // grava no anti-rematch correto: humanos ficam 20 partidas, bots 75
     try {
-      const updated = [chosen, ...recent.filter((id) => id !== chosen)].slice(0, 75);
-      localStorage.setItem(recentKey, JSON.stringify(updated));
+      const chosenIsBot = !!profById.get(chosen)?.is_bot;
+      if (chosenIsBot) {
+        const updated = [chosen, ...recentBots.filter((id: string) => id !== chosen)].slice(0, 75);
+        localStorage.setItem(recentBotsKey, JSON.stringify(updated));
+      } else {
+        const updated = [chosen, ...recentHumans.filter((id: string) => id !== chosen)].slice(0, 20);
+        localStorage.setItem(recentHumansKey, JSON.stringify(updated));
+      }
     } catch { /* ignore */ }
     const chosenOpp = { ownerId: chosen, ownerName: byOwner[chosen].username, arenaPoints: byOwner[chosen].arenaPoints, team: byOwner[chosen].team.slice(0, 3) };
     setOpponent(chosenOpp);
