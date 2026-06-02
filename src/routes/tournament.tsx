@@ -531,7 +531,7 @@ function TournamentPage() {
                   {myActiveBracket && (
                     <div className="overflow-x-auto mt-2">
                       <div className="flex gap-3 min-w-fit">
-                        {[1, 2, 3, 4].map((r) => (
+                        {[1, 2, 3, 4, 5].map((r) => (
                           <div key={r} className="flex-shrink-0 w-44">
                             <div className="text-[10px] font-extrabold opacity-80 text-center mb-1">{ROUND_NAMES[r]}</div>
                             <div className="space-y-2" style={{ paddingTop: `${(Math.pow(2, r - 1) - 1) * 18}px` }}>
