@@ -651,7 +651,7 @@ export const SPECIES: Record<string, Species> = {
   },
   hiena_carniceira: {
     id: "hiena_carniceira", name: "Hiena Carniceira", element: "shadow", role: "dps", rarity: "rare",
-    emoji: "🐺", image: hienaCarniceiraImg, hidden: true,
+    emoji: "🐺", image: hienaCarniceiraImg,
     description: "Necrófaga das sombras. Sente o cheiro do moribundo e termina o serviço com uma mordida devastadora.",
     base: { hp: 68, atk: 27, def: 10, spd: 17, int: 9 },
     skill: { name: "Investida Carniceira", emoji: "🦷", kind: "hyena_hunt", cooldown: 3, description: "Causa 140% do ATK no alvo e aplica 🏴 Marca da Caça por 2 turnos (alvos marcados: +25% dano recebido e não esquivam). PASSIVA — Frenesi do Predador: ao acertar inimigo marcado (skill ou básico), a Hiena ganha +20% SPD no próximo turno." },
