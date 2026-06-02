@@ -369,7 +369,46 @@ function ArenaPage() {
       toast("Ninguém com time completo agora. Tente em instantes! 🎯", { icon: "👀" });
       return;
     }
-    const chosen = ownerList[Math.floor(Math.random() * ownerList.length)];
+    // Bias de matchmaking: amigos > top10 (se eu sou top10) > player real > bot.
+    // Anti-rematch (últimos 75) continua valendo, então não fica caindo sempre nos mesmos.
+    let friendIds = new Set<string>();
+    let top10Ids = new Set<string>();
+    try {
+      const [friendsRes, top10Res] = await Promise.all([
+        (supabase as any)
+          .from("friendships")
+          .select("user_a,user_b")
+          .eq("status", "accepted")
+          .or(`user_a.eq.${userId},user_b.eq.${userId}`),
+        (supabase as any)
+          .from("public_profiles")
+          .select("id")
+          .eq("is_bot", false)
+          .order("arena_points", { ascending: false })
+          .limit(10),
+      ]);
+      for (const f of (friendsRes?.data ?? []) as Array<{ user_a: string; user_b: string }>) {
+        friendIds.add(f.user_a === userId ? f.user_b : f.user_a);
+      }
+      for (const p of (top10Res?.data ?? []) as Array<{ id: string }>) top10Ids.add(p.id);
+    } catch { /* ignore */ }
+    const iAmTop10 = top10Ids.has(userId);
+
+    const weights = ownerList.map((id) => {
+      const p = profById.get(id);
+      const isBot = !!p?.is_bot;
+      if (friendIds.has(id)) return 8;              // amigo na janela de MMR: prioridade máxima
+      if (iAmTop10 && top10Ids.has(id)) return 6;   // top10 vs top10: encontro de campeões
+      if (!isBot) return 3;                          // outro player real
+      return 1;                                      // bot
+    });
+    const totalW = weights.reduce((a, b) => a + b, 0) || 1;
+    let pickRoll = Math.random() * totalW;
+    let chosen = ownerList[ownerList.length - 1];
+    for (let i = 0; i < ownerList.length; i++) {
+      pickRoll -= weights[i];
+      if (pickRoll <= 0) { chosen = ownerList[i]; break; }
+    }
     // grava nos recentes (mantém últimos 75 — evita cair no mesmo oponente por ~75 partidas)
     try {
       const updated = [chosen, ...recent.filter((id) => id !== chosen)].slice(0, 75);
