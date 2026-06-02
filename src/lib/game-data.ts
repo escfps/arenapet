@@ -630,7 +630,7 @@ export const SPECIES: Record<string, Species> = {
   },
   arara_corsaria: {
     id: "arara_corsaria", name: "Arara Corsária", element: "fire", secondaryElement: "fire", role: "dps", rarity: "rare",
-    emoji: "🦜", image: araraCorsariaImg, hidden: true,
+    emoji: "🦜", image: araraCorsariaImg,
     description: "Pirata dos céus. Ataca em rajadas múltiplas, sempre roubando o brilho dos inimigos.",
     base: { hp: 60, atk: 30, def: 9, spd: 20, int: 11 },
     skill: { name: "Rajada Corsária", emoji: "🦜", kind: "corsair_volley", cooldown: 3, description: "Realiza 3 investidas rápidas em alvos ALEATÓRIOS (podem repetir no mesmo alvo, até as 3 no mesmo). Cada hit causa ATK×0.6 e tem 35% de chance de aplicar 🩸 sangramento por 2 turnos (15% do ATK por turno, máx 1 stack por alvo)." },
@@ -651,7 +651,7 @@ export const SPECIES: Record<string, Species> = {
   },
   hiena_carniceira: {
     id: "hiena_carniceira", name: "Hiena Carniceira", element: "shadow", role: "dps", rarity: "rare",
-    emoji: "🐺", image: hienaCarniceiraImg, hidden: true,
+    emoji: "🐺", image: hienaCarniceiraImg,
     description: "Necrófaga das sombras. Sente o cheiro do moribundo e termina o serviço com uma mordida devastadora.",
     base: { hp: 68, atk: 27, def: 10, spd: 17, int: 9 },
     skill: { name: "Investida Carniceira", emoji: "🦷", kind: "hyena_hunt", cooldown: 3, description: "Causa 140% do ATK no alvo e aplica 🏴 Marca da Caça por 2 turnos (alvos marcados: +25% dano recebido e não esquivam). PASSIVA — Frenesi do Predador: ao acertar inimigo marcado (skill ou básico), a Hiena ganha +20% SPD no próximo turno." },
@@ -665,7 +665,7 @@ export const SPECIES: Record<string, Species> = {
   },
   escorpiao_deserto: {
     id: "escorpiao_deserto", name: "Escorpião do Deserto", element: "earth", role: "assassin", rarity: "rare",
-    emoji: "🦂", image: escorpiaoDesertoImg, hidden: true,
+    emoji: "🦂", image: escorpiaoDesertoImg,
     description: "Ferrão venenoso vindo das dunas. Um único golpe pode paralisar a presa mais corajosa.",
     base: { hp: 57, atk: 21, def: 10, spd: 19, int: 10 },
     skill: { name: "Ferroada Venenosa", emoji: "🦂", kind: "scorpion_sting", cooldown: 3, description: "Ferroada no inimigo mais fraco causando 110% do ATK + aplica 🏴 Marca da Morte e ☠️ Veneno por 2 turnos. Se o alvo já estiver marcado, causa 130% do ATK e o veneno dura +1 turno. PASSIVA — Veneno Rastreador: inimigos com 🏴 Marca da Morte sofrem +15% de dano de veneno." },
