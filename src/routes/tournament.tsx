@@ -665,8 +665,8 @@ function TournamentPage() {
             existingLog={battleMatch.m.log ?? null}
             existingWinner={battleMatch.m.winner_id}
             meId={userId}
-            onFinished={() => { void refresh(); }}
-            onClose={() => { setBattleMatch(null); void refresh(); }}
+            onFinished={async () => { await supabase.rpc("tournaments_tick"); void refresh(); }}
+            onClose={async () => { setBattleMatch(null); await supabase.rpc("tournaments_tick"); void refresh(); }}
           />
         )}
 
