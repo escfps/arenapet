@@ -312,10 +312,14 @@ function ArenaPage() {
     }
 
     const myPts = profile.arena_points ?? 0;
-    // Evita repetir os últimos oponentes (anti-rematch)
-    const recentKey = `recent_opps_${userId}`;
-    let recent: string[] = [];
-    try { recent = JSON.parse(localStorage.getItem(recentKey) ?? "[]"); } catch { recent = []; }
+    // Anti-rematch separado: humanos = últimos 20, bots = últimos 75
+    const recentBotsKey = `recent_opps_${userId}`;        // mantém a key antiga pra não resetar bots
+    const recentHumansKey = `recent_opps_humans_${userId}`;
+    let recentBots: string[] = [];
+    let recentHumans: string[] = [];
+    try { recentBots = JSON.parse(localStorage.getItem(recentBotsKey) ?? "[]"); } catch { recentBots = []; }
+    try { recentHumans = JSON.parse(localStorage.getItem(recentHumansKey) ?? "[]"); } catch { recentHumans = []; }
+    const recent = new Set<string>([...recentBots, ...recentHumans]);
     // Só considera oponentes com time COMPLETO (3 pets) e SEM espécies repetidas
     const allOwnersFull = Object.keys(byOwner).filter((id) => {
       const team = byOwner[id].team;
