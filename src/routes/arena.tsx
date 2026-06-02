@@ -340,7 +340,7 @@ function ArenaPage() {
       return maxR <= rankCap;
     });
     const poolBase = allOwnersCapped.length > 0 ? allOwnersCapped : allOwnersFull;
-    const allOwners = poolBase.filter((id) => !recent.includes(id));
+    const allOwners = poolBase.filter((id) => !recent.has(id));
     // Pool sempre mista (bots + players reais). Anti-rematch de 25 partidas vale pra todos.
     const windows = [100, 200, 400, 800];
     let ownerList: string[] = [];
