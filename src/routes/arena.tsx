@@ -413,10 +413,16 @@ function ArenaPage() {
       pickRoll -= weights[i];
       if (pickRoll <= 0) { chosen = ownerList[i]; break; }
     }
-    // grava nos recentes (mantém últimos 75 — evita cair no mesmo oponente por ~75 partidas)
+    // grava no anti-rematch correto: humanos ficam 20 partidas, bots 75
     try {
-      const updated = [chosen, ...recent.filter((id) => id !== chosen)].slice(0, 75);
-      localStorage.setItem(recentKey, JSON.stringify(updated));
+      const chosenIsBot = !!profById.get(chosen)?.is_bot;
+      if (chosenIsBot) {
+        const updated = [chosen, ...recentBots.filter((id: string) => id !== chosen)].slice(0, 75);
+        localStorage.setItem(recentBotsKey, JSON.stringify(updated));
+      } else {
+        const updated = [chosen, ...recentHumans.filter((id: string) => id !== chosen)].slice(0, 20);
+        localStorage.setItem(recentHumansKey, JSON.stringify(updated));
+      }
     } catch { /* ignore */ }
     const chosenOpp = { ownerId: chosen, ownerName: byOwner[chosen].username, arenaPoints: byOwner[chosen].arenaPoints, team: byOwner[chosen].team.slice(0, 3) };
     setOpponent(chosenOpp);
