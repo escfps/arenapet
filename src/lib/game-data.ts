@@ -630,7 +630,7 @@ export const SPECIES: Record<string, Species> = {
   },
   arara_corsaria: {
     id: "arara_corsaria", name: "Arara Corsária", element: "fire", secondaryElement: "fire", role: "dps", rarity: "rare",
-    emoji: "🦜", image: araraCorsariaImg, hidden: true,
+    emoji: "🦜", image: araraCorsariaImg,
     description: "Pirata dos céus. Ataca em rajadas múltiplas, sempre roubando o brilho dos inimigos.",
     base: { hp: 60, atk: 30, def: 9, spd: 20, int: 11 },
     skill: { name: "Rajada Corsária", emoji: "🦜", kind: "corsair_volley", cooldown: 3, description: "Realiza 3 investidas rápidas em alvos ALEATÓRIOS (podem repetir no mesmo alvo, até as 3 no mesmo). Cada hit causa ATK×0.6 e tem 35% de chance de aplicar 🩸 sangramento por 2 turnos (15% do ATK por turno, máx 1 stack por alvo)." },
