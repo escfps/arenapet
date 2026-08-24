@@ -68,6 +68,8 @@ import corujaPsiquicaImg from "@/assets/monsters/coruja_psiquica.png";
 import gengarImg from "@/assets/monsters/gengar.png";
 import pikachuImg from "@/assets/monsters/pikachu.png";
 import alakazamImg from "@/assets/monsters/alakazam.png";
+import gastlyImg from "@/assets/monsters/gastly.png";
+import haunterImg from "@/assets/monsters/haunter.png";
 import brasagartoImg from "@/assets/monsters/brasagarto.png";
 import cascatorugaImg from "@/assets/monsters/cascatoruga.png";
 import folhassauroImg from "@/assets/monsters/folhassauro.png";
@@ -788,6 +790,20 @@ export const SPECIES: Record<string, Species> = {
     description: "Mestre psíquico de QI 5000 que dobra colheres com a mente. Teletransporta e esmaga o cérebro dos inimigos mais fracos sem que eles percebam.",
     base: { hp: 78, atk: 10, def: 10, spd: 24, int: 38 },
     skill: { name: "Poder Psíquico", emoji: "🧠", kind: "spectral_hunger", cooldown: 4, description: "Esmaga a mente do inimigo mais fraco (INT×2.2, ignora DEF). Se abater o alvo, devora a próxima mente mais fraca em cadeia (até 2 vezes). PASSIVA — Telecinese: +20% de esquiva enquanto estiver acima de 50% do HP." },
+  },
+  gastly: {
+    id: "gastly", name: "Gastly", element: "shadow", role: "mage", rarity: "super_rare",
+    emoji: "💜👻", image: gastlyImg, hidden: true,
+    description: "Primeira forma da linhagem sombria. Uma bolha de gás venenoso com olhos famintos — frágil, mas corrói a defesa de quem se aproxima.",
+    base: { hp: 44, atk: 7, def: 7, spd: 16, int: 24 },
+    skill: { name: "Gás Venenoso", emoji: "☠️", kind: "ash_breath", cooldown: 3, description: "Sopra gás tóxico no alvo (~INT×1.5) e reduz a DEF dele em 20% por 2 turnos." },
+  },
+  haunter: {
+    id: "haunter", name: "Haunter", element: "shadow", role: "mage", rarity: "legendary",
+    emoji: "🖐️👻", image: haunterImg, hidden: true,
+    description: "Segunda forma da linhagem sombria. Mãos flutuantes que lambem a alma dos inimigos — um passo antes de se tornar Gengar.",
+    base: { hp: 64, atk: 10, def: 10, spd: 18, int: 29 },
+    skill: { name: "Lambida Espectral", emoji: "👅", kind: "aoe_magic", cooldown: 4, description: "Onda sombria atinge TODOS os inimigos (~INT×1.5) com 25% de chance de silenciar cada um por 1 turno. PASSIVA — Devora Sonhos: ao abater um inimigo, recupera 8% do HP máx." },
   },
 };
 
@@ -1579,6 +1595,8 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   coruja_negra: ["aves", "sombras", "corujas"],
   coruja_psiquica: ["aves", "sombras", "corujas"],
   alakazam: ["sombras"],
+  gastly: ["sombras"],
+  haunter: ["sombras"],
 };
 
 export function getSpeciesCategories(speciesId: string): Category[] {

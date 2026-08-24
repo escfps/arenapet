@@ -815,9 +815,10 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           if (skill.kind === "aoe_magic") {
             const isPsychic = attacker.species === "coruja_psiquica";
             const isGengar = attacker.species === "gengar";
-            const intMult = isPsychic ? 1.6 : isGengar ? 1.8 : 2.2;
-            const flatMult = isPsychic ? 1.0 : isGengar ? 1.0 : 1.2;
-            const silenceChance = isPsychic ? 0.4 : isGengar ? 0.35 : 0;
+            const isHaunter = attacker.species === "haunter";
+            const intMult = isPsychic ? 1.6 : isGengar ? 1.8 : isHaunter ? 1.5 : 2.2;
+            const flatMult = isPsychic ? 1.0 : isGengar ? 1.0 : isHaunter ? 1.0 : 1.2;
+            const silenceChance = isPsychic ? 0.4 : isGengar ? 0.35 : isHaunter ? 0.25 : 0;
             const targets = enemies.filter((e) => e.current > 0);
             for (const t of targets) {
               const eff = defensiveMultiplier(getElement(attacker.species), t.species);
@@ -839,12 +840,12 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
                 effective: eff,
                 remainingHp: t.current,
                 targetShield: t.shield,
-                message: `${skill.emoji} ${attacker.name} → ${t.name}: ${dmg} de dano ${isPsychic ? "psíquico" : isGengar ? "sombrio" : "arcano"}${silenced ? " 🤐 (silenciado 1 turno)" : ""}`,
+                message: `${skill.emoji} ${attacker.name} → ${t.name}: ${dmg} de dano ${isPsychic ? "psíquico" : isGengar || isHaunter ? "sombrio" : "arcano"}${silenced ? " 🤐 (silenciado 1 turno)" : ""}`,
               });
               if (t.current <= 0) {
-                // PASSIVA — Devora Sonhos: Gengar recupera 12% do HP máx ao abater
-                if (isGengar && attacker.current > 0) {
-                  const heal = Math.round(attacker.maxHp * 0.12);
+                // PASSIVA — Devora Sonhos: Gengar 12% / Haunter 8% do HP máx ao abater
+                if ((isGengar || isHaunter) && attacker.current > 0) {
+                  const heal = Math.round(attacker.maxHp * (isGengar ? 0.12 : 0.08));
                   attacker.current = Math.min(attacker.maxHp, attacker.current + heal);
                   log.push({
                     turn,
