@@ -192,6 +192,16 @@ function GymsPage() {
 
     setBusy(true);
     try {
+      if (!gym.starter) {
+        const { error: spendErr } = await (supabase as any).rpc("gym_start_challenge", { p_type: t });
+        if (spendErr) {
+          toast.error("Você precisa de 5 insígnias diferentes para desafiar! 🎖️");
+          return;
+        }
+        setBadges([]);
+        toast.info("🎖️ 5 insígnias consumidas para entrar no ginásio!");
+      }
+
       let team: Team = [];
       let name = `Líder ${TYPE_INFO[t].name}`;
       let isNpc = true;
