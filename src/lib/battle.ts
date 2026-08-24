@@ -2514,8 +2514,9 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
         const tigerDodgeBonus = target.species === "tigre_relampago"
           ? Math.floor(effectiveSpd(target) / 10) * 0.04
           : 0;
-        // PASSIVA Alakazam — Telecinese: +20% de esquiva enquanto acima de 50% do HP
-        const alakazamBonus = target.species === "alakazam" && target.current > target.maxHp * 0.5 ? 0.20 : 0;
+        // PASSIVA Alakazam/Kadabra/Abra — Telecinese: esquiva extra acima de 50% do HP
+        const psiDodge = target.species === "alakazam" ? 0.20 : target.species === "kadabra" ? 0.18 : target.species === "abra" ? 0.15 : 0;
+        const alakazamBonus = psiDodge > 0 && target.current > target.maxHp * 0.5 ? psiDodge : 0;
         const baseDodge = Math.max(0.05, Math.min(0.75, 0.05 + spdDiff * 0.035 + tigerDodgeBonus + alakazamBonus));
         // 🏴 Marca da Morte: zera a esquiva contra ataques básicos
         const dodgeChance = target.markTurns > 0 ? 0 : baseDodge;
