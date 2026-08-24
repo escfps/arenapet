@@ -5,6 +5,8 @@ import { SPECIES, speciesImage, shinyFallbackFilter, ITEMS, SKINS, ELEMENT_COLOR
 import type { MonsterRow } from "@/components/MonsterCard";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
+import { useServerFn } from "@tanstack/react-start";
+import { useItemOnPet, trainPet, resetPetTraining, playWithPet, equipPetSkin } from "@/lib/economy.functions";
 import { toast, Toaster } from "sonner";
 import arenaBg from "@/assets/arena-bg.jpg";
 
@@ -28,6 +30,11 @@ function MonsterPage() {
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [teamSynergyBonus, setTeamSynergyBonus] = useState<Record<SynergyStat, number>>({ hp: 0, atk: 0, def: 0, spd: 0, int: 0, crit: 0 });
   const RESET_GEM_COST = 50;
+  const useItemFn = useServerFn(useItemOnPet);
+  const trainFn = useServerFn(trainPet);
+  const resetTrainFn = useServerFn(resetPetTraining);
+  const playFn = useServerFn(playWithPet);
+  const skinFn = useServerFn(equipPetSkin);
 
 
   const load = useCallback(async () => {
@@ -73,29 +80,14 @@ function MonsterPage() {
   async function useItem(itemId: string) {
     if (!profile || !monster) return;
     const item = ITEMS[itemId];
-    const useFromInventory = itemId === "ration" && rations > 0;
-    if (!useFromInventory) {
-      if (item.priceCoins && profile.coins < item.priceCoins) { toast.error("Moedas insuficientes!"); return; }
-      if (item.priceGems && profile.gems < item.priceGems) { toast.error("Gemas insuficientes!"); return; }
-      await patch({
-        coins: profile.coins - (item.priceCoins ?? 0),
-        gems: profile.gems - (item.priceGems ?? 0),
-      });
-    } else {
-      const newQty = rations - 1;
-      setRations(newQty);
-      await supabase.from("inventory").update({ quantity: newQty }).eq("user_id", userId!).eq("item_type", "ration");
+    try {
+      await useItemFn({ data: { petId: monster.id, itemId } });
+      await load();
+      window.dispatchEvent(new Event("profile:reload"));
+      toast.success(`Usou ${item.emoji} ${item.name}`);
+    } catch (e: any) {
+      toast.error(e?.message ?? "Não foi possível usar o item.");
     }
-    const updates: Partial<MonsterRow> = {};
-    if (item.effect.hunger) updates.hunger = Math.min(100, monster.hunger + item.effect.hunger);
-    if (item.effect.energy) {
-      const e = computeBattleEnergy(monster.battle_energy, monster.battle_energy_at);
-      updates.battle_energy = Math.min(MAX_BATTLE_ENERGY, e.energy + item.effect.energy);
-      updates.battle_energy_at = e.nextStoredAt;
-    }
-    if (item.effect.happiness) updates.happiness = Math.min(100, monster.happiness + item.effect.happiness);
-    await patchMonster(updates);
-    toast.success(`Usou ${item.emoji} ${item.name}`);
   }
 
   const TRAIN_ENERGY_COST = 2;
@@ -105,105 +97,67 @@ function MonsterPage() {
 
   async function train(stat: "atk" | "def" | "spd" | "hp" | "int" | "crit") {
     if (!profile || !monster) return;
-    const limit = (monster.rank ?? 1) * 10;
-    const used = monster.train_count ?? 0;
-    if (used >= limit) { toast.error("Limite de treinos atingido! Eleve o pet ⭐"); return; }
-    if (stat === "crit") {
-      const critLimit = monster.rank ?? 1;
-      const critUsed = monster.crit ?? 0;
-      if (critUsed >= critLimit) { toast.error(`Limite de CRIT atingido (${critLimit})! Eleve o pet ⭐`); return; }
+    try {
+      const res = await trainFn({ data: { petId: monster.id, stat } });
+      await load();
+      window.dispatchEvent(new Event("profile:reload"));
+      if (stat === "crit") toast.success(`+2% CRIT! (${res.used}/${res.limit})`);
+      else toast.success(`+${res.gain} ${stat.toUpperCase()}! (${res.used}/${res.limit})`);
+      window.dispatchEvent(new CustomEvent("tutorial:trained"));
+    } catch (e: any) {
+      toast.error(e?.message ?? "Não foi possível treinar.");
     }
-    const cost = 20 + (monster.rank ?? 1) * 10;
-    if (profile.coins < cost) { toast.error("Moedas insuficientes!"); return; }
-    if ((profile.gems ?? 0) < TRAIN_GEM_COST) { toast.error(`Faltam 💎 ${TRAIN_GEM_COST} diamantes!`); return; }
-    const e = computeBattleEnergy(monster.battle_energy, monster.battle_energy_at);
-    if (e.energy < TRAIN_ENERGY_COST) { toast.error("Sem energia! Dê um energético ou espere regenerar."); return; }
-    if (monster.hunger < 20) { toast.error("Está com fome! Alimente primeiro."); return; }
-    await patch({ coins: profile.coins - cost, gems: (profile.gems ?? 0) - TRAIN_GEM_COST });
-    const updates: Partial<MonsterRow> = {
-      battle_energy: e.energy - TRAIN_ENERGY_COST,
-      battle_energy_at: e.nextStoredAt,
-      hunger: monster.hunger - 5,
-      train_count: used + 1,
-    };
-    if (stat === "crit") {
-      const newCrit = (monster.crit ?? 0) + 1;
-      updates.crit = newCrit;
-      await patchMonster(updates);
-      toast.success(`+2% CRIT! (${used + 1}/${limit})`);
-    } else {
-      const gain = stat === "hp" ? 20 + Math.floor(Math.random() * 6) : stat === "spd" || stat === "def" ? 3 + Math.floor(Math.random() * 3) : 1 + Math.floor(Math.random() * 2);
-      updates[stat] = (monster[stat] ?? 0) + gain;
-      await patchMonster(updates);
-      toast.success(`+${gain} ${stat.toUpperCase()}! (${used + 1}/${limit})`);
-    }
-    window.dispatchEvent(new CustomEvent("tutorial:trained"));
   }
 
   async function resetTraining() {
     if (!profile || !monster) return;
-    if ((profile.gems ?? 0) < RESET_GEM_COST) {
-      toast.error(`Faltam 💎 ${RESET_GEM_COST} diamantes!`);
+    try {
+      await resetTrainFn({ data: { petId: monster.id } });
+      await load();
+      window.dispatchEvent(new Event("profile:reload"));
       setShowResetConfirm(false);
-      return;
-    }
-    if ((monster.train_count ?? 0) === 0 && (monster.crit ?? 0) === 0) {
-      toast.error("Nenhum ponto distribuído pra resetar.");
+      toast.success("Atributos resetados! Redistribua como quiser. ✨");
+    } catch (e: any) {
       setShowResetConfirm(false);
-      return;
+      toast.error(e?.message ?? "Não foi possível resetar.");
     }
-    await patch({ gems: (profile.gems ?? 0) - RESET_GEM_COST });
-    await patchMonster({
-      hp: sp.base.hp,
-      atk: sp.base.atk,
-      def: sp.base.def,
-      spd: sp.base.spd,
-      int: sp.base.int,
-      crit: 0,
-      train_count: 0,
-    });
-    setShowResetConfirm(false);
-    toast.success("Atributos resetados! Redistribua como quiser. ✨");
   }
-
-
-
 
   async function play() {
     if (!monster) return;
-    const e = computeBattleEnergy(monster.battle_energy, monster.battle_energy_at);
-    if (e.energy < PLAY_ENERGY_COST) { toast.error("Sem energia!"); return; }
-    await patchMonster({
-      happiness: Math.min(100, monster.happiness + 20),
-      battle_energy: e.energy - PLAY_ENERGY_COST,
-      battle_energy_at: e.nextStoredAt,
-    });
-    toast.success("Que divertido! 🎉 +20 felicidade");
+    try {
+      await playFn({ data: { petId: monster.id } });
+      await load();
+      toast.success("Que divertido! 🎉 +20 felicidade");
+    } catch (e: any) {
+      toast.error(e?.message ?? "Sem energia!");
+    }
   }
 
   async function equipSkin(skinId: string) {
     if (!monster) return;
-    await patchMonster({ skin: skinId });
-    toast.success("Skin equipada!");
+    try {
+      await skinFn({ data: { petId: monster.id, skinId, buy: false } });
+      await load();
+      toast.success("Skin equipada!");
+    } catch (e: any) {
+      toast.error(e?.message ?? "Não foi possível equipar.");
+    }
   }
 
   async function buyAndEquipSkin(skinId: string) {
     if (!monster || !profile || !userId) return;
     const sk = SKINS[skinId];
     if (!sk) return;
-    if (sk.vipOnly) { toast.error("Skin exclusiva VIP."); return; }
-    if ((profile.gems ?? 0) < sk.priceGems) { toast.error("Diamantes insuficientes!"); return; }
-    const { error } = await supabase
-      .from("skins_owned")
-      .insert({ user_id: userId, skin_id: skinId, species: monster.species });
-    if (error) {
-      toast.error("Não foi possível comprar a skin.");
-      return;
+    try {
+      await skinFn({ data: { petId: monster.id, skinId, buy: true } });
+      await load();
+      window.dispatchEvent(new Event("profile:reload"));
+      setOwnedSkins((prev) => (prev.includes(skinId) ? prev : [...prev, skinId]));
+      toast.success(`${sk.name} desbloqueada e equipada! ✨`);
+    } catch (e: any) {
+      toast.error(e?.message ?? "Não foi possível comprar a skin.");
     }
-    await patch({ gems: (profile.gems ?? 0) - sk.priceGems });
-    await patchMonster({ skin: skinId });
-    setOwnedSkins((prev) => (prev.includes(skinId) ? prev : [...prev, skinId]));
-    toast.success(`${sk.name} desbloqueada e equipada! ✨`);
   }
 
   async function toggleTeam() {
