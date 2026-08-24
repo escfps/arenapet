@@ -410,6 +410,7 @@ export type Database = {
           nick_changes: number
           pity_gold: number
           pity_legendary: number
+          pity_mythic: number
           pity_silver: number
           tutorial_reward_claimed: boolean
           updated_at: string
@@ -442,6 +443,7 @@ export type Database = {
           nick_changes?: number
           pity_gold?: number
           pity_legendary?: number
+          pity_mythic?: number
           pity_silver?: number
           tutorial_reward_claimed?: boolean
           updated_at?: string
@@ -474,6 +476,7 @@ export type Database = {
           nick_changes?: number
           pity_gold?: number
           pity_legendary?: number
+          pity_mythic?: number
           pity_silver?: number
           tutorial_reward_claimed?: boolean
           updated_at?: string

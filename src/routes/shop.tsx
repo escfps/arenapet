@@ -8,7 +8,7 @@ import {
   rollEgg, skinFilter, isVip,
   MAX_BATTLE_ENERGY, ENERGY_REFILL_GEM_COST, ENERGY_REFILL_ALL_GEM_COST, computeBattleEnergy,
   CHESTS, rollChest, RARITY_INFO, starterMonsterStats,
-  CHEST_PITY, PITY_COLUMN,
+  CHEST_PITY, PITY_COLUMN, CHEST_PITY_MYTHIC, PITY_MYTHIC_COLUMN,
   type ChestTier, type ChestReward, type Rarity,
 } from "@/lib/game-data";
 import { useServerFn } from "@tanstack/react-start";
@@ -122,9 +122,17 @@ function ShopPage() {
     const pity = CHEST_PITY[tier];
     const pityCol = PITY_COLUMN[tier];
     const currentPity = pityCol ? ((profile as Record<string, unknown>)[pityCol] as number ?? 0) : 0;
-    const forceRarity = pity && currentPity + 1 >= pity.limit
-      ? pity.rarities[Math.floor(Math.random() * pity.rarities.length)]
-      : undefined;
+    const mythicPity = CHEST_PITY_MYTHIC[tier];
+    const mythicPityCol = PITY_MYTHIC_COLUMN[tier];
+    const currentMythicPity = mythicPityCol ? ((profile as Record<string, unknown>)[mythicPityCol] as number ?? 0) : 0;
+
+    // Pity mítico (teto 50) tem prioridade — força MÍTICO puro
+    let forceRarity: Rarity | undefined;
+    if (mythicPity && mythicPityCol && currentMythicPity + 1 >= mythicPity.limit) {
+      forceRarity = "mythic";
+    } else if (pity && currentPity + 1 >= pity.limit) {
+      forceRarity = pity.rarities[Math.floor(Math.random() * pity.rarities.length)];
+    }
 
     const reward = rollChest(tier, forceRarity);
 
@@ -133,10 +141,13 @@ function ShopPage() {
       gems: profile.gems - (useGems ? (c.priceGems ?? 0) : 0) + reward.gems,
     };
 
-    // Atualiza contador de pity: zera se pegou alguma das raridades garantidas, senão +1
+    // Atualiza contadores de pity: zera se pegou alguma raridade garantida, senão +1
+    const gotRarity = reward.petSpecies ? SPECIES[reward.petSpecies].rarity : null;
     if (pity && pityCol) {
-      const gotRarity = reward.petSpecies ? SPECIES[reward.petSpecies].rarity : null;
       patchObj[pityCol] = gotRarity && pity.rarities.includes(gotRarity) ? 0 : currentPity + 1;
+    }
+    if (mythicPity && mythicPityCol) {
+      patchObj[mythicPityCol] = gotRarity === "mythic" ? 0 : currentMythicPity + 1;
     }
 
     await patch(patchObj);
@@ -368,6 +379,10 @@ function ShopPage() {
                 const pityCol = PITY_COLUMN[c.id];
                 const currentPity = pityCol ? ((profile as Record<string, unknown>)[pityCol] as number ?? 0) : 0;
                 const pityLeft = pity ? Math.max(0, pity.limit - currentPity) : 0;
+                const mythicPity = CHEST_PITY_MYTHIC[c.id];
+                const mythicPityCol = PITY_MYTHIC_COLUMN[c.id];
+                const currentMythicPity = mythicPityCol ? ((profile as Record<string, unknown>)[mythicPityCol] as number ?? 0) : 0;
+                const mythicLeft = mythicPity ? Math.max(0, mythicPity.limit - currentMythicPity) : 0;
                 return (
                   <div key={c.id} className="rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 p-4 text-white">
                     <div className="text-center">
@@ -383,6 +398,17 @@ function ShopPage() {
                           {pityLeft === 1
                             ? `🔥 Próximo baú garante ${label}!`
                             : `${pityLeft <= 3 ? "🔥" : "🎯"} Faltam ${pityLeft} pra garantir ${label}`}
+                        </div>
+                      );
+                    })()}
+
+                    {mythicPity && (() => {
+                      const mythicLabel = `${RARITY_INFO.mythic.emoji} ${RARITY_INFO.mythic.name}`;
+                      return (
+                        <div className={`text-center text-xs font-extrabold mb-2 px-2 py-1.5 rounded-lg ${mythicLeft <= 5 ? "bg-fuchsia-500/30 text-fuchsia-100 animate-pulse" : "bg-black/30 text-cyan-200"}`}>
+                          {mythicLeft === 1
+                            ? `🔥 Próximo baú garante ${mythicLabel} puro!`
+                            : `${mythicLeft <= 5 ? "🔥" : "💀"} Faltam ${mythicLeft} pra garantir ${mythicLabel}`}
                         </div>
                       );
                     })()}
