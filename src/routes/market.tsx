@@ -190,6 +190,9 @@ function MarketPage() {
       return sp?.rarity === filterRarity;
     });
   }
+  if (filterShiny) {
+    shown = shown.filter((l) => l.kind === "monster" && !!l.snapshot?.is_shiny);
+  }
   if (sortPrice === "asc") {
     shown = [...shown].sort((a, b) => a.price - b.price);
   } else if (sortPrice === "desc") {
