@@ -1493,7 +1493,57 @@ export const SPECIES: Record<string, Species> = {
     base: { hp: 94, atk: 27, def: 24, spd: 10, int: 14 },
     skill: { name: "Maré de Veneno", emoji: "☣️", kind: "thorn_burst", cooldown: 5, description: "Espalha veneno atingindo todos os inimigos." },
   },
+  shellder: {
+    id: "shellder", name: "Shellder", element: "water", role: "tank", rarity: "common",
+    emoji: "🐚", image: shellderImg, hidden: true,
+    description: "Concha teimosa que morde tudo que se aproxima.",
+    base: { hp: 38, atk: 12, def: 14, spd: 8, int: 7 },
+    skill: { name: "Casco Duro", emoji: "🛡️", kind: "turtle_shell", cooldown: 4, description: "Fecha a concha e reduz o dano recebido." },
+  },
+  cloyster: {
+    id: "cloyster", name: "Cloyster", element: "water", role: "tank", rarity: "legendary",
+    emoji: "🐚❄️", image: cloysterImg, hidden: true,
+    description: "Armadura de gelo com espinhos afiadíssimos.",
+    base: { hp: 86, atk: 28, def: 30, spd: 12, int: 16 },
+    skill: { name: "Lança de Gelo", emoji: "🧊", kind: "frost_pounce", cooldown: 4, description: "Espinhos gelados com chance de congelar." },
+  },
+  onix: {
+    id: "onix", name: "Onix", element: "earth", role: "tank", rarity: "legendary",
+    emoji: "🪨🐍", image: onixImg, hidden: true,
+    description: "Serpente de rocha que cava túneis a alta velocidade.",
+    base: { hp: 100, atk: 24, def: 32, spd: 11, int: 8 },
+    skill: { name: "Prisão de Pedra", emoji: "🪨", kind: "shield_taunt", cooldown: 4, description: "Ergue muralhas, provoca e ganha escudo." },
+  },
+  drowzee: {
+    id: "drowzee", name: "Drowzee", element: "shadow", role: "mage", rarity: "rare",
+    emoji: "😴", image: drowzeeImg, hidden: true,
+    description: "Devora sonhos de quem dorme perto dele.",
+    base: { hp: 48, atk: 12, def: 12, spd: 10, int: 20 },
+    skill: { name: "Hipnose", emoji: "💤", kind: "sleep_strike", cooldown: 4, description: "Adormece o alvo com ondas mentais." },
+  },
+  hypno: {
+    id: "hypno", name: "Hypno", element: "shadow", role: "mage", rarity: "legendary",
+    emoji: "🌀", image: hypnoImg, hidden: true,
+    description: "Com o pêndulo, domina a mente dos inimigos.",
+    base: { hp: 74, atk: 20, def: 22, spd: 15, int: 34 },
+    skill: { name: "Pêndulo Sombrio", emoji: "🌀", kind: "sleep_strike", cooldown: 5, description: "Hipnotiza o alvo e drena sua mente." },
+  },
+  krabby: {
+    id: "krabby", name: "Krabby", element: "water", role: "dps", rarity: "common",
+    emoji: "🦀", image: krabbyImg, hidden: true,
+    description: "Caranguejo briguento das praias.",
+    base: { hp: 36, atk: 15, def: 10, spd: 12, int: 6 },
+    skill: { name: "Pinça Dupla", emoji: "🦀", kind: "double_strike", cooldown: 3, description: "Duas pinçadas rápidas." },
+  },
+  kingler: {
+    id: "kingler", name: "Kingler", element: "water", role: "dps", rarity: "legendary",
+    emoji: "🦀💪", image: kinglerImg, hidden: true,
+    description: "Sua pinça gigante esmaga qualquer armadura.",
+    base: { hp: 76, atk: 34, def: 22, spd: 16, int: 10 },
+    skill: { name: "Martelo de Pinça", emoji: "🔨", kind: "guaranteed_crit", cooldown: 4, description: "Golpe crítico devastador." },
+  },
 };
+
 
 
 
