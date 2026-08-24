@@ -371,6 +371,11 @@ import dracomarinoImg from "@/assets/monsters/dracomarino.png";
 /**
  * Os 18 tipos oficiais + "shadow"/"earth" (legado, só pets antigos aposentados).
  */
+export type OfficialElement =
+  | "normal" | "fire" | "water" | "grass" | "electric" | "ice"
+  | "fighting" | "poison" | "ground" | "flying" | "psychic" | "bug"
+  | "rock" | "ghost" | "dragon" | "dark" | "steel" | "fairy";
+
 export type Element =
   | "normal" | "fire" | "water" | "grass" | "electric" | "ice"
   | "fighting" | "poison" | "ground" | "flying" | "psychic" | "bug"
@@ -3048,8 +3053,16 @@ export function toOfficialElement(el: string): OfficialElement {
   return (LEGACY_ELEMENT_MAP[el] ?? el) as OfficialElement;
 }
 
+/** Categorias = tipagens oficiais do pokémon (primária + secundária). */
 export function getSpeciesCategories(speciesId: string): Category[] {
-  return SPECIES_CATEGORIES[speciesId] ?? [];
+  const sp = SPECIES.find((s) => s.id === speciesId);
+  if (!sp) return [];
+  const out: Category[] = [toOfficialElement(sp.element)];
+  if (sp.secondaryElement) {
+    const sec = toOfficialElement(sp.secondaryElement);
+    if (sec !== out[0]) out.push(sec);
+  }
+  return out;
 }
 
 export type SynergyEntry = { category: Category; count: number; bonusPct: number; active: boolean };
@@ -3067,7 +3080,6 @@ export function computeSynergies(speciesIds: string[]): SynergyEntry[] {
   const out: SynergyEntry[] = [];
   for (const [category, count] of counts.entries()) {
     let bonusPct = count >= 3 ? 10 : count >= 2 ? 5 : 0;
-    if (category === "macacos") bonusPct = count >= 3 ? 5 : count >= 2 ? 3 : 0;
     out.push({ category, count, bonusPct, active: count >= 2 });
   }
   // Ordena: ativos primeiro (maior bonus), depois inativos
