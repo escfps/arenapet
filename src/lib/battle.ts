@@ -3,7 +3,6 @@ import {
   SHINY_SKILL,
   ROLE_SKILLS,
   RARITY_INFO,
-  defensiveMultiplier,
   totalStats,
   getSkill,
   hungerMultiplier,
@@ -14,6 +13,19 @@ import {
   type Role,
   type Rarity,
 } from "./game-data";
+import {
+  MOVES,
+  TYPE_INFO,
+  typeMultiplier,
+  getTypes,
+  getMoveset,
+  getShinyPassive,
+  stabBonus,
+  type Move,
+  type MoveEffect,
+  type PokeType,
+} from "./moves";
+
 
 export type BattleMonster = {
   id: string;
@@ -101,9 +113,18 @@ export function toBattleMonster(m: DBMonster): BattleMonster {
   };
 }
 
-function getElement(species: string): Element {
-  return SPECIES[species]?.element ?? "shadow";
+/** Tipo principal (18 tipos) usado pelas skills antigas. */
+function getElement(species: string): PokeType {
+  return getTypes(species)[0] ?? "normal";
 }
+
+/** Efetividade das SKILLS pelo novo sistema de 18 tipos (com clamp pra não travar batalha). */
+function defensiveMultiplier(atkType: PokeType, defSpecies: string): number {
+  const m = typeMultiplier(atkType, getTypes(defSpecies));
+  if (m <= 0) return 0.4;
+  return Math.max(0.4, Math.min(2.5, m));
+}
+
 
 // ===== PASSIVAS DAS FÊNIX MÍTICAS =====
 // Fênix Vermelha: cada 10% HP perdido = +6% ATK (cap +60% com 1 HP)
@@ -170,6 +191,12 @@ type Live = BattleMonster & {
   markPassiveProcessed: boolean; // controle: passiva da Coruja Branca já processou morte
   tempShieldAmount: number; // escudo temporário ativo (subset de shield)
   tempShieldTurns: number; // turnos restantes do escudo temporário
+  moveCds: Record<string, number>; // recargas dos golpes (sistema de tipos)
+  confuseTurns: number; // 💫 confuso: pode se acertar
+  atkBuffTurns: number; // bônus de ATK temporário (atk_up)
+  atkBuffPct: number;
+  firstStrikeUsed: boolean; // ✨ shiny first_strike
+
 };
 
 function pickTarget(attacker: Live, enemies: Live[]): Live | null {
@@ -211,6 +238,125 @@ function effectiveSpd(mon: Live): number {
 function isCCImmune(mon: Live): boolean {
   return mon.species === "elefante_ancestral";
 }
+
+/** Um golpe de status só vale a pena se ainda pode surtir efeito. */
+function statusMoveUseful(move: Move, self: Live, target: Live): boolean {
+  const e = move.effect;
+  if (!e) return false;
+  switch (e.kind) {
+    case "heal": return self.current < self.maxHp * 0.75;
+    case "shield": return self.shield <= 0;
+    case "cleanse": return self.burnTurns > 0 || self.poisonTurns > 0 || self.bleedTurns > 0 || self.atkDebuffTurns > 0 || self.defDebuffTurns > 0 || self.confuseTurns > 0;
+    case "atk_up": return self.atkBuffTurns <= 0;
+    case "def_up": return self.defBuffTurns <= 0;
+    case "spd_up": return self.spdBuffTurns <= 0;
+    case "sleep": return target.sleepTurns <= 0 && !isCCImmune(target);
+    case "freeze": return target.freezeTurns <= 0 && !isCCImmune(target);
+    case "paralyze": return target.stunTurns <= 0 && !isCCImmune(target);
+    case "confuse": return target.confuseTurns <= 0 && !isCCImmune(target);
+    case "poison": return target.poisonTurns <= 0;
+    case "burn": return target.burnTurns <= 0 && !isCCImmune(target);
+    case "silence": return target.silenceTurns <= 0 && !isCCImmune(target);
+    case "atk_down": return target.atkDebuffTurns <= 0;
+    case "def_down": return target.defDebuffTurns <= 0;
+    case "spd_down": return target.spdBuffTurns <= 0;
+    default: return true;
+  }
+}
+
+/** Aplica o efeito secundário de um golpe. Retorna o texto do que aconteceu (ou null). */
+function applyMoveEffect(
+  self: Live, target: Live, e: MoveEffect, damage: number,
+  rand: () => number, ccBonus = 0,
+): string | null {
+  const chance = Math.min(1, (e.chance ?? 1) + ccBonus);
+  if (rand() > chance) return null;
+  const turns = e.turns ?? 2;
+  const val = e.value ?? 0.2;
+  const ccBlocked = isCCImmune(target);
+  switch (e.kind) {
+    case "burn":
+      if (ccBlocked) return null;
+      target.burnTurns = Math.max(target.burnTurns, turns);
+      target.burnDmg = Math.max(target.burnDmg, Math.max(1, Math.round(target.maxHp * 0.05)));
+      return "🔥 queimou";
+    case "poison":
+      target.poisonTurns = Math.max(target.poisonTurns, turns);
+      target.poisonDmg = Math.max(target.poisonDmg, Math.max(1, Math.round(target.maxHp * 0.06)));
+      return "☠️ envenenou";
+    case "paralyze":
+      if (ccBlocked) return null;
+      target.stunTurns = Math.max(target.stunTurns, turns);
+      return "⚡ paralisou";
+    case "freeze":
+      if (ccBlocked) return null;
+      target.freezeTurns = Math.max(target.freezeTurns, turns);
+      return "❄️ congelou";
+    case "sleep":
+      if (ccBlocked) return null;
+      target.sleepTurns = Math.max(target.sleepTurns, turns);
+      return "😴 adormeceu";
+    case "confuse":
+      if (ccBlocked) return null;
+      target.confuseTurns = Math.max(target.confuseTurns, turns);
+      return "💫 ficou confuso";
+    case "silence":
+      if (ccBlocked) return null;
+      target.silenceTurns = Math.max(target.silenceTurns, turns);
+      return "🤐 foi silenciado";
+    case "atk_down":
+      target.atkDebuffTurns = Math.max(target.atkDebuffTurns, turns);
+      target.atkDebuffPct = Math.max(target.atkDebuffPct, val);
+      return `⬇️ perdeu ${Math.round(val * 100)}% de ATK`;
+    case "def_down":
+      target.defDebuffTurns = Math.max(target.defDebuffTurns, turns);
+      target.defDebuffPct = Math.max(target.defDebuffPct, val);
+      return `🛡️⬇️ perdeu ${Math.round(val * 100)}% de DEF`;
+    case "spd_down":
+      target.spdBuffTurns = Math.max(target.spdBuffTurns, turns);
+      target.spdBuffPct = -val;
+      return `🐌 perdeu ${Math.round(val * 100)}% de SPD`;
+    case "atk_up":
+      self.atkBuffTurns = Math.max(self.atkBuffTurns, turns);
+      self.atkBuffPct = Math.max(self.atkBuffPct, val);
+      return `💪 +${Math.round(val * 100)}% ATK`;
+    case "def_up":
+      self.defBuffTurns = Math.max(self.defBuffTurns, turns);
+      self.defBuffPct = Math.max(self.defBuffPct, val);
+      return `🛡️ +${Math.round(val * 100)}% DEF`;
+    case "spd_up":
+      self.spdBuffTurns = Math.max(self.spdBuffTurns, turns);
+      self.spdBuffPct = Math.max(self.spdBuffPct, val);
+      return `💨 +${Math.round(val * 100)}% SPD`;
+    case "heal": {
+      const h = Math.round(self.maxHp * val);
+      const before = self.current;
+      self.current = Math.min(self.maxHp, self.current + h);
+      return `💚 recuperou ${self.current - before} HP`;
+    }
+    case "shield": {
+      const s = Math.round(self.maxHp * val);
+      self.shield += s;
+      self.tempShieldAmount += s;
+      self.tempShieldTurns = Math.max(self.tempShieldTurns, turns);
+      return `🛡️ ganhou ${s} de escudo`;
+    }
+    case "drain": {
+      const h = Math.round(damage * val);
+      self.current = Math.min(self.maxHp, self.current + h);
+      return `🩸 roubou ${h} HP`;
+    }
+    case "cleanse":
+      self.burnTurns = 0; self.poisonTurns = 0; self.bleedTurns = 0;
+      self.atkDebuffTurns = 0; self.atkDebuffPct = 0;
+      self.defDebuffTurns = 0; self.defDebuffPct = 0;
+      self.confuseTurns = 0; self.blindTurns = 0;
+      return "🌀 limpou os efeitos negativos";
+    default:
+      return null;
+  }
+}
+
 
 
 
@@ -274,6 +420,12 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
     spdBuffPct: 0,
     tempShieldAmount: 0,
     tempShieldTurns: 0,
+    moveCds: {},
+    confuseTurns: 0,
+    atkBuffTurns: 0,
+    atkBuffPct: 0,
+    firstStrikeUsed: false,
+
   });
   const a: Live[] = teamA.map(mkLive);
   const b: Live[] = teamB.map(mkLive);
@@ -666,6 +818,49 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           attacker.atkDebuffTurns -= 1;
           if (attacker.atkDebuffTurns === 0) attacker.atkDebuffPct = 0;
         }
+        // tick atk buff (atk_up)
+        if (attacker.atkBuffTurns > 0) {
+          attacker.atkBuffTurns -= 1;
+          if (attacker.atkBuffTurns === 0) attacker.atkBuffPct = 0;
+        }
+        // ✨ Passiva Shiny: regeneração e vingança
+        {
+          const sp = attacker.shiny ? getShinyPassive(attacker.species) : undefined;
+          if (sp?.kind === "regen" && attacker.current > 0 && attacker.current < attacker.maxHp) {
+            const h = Math.max(1, Math.round(attacker.maxHp * sp.value));
+            const before = attacker.current;
+            attacker.current = Math.min(attacker.maxHp, attacker.current + h);
+            log.push({
+              turn, actor: side, actorName: attacker.name, targetName: attacker.name,
+              damage: -(attacker.current - before), crit: false, effective: 1,
+              remainingHp: attacker.current,
+              message: `${sp.emoji} ${attacker.name} regenerou ${attacker.current - before} HP (${sp.name})`,
+            });
+          }
+          if (sp?.kind === "vengeance" && attacker.maxHp > 0) {
+            const lostPct = 1 - attacker.current / attacker.maxHp;
+            if (lostPct > 0) {
+              attacker.atkBuffTurns = Math.max(attacker.atkBuffTurns, 1);
+              attacker.atkBuffPct = Math.max(attacker.atkBuffPct, lostPct * sp.value);
+            }
+          }
+          if (sp?.kind === "thorns") attacker.thornsPct = Math.max(attacker.thornsPct, sp.value);
+        }
+        // 💫 Confusão: pode se acertar e perder o turno
+        if (attacker.confuseTurns > 0) {
+          attacker.confuseTurns -= 1;
+          if (rand() < 0.33) {
+            const selfDmg = Math.max(1, Math.round(attacker.atk * 0.8));
+            applyDamage(attacker, selfDmg);
+            log.push({
+              turn, actor: side, actorName: attacker.name, targetName: attacker.name,
+              damage: selfDmg, crit: false, effective: 1, remainingHp: attacker.current,
+              message: `💫 ${attacker.name} está confuso e se feriu causando ${selfDmg} de dano!`,
+            });
+            return;
+          }
+        }
+
         // tick spd buff
         if (attacker.spdBuffTurns > 0) {
           attacker.spdBuffTurns -= 1;
@@ -2557,23 +2752,119 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           return;
         }
 
-        const eff = defensiveMultiplier(getElement(attacker.species), target.species);
+        // ===== ESCOLHA DE GOLPE (tipo · categoria · efeito) =====
+        const myTypes = getTypes(attacker.species);
+        const ms = getMoveset(attacker.species);
+        const shinyP = attacker.shiny ? getShinyPassive(attacker.species) : undefined;
+        const ccBonus = shinyP?.kind === "cc_master" ? shinyP.value : 0;
+
+        // recarga dos golpes
+        for (const k of Object.keys(attacker.moveCds)) {
+          if (attacker.moveCds[k] > 0) attacker.moveCds[k] -= 1;
+        }
+
+        let move: Move | null = null;
+        if (ms) {
+          const stMove = MOVES[ms.status];
+          if (stMove && (attacker.moveCds[stMove.id] ?? 0) <= 0 && statusMoveUseful(stMove, attacker, target)) {
+            move = stMove;
+          } else {
+            let best = -1;
+            for (const id of ms.moves) {
+              const m = MOVES[id];
+              if (!m || (attacker.moveCds[m.id] ?? 0) > 0) continue;
+              const e = typeMultiplier(m.type, getTypes(target.species));
+              if (e <= 0) continue;
+              const score = m.power * e * stabBonus(m, myTypes) * (m.target === "all" ? 1.35 : 1) + (m.effect ? 0.15 : 0);
+              if (score > best) { best = score; move = m; }
+            }
+          }
+        }
+
+        // ===== GOLPE DE STATUS =====
+        if (move && move.category === "status" && move.effect) {
+          attacker.moveCds[move.id] = move.cooldown;
+          const stTargets: Live[] =
+            move.target === "self" ? [attacker]
+            : move.target === "all" ? enemies.filter((e) => e.current > 0)
+            : move.target === "highest" ? [enemies.filter((e) => e.current > 0).reduce((a, b) => (a.current > b.current ? a : b), target)]
+            : [target];
+          const applied: string[] = [];
+          for (const t of stTargets) {
+            const r = applyMoveEffect(attacker, t, move.effect, 1, rand, ccBonus);
+            if (r) applied.push(`${t.name} ${r}`);
+          }
+          log.push({
+            turn,
+            actor: side,
+            actorName: attacker.name,
+            targetName: stTargets[0]?.name ?? attacker.name,
+            targetTeam: move.target === "self" ? "actor" : "opponent",
+            damage: 0,
+            crit: false,
+            effective: 1,
+            remainingHp: stTargets[0]?.current ?? attacker.current,
+            message: `${TYPE_INFO[move.type].emoji} ${attacker.name} usou ${move.name}! ${applied.join(", ") || "sem efeito"}`,
+          });
+          return;
+        }
+
+        if (move) attacker.moveCds[move.id] = move.cooldown;
+
+        const rawEff = move
+          ? typeMultiplier(move.type, getTypes(target.species))
+          : defensiveMultiplier(getElement(attacker.species), target.species);
+        const eff = rawEff <= 0 ? 0.25 : rawEff;
         const synCrit = side === "team_a" ? critBonusA : critBonusB;
         const baseCrit = attacker.role === "assassin" ? 0.35 : 0.12;
         const passiveCritFloor = attacker.species === "raposa_espectral" ? 0.3 : 0;
         const trainedCrit = (attacker.crit || 0) * 0.02;
-        const critChance = Math.max(passiveCritFloor, Math.min(0.95, baseCrit + synCrit + trainedCrit));
+        const moveCrit = move?.effect?.kind === "crit" ? (move.effect.chance ?? 1) : 0;
+        const critChance = Math.max(passiveCritFloor, Math.min(0.95, baseCrit + synCrit + trainedCrit + moveCrit));
         // PASSIVA Leopardo Fantasma: crítico garantido se for mais rápido que o alvo
         const leopardFaster = attacker.species === "leopardo_fantasma" && effectiveSpd(attacker) > effectiveSpd(target);
-        const crit = leopardFaster || rand() < critChance;
-        const defUsed = attacker.role === "mage" ? target.def * 0.85 : target.def;
-        const atkStat = attacker.role === "mage" ? attacker.int : attacker.atk * phoenixAtkBonus(attacker);
+        // ✨ Shiny "primeiro golpe": o primeiro golpe da batalha é crítico
+        const shinyFirstStrike = shinyP?.kind === "first_strike" && !attacker.firstStrikeUsed;
+        if (shinyFirstStrike) attacker.firstStrikeUsed = true;
+        const crit = leopardFaster || shinyFirstStrike || rand() < critChance;
+        const useSpecial = move ? move.category === "special" : attacker.role === "mage";
+        const defUsed = useSpecial ? target.def * 0.85 : target.def;
+        const atkStat = useSpecial ? attacker.int : attacker.atk * phoenixAtkBonus(attacker);
         let base = Math.max(1, atkStat * 2 - defUsed);
         if (attacker.role === "dps") base *= 1.15;
+        if (move) base *= move.power * stabBonus(move, myTypes);
+        // ✨ Shiny "type_boost": +% de dano com golpes do tipo principal
+        if (shinyP?.kind === "type_boost" && move && move.type === myTypes[0]) base *= 1 + shinyP.value;
+        if (shinyP?.kind === "status_immune") base *= 1 + shinyP.value;
+        if (attacker.atkBuffTurns > 0 && attacker.atkBuffPct > 0) base *= 1 + attacker.atkBuffPct;
+        if (attacker.atkDebuffTurns > 0 && attacker.atkDebuffPct > 0) base *= 1 - attacker.atkDebuffPct;
         const variance = 0.85 + rand() * 0.3;
         const damage = Math.max(1, Math.round(base * eff * variance * (crit ? 1.7 : 1)));
         applyDamage(target, damage);
         const phoenixGrow = phoenixOnDamageDealt(attacker, damage);
+
+        // efeito secundário do golpe
+        let moveEffectMsg = "";
+        if (move?.effect && move.effect.kind !== "crit" && target.current > 0) {
+          const r = applyMoveEffect(attacker, target, move.effect, damage, rand, ccBonus);
+          if (r) moveEffectMsg = ` — ${target.name} ${r}`;
+        }
+        // ✨ Shiny "leech": cura % do dano causado
+        if (shinyP?.kind === "leech" && damage > 0) {
+          const h = Math.round(damage * shinyP.value);
+          attacker.current = Math.min(attacker.maxHp, attacker.current + h);
+          moveEffectMsg += ` 🩸 (+${h} HP — ${shinyP.name})`;
+        }
+        // AoE: golpes "all" espalham 45% do dano nos demais inimigos
+        if (move?.target === "all") {
+          for (const other of enemies) {
+            if (other === target || other.current <= 0) continue;
+            const oe = typeMultiplier(move.type, getTypes(other.species));
+            if (oe <= 0) continue;
+            applyDamage(other, Math.max(1, Math.round(damage * 0.45 * oe)));
+          }
+        }
+
 
         // PASSIVA Borboleta Sonífera: 50% de chance de adormecer o alvo por 2 turnos
         let sleptByPassive = false;
@@ -2624,7 +2915,11 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           applyDamage(attacker, reflected);
         }
 
-        let msg = `${attacker.name} atacou ${target.name} causando ${damage} de dano`;
+        let msg = move
+          ? `${TYPE_INFO[move.type].emoji} ${attacker.name} usou ${move.name} em ${target.name} causando ${damage} de dano`
+          : `${attacker.name} atacou ${target.name} causando ${damage} de dano`;
+        if (moveEffectMsg) msg += moveEffectMsg;
+
         if (crit) msg += " (CRÍTICO!)";
         if (attacker.role === "mage") msg += " 🔮";
         if (eff > 1) msg += " (super eficaz!)";
