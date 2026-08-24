@@ -289,7 +289,7 @@ function GymsPage() {
 
           <div className="rounded-2xl bg-black/40 border border-white/15 p-3 mb-4 text-white/85 text-xs space-y-1">
             <div>🎖️ Suas insígnias: <b className="text-yellow-300">{distinctBadges}</b> / 18</div>
-            <div>🔓 Ginásios iniciantes (Normal, Planta e Inseto) são livres. Os outros exigem <b>{BADGES_REQUIRED} insígnias diferentes</b>.</div>
+            <div>🔓 Ginásios iniciantes (Normal, Planta e Inseto) são livres. Os outros exigem <b>{BADGES_REQUIRED} insígnias diferentes</b>, que são <b className="text-red-300">consumidas ao desafiar</b> (ganhe ou perca).</div>
             <div>⚠️ Lutar com time fora do tipo serve só para farmar insígnia — não dá liderança.</div>
           </div>
 
