@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
+import { GymLeaderTitle, useGymLeaders } from "@/components/GymLeaderTitle";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
 import { getTier, nextTierProgress, SPECIES, RARITY_INFO, skinFilter, rankStars, MAX_RANK } from "@/lib/game-data";
@@ -44,6 +45,7 @@ type Row = {
 function RankingPage() {
   const navigate = useNavigate();
   const { profile, loading } = useProfile();
+  const gymLeaders = useGymLeaders();
   const fetchSeason = useServerFn(getCurrentSeason);
   const [rows, setRows] = useState<Row[]>([]);
   const [myRank, setMyRank] = useState<number | null>(null);
@@ -148,7 +150,7 @@ function RankingPage() {
             </div>
             <div className="flex-1 min-w-[180px]">
               <div className="text-xs opacity-80">{profile.username}</div>
-              <div className="font-bold">{profile.arena_points ?? 0} pts {myRank ? `• #${myRank}` : ""}</div>
+              <div className="font-bold flex items-center gap-1 flex-wrap"><GymLeaderTitle types={gymLeaders[profile.id]} />{profile.arena_points ?? 0} pts {myRank ? `• #${myRank}` : ""}</div>
               {progress && (
                 <div className="mt-1">
                   <div className="h-2 rounded-full bg-black/40 overflow-hidden">
@@ -214,6 +216,7 @@ function RankingPage() {
                       <div className="font-bold text-white truncate flex items-center gap-2">
                         {r.username}
                         {isMe && <span className="text-[9px] bg-yellow-400 text-yellow-950 px-1.5 rounded font-extrabold">VOCÊ</span>}
+                        <GymLeaderTitle types={gymLeaders[r.id]} compact />
                       </div>
                       <div className="text-[10px] text-white/60">
                         Nv {r.level} • {r.wins}V/{r.losses}D
