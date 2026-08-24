@@ -2492,7 +2492,9 @@ export function rollChest(tier: ChestTier, forceRarity?: Rarity): ChestReward {
 
   }
 
-  const petShiny = petSpecies ? rollShiny() : false;
+  // ✨ Shiny só pode sair no Baú Lendário
+  const petShiny = petSpecies && tier === "legendary" ? rollShiny() : false;
+
   return { coins, gems, rations, petSpecies, petShiny };
 
 }
