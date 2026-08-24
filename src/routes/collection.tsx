@@ -230,9 +230,10 @@ function CollectionPage() {
 
         {/* Grid grouped by element */}
         <div className="space-y-6">
-          {(["fire", "water", "grass", "electric", "shadow", "earth"] as Element[]).map((el) => {
-            const list = filtered.filter((s) => s.element === el || s.secondaryElement === el);
+          {[...ALL_ELEMENTS, "shadow" as Element, "earth" as Element].map((el) => {
+            const list = filtered.filter((s) => s.element === el);
             if (list.length === 0) return null;
+
             return (
               <section key={el}>
                 <h2 className="text-white font-extrabold text-lg mb-2 flex items-center gap-2">
