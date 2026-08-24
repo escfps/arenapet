@@ -1808,6 +1808,12 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   kakuna: ["floresta"],
   beedrill: ["floresta", "aves"],
   pidgey: ["aves"],
+  pidgeotto: ["aves"],
+  pidgeot: ["aves"],
+  fearow: ["aves"],
+  rattata: ["floresta"],
+  raticate: ["floresta"],
+  ekans: ["repteis"],
 };
 
 export function getSpeciesCategories(speciesId: string): Category[] {
