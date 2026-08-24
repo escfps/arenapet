@@ -14,12 +14,12 @@ const bottomItems = [
   { to: "/ranking", label: "Ranking", emoji: "📊" },
   { to: "/tournament", label: "Copa", emoji: "🏆" },
   { to: "/forge", label: "Elevar", emoji: "⭐" },
+  { to: "/shop", label: "Loja", emoji: "🏪" },
   { to: "/collection", label: "Coleção", emoji: "🎒" },
 ] as const;
 
 const internalItems = [
   { to: "/friends", label: "Amigos", emoji: "👥" },
-  { to: "/shop", label: "Loja", emoji: "🏪" },
   { to: "/shop", label: "Passe de Batalha", emoji: "🎟️", hash: "vip" },
   { to: "/inventario", label: "Inventário", emoji: "🎒" },
   { to: "/profile", label: "Perfil", emoji: "👤" },
