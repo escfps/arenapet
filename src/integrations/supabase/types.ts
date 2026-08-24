@@ -1043,6 +1043,10 @@ export type Database = {
         Returns: boolean
       }
       _bot_rarity_weight: { Args: { r: string }; Returns: number }
+      _bot_set_type_team: {
+        Args: { p_bot: string; p_type: string }
+        Returns: boolean
+      }
       _bot_species_name: { Args: { sp: string }; Returns: string }
       _bot_species_rarity: { Args: { sp: string }; Returns: string }
       _bot_species_role: { Args: { sp: string }; Returns: string }
