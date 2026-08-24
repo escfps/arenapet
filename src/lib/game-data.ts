@@ -146,6 +146,16 @@ import hitmonleeImg from "@/assets/monsters/hitmonlee.png";
 import hitmonchanImg from "@/assets/monsters/hitmonchan.png";
 import lickitungImg from "@/assets/monsters/lickitung.png";
 import koffingImg from "@/assets/monsters/koffing.png";
+import weezingImg from "@/assets/monsters/weezing.png";
+import rhyhornImg from "@/assets/monsters/rhyhorn.png";
+import rhydonImg from "@/assets/monsters/rhydon.png";
+import chanseyImg from "@/assets/monsters/chansey.png";
+import tangelaImg from "@/assets/monsters/tangela.png";
+import kangaskhanImg from "@/assets/monsters/kangaskhan.png";
+import horseaImg from "@/assets/monsters/horsea.png";
+import seadraImg from "@/assets/monsters/seadra.png";
+import goldeenImg from "@/assets/monsters/goldeen.png";
+import seakingImg from "@/assets/monsters/seaking.png";
 import alakazamImg from "@/assets/monsters/alakazam.png";
 import gastlyImg from "@/assets/monsters/gastly.png";
 import haunterImg from "@/assets/monsters/haunter.png";
@@ -1651,11 +1661,11 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Broca Perfurante", emoji: "🔩", kind: "guaranteed_crit", cooldown: 4, description: "Chifre giratório que ignora armadura." },
   },
   chansey: {
-    id: "chansey", name: "Chansey", element: "grass", role: "support", rarity: "legendary",
+    id: "chansey", name: "Chansey", element: "grass", role: "healer", rarity: "legendary",
     emoji: "🥚💗", image: chanseyImg, hidden: true,
     description: "Seu ovo cura qualquer ferida.",
     base: { hp: 110, atk: 8, def: 14, spd: 14, int: 30 },
-    skill: { name: "Ovo da Sorte", emoji: "🥚", kind: "heal_team", cooldown: 4, description: "Cura o time inteiro com energia vital." },
+    skill: { name: "Ovo da Sorte", emoji: "🥚", kind: "team_heal", cooldown: 4, description: "Cura o time inteiro com energia vital." },
   },
   tangela: {
     id: "tangela", name: "Tangela", element: "grass", role: "tank", rarity: "rare",
@@ -1693,7 +1703,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Chifre Furioso", emoji: "🦄", kind: "double_strike", cooldown: 3, description: "Duas estocadas rápidas com o chifre." },
   },
   seaking: {
-    id: "seaking", name: "Seaking", element: "water", role: "dps", rarity: "superrare",
+    id: "seaking", name: "Seaking", element: "water", role: "dps", rarity: "super_rare",
     emoji: "🐠⚔️", image: seakingImg, hidden: true,
     description: "Perfura rochas com o chifre para fazer seu ninho.",
     base: { hp: 62, atk: 28, def: 18, spd: 20, int: 10 },
@@ -2599,6 +2609,16 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   hitmonchan: ["pedra"],
   lickitung: ["floresta"],
   koffing: ["sombras"],
+  weezing: ["sombras"],
+  rhyhorn: ["pedra"],
+  rhydon: ["pedra"],
+  chansey: ["floresta"],
+  tangela: ["floresta"],
+  kangaskhan: ["pedra"],
+  horsea: ["abyssal"],
+  seadra: ["abyssal"],
+  goldeen: ["abyssal"],
+  seaking: ["abyssal"],
 };
 
 export function getSpeciesCategories(speciesId: string): Category[] {
