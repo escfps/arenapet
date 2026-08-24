@@ -240,6 +240,7 @@ import vulpixShinyImg from "@/assets/monsters/shiny/vulpix.png";
 import ninetalesShinyImg from "@/assets/monsters/shiny/ninetales.png";
 import jigglypuffShinyImg from "@/assets/monsters/shiny/jigglypuff.png";
 import wigglytuffShinyImg from "@/assets/monsters/shiny/wigglytuff.png";
+import dugtrioShinyImg from "@/assets/monsters/shiny/dugtrio.png";
 import metapodImg from "@/assets/monsters/metapod.png";
 import butterfreeImg from "@/assets/monsters/butterfree.png";
 import weedleImg from "@/assets/monsters/weedle.png";
@@ -1342,7 +1343,7 @@ export const SPECIES: Record<string, Species> = {
   },
   dugtrio: {
     id: "dugtrio", name: "Dugtrio", element: "earth", role: "assassin", rarity: "super_rare",
-    emoji: "🕳️🕳️🕳️", image: dugtrioImg, hidden: true,
+    emoji: "🕳️🕳️🕳️", image: dugtrioImg, shinyImage: dugtrioShinyImg, hidden: true,
     description: "Trio de tocas que perfura o time inteiro.",
     base: { hp: 54, atk: 22, def: 12, spd: 24, int: 9 },
     skill: { name: "Tri-Perfuração", emoji: "⛏️", kind: "aoe_strike_def_down", cooldown: 4, description: "Perfura todos os inimigos e reduz a DEF." },
