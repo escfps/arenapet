@@ -2500,7 +2500,7 @@ export function rollChest(tier: ChestTier, forceRarity?: Rarity): ChestReward {
 // Pity system: tier => { guaranteed rarities (any of), limit }
 export const CHEST_PITY: Partial<Record<ChestTier, { rarities: Rarity[]; limit: number }>> = {
   silver: { rarities: ["rare"], limit: 10 },
-  gold: { rarities: ["epic"], limit: 20 },
+  gold: { rarities: ["super_rare"], limit: 20 },
   legendary: { rarities: ["legendary", "mythic"], limit: 10 },
 };
 
