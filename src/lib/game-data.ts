@@ -119,6 +119,16 @@ import golemImg from "@/assets/monsters/golem.png";
 import ponytaImg from "@/assets/monsters/ponyta.png";
 import rapidashImg from "@/assets/monsters/rapidash.png";
 import slowpokeImg from "@/assets/monsters/slowpoke.png";
+import slowbroImg from "@/assets/monsters/slowbro.png";
+import magnemiteImg from "@/assets/monsters/magnemite.png";
+import magnetonImg from "@/assets/monsters/magneton.png";
+import farfetchdImg from "@/assets/monsters/farfetchd.png";
+import doduoImg from "@/assets/monsters/doduo.png";
+import dodrioImg from "@/assets/monsters/dodrio.png";
+import seelImg from "@/assets/monsters/seel.png";
+import dewgongImg from "@/assets/monsters/dewgong.png";
+import grimerImg from "@/assets/monsters/grimer.png";
+import mukImg from "@/assets/monsters/muk.png";
 import alakazamImg from "@/assets/monsters/alakazam.png";
 import gastlyImg from "@/assets/monsters/gastly.png";
 import haunterImg from "@/assets/monsters/haunter.png";
@@ -1413,6 +1423,76 @@ export const SPECIES: Record<string, Species> = {
     base: { hp: 42, atk: 10, def: 12, spd: 5, int: 9 },
     skill: { name: "Bocejo Lento", emoji: "💤", kind: "sleep_strike", cooldown: 4, description: "Bocejo contagioso que pode fazer o alvo dormir." },
   },
+  slowbro: {
+    id: "slowbro", name: "Slowbro", element: "water", role: "tank", rarity: "legendary",
+    emoji: "🐚🧠", image: slowbroImg, hidden: true,
+    description: "Com a concha na cauda, ficou surpreendentemente resistente.",
+    base: { hp: 92, atk: 22, def: 28, spd: 9, int: 26 },
+    skill: { name: "Concha Protetora", emoji: "🐚", kind: "turtle_shell", cooldown: 4, description: "Escudo grosso e redução do dano recebido." },
+  },
+  magnemite: {
+    id: "magnemite", name: "Magnemite", element: "electric", role: "mage", rarity: "common",
+    emoji: "🧲", image: magnemiteImg, hidden: true,
+    description: "Ímã flutuante carregado de eletricidade.",
+    base: { hp: 30, atk: 10, def: 11, spd: 12, int: 16 },
+    skill: { name: "Choque Magnético", emoji: "⚡", kind: "chain_lightning", cooldown: 4, description: "Descarga que salta entre inimigos." },
+  },
+  magneton: {
+    id: "magneton", name: "Magneton", element: "electric", role: "mage", rarity: "legendary",
+    emoji: "🧲⚡", image: magnetonImg, hidden: true,
+    description: "Três ímãs unidos gerando campo elétrico brutal.",
+    base: { hp: 70, atk: 22, def: 22, spd: 17, int: 32 },
+    skill: { name: "Tempestade Magnética", emoji: "🌩️", kind: "lightning_charge", cooldown: 5, description: "Investida elétrica que paralisa o alvo." },
+  },
+  farfetchd: {
+    id: "farfetchd", name: "Farfetch'd", element: "grass", role: "dps", rarity: "rare",
+    emoji: "🦆🥬", image: farfetchdImg, hidden: true,
+    description: "Espadachim que luta com um alho-poró.",
+    base: { hp: 46, atk: 20, def: 12, spd: 18, int: 10 },
+    skill: { name: "Corte de Alho-Poró", emoji: "🗡️", kind: "guaranteed_crit", cooldown: 3, description: "Golpe certeiro no inimigo mais fraco." },
+  },
+  doduo: {
+    id: "doduo", name: "Doduo", element: "grass", role: "dps", rarity: "common",
+    emoji: "🐦🐦", image: doduoImg, hidden: true,
+    description: "Duas cabeças, o dobro de bicadas.",
+    base: { hp: 34, atk: 14, def: 8, spd: 18, int: 6 },
+    skill: { name: "Bicada Dupla", emoji: "🐤", kind: "double_strike", cooldown: 3, description: "Duas bicadas rápidas." },
+  },
+  dodrio: {
+    id: "dodrio", name: "Dodrio", element: "grass", role: "dps", rarity: "super_rare",
+    emoji: "🐦‍⬛", image: dodrioImg, hidden: true,
+    description: "Três cabeças correndo a 60 km/h.",
+    base: { hp: 60, atk: 26, def: 14, spd: 28, int: 8 },
+    skill: { name: "Fúria Tripla", emoji: "💨", kind: "berserker_rage", cooldown: 4, description: "Frenesi de bicadas que aumenta o ATK." },
+  },
+  seel: {
+    id: "seel", name: "Seel", element: "water", role: "tank", rarity: "common",
+    emoji: "🦭", image: seelImg, hidden: true,
+    description: "Foca brincalhona das águas geladas.",
+    base: { hp: 40, atk: 11, def: 12, spd: 10, int: 9 },
+    skill: { name: "Sopro Gélido", emoji: "❄️", kind: "freeze_strike", cooldown: 4, description: "Sopro frio com chance de congelar." },
+  },
+  dewgong: {
+    id: "dewgong", name: "Dewgong", element: "water", role: "tank", rarity: "legendary",
+    emoji: "🦭❄️", image: dewgongImg, hidden: true,
+    description: "Elegante e letal sob o gelo do ártico.",
+    base: { hp: 88, atk: 24, def: 26, spd: 16, int: 22 },
+    skill: { name: "Prisão de Gelo", emoji: "🧊", kind: "frost_pounce", cooldown: 4, description: "Ataque crítico gélido com chance de congelar." },
+  },
+  grimer: {
+    id: "grimer", name: "Grimer", element: "shadow", role: "tank", rarity: "common",
+    emoji: "🟣", image: grimerImg, hidden: true,
+    description: "Lodo vivo nascido do esgoto.",
+    base: { hp: 44, atk: 12, def: 11, spd: 7, int: 8 },
+    skill: { name: "Lodo Tóxico", emoji: "🧪", kind: "bleed_dot", cooldown: 3, description: "Cobre o alvo de lodo causando dano contínuo." },
+  },
+  muk: {
+    id: "muk", name: "Muk", element: "shadow", role: "tank", rarity: "legendary",
+    emoji: "☣️", image: mukImg, hidden: true,
+    description: "Montanha de lodo venenoso que corrói tudo.",
+    base: { hp: 94, atk: 27, def: 24, spd: 10, int: 14 },
+    skill: { name: "Maré de Veneno", emoji: "☣️", kind: "thorn_burst", cooldown: 5, description: "Espalha veneno atingindo todos os inimigos." },
+  },
 };
 
 
@@ -2283,6 +2363,16 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   ponyta: ["fogo"],
   rapidash: ["fogo"],
   slowpoke: ["abyssal"],
+  slowbro: ["abyssal"],
+  magnemite: ["relampago"],
+  magneton: ["relampago"],
+  farfetchd: ["aves"],
+  doduo: ["aves"],
+  dodrio: ["aves"],
+  seel: ["abyssal"],
+  dewgong: ["abyssal"],
+  grimer: ["sombras"],
+  muk: ["sombras"],
 };
 
 export function getSpeciesCategories(speciesId: string): Category[] {
