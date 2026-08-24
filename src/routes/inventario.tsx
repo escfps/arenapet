@@ -65,6 +65,7 @@ function InventoryPage() {
         setChestResult(res);
       }
       await load();
+      window.dispatchEvent(new Event("profile:reload"));
     } finally {
       setBusy(null);
     }
