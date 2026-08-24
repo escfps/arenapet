@@ -389,6 +389,14 @@ function PatioPage() {
                       >
                         ×
                       </button>
+                      {(m as any).is_shiny === true && (
+                        <span
+                          title="✨ Shiny • +10% status • Aura Prismática"
+                          className="absolute top-8 right-1 z-10 w-6 h-6 rounded-full bg-gradient-to-br from-yellow-200 via-amber-300 to-yellow-500 border border-white/70 text-[12px] leading-none flex items-center justify-center shadow-lg animate-pulse pointer-events-none"
+                        >
+                          ✨
+                        </span>
+                      )}
                       <div className="absolute inset-x-0 bottom-6 flex items-center justify-between px-1 z-10 gap-1">
                         {canMoveLeft ? (
                           <button

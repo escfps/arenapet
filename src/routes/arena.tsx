@@ -1116,6 +1116,9 @@ function TeamPanel({ title, team, side, energies }: { title: string; team: FullM
               <img src={speciesImage(m.species, (m as any).is_shiny === true)} alt="" className="h-14 w-14 object-contain drop-shadow-lg" style={{ filter: `${skinFilter(m.skin)} ${shinyFallbackFilter(m.species, (m as any).is_shiny === true)}`.trim() }} />
               <div className="flex-1 min-w-0">
                 <div className="font-bold text-sm truncate flex items-center gap-1 flex-wrap">
+                  {(m as any).is_shiny === true && (
+                    <span title="✨ Shiny • +10% status" className="px-1.5 py-0.5 rounded bg-gradient-to-r from-yellow-200 via-amber-300 to-yellow-500 text-amber-950 text-[9px] font-extrabold shadow animate-pulse">✨</span>
+                  )}
                   {m.name}
                   <span className={`px-1.5 py-0.5 rounded ${ROLE_INFO[sp.role].color} text-[9px]`}>
                     {ROLE_INFO[sp.role].emoji} {ROLE_INFO[sp.role].name}
