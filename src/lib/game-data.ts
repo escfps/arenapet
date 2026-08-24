@@ -70,6 +70,8 @@ import pikachuImg from "@/assets/monsters/pikachu.png";
 import alakazamImg from "@/assets/monsters/alakazam.png";
 import gastlyImg from "@/assets/monsters/gastly.png";
 import haunterImg from "@/assets/monsters/haunter.png";
+import abraImg from "@/assets/monsters/abra.png";
+import kadabraImg from "@/assets/monsters/kadabra.png";
 import brasagartoImg from "@/assets/monsters/brasagarto.png";
 import cascatorugaImg from "@/assets/monsters/cascatoruga.png";
 import folhassauroImg from "@/assets/monsters/folhassauro.png";
