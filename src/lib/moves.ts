@@ -67,13 +67,14 @@ export function typeMultiplier(moveType: PokeType, defTypes: PokeType[]): number
 }
 
 export function effectivenessLabel(mult: number): string {
-  if (mult === 0) return "Não afeta";
-  if (mult >= 4) return "Super efetivo x4!";
-  if (mult >= 2) return "Super efetivo!";
-  if (mult <= 0.25) return "Quase não afeta";
-  if (mult < 1) return "Pouco efetivo";
-  return "Neutro";
+  if (mult === 0) return "🚫 Imune";
+  if (mult >= 4) return "💥💥 Super efetivo (4x)";
+  if (mult >= 2) return "💥 Super efetivo (2x)";
+  if (mult <= 0.25) return "🛡️🛡️ Muito resistido (0.25x)";
+  if (mult < 1) return "🛡️ Resistido (0.5x)";
+  return "➖ Normal";
 }
+
 
 // ===== Efeitos secundários =====
 export type MoveEffectKind =
