@@ -13,6 +13,7 @@ const TIER_GLOW: Record<ChestTier, string> = {
   silver: "from-slate-300/40 via-slate-100/30 to-slate-400/40",
   gold: "from-yellow-400/50 via-amber-300/40 to-yellow-500/50",
   legendary: "from-fuchsia-500/50 via-purple-400/40 to-indigo-500/50",
+  mythic: "from-cyan-400/50 via-fuchsia-400/40 to-amber-300/50",
 };
 
 const TIER_RING: Record<ChestTier, string> = {
@@ -20,6 +21,7 @@ const TIER_RING: Record<ChestTier, string> = {
   silver: "ring-slate-200/70",
   gold: "ring-yellow-300/80",
   legendary: "ring-fuchsia-400/90",
+  mythic: "ring-cyan-300/90",
 };
 
 export function ChestRewardPopup({

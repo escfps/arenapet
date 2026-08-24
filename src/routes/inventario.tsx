@@ -43,7 +43,7 @@ function InventoryPage() {
   }
 
   const rations = items["ration"] ?? 0;
-  const chestTiers: ChestTier[] = ["wood", "silver", "gold", "legendary"];
+  const chestTiers: ChestTier[] = ["wood", "silver", "gold", "legendary", "mythic"];
 
   async function openOne(tier: ChestTier) {
     if (!userId || !profile) return;
