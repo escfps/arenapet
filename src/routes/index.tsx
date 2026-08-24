@@ -458,6 +458,30 @@ function PatioPage() {
                 </div>
               </div>
               <div className="space-y-1">
+                <div className="text-white/70 text-[10px] font-extrabold uppercase tracking-wider px-1">Shiny</div>
+                <div className="flex flex-wrap gap-1.5">
+                  {([
+                    { v: "all", label: "Todos" },
+                    { v: "shiny", label: "✨ Só shiny" },
+                    { v: "normal", label: "Só normais" },
+                  ] as const).map(({ v, label }) => (
+                    <button
+                      key={v}
+                      onClick={() => setShinyFilter(v)}
+                      className={`px-3 py-1 rounded-full text-[11px] font-extrabold transition ${
+                        shinyFilter === v
+                          ? v === "shiny"
+                            ? "bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-400 text-amber-950 ring-2 ring-white"
+                            : "bg-yellow-400 text-yellow-950"
+                          : "bg-white/10 text-white hover:bg-white/20"
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="space-y-1">
                 <div className="text-white/70 text-[10px] font-extrabold uppercase tracking-wider px-1">Elemento</div>
                 <div className="flex flex-wrap gap-1.5">
                   <button
