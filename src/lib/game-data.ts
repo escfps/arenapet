@@ -221,6 +221,15 @@ import pidgeottoShinyImg from "@/assets/monsters/shiny/pidgeotto.png";
 import pidgeotShinyImg from "@/assets/monsters/shiny/pidgeot.png";
 import rattataShinyImg from "@/assets/monsters/shiny/rattata.png";
 import raticateShinyImg from "@/assets/monsters/shiny/raticate.png";
+import fearowShinyImg from "@/assets/monsters/shiny/fearow.png";
+import ekansShinyImg from "@/assets/monsters/shiny/ekans.png";
+import arbokShinyImg from "@/assets/monsters/shiny/arbok.png";
+import pikachuShinyImg from "@/assets/monsters/shiny/pikachu.png";
+import raichuShinyImg from "@/assets/monsters/shiny/raichu.png";
+import sandshrewShinyImg from "@/assets/monsters/shiny/sandshrew.png";
+import sandslashShinyImg from "@/assets/monsters/shiny/sandslash.png";
+import nidoranFShinyImg from "@/assets/monsters/shiny/nidoran_f.png";
+import nidorinaShinyImg from "@/assets/monsters/shiny/nidorina.png";
 import metapodImg from "@/assets/monsters/metapod.png";
 import butterfreeImg from "@/assets/monsters/butterfree.png";
 import weedleImg from "@/assets/monsters/weedle.png";
@@ -804,7 +813,7 @@ export const SPECIES: Record<string, Species> = {
   // ===== NOVA LINHAGEM (ocultos até liberação) =====
   pikachu: {
     id: "pikachu", name: "Pikachu", element: "electric", role: "assassin", rarity: "super_rare",
-    emoji: "⚡🐭", image: pikachuImg, hidden: true,
+    emoji: "⚡🐭", image: pikachuImg, shinyImage: pikachuShinyImg, hidden: true,
     description: "Roedor elétrico de bochechas faiscantes. Solta descargas devastadoras antes que o inimigo pisque.",
     base: { hp: 64, atk: 15, def: 9, spd: 20, int: 12 },
     skill: { name: "Choque do Trovão", emoji: "⚡", kind: "lightning_charge", cooldown: 3, description: "Investida elétrica no inimigo mais forte (2× dano) + 60% de chance de ⚡ paralisar. PASSIVA: ataque básico tem 30% de paralisar." },
@@ -1127,56 +1136,56 @@ export const SPECIES: Record<string, Species> = {
   },
   fearow: {
     id: "fearow", name: "Fearow", element: "grass", role: "assassin", rarity: "super_rare",
-    emoji: "🪶🗡️", image: fearowImg, hidden: true,
+    emoji: "🪶🗡️", image: fearowImg, shinyImage: fearowShinyImg, hidden: true,
     description: "Ave de bico longo e agressiva. Perfura o alvo mais fraco em investidas certeiras.",
     base: { hp: 60, atk: 23, def: 12, spd: 24, int: 10 },
     skill: { name: "Perfurar", emoji: "🗡️", kind: "execute", cooldown: 3, description: "Ataca o inimigo com menos HP causando dano extra." },
   },
   ekans: {
     id: "ekans", name: "Ekans", element: "grass", role: "assassin", rarity: "common",
-    emoji: "🐍☠️", image: ekansImg, hidden: true,
+    emoji: "🐍☠️", image: ekansImg, shinyImage: ekansShinyImg, hidden: true,
     description: "Serpente venenosa que se enrola para emboscar. O veneno faz o trabalho no tempo dele.",
     base: { hp: 32, atk: 11, def: 7, spd: 15, int: 8 },
     skill: { name: "Picada Venenosa", emoji: "☠️", kind: "bleed_dot", cooldown: 3, description: "Injeta veneno no alvo, causando dano por 3 turnos." },
   },
   arbok: {
     id: "arbok", name: "Arbok", element: "grass", role: "assassin", rarity: "rare",
-    emoji: "🐍💀", image: arbokImg, hidden: true,
+    emoji: "🐍💀", image: arbokImg, shinyImage: arbokShinyImg, hidden: true,
     description: "Cobra intimidadora com o padrão de terror no capuz. Aperta o alvo e injeta veneno letal.",
     base: { hp: 52, atk: 19, def: 12, spd: 18, int: 10 },
     skill: { name: "Aperto Venenoso", emoji: "💀", kind: "bleed_dot", cooldown: 3, description: "Enrola no alvo e aplica veneno forte por 3 turnos." },
   },
   raichu: {
     id: "raichu", name: "Raichu", element: "electric", role: "assassin", rarity: "legendary",
-    emoji: "⚡🐭", image: raichuImg, hidden: true,
+    emoji: "⚡🐭", image: raichuImg, shinyImage: raichuShinyImg, hidden: true,
     description: "Evolução elétrica. A cauda descarrega no chão e a corrente atravessa o campo inteiro.",
     base: { hp: 82, atk: 21, def: 14, spd: 24, int: 18 },
     skill: { name: "Trovão", emoji: "🌩️", kind: "chain_lightning", cooldown: 4, description: "Descarga que salta entre os inimigos, com chance de ⚡ paralisar." },
   },
   sandshrew: {
     id: "sandshrew", name: "Sandshrew", element: "earth", role: "tank", rarity: "common",
-    emoji: "🏜️🛡️", image: sandshrewImg, hidden: true,
+    emoji: "🏜️🛡️", image: sandshrewImg, shinyImage: sandshrewShinyImg, hidden: true,
     description: "Tatu do deserto. Se enrola numa bola blindada e deixa o inimigo se cansar.",
     base: { hp: 38, atk: 10, def: 12, spd: 10, int: 5 },
     skill: { name: "Enrolar", emoji: "🛡️", kind: "turtle_shell", cooldown: 3, description: "Se enrola numa bola: reduz o dano recebido por 2 turnos e devolve parte do dano." },
   },
   sandslash: {
     id: "sandslash", name: "Sandslash", element: "earth", role: "dps", rarity: "rare",
-    emoji: "🏜️🗡️", image: sandslashImg, hidden: true,
+    emoji: "🏜️🗡️", image: sandslashImg, shinyImage: sandslashShinyImg, hidden: true,
     description: "Espinhos nas costas e garras enormes. Rola pelo campo cortando tudo no caminho.",
     base: { hp: 56, atk: 18, def: 16, spd: 14, int: 8 },
     skill: { name: "Garra Perfurante", emoji: "🗡️", kind: "heavy_strike", cooldown: 3, description: "Golpe pesado com as garras, ignorando parte da DEF." },
   },
   nidoran_f: {
     id: "nidoran_f", name: "Nidoran♀", element: "earth", role: "dps", rarity: "common",
-    emoji: "💠🐗", image: nidoranFImg, hidden: true,
+    emoji: "💠🐗", image: nidoranFImg, shinyImage: nidoranFShinyImg, hidden: true,
     description: "Pequena e territorial. As farpas carregam veneno suficiente pra assustar predadores.",
     base: { hp: 34, atk: 11, def: 9, spd: 12, int: 6 },
     skill: { name: "Farpa Tóxica", emoji: "💠", kind: "bleed_dot", cooldown: 3, description: "Espeta o alvo com farpas venenosas por 3 turnos." },
   },
   nidorina: {
     id: "nidorina", name: "Nidorina", element: "earth", role: "dps", rarity: "rare",
-    emoji: "💠🦏", image: nidorinaImg, hidden: true,
+    emoji: "💠🦏", image: nidorinaImg, shinyImage: nidorinaShinyImg, hidden: true,
     description: "Mais robusta e protetora. Ataca de chifre e aguenta pancada no lugar do time.",
     base: { hp: 54, atk: 17, def: 14, spd: 13, int: 9 },
     skill: { name: "Chifrada", emoji: "🦏", kind: "horn_charge", cooldown: 3, description: "Investida de chifre com dano aumentado." },
