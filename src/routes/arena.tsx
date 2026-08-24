@@ -13,6 +13,8 @@ import { toast, Toaster } from "sonner";
 import arenaBg from "@/assets/arena-bg.jpg";
 import { playSfx, startMusic, stopMusic } from "@/lib/sound";
 import { ChestRewardPopup, type PendingChest } from "@/components/ChestRewardPopup";
+import { useServerFn } from "@tanstack/react-start";
+import { arenaStart, arenaFinish } from "@/lib/arena.functions";
 
 export const Route = createFileRoute("/arena")({
   component: ArenaPage,
@@ -62,7 +64,9 @@ async function fetchOpponentProfiles(ownerIds: string[]) {
 
 function ArenaPage() {
   const navigate = useNavigate();
-  const { userId, profile, patch, loading } = useProfile();
+  const { userId, profile, reload, loading } = useProfile();
+  const startFight = useServerFn(arenaStart);
+  const finishFight = useServerFn(arenaFinish);
   const [myTeam, setMyTeam] = useState<FullMonster[]>([]);
   const [opponent, setOpponent] = useState<{ ownerId: string; ownerName: string; arenaPoints: number; team: FullMonster[] } | null>(null);
   const [searching, setSearching] = useState(false);
@@ -80,10 +84,13 @@ function ArenaPage() {
   const winnerRef = useRef<"team_a" | "team_b" | "draw" | null>(null);
   const battleTeamsRef = useRef<{ a: ReturnType<typeof toBattleMonster>[]; b: ReturnType<typeof toBattleMonster>[] } | null>(null);
   const [ranks, setRanks] = useState<{ mine: number | null; opp: number | null }>({ mine: null, opp: null });
+  const shownCountRef = useRef(0);
+  const forfeitRef = useRef(false);
   const battleFinished = !!battleLog && (shownLog.length >= battleLog.length || (battleTimer <= 0 && playbackStoppedRef.current));
 
   // mantém winnerRef sincronizado com o estado (apply lê daqui)
   useEffect(() => { winnerRef.current = winner; }, [winner]);
+  useEffect(() => { shownCountRef.current = shownLog.length; }, [shownLog.length]);
 
   // Compute ranking positions (1-based) when fight starts
   useEffect(() => {
@@ -122,6 +129,7 @@ function ArenaPage() {
       const apply = pendingApplyRef.current;
       if (!apply) return;
       pendingApplyRef.current = null;
+      forfeitRef.current = true;
       winnerRef.current = "team_b";
       playbackStoppedRef.current = true;
       void apply();
@@ -427,10 +435,6 @@ function ArenaPage() {
     const chosenOpp = { ownerId: chosen, ownerName: byOwner[chosen].username, arenaPoints: byOwner[chosen].arenaPoints, team: byOwner[chosen].team.slice(0, 3) };
     setOpponent(chosenOpp);
     setSearching(false);
-    // Bots têm energia ilimitada — recarrega antes da batalha pra nunca travarem
-    if (profById.get(chosen)?.is_bot) {
-      void supabase.from("monsters").update({ battle_energy: 24, battle_energy_at: new Date().toISOString(), hunger: 100 }).eq("owner_id", chosen);
-    }
     // Já começa a partida imediatamente — não dá pra rebuscar oponente
     void fight(chosenOpp);
   }
@@ -455,264 +459,82 @@ function ArenaPage() {
       return;
     }
 
-    // Consume 1 battle energy + 1~3 hunger from each team pet
-    const hungerLoss = myTeam.map(() => 1 + Math.floor(Math.random() * 3));
-    await Promise.all(myTeam.map(async (m, i) => {
-      const e = teamEnergies[i];
-      const newEnergy = Math.max(0, e.energy - 1);
-      const newHunger = Math.max(0, (m.hunger ?? 100) - hungerLoss[i]);
-      await supabase
-        .from("monsters")
-        .update({ battle_energy: newEnergy, battle_energy_at: e.nextStoredAt, hunger: newHunger })
-        .eq("id", m.id);
-    }));
-    // Reflect locally so the UI updates instantly
-    setMyTeam((prev) => prev.map((m, i) => ({
-      ...m,
-      battle_energy: Math.max(0, teamEnergies[i].energy - 1),
-      battle_energy_at: teamEnergies[i].nextStoredAt,
-      hunger: Math.max(0, (m.hunger ?? 100) - hungerLoss[i]),
-    })));
+    let res: Awaited<ReturnType<typeof startFight>>;
+    try {
+      res = await startFight({ data: { opponentId: opp.ownerId } });
+    } catch (e: any) {
+      toast.error(e?.message ?? "Não foi possível iniciar a batalha.");
+      return;
+    }
 
-    const a = myTeam.map(toBattleMonster);
-    const b = opp.team.map(toBattleMonster);
-    const result = simulateBattle(a, b);
+    const a = res.teamA as ReturnType<typeof toBattleMonster>[];
+    const b = res.teamB as ReturnType<typeof toBattleMonster>[];
     battleTeamsRef.current = { a, b };
+    setMyTeam(res.myTeam as unknown as FullMonster[]);
+    setOpponent({
+      ownerId: res.opponent.ownerId,
+      ownerName: res.opponent.ownerName,
+      arenaPoints: res.opponent.arenaPoints,
+      team: res.opponent.team as unknown as FullMonster[],
+    });
 
-    // Inicia a animação ANTES de aplicar resultado, pra não revelar o vencedor
-    // pelas atualizações de vitórias/derrotas/recompensas no HUD.
+    const promoBefore = promo;
+    forfeitRef.current = false;
     playbackStoppedRef.current = false;
     setBattleTimer(150);
     setShownLog([]);
-    setBattleLog(result.log);
-    setWinner(result.winner);
-    winnerRef.current = result.winner;
+    setBattleLog(res.log as BattleLogEntry[]);
+    setWinner(res.winner as "team_a" | "team_b" | "draw");
+    winnerRef.current = res.winner as "team_a" | "team_b" | "draw";
 
-    // Aplica HUD, recompensas e gravações no DB somente quando a animação terminar.
-    // Lê o vencedor do ref no momento de aplicar — assim respeita o recálculo
-    // que acontece quando o cronômetro de 2min estoura antes do fim da animação.
+    // Todo o cálculo de recompensa acontece no servidor quando a animação termina.
     pendingApplyRef.current = async () => {
-      const finalWinner = winnerRef.current ?? result.winner;
-      const isDraw = finalWinner === "draw";
-      const won = finalWinner === "team_a";
-      const rew = isDraw
-        ? { coins: 0, xp: 0 }
-        : computeRewards(profile.level, won, isVip(profile.vip_until));
-      const gemWin = !isDraw && Math.random() < (won ? 0.5 : 0.25) ? 1 : 0;
-
-      // Arena points + promo series logic
-      const oldPoints = profile.arena_points ?? 0;
-      const promoBefore = promo;
-      const myRoll = rollArenaPoints(oldPoints);
-      const oppRoll = rollArenaPoints(opp.arenaPoints);
-      const myWinPts = myRoll.win;
-      const myLossPts = myRoll.loss;
-      const oppWinPts = oppRoll.win;
-      const oppLossPts = oppRoll.loss;
-      let newPoints = oldPoints;
-      let delta = 0;
-      let promoMsg: string | undefined;
-      let nextPromo: PromoSeries | null = promo;
-      const levelUpToasts: Array<() => void> = [];
-      let rationToast: (() => void) | null = null;
-
-      if (isDraw) {
-        promoMsg = "🤝 Empate — pontos preservados";
-      } else {
-        if (promo) {
-          const updated: PromoSeries = { ...promo, wins: promo.wins + (won ? 1 : 0), losses: promo.losses + (won ? 0 : 1) };
-          const need = promoNeeded(promo.type);
-          if (updated.wins >= need) {
-            const b = divisionBounds(oldPoints);
-            newPoints = b ? b.end : oldPoints + 1;
-            delta = newPoints - oldPoints;
-            nextPromo = null;
-            promoMsg = promo.type === "bo5" ? "👑 SUBIU DE TIER!" : "🎉 Promovido!";
-          } else if (updated.losses >= need) {
-            newPoints = Math.max(0, oldPoints - 30);
-            delta = newPoints - oldPoints;
-            nextPromo = null;
-            promoMsg = "😢 Série de promoção fracassou";
-          } else {
-            nextPromo = updated;
-            promoMsg = `Série ${promo.type.toUpperCase()}: ${updated.wins}V ${updated.losses}D`;
-          }
-        } else {
-          delta = won ? myWinPts : -myLossPts;
-          newPoints = Math.max(0, oldPoints + delta);
-          const b = divisionBounds(oldPoints);
-          if (b && newPoints >= b.end) {
-            newPoints = b.end - 1;
-            delta = newPoints - oldPoints;
-            nextPromo = { wins: 0, losses: 0, type: b.nextIsTierUp ? "bo5" : "bo3", targetFrom: oldPoints };
-            promoMsg = b.nextIsTierUp ? "🔥 Série de tier MD5 iniciada!" : "⚡ Série de promoção MD3 iniciada!";
-          }
-        }
-
-        savePromo(userId, nextPromo);
-
-        const updates: Partial<typeof profile> = {
-          coins: profile.coins + rew.coins,
-          gems: (profile.gems ?? 0) + gemWin,
-          xp: profile.xp + rew.xp,
-          wins: profile.wins + (won ? 1 : 0),
-          losses: profile.losses + (won ? 0 : 1),
-          arena_points: newPoints,
-        };
-
-        let newXp = updates.xp!;
-        let newLevel = profile.level;
-        while (newXp >= xpForNextLevel(newLevel)) {
-          newXp -= xpForNextLevel(newLevel);
-          newLevel += 1;
-        }
-        updates.xp = newXp;
-        updates.level = newLevel;
-
-        if (newLevel > profile.level) {
-          const lvRew = rollLevelUpRewards(profile.level, newLevel);
-          updates.coins = (updates.coins ?? profile.coins) + lvRew.coins;
-          updates.gems = (updates.gems ?? (profile.gems ?? 0)) + lvRew.gems;
-          await patch(updates);
-          if (lvRew.rations > 0) {
-            const { data: rRow } = await supabase.from("inventory").select("quantity").eq("user_id", userId).eq("item_type", "ration").maybeSingle();
-            await supabase.from("inventory").upsert(
-              { user_id: userId, item_type: "ration", quantity: (rRow?.quantity ?? 0) + lvRew.rations },
-              { onConflict: "user_id,item_type" }
-            );
-          }
-          if (lvRew.petSpecies.length > 0) {
-            const rows = lvRew.petSpecies.map((sid) => {
-              const sp = SPECIES[sid];
-              return { owner_id: userId, species: sid, name: sp.name, ...starterMonsterStats(sid) };
-            });
-            await supabase.from("monsters").insert(rows);
-          }
-          const newChests: PendingChest[] = lvRew.chests.map((c, i) => ({
-            id: `lv-${Date.now()}-${i}`,
-            tier: c.tier,
-            label: `Level ${c.level}!`,
-            reward: c.reward,
-          }));
-          setChestQueue((q) => [...q, ...newChests]);
-          const parts: string[] = [];
-          if (lvRew.coins) parts.push(`🪙 ${lvRew.coins}`);
-          if (lvRew.gems) parts.push(`💎 ${lvRew.gems}`);
-          if (lvRew.rations) parts.push(`🍖 ${lvRew.rations}`);
-          if (lvRew.petSpecies.length) parts.push(`🥚 ${lvRew.petSpecies.length} pet${lvRew.petSpecies.length > 1 ? "s" : ""}`);
-          if (parts.length) levelUpToasts.push(() => toast(`Recompensas: ${parts.join(" • ")}`, { duration: 5000 }));
-        } else {
-          await patch(updates);
-        }
-
-        await supabase.rpc("apply_arena_defender_result", {
-          p_defender_id: opp.ownerId,
-          p_attacker_won: won,
-          p_win_pts: oppWinPts,
-          p_loss_pts: oppLossPts,
+      try {
+        const out = await finishFight({
+          data: {
+            sessionId: res.sessionId,
+            visibleTurns: forfeitRef.current ? 0 : shownCountRef.current,
+            forfeit: forfeitRef.current,
+            promo: promoBefore,
+          },
         });
 
-        const displayedAttackerDelta = isDraw ? 0 : (won ? myWinPts : -myLossPts);
-        const displayedDefenderDelta = isDraw ? 0 : (won ? -Math.min(oppLossPts, opp.arenaPoints) : oppWinPts);
-        void displayedAttackerDelta; void displayedDefenderDelta;
-        // Histórico de batalhas removido para reduzir carga no banco.
+        winnerRef.current = out.winner;
+        setWinner(out.winner);
+        savePromo(userId, (out.promoAfter ?? null) as PromoSeries | null);
+        setRewards({
+          coins: out.rewards.coins,
+          xp: out.rewards.xp,
+          gems: out.rewards.gems,
+          points: out.rewards.points,
+          oldPoints: out.rewards.oldPoints,
+          newPoints: out.rewards.newPoints,
+          promoMsg: out.rewards.promoMsg,
+          promoBefore,
+          promoAfter: (out.promoAfter ?? null) as PromoSeries | null,
+        });
+
+        if (out.chests.length > 0) {
+          setChestQueue((q) => [
+            ...q,
+            ...out.chests.map((c, i) => ({
+              id: `arena-${Date.now()}-${i}`,
+              tier: c.tier,
+              label: c.label,
+              reward: c.reward,
+            })) as PendingChest[],
+          ]);
+        }
+        for (const m of out.messages) toast(m, { duration: 5000 });
+        if (out.rationsDropped > 0) toast(`🍖 +${out.rationsDropped} ração!`, { icon: "🎁" });
+
+        await reload();
         if (typeof window !== "undefined") {
           window.dispatchEvent(new CustomEvent("tutorial:battle-finished"));
         }
-
-        if (won && Math.random() < 0.70) {
-          const dropped = 1 + Math.floor(Math.random() * 2);
-          const { data: foodRow } = await supabase
-            .from("inventory")
-            .select("quantity")
-            .eq("user_id", userId)
-            .eq("item_type", "ration")
-            .maybeSingle();
-          const current = foodRow?.quantity ?? 0;
-          await supabase
-            .from("inventory")
-            .upsert(
-              { user_id: userId, item_type: "ration", quantity: current + dropped },
-              { onConflict: "user_id,item_type" }
-            );
-          rationToast = () => toast(`🍖 +${dropped} ração!`, { icon: "🎁" });
-        }
-
-        const oldTierName = getTier(oldPoints).name;
-        const newTierName = getTier(newPoints).name;
-        const newTierIdx = tierRankIndex(newTierName);
-        const highest = (profile as { highest_tier_rank?: number }).highest_tier_rank ?? 0;
-        if (oldTierName !== newTierName && newTierIdx > highest) {
-          const chestCounts = tierPromotionChests(newTierName);
-          const tiersToRoll: Array<"silver" | "gold" | "legendary"> = [];
-          for (let i = 0; i < chestCounts.silver; i++) tiersToRoll.push("silver");
-          for (let i = 0; i < chestCounts.gold; i++) tiersToRoll.push("gold");
-          for (let i = 0; i < chestCounts.legendary; i++) tiersToRoll.push("legendary");
-
-          if (tiersToRoll.length > 0) {
-            let bonusCoins = 0, bonusGems = 0, bonusRations = 0;
-            const bonusPets: string[] = [];
-            const tierChests: PendingChest[] = [];
-            for (const tk of tiersToRoll) {
-              const r = rollChest(tk);
-              bonusCoins += r.coins;
-              bonusGems += r.gems;
-              bonusRations += r.rations;
-              if (r.petSpecies) bonusPets.push(r.petSpecies);
-              tierChests.push({
-                id: `tier-${Date.now()}-${tierChests.length}`,
-                tier: tk,
-                label: `Promoção pra ${newTierName}!`,
-                reward: r,
-              });
-            }
-            setChestQueue((q) => [...q, ...tierChests]);
-
-            const { data: freshProfile } = await supabase
-              .from("profiles")
-              .select("coins,gems")
-              .eq("id", userId)
-              .maybeSingle();
-            await supabase
-              .from("profiles")
-              .update({
-                coins: (freshProfile?.coins ?? 0) + bonusCoins,
-                gems: (freshProfile?.gems ?? 0) + bonusGems,
-              })
-              .eq("id", userId);
-
-            if (bonusRations > 0) {
-              const { data: rRow } = await supabase.from("inventory").select("quantity").eq("user_id", userId).eq("item_type", "ration").maybeSingle();
-              await supabase.from("inventory").upsert(
-                { user_id: userId, item_type: "ration", quantity: (rRow?.quantity ?? 0) + bonusRations },
-                { onConflict: "user_id,item_type" }
-              );
-            }
-
-            if (bonusPets.length > 0) {
-              const rows = bonusPets.map((sid) => {
-                const sp = SPECIES[sid];
-                return { owner_id: userId, species: sid, name: sp.name, ...starterMonsterStats(sid) };
-              });
-              await supabase.from("monsters").insert(rows);
-            }
-
-            const chestLabel = tiersToRoll.map((tk) => CHESTS[tk].emoji).join(" ");
-            levelUpToasts.push(() => toast.success(`👑 Promoção pra ${newTierName}! Baús: ${chestLabel}`, { duration: 5000 }));
-            const parts: string[] = [];
-            if (bonusCoins) parts.push(`🪙 ${bonusCoins}`);
-            if (bonusGems) parts.push(`💎 ${bonusGems}`);
-            if (bonusRations) parts.push(`🍖 ${bonusRations}`);
-            if (bonusPets.length) parts.push(`🥚 ${bonusPets.length} pet${bonusPets.length > 1 ? "s" : ""}`);
-            if (parts.length) levelUpToasts.push(() => toast(`Recompensas de tier: ${parts.join(" • ")}`, { duration: 6000 }));
-          }
-          await supabase.from("profiles").update({ highest_tier_rank: newTierIdx }).eq("id", userId);
-        }
+      } catch (e: any) {
+        toast.error(e?.message ?? "Erro ao registrar a batalha.");
       }
-
-      setRewards({ ...rew, gems: gemWin, points: delta, oldPoints, newPoints, promoMsg, promoBefore, promoAfter: nextPromo });
-      levelUpToasts.forEach((fn) => fn());
-      if (rationToast) rationToast();
     };
   }
 
