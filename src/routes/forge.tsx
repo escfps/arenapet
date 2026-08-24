@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { SPECIES, ELEMENT_COLORS, RARITY_INFO, MAX_RANK, rankStars, RANK_MULT } from "@/lib/game-data";
+import { SPECIES, ELEMENT_COLORS, RARITY_INFO, MAX_RANK, rankStars, RANK_MULT, speciesImage, shinyFallbackFilter } from "@/lib/game-data";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
 import { toast, Toaster } from "sonner";
@@ -19,6 +19,7 @@ type ForgeMonster = {
   name: string;
   rank: number;
   in_team: boolean;
+  is_shiny?: boolean | null;
 };
 
 function ForgePage() {
@@ -31,7 +32,7 @@ function ForgePage() {
     if (!userId) return;
     const { data } = await supabase
       .from("monsters")
-      .select("id,owner_id,species,name,rank,in_team")
+      .select("id,owner_id,species,name,rank,in_team,is_shiny")
       .eq("owner_id", userId)
       .order("rank", { ascending: false });
     if (data) setMonsters(data as ForgeMonster[]);
@@ -67,8 +68,11 @@ function ForgePage() {
       toast.error("Tire os bichinhos do time antes de fundir!");
       return;
     }
-    const keep = available[0];
-    const consume = available[1];
+    // Preserva sempre o SHINY: shiny vira o "keep", não-shiny é consumido primeiro.
+    const shinySorted = [...available].sort((a, b) => Number(b.is_shiny === true) - Number(a.is_shiny === true));
+    const keep = shinySorted[0];
+    const consume = [...shinySorted].reverse().find((m) => m.id !== keep.id)!;
+    const keepShiny = keep.is_shiny === true || consume.is_shiny === true;
     const sp = SPECIES[group.species];
     const newRank = group.rank + 1;
 
@@ -82,14 +86,14 @@ function ForgePage() {
     }
     const { error: updErr } = await supabase
       .from("monsters")
-      .update({ rank: newRank })
+      .update({ rank: newRank, is_shiny: keepShiny })
       .eq("id", keep.id);
     setFusing(false);
     if (updErr) {
       toast.error("Erro ao upar rank: " + updErr.message);
       return;
     }
-    toast.success(`🔨 ${keep.name} subiu para ${rankStars(newRank)}!`);
+    toast.success(`${keepShiny ? "✨" : "🔨"} ${keep.name} subiu para ${rankStars(newRank)}!${keepShiny ? " (Shiny mantido)" : ""}`);
     load();
   }
 
@@ -150,13 +154,15 @@ function FuseCard({ group, onFuse, disabled }: { group: { species: string; rank:
   if (!sp) return null;
   const inTeam = group.list.filter((m) => m.in_team).length;
   const available = group.list.length - inTeam;
+  const hasShiny = group.list.some((m) => m.is_shiny === true);
   const canFuse = available >= 2 && group.rank < MAX_RANK;
   return (
     <div className={`rounded-xl bg-gradient-to-br ${ELEMENT_COLORS[sp.element]} p-3 shadow-xl ring-2 ${RARITY_INFO[sp.rarity].ringColor}`}>
       <div className="flex items-center gap-3">
-        <img src={sp.image} alt={sp.name} className="h-16 w-16 object-contain drop-shadow-xl" />
+        <img src={speciesImage(group.species, hasShiny)} alt={sp.name} className="h-16 w-16 object-contain drop-shadow-xl" style={{ filter: shinyFallbackFilter(group.species, hasShiny) }} />
         <div className="flex-1 min-w-0">
-          <div className="font-extrabold text-white text-sm truncate">{sp.name}</div>
+          <div className="font-extrabold text-white text-sm truncate">{hasShiny ? "✨ " : ""}{sp.name}</div>
+          {hasShiny && <div className="text-[10px] font-bold text-yellow-200">Shiny é preservado na fusão</div>}
           <div className="text-[10px] text-white/90">
             {group.list.length}× no rank atual
             {inTeam > 0 && <span className="text-yellow-200"> ({inTeam} no time)</span>}
