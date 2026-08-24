@@ -107,6 +107,7 @@ export const MOVESETS: Record<string, Moveset> = {
   "pidgeot": { types: ["normal", "flying"], moves: ["hurricane", "brave_bird", "tackle", "quick_attack"], status: "swords_dance" },
   "rattata": { types: ["normal"], moves: ["quick_attack", "hyper_fang", "tackle", "body_slam"], status: "swords_dance" },
   "raticate": { types: ["normal"], moves: ["hyper_fang", "crunch", "tackle", "quick_attack"], status: "swords_dance" },
+  "spearow": { types: ["normal", "flying"], moves: ["drill_peck", "peck", "quick_attack", "tackle"], status: "swords_dance" },
   "fearow": { types: ["normal", "flying"], moves: ["drill_peck", "aerial_ace", "tackle", "quick_attack"], status: "swords_dance" },
   "ekans": { types: ["poison"], moves: ["poison_sting", "bite", "poison_fang", "acid"], status: "toxic" },
   "arbok": { types: ["poison"], moves: ["poison_jab", "crunch", "poison_fang", "acid"], status: "toxic" },
