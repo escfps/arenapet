@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { POKE_TYPES } from "@/lib/moves";
+import type { NpcTeamMember } from "./gym-npc";
 
 const TypeSchema = z.enum(POKE_TYPES as unknown as [string, ...string[]]);
 
@@ -47,7 +48,7 @@ export const gymChallengeStart = createServerFn({ method: "POST" })
     }
 
     // Time inimigo: líder atual ou NPC
-    let enemyTeam: unknown[] = [];
+    let enemyTeam: NpcTeamMember[] = [];
     let enemyName = vacantLeaderName(data.type as never);
     let isNpc = true;
     if (gym.leader_id) {
@@ -60,7 +61,19 @@ export const gymChallengeStart = createServerFn({ method: "POST" })
         .limit(3);
       const rows = (leaderTeam ?? []).slice(0, 3);
       if (rows.length === 3) {
-        enemyTeam = rows;
+        enemyTeam = rows.map((r, i) => ({
+          id: r.id,
+          owner_id: r.owner_id,
+          species: r.species,
+          name: r.name,
+          hp: r.hp, atk: r.atk, def: r.def, spd: r.spd, int: r.int, crit: r.crit ?? 0,
+          hunger: r.hunger ?? 100, energy: r.energy ?? 100, happiness: r.happiness ?? 100,
+          skin: r.skin ?? "default",
+          in_team: true,
+          rank: r.rank ?? 1,
+          team_position: r.team_position ?? i,
+          is_shiny: r.is_shiny === true,
+        }));
         isNpc = false;
         const { data: lp } = await supabaseAdmin
           .from("profiles")
@@ -112,7 +125,7 @@ export const gymChallengeStart = createServerFn({ method: "POST" })
       sessionId: session.id as string,
       log: result.log,
       winner: result.winner,
-      enemyTeam: enemyTeam as Record<string, unknown>[],
+      enemyTeam,
       enemyName,
       isNpc,
       pure,
