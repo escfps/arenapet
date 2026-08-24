@@ -1369,7 +1369,7 @@ export const SPECIES: Record<string, Species> = {
     emoji: "🪼⚡", image: tentacruelImg, hidden: true,
     description: "Oitenta tentáculos paralisantes nas profundezas.",
     base: { hp: 74, atk: 25, def: 19, spd: 18, int: 29 },
-    skill: { name: "Cerco de Tentáculos", emoji: "🌊", kind: "paralyze_strike", cooldown: 5, description: "Envolve o alvo e o paralisa." },
+    skill: { name: "Cerco de Tentáculos", emoji: "🌊", kind: "lightning_charge", cooldown: 5, description: "Envolve o alvo e o paralisa." },
   },
   geodude: {
     id: "geodude", name: "Geodude", element: "earth", role: "tank", rarity: "common",
@@ -1390,14 +1390,14 @@ export const SPECIES: Record<string, Species> = {
     emoji: "🗿", image: golemImg, hidden: true,
     description: "Couraça de pedra viva, praticamente indestrutível.",
     base: { hp: 96, atk: 26, def: 30, spd: 11, int: 8 },
-    skill: { name: "Terremoto", emoji: "💥", kind: "earthquake", cooldown: 5, description: "Sacode o campo atingindo todos os inimigos." },
+    skill: { name: "Terremoto", emoji: "💥", kind: "thorn_burst", cooldown: 5, description: "Sacode o campo atingindo todos os inimigos." },
   },
   ponyta: {
     id: "ponyta", name: "Ponyta", element: "fire", role: "dps", rarity: "rare",
     emoji: "🐴🔥", image: ponytaImg, hidden: true,
     description: "Potro de crina flamejante e cascos rápidos.",
     base: { hp: 46, atk: 19, def: 11, spd: 22, int: 10 },
-    skill: { name: "Investida Ardente", emoji: "🔥", kind: "burn_strike", cooldown: 3, description: "Corrida flamejante que queima o alvo." },
+    skill: { name: "Investida Ardente", emoji: "🔥", kind: "bleed_dot", cooldown: 3, description: "Corrida flamejante que queima o alvo." },
   },
   rapidash: {
     id: "rapidash", name: "Rapidash", element: "fire", role: "dps", rarity: "legendary",
