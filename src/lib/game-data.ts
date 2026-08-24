@@ -2366,6 +2366,19 @@ export function rankStars(rank: number): string {
 
 // Multiplicador global de HP base — aumenta durabilidade pra evitar one-shots
 // quando bots de alto rank encontram pets squishy.
+
+/** Arte do pet: usa a arte shiny exclusiva quando existir. */
+export function speciesImage(species: string, shiny = false): string {
+  const sp = SPECIES[species];
+  if (!sp) return "";
+  return shiny && sp.shinyImage ? sp.shinyImage : sp.image;
+}
+/** Filtro visual usado quando o pet é shiny mas ainda não tem arte própria. */
+export function shinyFallbackFilter(species: string, shiny: boolean): string {
+  if (!shiny || SPECIES[species]?.shinyImage) return "";
+  return "hue-rotate(150deg) saturate(1.6) brightness(1.12)";
+}
+
 export const HP_BASE_MULT = 2.56;
 
 export function totalStats(species: string, rank = 1, bonus = { hp: 0, atk: 0, def: 0, spd: 0, int: 0 }, shiny = false) {
