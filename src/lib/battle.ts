@@ -240,7 +240,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
     maxHp: m.hp,
     healCd: 0,
     skillCd: 1,
-    shield: 0,
+    shield: m.shiny ? Math.round(m.hp * SHINY_SKILL.startShieldPct) : 0,
     tauntTargetId: null,
     tauntTurns: 0,
     burnDmg: 0,
@@ -523,6 +523,23 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
         if (attacker.tauntTurns > 0) {
           attacker.tauntTurns -= 1;
           if (attacker.tauntTurns === 0) attacker.tauntTargetId = null;
+        }
+        // ✨ SHINY — Aura Prismática: regenera 3% do HP máximo por turno
+        if (attacker.shiny && attacker.current > 0 && attacker.current < attacker.maxHp) {
+          const regen = Math.max(1, Math.round(attacker.maxHp * SHINY_SKILL.regenPct));
+          const healed = Math.min(regen, attacker.maxHp - attacker.current);
+          attacker.current += healed;
+          log.push({
+            turn,
+            actor: side,
+            actorName: attacker.name,
+            targetName: attacker.name,
+            damage: 0,
+            crit: false,
+            effective: 1,
+            remainingHp: attacker.current,
+            message: `✨ Aura Prismática curou ${healed} de ${attacker.name}`,
+          });
         }
         // tick burn (DoT)
         if (attacker.burnTurns > 0 && attacker.current > 0) {
