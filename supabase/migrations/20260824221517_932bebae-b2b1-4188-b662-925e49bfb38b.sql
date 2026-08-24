@@ -1,0 +1,1 @@
+DROP FUNCTION IF EXISTS public.bot_jobs_lock();
