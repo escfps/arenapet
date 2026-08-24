@@ -9,6 +9,7 @@ export const CHEST_ITEM_TYPE: Record<ChestTier, string> = {
   silver: "silver_chest",
   gold: "gold_chest",
   legendary: "legendary_chest",
+  mythic: "mythic_chest",
 };
 
 /** Soma N baús de um tier no inventário do usuário (upsert). */

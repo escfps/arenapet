@@ -2352,7 +2352,7 @@ export const GEM_PACKS = [
 ];
 
 // ===== Baús (loja) =====
-export type ChestTier = "wood" | "silver" | "gold" | "legendary";
+export type ChestTier = "wood" | "silver" | "gold" | "legendary" | "mythic";
 
 export type Chest = {
   id: ChestTier;
@@ -2416,6 +2416,17 @@ export const CHESTS: Record<ChestTier, Chest> = {
     gemChance: 1, gems: [10, 20],
     petChance: 1,
     petRarityWeights: { super_rare: 30, legendary: 55, mythic: 15 },
+  },
+
+  mythic: {
+    id: "mythic", name: "Baú Mítico", emoji: "🌟",
+    description: "80% de chance de LENDÁRIO e 20% de MÍTICO. O baú mais poderoso do jogo!",
+    priceGems: 350,
+    coins: [10000, 20000],
+    rations: [20, 40],
+    gemChance: 1, gems: [20, 40],
+    petChance: 1,
+    petRarityWeights: { legendary: 80, mythic: 20 },
   },
 
 
@@ -2493,7 +2504,7 @@ export function rollChest(tier: ChestTier, forceRarity?: Rarity): ChestReward {
   }
 
   // ✨ Shiny só pode sair no Baú Lendário
-  const petShiny = petSpecies && tier === "legendary" ? rollShiny() : false;
+  const petShiny = petSpecies && (tier === "legendary" || tier === "mythic") ? rollShiny() : false;
 
   return { coins, gems, rations, petSpecies, petShiny };
 
