@@ -292,6 +292,12 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
     spdBuffPct: 0,
     tempShieldAmount: 0,
     tempShieldTurns: 0,
+    moveCds: {},
+    confuseTurns: 0,
+    atkBuffTurns: 0,
+    atkBuffPct: 0,
+    firstStrikeUsed: false,
+
   });
   const a: Live[] = teamA.map(mkLive);
   const b: Live[] = teamB.map(mkLive);
