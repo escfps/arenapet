@@ -327,7 +327,21 @@ function MarketPage() {
             </div>
 
             <div className="flex gap-2 items-center">
-              <span className="text-[11px] font-bold text-white/70">Preço:</span>
+              <span className="text-[11px] font-bold text-white/70">Brilho:</span>
+              <button
+                onClick={() => setFilterShiny(false)}
+                className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${!filterShiny ? "bg-yellow-300 text-violet-900" : "bg-white/15 text-white"}`}
+              >
+                Todos
+              </button>
+              <button
+                onClick={() => setFilterShiny(true)}
+                className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${filterShiny ? "bg-yellow-300 text-violet-900" : "bg-white/15 text-white"}`}
+              >
+                ✨ Shiny
+              </button>
+            </div>
+
               {([["recent", "🕒 Recentes"], ["asc", "⬆️ Menor"], ["desc", "⬇️ Maior"]] as const).map(([k, label]) => (
                 <button
                   key={k}
