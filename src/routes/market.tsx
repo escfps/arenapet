@@ -302,6 +302,38 @@ function MarketPage() {
                 </button>
               ))}
             </div>
+
+            <div className="flex gap-2 flex-wrap items-center">
+              <span className="text-[11px] font-bold text-white/70">Qualidade:</span>
+              <button
+                onClick={() => setFilterRarity("all")}
+                className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${filterRarity === "all" ? "bg-yellow-300 text-violet-900" : "bg-white/15 text-white"}`}
+              >
+                Todas
+              </button>
+              {RARITY_KEYS.map((r) => (
+                <button
+                  key={r}
+                  onClick={() => setFilterRarity(r)}
+                  className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${filterRarity === r ? "bg-yellow-300 text-violet-900" : "bg-white/15 text-white"}`}
+                >
+                  {RARITY_INFO[r].emoji} {RARITY_INFO[r].name}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex gap-2 items-center">
+              <span className="text-[11px] font-bold text-white/70">Preço:</span>
+              {([["recent", "🕒 Recentes"], ["asc", "⬆️ Menor"], ["desc", "⬇️ Maior"]] as const).map(([k, label]) => (
+                <button
+                  key={k}
+                  onClick={() => setSortPrice(k)}
+                  className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${sortPrice === k ? "bg-yellow-300 text-violet-900" : "bg-white/15 text-white"}`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
             {shown.length === 0 ? (
               <div className="rounded-2xl bg-white/10 border border-white/20 p-6 text-center text-white/80 text-sm">
                 Nenhum anúncio por aqui ainda. Seja o primeiro a anunciar! 📢
