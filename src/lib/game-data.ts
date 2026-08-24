@@ -181,6 +181,8 @@ import kabutopsImg from "@/assets/monsters/kabutops.png";
 import aerodactylImg from "@/assets/monsters/aerodactyl.png";
 import snorlaxImg from "@/assets/monsters/snorlax.png";
 import articunoImg from "@/assets/monsters/articuno.png";
+import mewtwoImg from "@/assets/monsters/mewtwo.png";
+import mewImg from "@/assets/monsters/mew.png";
 import zapdosImg from "@/assets/monsters/zapdos.png";
 import moltresImg from "@/assets/monsters/moltres.png";
 import dratiniImg from "@/assets/monsters/dratini.png";
@@ -1949,7 +1951,22 @@ export const SPECIES: Record<string, Species> = {
     base: { hp: 88, atk: 30, def: 36, spd: 14, int: 22 },
     skill: { name: "Abraço dos Tentáculos", emoji: "🌀", kind: "bleed_dot", cooldown: 4, description: "Aperta o alvo causando sangramento." },
   },
+  mewtwo: {
+    id: "mewtwo", name: "Mewtwo", element: "shadow", role: "mage", rarity: "mythic",
+    emoji: "🧠", image: mewtwoImg, hidden: true,
+    description: "Criado em laboratório, o poder psíquico mais devastador já visto.",
+    base: { hp: 92, atk: 34, def: 26, spd: 38, int: 50 },
+    skill: { name: "Explosão Psíquica", emoji: "🌌", kind: "true_damage_nuke", cooldown: 5, description: "Onda mental pura que ignora DEF e elemento." },
+  },
+  mew: {
+    id: "mew", name: "Mew", element: "shadow", role: "mage", rarity: "mythic",
+    emoji: "✨", image: mewImg, hidden: true,
+    description: "Ancestral de todos os pets, contém todo o DNA conhecido.",
+    base: { hp: 90, atk: 30, def: 28, spd: 36, int: 48 },
+    skill: { name: "Transformação Ancestral", emoji: "💫", kind: "team_heal", cooldown: 5, description: "Energia vital que cura todo o time e revigora." },
+  },
 };
+
 
 
 
