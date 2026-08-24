@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { SPECIES, speciesImage, shinyFallbackFilter, ITEMS, SKINS, ELEMENT_COLORS, ROLE_INFO, getSkill, RARITY_INFO, skinFilter, rankStars, totalStats, computeBattleEnergy, MAX_BATTLE_ENERGY, hungerStatusLabel, getSpeciesCategories, CATEGORY_INFO, synergyStatBonuses, type SynergyStat } from "@/lib/game-data";
+import { SPECIES, speciesImage, shinyFallbackFilter, ITEMS, SKINS, ELEMENT_COLORS, ROLE_INFO, getSkill, RARITY_INFO, skinFilter, rankStars, totalStats, computeBattleEnergy, MAX_BATTLE_ENERGY, hungerStatusLabel, getSpeciesCategories, CATEGORY_INFO, synergyStatBonuses, SHINY_SKILL, SHINY_STAT_MULT, type SynergyStat } from "@/lib/game-data";
 import type { MonsterRow } from "@/components/MonsterCard";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
@@ -450,6 +450,23 @@ function MonsterPage() {
                   </div>
                 </div>
               </div>
+              {(monster as any).is_shiny === true && (
+                <div className="mt-3 rounded-xl bg-gradient-to-br from-amber-500/30 to-yellow-300/20 p-3 border-2 border-amber-300/70 shadow-[0_0_20px_rgba(252,211,77,0.5)]">
+                  <div className="font-extrabold text-base flex items-center gap-1.5 text-amber-100">
+                    <span className="text-xl">{SHINY_SKILL.emoji}</span>
+                    {SHINY_SKILL.name}
+                    <span className="ml-auto text-[10px] bg-amber-300 text-amber-950 px-2 py-0.5 rounded-full font-extrabold">SKILL EXTRA SHINY</span>
+                  </div>
+                  <div className="text-xs opacity-95 mt-1">{SHINY_SKILL.description}</div>
+                  <div className="mt-2 grid grid-cols-2 gap-2 text-xs font-extrabold">
+                    <div className="rounded-lg bg-black/35 p-2">🛡️ Escudo inicial: {Math.round(maxHp * SHINY_SKILL.startShieldPct)}</div>
+                    <div className="rounded-lg bg-black/35 p-2">💚 Regen/turno: {Math.round(maxHp * SHINY_SKILL.regenPct)}</div>
+                  </div>
+                  <div className="mt-2 text-[11px] font-bold text-amber-100">
+                    📈 Status shiny: +{Math.round((SHINY_STAT_MULT - 1) * 100)}% em HP, ATK, DEF, SPD e INT (já somados acima)
+                  </div>
+                </div>
+              )}
             </div>
           );
         })()}

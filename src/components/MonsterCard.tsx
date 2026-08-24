@@ -91,6 +91,9 @@ export function MonsterCard({ monster, onClick, compact, selected }: Props) {
       </div>
       <div className="p-2 bg-card/95 backdrop-blur-sm">
         <div className="font-extrabold text-sm truncate">{shiny ? "✨ " : ""}{monster.name}</div>
+        {shiny && (
+          <div className="text-[9px] font-extrabold text-amber-600">+10% status • ✨ Aura Prismática</div>
+        )}
         <div className="text-[10px] text-muted-foreground">
           {sp.emoji} {sp.name} • {ELEMENT_NAMES[sp.element]}{sp.secondaryElement ? ` / ${ELEMENT_NAMES[sp.secondaryElement]}` : ""}
         </div>
