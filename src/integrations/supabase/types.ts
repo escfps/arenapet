@@ -260,6 +260,71 @@ export type Database = {
         }
         Relationships: []
       }
+      gym_badges: {
+        Row: {
+          created_at: string
+          earned_at: string
+          gym_type: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          earned_at?: string
+          gym_type: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          earned_at?: string
+          gym_type?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gym_badges_gym_type_fkey"
+            columns: ["gym_type"]
+            isOneToOne: false
+            referencedRelation: "gyms"
+            referencedColumns: ["type"]
+          },
+        ]
+      }
+      gyms: {
+        Row: {
+          created_at: string
+          defends: number
+          last_reward_at: string | null
+          leader_claimed_at: string | null
+          leader_id: string | null
+          starter: boolean
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          defends?: number
+          last_reward_at?: string | null
+          leader_claimed_at?: string | null
+          leader_id?: string | null
+          starter?: boolean
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          defends?: number
+          last_reward_at?: string | null
+          leader_claimed_at?: string | null
+          leader_id?: string | null
+          starter?: boolean
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       iap_transactions: {
         Row: {
           created_at: string
@@ -1011,6 +1076,11 @@ export type Database = {
       }
       end_season: { Args: { p_season_id: string }; Returns: undefined }
       ensure_tournament: { Args: { slot: string }; Returns: string }
+      gym_claim_reward: { Args: { p_type: string }; Returns: Json }
+      gym_report_result: {
+        Args: { p_pure: boolean; p_type: string; p_won: boolean }
+        Returns: Json
+      }
       join_tournament: { Args: { p_tournament_id: string }; Returns: Json }
       report_match_result: {
         Args: { p_log: Json; p_match_id: string; p_winner_id: string }

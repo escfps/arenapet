@@ -25,6 +25,7 @@ import { Route as PreviewChestRouteImport } from './routes/preview-chest'
 import { Route as NovidadesRouteImport } from './routes/novidades'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as InventarioRouteImport } from './routes/inventario'
+import { Route as GymsRouteImport } from './routes/gyms'
 import { Route as FriendsRouteImport } from './routes/friends'
 import { Route as ForgeRouteImport } from './routes/forge'
 import { Route as ExpeditionsRouteImport } from './routes/expeditions'
@@ -118,6 +119,11 @@ const InventarioRoute = InventarioRouteImport.update({
   path: '/inventario',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GymsRoute = GymsRouteImport.update({
+  id: '/gyms',
+  path: '/gyms',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FriendsRoute = FriendsRouteImport.update({
   id: '/friends',
   path: '/friends',
@@ -189,6 +195,7 @@ export interface FileRoutesByFullPath {
   '/expeditions': typeof ExpeditionsRoute
   '/forge': typeof ForgeRoute
   '/friends': typeof FriendsRouteWithChildren
+  '/gyms': typeof GymsRoute
   '/inventario': typeof InventarioRoute
   '/login': typeof LoginRoute
   '/novidades': typeof NovidadesRoute
@@ -219,6 +226,7 @@ export interface FileRoutesByTo {
   '/expeditions': typeof ExpeditionsRoute
   '/forge': typeof ForgeRoute
   '/friends': typeof FriendsRouteWithChildren
+  '/gyms': typeof GymsRoute
   '/inventario': typeof InventarioRoute
   '/login': typeof LoginRoute
   '/novidades': typeof NovidadesRoute
@@ -250,6 +258,7 @@ export interface FileRoutesById {
   '/expeditions': typeof ExpeditionsRoute
   '/forge': typeof ForgeRoute
   '/friends': typeof FriendsRouteWithChildren
+  '/gyms': typeof GymsRoute
   '/inventario': typeof InventarioRoute
   '/login': typeof LoginRoute
   '/novidades': typeof NovidadesRoute
@@ -282,6 +291,7 @@ export interface FileRouteTypes {
     | '/expeditions'
     | '/forge'
     | '/friends'
+    | '/gyms'
     | '/inventario'
     | '/login'
     | '/novidades'
@@ -312,6 +322,7 @@ export interface FileRouteTypes {
     | '/expeditions'
     | '/forge'
     | '/friends'
+    | '/gyms'
     | '/inventario'
     | '/login'
     | '/novidades'
@@ -342,6 +353,7 @@ export interface FileRouteTypes {
     | '/expeditions'
     | '/forge'
     | '/friends'
+    | '/gyms'
     | '/inventario'
     | '/login'
     | '/novidades'
@@ -373,6 +385,7 @@ export interface RootRouteChildren {
   ExpeditionsRoute: typeof ExpeditionsRoute
   ForgeRoute: typeof ForgeRoute
   FriendsRoute: typeof FriendsRouteWithChildren
+  GymsRoute: typeof GymsRoute
   InventarioRoute: typeof InventarioRoute
   LoginRoute: typeof LoginRoute
   NovidadesRoute: typeof NovidadesRoute
@@ -508,6 +521,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InventarioRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/gyms': {
+      id: '/gyms'
+      path: '/gyms'
+      fullPath: '/gyms'
+      preLoaderRoute: typeof GymsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/friends': {
       id: '/friends'
       path: '/friends'
@@ -615,6 +635,7 @@ const rootRouteChildren: RootRouteChildren = {
   ExpeditionsRoute: ExpeditionsRoute,
   ForgeRoute: ForgeRoute,
   FriendsRoute: FriendsRouteWithChildren,
+  GymsRoute: GymsRoute,
   InventarioRoute: InventarioRoute,
   LoginRoute: LoginRoute,
   NovidadesRoute: NovidadesRoute,
