@@ -36,7 +36,7 @@ type GymRow = {
   defends: number;
 };
 
-const BADGES_REQUIRED = 4;
+const BADGES_REQUIRED = 5;
 const REWARD_GEMS = 50;
 
 /** Espécies ativas de um tipo específico. */
