@@ -67,6 +67,7 @@ import corujaNegraImg from "@/assets/monsters/coruja_negra.png";
 import corujaPsiquicaImg from "@/assets/monsters/coruja_psiquica.png";
 import gengarImg from "@/assets/monsters/gengar.png";
 import pikachuImg from "@/assets/monsters/pikachu.png";
+import alakazamImg from "@/assets/monsters/alakazam.png";
 import brasagartoImg from "@/assets/monsters/brasagarto.png";
 import cascatorugaImg from "@/assets/monsters/cascatoruga.png";
 import folhassauroImg from "@/assets/monsters/folhassauro.png";
@@ -780,6 +781,13 @@ export const SPECIES: Record<string, Species> = {
     description: "Coruja psíquica que dobra colheres com o pensamento e manipula o tempo com seu cronômetro. Sua mente é uma arma de destruição em massa.",
     base: { hp: 89, atk: 12, def: 12, spd: 18, int: 36 },
     skill: { name: "Explosão Psíquica", emoji: "🧠", kind: "aoe_magic", cooldown: 6, description: "Causa INT×1.6 de dano psíquico em TODOS os inimigos com 40% de chance de silenciar por 1 turno. PASSIVA: ao entrar em batalha, concede +100 de escudo para si e para os 2 aliados." },
+  },
+  alakazam: {
+    id: "alakazam", name: "Alakazam", element: "shadow", role: "mage", rarity: "mythic",
+    emoji: "🥄🧠", image: alakazamImg, hidden: true,
+    description: "Mestre psíquico de QI 5000 que dobra colheres com a mente. Teletransporta e esmaga o cérebro dos inimigos mais fracos sem que eles percebam.",
+    base: { hp: 78, atk: 10, def: 10, spd: 24, int: 38 },
+    skill: { name: "Poder Psíquico", emoji: "🧠", kind: "spectral_hunger", cooldown: 4, description: "Esmaga a mente do inimigo mais fraco (INT×2.2, ignora DEF). Se abater o alvo, devora a próxima mente mais fraca em cadeia (até 2 vezes). PASSIVA — Telecinese: +20% de esquiva enquanto estiver acima de 50% do HP." },
   },
 };
 
@@ -1570,6 +1578,7 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   escorpiao_deserto: ["pedra", "sombras"],
   coruja_negra: ["aves", "sombras", "corujas"],
   coruja_psiquica: ["aves", "sombras", "corujas"],
+  alakazam: ["sombras"],
 };
 
 export function getSpeciesCategories(speciesId: string): Category[] {
