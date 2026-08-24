@@ -10,6 +10,7 @@ import {
   type ChestTier, type ChestReward,
 } from "@/lib/game-data";
 import { CHEST_ITEM_TYPE, openStoredChest } from "@/lib/chest-inventory";
+import { POKE_TYPES, TYPE_INFO, type PokeType } from "@/lib/moves";
 import arenaBg from "@/assets/arena-bg.jpg";
 
 export const Route = createFileRoute("/inventario")({
@@ -24,16 +25,22 @@ function InventoryPage() {
   const [items, setItems] = useState<Record<string, number>>({});
   const [busy, setBusy] = useState<string | null>(null);
   const [chestResult, setChestResult] = useState<{ tier: ChestTier; reward: ChestReward } | null>(null);
+  const [badges, setBadges] = useState<Record<string, number>>({});
 
   const load = useCallback(async () => {
     if (!userId) return;
-    const { data } = await supabase
-      .from("inventory")
-      .select("item_type, quantity")
-      .eq("user_id", userId);
+    const [invRes, badgeRes] = await Promise.all([
+      supabase.from("inventory").select("item_type, quantity").eq("user_id", userId),
+      supabase.from("gym_badges").select("gym_type").eq("user_id", userId),
+    ]);
     const map: Record<string, number> = {};
-    (data as InventoryRow[] | null)?.forEach((r) => { map[r.item_type] = r.quantity; });
+    (invRes.data as InventoryRow[] | null)?.forEach((r) => { map[r.item_type] = r.quantity; });
     setItems(map);
+    const bmap: Record<string, number> = {};
+    ((badgeRes.data as { gym_type: string }[] | null) ?? []).forEach((b) => {
+      bmap[b.gym_type] = (bmap[b.gym_type] ?? 0) + 1;
+    });
+    setBadges(bmap);
   }, [userId]);
 
   useEffect(() => { if (userId) load(); }, [userId, load]);
@@ -44,6 +51,7 @@ function InventoryPage() {
 
   const rations = items["ration"] ?? 0;
   const chestTiers: ChestTier[] = ["wood", "silver", "gold", "legendary", "mythic"];
+  const totalBadges = Object.values(badges).reduce((a, b) => a + b, 0);
 
   async function openOne(tier: ChestTier) {
     if (!userId || !profile) return;
@@ -94,6 +102,42 @@ function InventoryPage() {
               <div className="text-[10px] opacity-70 mt-1">Use para alimentar pets</div>
             </div>
           </div>
+        </section>
+
+
+        {/* Insígnias */}
+        <section className="rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 p-4 text-white">
+          <div className="flex items-center justify-between mb-1">
+            <h2 className="font-extrabold text-lg">🏅 Insígnias</h2>
+            <span className="text-sm font-extrabold text-yellow-300">Total: {totalBadges}</span>
+          </div>
+          <p className="text-xs opacity-80 mb-3">
+            Precisa de 5 insígnias pra desafiar um ginásio (elas são consumidas no desafio).
+          </p>
+          {totalBadges === 0 ? (
+            <div className="text-xs opacity-70 bg-black/30 rounded-xl p-3">
+              Você ainda não tem insígnias — vença ginásios pra conquistá-las.
+            </div>
+          ) : (
+            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+              {POKE_TYPES.filter((t) => (badges[t] ?? 0) > 0).map((t) => {
+                const info = TYPE_INFO[t as PokeType];
+                return (
+                  <div key={t} className="bg-black/40 border-2 border-yellow-400/40 rounded-xl p-2 text-center">
+                    <div className="text-3xl">{info.emoji}</div>
+                    <div className="text-[10px] font-extrabold truncate">{info.name}</div>
+                    <div className="text-lg font-extrabold text-yellow-300">×{badges[t]}</div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+          <button
+            onClick={() => navigate({ to: "/gyms" })}
+            className="mt-4 w-full py-2.5 rounded-xl bg-white/15 hover:bg-white/25 text-sm font-bold transition"
+          >
+            🏛️ Ir pros ginásios
+          </button>
         </section>
 
         {/* Baús guardados */}
