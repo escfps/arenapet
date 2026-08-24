@@ -2915,7 +2915,11 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           applyDamage(attacker, reflected);
         }
 
-        let msg = `${attacker.name} atacou ${target.name} causando ${damage} de dano`;
+        let msg = move
+          ? `${TYPE_INFO[move.type].emoji} ${attacker.name} usou ${move.name} em ${target.name} causando ${damage} de dano`
+          : `${attacker.name} atacou ${target.name} causando ${damage} de dano`;
+        if (moveEffectMsg) msg += moveEffectMsg;
+
         if (crit) msg += " (CRÍTICO!)";
         if (attacker.role === "mage") msg += " 🔮";
         if (eff > 1) msg += " (super eficaz!)";
