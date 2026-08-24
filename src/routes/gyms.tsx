@@ -47,6 +47,32 @@ function speciesOfType(t: PokeType): string[] {
     .filter((id) => getTypes(id).includes(t));
 }
 
+/** Nomes de treinador fixos por ginásio vago (parecem players de verdade). */
+const VACANT_LEADER_NAMES: Record<string, string> = {
+  normal: "LuKaS_92",
+  fire: "BrunaFlames",
+  water: "TidalRafa",
+  grass: "Leaf_Duda",
+  electric: "ThiagoVolt",
+  ice: "Nay_Frost",
+  fighting: "MarcosKO",
+  poison: "ToxicJhow",
+  ground: "PedroQuake",
+  flying: "SkyLarih",
+  psychic: "MindGus",
+  bug: "BiaSwarm",
+  rock: "RochaVitor",
+  ghost: "SombraKarl",
+  dragon: "DrakeIgor",
+  dark: "NoiteLeo",
+  steel: "AcoRenan",
+  fairy: "LariGlow",
+};
+
+function vacantLeaderName(t: PokeType): string {
+  return VACANT_LEADER_NAMES[t] ?? "Treinador";
+}
+
 /** Time do líder NPC quando o ginásio está vago. */
 function buildNpcTeam(t: PokeType): Team {
   const pool = speciesOfType(t);
@@ -203,7 +229,7 @@ function GymsPage() {
       }
 
       let team: Team = [];
-      let name = `Líder ${TYPE_INFO[t].name}`;
+      let name = vacantLeaderName(t);
       let isNpc = true;
       if (gym.leader_id) {
         const { data } = await supabase
@@ -330,7 +356,7 @@ function GymsPage() {
                     <div className="text-white/80 text-xs mb-2">
                       👑 Líder:{" "}
                       <b className="text-white">
-                        {gym.leader_id ? (mine ? "Você" : (leaderNames[gym.leader_id] ?? "Treinador")) : `NPC ${info.name}`}
+                        {gym.leader_id ? (mine ? "Você" : (leaderNames[gym.leader_id] ?? "Treinador")) : vacantLeaderName(t)}
                       </b>
                       {gym.leader_id && gym.defends > 0 && <span className="text-white/60"> · {gym.defends} defesas</span>}
                     </div>
