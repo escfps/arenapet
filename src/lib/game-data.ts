@@ -166,6 +166,16 @@ import magmarImg from "@/assets/monsters/magmar.png";
 import pinsirImg from "@/assets/monsters/pinsir.png";
 import taurosImg from "@/assets/monsters/tauros.png";
 import magikarpImg from "@/assets/monsters/magikarp.png";
+import gyaradosImg from "@/assets/monsters/gyarados.png";
+import laprasImg from "@/assets/monsters/lapras.png";
+import dittoImg from "@/assets/monsters/ditto.png";
+import eeveeImg from "@/assets/monsters/eevee.png";
+import vaporeonImg from "@/assets/monsters/vaporeon.png";
+import jolteonImg from "@/assets/monsters/jolteon.png";
+import flareonImg from "@/assets/monsters/flareon.png";
+import porygonImg from "@/assets/monsters/porygon.png";
+import omanyteImg from "@/assets/monsters/omanyte.png";
+import omastarImg from "@/assets/monsters/omastar.png";
 import alakazamImg from "@/assets/monsters/alakazam.png";
 import gastlyImg from "@/assets/monsters/gastly.png";
 import haunterImg from "@/assets/monsters/haunter.png";
@@ -1804,14 +1814,14 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Canto Gelado", emoji: "❄️", kind: "freeze_strike", cooldown: 5, description: "Congela o inimigo com um canto ancestral." },
   },
   ditto: {
-    id: "ditto", name: "Ditto", element: "shadow", role: "support", rarity: "super_rare",
+    id: "ditto", name: "Ditto", element: "shadow", role: "mage", rarity: "super_rare",
     emoji: "🫠", image: dittoImg, hidden: true,
     description: "Copia qualquer forma que enxerga.",
     base: { hp: 62, atk: 20, def: 18, spd: 20, int: 22 },
-    skill: { name: "Transformar", emoji: "🔄", kind: "buff_team_atk", cooldown: 4, description: "Imita o mais forte e fortalece o time." },
+    skill: { name: "Transformar", emoji: "🔄", kind: "berserker_rage", cooldown: 4, description: "Imita o mais forte e fortalece o time." },
   },
   eevee: {
-    id: "eevee", name: "Eevee", element: "earth", role: "support", rarity: "rare",
+    id: "eevee", name: "Eevee", element: "earth", role: "dps", rarity: "rare",
     emoji: "🦊", image: eeveeImg, hidden: true,
     description: "Um potencial evolutivo infinito.",
     base: { hp: 52, atk: 20, def: 16, spd: 22, int: 14 },
@@ -1829,7 +1839,7 @@ export const SPECIES: Record<string, Species> = {
     emoji: "⚡", image: jolteonImg, hidden: true,
     description: "Pelos que disparam agulhas elétricas.",
     base: { hp: 62, atk: 34, def: 16, spd: 40, int: 20 },
-    skill: { name: "Agulhas de Raio", emoji: "⚡", kind: "paralyze_strike", cooldown: 4, description: "Descarga que paralisa o alvo." },
+    skill: { name: "Agulhas de Raio", emoji: "⚡", kind: "lightning_charge", cooldown: 4, description: "Descarga que paralisa o alvo." },
   },
   flareon: {
     id: "flareon", name: "Flareon", element: "fire", role: "dps", rarity: "legendary",
@@ -2780,6 +2790,16 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   pinsir: ["pedra"],
   tauros: ["pedra"],
   magikarp: ["abyssal"],
+  gyarados: ["abyssal"],
+  lapras: ["abyssal"],
+  ditto: ["sombras"],
+  eevee: ["pedra"],
+  vaporeon: ["abyssal"],
+  jolteon: ["relampago"],
+  flareon: ["fogo"],
+  porygon: ["relampago"],
+  omanyte: ["abyssal"],
+  omastar: ["abyssal"],
 };
 
 export function getSpeciesCategories(speciesId: string): Category[] {
