@@ -229,10 +229,10 @@ function ExpeditionsPage() {
                   <div className="flex items-center gap-3">
                     {sp && monster && (
                       <img
-                        src={sp.image}
+                        src={speciesImage(monster.species, (monster as any).is_shiny === true)}
                         alt=""
                         className="h-14 w-14 object-contain drop-shadow-lg"
-                        style={{ filter: skinFilter(monster.skin) }}
+                        style={{ filter: `${skinFilter(monster.skin)} ${shinyFallbackFilter(monster.species, (monster as any).is_shiny === true)}`.trim() }}
                       />
                     )}
                     <div className="flex-1 min-w-0">
@@ -346,7 +346,7 @@ function ExpeditionsPage() {
                         className={`rounded-xl bg-gradient-to-r ${ELEMENT_COLORS[sp.element]} p-3 text-white text-left hover:scale-105 transition disabled:opacity-50 disabled:hover:scale-100`}
                       >
                         <div className="flex items-center gap-2">
-                          <img src={sp.image} alt="" className="h-12 w-12 object-contain drop-shadow-lg" style={{ filter: skinFilter(m.skin) }} />
+                          <img src={speciesImage(m.species, (m as any).is_shiny === true)} alt="" className="h-12 w-12 object-contain drop-shadow-lg" style={{ filter: `${skinFilter(m.skin)} ${shinyFallbackFilter(m.species, (m as any).is_shiny === true)}`.trim() }} />
                           <div className="flex-1 min-w-0">
                             <div className="font-bold text-sm truncate">{m.name}</div>
                             <div className="text-[10px] opacity-90">{rankStars(m.rank ?? 1)}</div>
@@ -389,7 +389,7 @@ function ExpeditionsPage() {
                         className={`rounded-xl bg-gradient-to-r ${ELEMENT_COLORS[sp.element]} p-3 text-white text-left hover:scale-105 transition disabled:opacity-50 disabled:hover:scale-100`}
                       >
                         <div className="flex items-center gap-2">
-                          <img src={sp.image} alt="" className="h-12 w-12 object-contain drop-shadow-lg" style={{ filter: skinFilter(m.skin) }} />
+                          <img src={speciesImage(m.species, (m as any).is_shiny === true)} alt="" className="h-12 w-12 object-contain drop-shadow-lg" style={{ filter: `${skinFilter(m.skin)} ${shinyFallbackFilter(m.species, (m as any).is_shiny === true)}`.trim() }} />
                           <div className="flex-1 min-w-0">
                             <div className="font-bold text-sm truncate">{m.name}</div>
                             <div className="text-[10px] opacity-90">{rankStars(m.rank ?? 1)}</div>

@@ -308,7 +308,7 @@ function MonsterPick({ mon, selected, onClick }: { mon: Mon; selected: boolean; 
       onClick={onClick}
       className={`p-2 rounded-lg border-2 transition text-left ${selected ? "border-yellow-400 bg-yellow-400/20" : "border-white/20 bg-white/5 hover:bg-white/10"}`}
     >
-      <img src={sp.image} alt={sp.name} className="h-12 w-full object-contain" />
+      <img src={speciesImage(m.species, (m as any).is_shiny === true)} alt={sp.name} className="h-12 w-full object-contain" style={{ filter: shinyFallbackFilter(m.species, (m as any).is_shiny === true) }} />
       <div className="text-white text-[11px] font-extrabold truncate">{mon.name}</div>
       <div className="text-white/70 text-[10px]">{rankStars(mon.rank ?? 1)}</div>
     </button>
