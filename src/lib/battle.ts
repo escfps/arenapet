@@ -182,6 +182,12 @@ type Live = BattleMonster & {
   markPassiveProcessed: boolean; // controle: passiva da Coruja Branca já processou morte
   tempShieldAmount: number; // escudo temporário ativo (subset de shield)
   tempShieldTurns: number; // turnos restantes do escudo temporário
+  moveCds: Record<string, number>; // recargas dos golpes (sistema de tipos)
+  confuseTurns: number; // 💫 confuso: pode se acertar
+  atkBuffTurns: number; // bônus de ATK temporário (atk_up)
+  atkBuffPct: number;
+  firstStrikeUsed: boolean; // ✨ shiny first_strike
+
 };
 
 function pickTarget(attacker: Live, enemies: Live[]): Live | null {
