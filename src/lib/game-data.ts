@@ -839,7 +839,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Garra Flamejante", emoji: "🗡️", kind: "double_strike", cooldown: 3, description: "Duas garradas em chamas no mesmo alvo (dano por golpe reduzido)." },
   },
   charizard: {
-    id: "charizard", name: "Charizard", element: "fire", secondaryElement: "air", role: "dps", rarity: "mythic",
+    id: "charizard", name: "Charizard", element: "fire", role: "dps", rarity: "mythic",
     emoji: "🐉🔥", image: charizardImg, hidden: true,
     description: "Forma final da linhagem flamejante. Um dragão alado que cospe fogo capaz de derreter pedra — quanto mais ferido, mais furioso fica.",
     base: { hp: 88, atk: 26, def: 15, spd: 22, int: 14 },
