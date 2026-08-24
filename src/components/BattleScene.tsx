@@ -114,11 +114,11 @@ export function BattleScene({
     const map: HpMap = new Map();
     const bonusOf = (m: any) => ({ hp: m.hp ?? 0, atk: m.atk ?? 0, def: m.def ?? 0, spd: m.spd ?? 0, int: m.int ?? 0 });
     for (const m of teamA) {
-      const max = totalStats(m.species, m.rank ?? 1, bonusOf(m)).hp;
+      const max = totalStats(m.species, m.rank ?? 1, bonusOf(m), (m as any).is_shiny === true).hp;
       map.set(`a:${m.name}`, { cur: max, max });
     }
     for (const m of teamB) {
-      const max = totalStats(m.species, m.rank ?? 1, bonusOf(m)).hp;
+      const max = totalStats(m.species, m.rank ?? 1, bonusOf(m), (m as any).is_shiny === true).hp;
       map.set(`b:${m.name}`, { cur: max, max });
     }
     return map;
