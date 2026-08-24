@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { SPECIES, ITEMS, SKINS, ELEMENT_COLORS, ROLE_INFO, getSkill, RARITY_INFO, skinFilter, rankStars, totalStats, computeBattleEnergy, MAX_BATTLE_ENERGY, hungerStatusLabel, getSpeciesCategories, CATEGORY_INFO, synergyStatBonuses, type SynergyStat } from "@/lib/game-data";
+import { SPECIES, speciesImage, shinyFallbackFilter, ITEMS, SKINS, ELEMENT_COLORS, ROLE_INFO, getSkill, RARITY_INFO, skinFilter, rankStars, totalStats, computeBattleEnergy, MAX_BATTLE_ENERGY, hungerStatusLabel, getSpeciesCategories, CATEGORY_INFO, synergyStatBonuses, type SynergyStat } from "@/lib/game-data";
 import type { MonsterRow } from "@/components/MonsterCard";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
@@ -232,10 +232,13 @@ function MonsterPage() {
         <div className={`rounded-3xl overflow-hidden border-2 border-white/30 shadow-2xl bg-gradient-to-br ${ELEMENT_COLORS[sp.element]}`}>
           <div className="flex flex-col sm:flex-row items-center gap-4 p-4">
             <div className="w-40 h-40 sm:w-48 sm:h-48 flex items-center justify-center">
-              <img src={sp.image} alt={sp.name} className="h-full w-auto drop-shadow-2xl" style={{ filter: skinFilter(monster.skin) }} loading="lazy" />
+              <img src={speciesImage(monster.species, (monster as any).is_shiny === true)} alt={sp.name} className="h-full w-auto drop-shadow-2xl" style={{ filter: `${skinFilter(monster.skin)} ${shinyFallbackFilter(monster.species, (monster as any).is_shiny === true)} ${(monster as any).is_shiny ? "drop-shadow(0 0 14px rgba(253,224,71,0.95))" : ""}`.trim() }} loading="lazy" />
             </div>
             <div className="flex-1 text-white">
-              <h1 className="text-3xl font-extrabold drop-shadow-md">{monster.name}</h1>
+              <h1 className="text-3xl font-extrabold drop-shadow-md">{(monster as any).is_shiny ? "✨ " : ""}{monster.name}</h1>
+              {(monster as any).is_shiny && (
+                <span className="inline-block mt-1 px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-400 text-amber-950 text-[10px] font-extrabold shadow animate-pulse">✨ SHINY • +10% status • Aura Prismática</span>
+              )}
               <p className="text-sm opacity-90">{sp.emoji} {sp.name} • {"✦".repeat(monster.rank)}</p>
               <div className="mt-1 flex flex-wrap gap-1">
                 {getSpeciesCategories(monster.species).map((cat) => (
