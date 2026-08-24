@@ -6,6 +6,8 @@ import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
 import { toast, Toaster } from "sonner";
 import arenaBg from "@/assets/arena-bg.jpg";
+import { useServerFn } from "@tanstack/react-start";
+import { fusePets } from "@/lib/economy.functions";
 
 export const Route = createFileRoute("/forge")({
   component: ForgePage,
@@ -27,6 +29,7 @@ function ForgePage() {
   const { userId, profile, loading } = useProfile();
   const [monsters, setMonsters] = useState<ForgeMonster[]>([]);
   const [fusing, setFusing] = useState(false);
+  const fuseFn = useServerFn(fusePets);
 
   const load = useCallback(async () => {
     if (!userId) return;
@@ -78,22 +81,16 @@ function ForgePage() {
 
 
     setFusing(true);
-    const { error: delErr } = await supabase.from("monsters").delete().eq("id", consume.id);
-    if (delErr) {
+    try {
+      const res = await fuseFn({ data: { species: group.species, rank: group.rank } });
+      toast.success(`${res.shiny ? "✨" : "🔨"} ${res.name} subiu para ${rankStars(res.rank)}!${res.shiny ? " (Shiny mantido)" : ""}`);
+    } catch (e: any) {
+      toast.error((e as Error).message ?? "Erro ao fundir");
       setFusing(false);
-      toast.error("Erro ao fundir: " + delErr.message);
       return;
     }
-    const { error: updErr } = await supabase
-      .from("monsters")
-      .update({ rank: newRank, is_shiny: keepShiny })
-      .eq("id", keep.id);
     setFusing(false);
-    if (updErr) {
-      toast.error("Erro ao upar rank: " + updErr.message);
-      return;
-    }
-    toast.success(`${keepShiny ? "✨" : "🔨"} ${keep.name} subiu para ${rankStars(newRank)}!${keepShiny ? " (Shiny mantido)" : ""}`);
+    void newRank; void keep; void keepShiny; void sp;
     load();
   }
 

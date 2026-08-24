@@ -10,6 +10,8 @@ import { SynergyBadges } from "@/components/SynergyBadges";
 import { useProfile } from "@/lib/use-profile";
 import { toast, Toaster } from "sonner";
 import arenaBg from "@/assets/arena-bg.jpg";
+import { useServerFn } from "@tanstack/react-start";
+import { openWelcomeChest as openWelcomeChestFnDef } from "@/lib/economy.functions";
 
 export const Route = createFileRoute("/")({
   component: PatioPage,
@@ -30,6 +32,7 @@ const ALL_CATEGORIES: Category[] = ["normal","fire","water","grass","electric","
 function PatioPage() {
   const navigate = useNavigate();
   const { userId, profile, loading, reload } = useProfile();
+  const welcomeChestFn = useServerFn(openWelcomeChestFnDef);
   const [monsters, setMonsters] = useState<MonsterRow[]>([]);
   const [hatching, setHatching] = useState(false);
   const [welcomeReveal, setWelcomeReveal] = useState<string[] | null>(null);
@@ -148,43 +151,21 @@ function PatioPage() {
 
   async function openWelcomeChest() {
     if (!userId || !profile || hatching) return;
-    if (profile.welcome_chest_claimed) {
-      toast.error("Você já abriu seu baú de boas-vindas.");
-      return;
-    }
     setHatching(true);
-    const speciesIds = rollWelcomeChest();
-    const rows = speciesIds.map((id, idx) => {
-      const sp = SPECIES[id];
-      return {
-        owner_id: userId,
-        species: id,
-        name: sp.name,
-        ...starterMonsterStats(id),
-        in_team: idx < TEAM_MAX,
-        team_position: idx < TEAM_MAX ? idx : 0,
-      };
-    });
-    const { error: insErr } = await supabase.from("monsters").insert(rows);
-    if (insErr) {
+    try {
+      const res = await welcomeChestFn({ data: undefined });
+      const speciesIds = res.speciesIds as string[];
       setHatching(false);
-      toast.error("Erro ao abrir baú: " + insErr.message);
-      return;
+      // IMPORTANTE: setar reveal ANTES do reload pra evitar que o tutorial
+      // apareça no breve render onde welcome_chest_claimed=true mas reveal=null
+      setWelcomeReveal(speciesIds);
+      await reload();
+      await loadMonsters();
+      toast.success("Baú de boas-vindas aberto! 🎁");
+    } catch (e: any) {
+      setHatching(false);
+      toast.error(e?.message ?? "Erro ao abrir baú");
     }
-    const { error: updErr } = await supabase
-      .from("profiles")
-      .update({ welcome_chest_claimed: true })
-      .eq("id", userId);
-    setHatching(false);
-    if (updErr) {
-      toast.error("Baú aberto, mas falhou ao registrar: " + updErr.message);
-    }
-    // IMPORTANTE: setar reveal ANTES do reload pra evitar que o tutorial
-    // apareça no breve render onde welcome_chest_claimed=true mas reveal=null
-    setWelcomeReveal(speciesIds);
-    await reload();
-    await loadMonsters();
-    toast.success("Baú de boas-vindas aberto! 🎁");
   }
 
 

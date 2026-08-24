@@ -13,7 +13,7 @@ import {
 } from "@/lib/game-data";
 import { useServerFn } from "@tanstack/react-start";
 import { claimBattlePassDaily } from "@/lib/battle-pass.functions";
-import { storeChest } from "@/lib/chest-inventory";
+import { buyAndOpenChest, buyChestToInventory as buyChestToInventoryFn, hatchEgg, refillBattleEnergy } from "@/lib/economy.functions";
 import type { MonsterRow } from "@/components/MonsterCard";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
@@ -57,6 +57,10 @@ function ShopPage() {
     return () => window.removeEventListener("hashchange", syncTabFromHash);
   }, []);
   const claimBP = useServerFn(claimBattlePassDaily);
+  const buyOpenChestFn = useServerFn(buyAndOpenChest);
+  const buyChestInvFn = useServerFn(buyChestToInventoryFn);
+  const hatchEggFn = useServerFn(hatchEgg);
+  const refillEnergyFn = useServerFn(refillBattleEnergy);
   const [hatchResult, setHatchResult] = useState<string | null>(null);
   const [chestResult, setChestResult] = useState<{ tier: ChestTier; reward: ChestReward } | null>(null);
   const [pets, setPets] = useState<MonsterRow[]>([]);
@@ -73,132 +77,47 @@ function ShopPage() {
   async function hatch(eggId: string) {
     if (!profile || !userId) return;
     const egg = EGGS[eggId];
-    if (egg.priceCoins && profile.coins < egg.priceCoins) { toast.error("Moedas insuficientes!"); return; }
-    if (egg.priceGems && profile.gems < egg.priceGems) { toast.error("Gemas insuficientes!"); return; }
-
-    await patch({
-      coins: profile.coins - (egg.priceCoins ?? 0),
-      gems: profile.gems - (egg.priceGems ?? 0),
-    });
-
-    const pack = egg.pack ?? 1;
-    const isRare = eggId === "rare" || eggId === "rare_10";
-    const bonus = isRare ? 5 : 0;
-    const rolled: string[] = [];
-    const rows = [];
-    for (let i = 0; i < pack; i++) {
-      const species = rollEgg(eggId);
-      const sp = SPECIES[species];
-      rolled.push(species);
-      rows.push({
-        owner_id: userId,
-        species,
-        name: sp.name,
-        hp: starterMonsterStats(species).hp + bonus,
-        atk: starterMonsterStats(species).atk + Math.floor(bonus / 2),
-        def: starterMonsterStats(species).def + Math.floor(bonus / 2),
-        spd: starterMonsterStats(species).spd + Math.floor(bonus / 2),
-      });
-    }
-    await supabase.from("monsters").insert(rows);
-    setHatchResult(rolled[rolled.length - 1]);
-    if (pack > 1) {
-      const rareCount = rolled.filter((s) => SPECIES[s].rarity === "rare").length;
-      toast.success(`Chocou ${pack} pets! 🎉 ${rareCount > 0 ? `(${rareCount} raro${rareCount > 1 ? "s" : ""}!)` : ""}`);
-    } else {
-      toast.success(`Você chocou um ${SPECIES[rolled[0]].name}! 🎉`);
+    try {
+      const res = await hatchEggFn({ data: { eggId } });
+      const rolled = res.rolled as string[];
+      const pack = egg.pack ?? 1;
+      setHatchResult(rolled[rolled.length - 1]);
+      if (pack > 1) {
+        const rareCount = rolled.filter((s) => SPECIES[s].rarity === "rare").length;
+        toast.success(`Chocou ${pack} pets! 🎉 ${rareCount > 0 ? `(${rareCount} raro${rareCount > 1 ? "s" : ""}!)` : ""}`);
+      } else {
+        toast.success(`Você chocou um ${SPECIES[rolled[0]].name}! 🎉`);
+      }
+      await reload();
+      await loadPets();
+    } catch (e: any) {
+      toast.error(e?.message ?? "Não foi possível chocar o ovo.");
     }
   }
 
   async function openChest(tier: ChestTier, payWith: "coins" | "gems" = "gems") {
     if (!profile || !userId) return;
-    const c = CHESTS[tier];
-    const useCoins = payWith === "coins" && c.priceCoins != null;
-    const useGems = !useCoins && c.priceGems != null;
-    if (useCoins && profile.coins < (c.priceCoins ?? 0)) { toast.error("Moedas insuficientes!"); return; }
-    if (useGems && profile.gems < (c.priceGems ?? 0)) { toast.error("Gemas insuficientes!"); return; }
-
-    // Pity: força o drop garantido quando o contador bate o limite
-    const pity = CHEST_PITY[tier];
-    const pityCol = PITY_COLUMN[tier];
-    const currentPity = pityCol ? ((profile as Record<string, unknown>)[pityCol] as number ?? 0) : 0;
-    const mythicPity = CHEST_PITY_MYTHIC[tier];
-    const mythicPityCol = PITY_MYTHIC_COLUMN[tier];
-    const currentMythicPity = mythicPityCol ? ((profile as Record<string, unknown>)[mythicPityCol] as number ?? 0) : 0;
-
-    // Pity mítico (teto 50) tem prioridade — força MÍTICO puro
-    let forceRarity: Rarity | undefined;
-    if (mythicPity && mythicPityCol && currentMythicPity + 1 >= mythicPity.limit) {
-      forceRarity = "mythic";
-    } else if (pity && currentPity + 1 >= pity.limit) {
-      forceRarity = pity.rarities[Math.floor(Math.random() * pity.rarities.length)];
+    try {
+      const res = await buyOpenChestFn({ data: { tier, payWith } });
+      setChestResult({ tier: res.tier as ChestTier, reward: res.reward as ChestReward });
+      await reload();
+      await loadPets();
+    } catch (e: any) {
+      toast.error(e?.message ?? "Não foi possível abrir o baú.");
     }
-
-    const reward = rollChest(tier, forceRarity);
-
-    const patchObj: Record<string, number> = {
-      coins: profile.coins - (useCoins ? (c.priceCoins ?? 0) : 0) + reward.coins,
-      gems: profile.gems - (useGems ? (c.priceGems ?? 0) : 0) + reward.gems,
-    };
-
-    // Atualiza contadores de pity: zera se pegou alguma raridade garantida, senão +1
-    const gotRarity = reward.petSpecies ? SPECIES[reward.petSpecies].rarity : null;
-    if (pity && pityCol) {
-      patchObj[pityCol] = gotRarity && pity.rarities.includes(gotRarity) ? 0 : currentPity + 1;
-    }
-    if (mythicPity && mythicPityCol) {
-      patchObj[mythicPityCol] = gotRarity === "mythic" ? 0 : currentMythicPity + 1;
-    }
-
-    await patch(patchObj);
-
-
-    // rações no inventário (upsert somando)
-    if (reward.rations > 0) {
-      const { data: row } = await supabase
-        .from("inventory")
-        .select("quantity")
-        .eq("user_id", userId)
-        .eq("item_type", "ration")
-        .maybeSingle();
-      await supabase
-        .from("inventory")
-        .upsert(
-          { user_id: userId, item_type: "ration", quantity: (row?.quantity ?? 0) + reward.rations },
-          { onConflict: "user_id,item_type" }
-        );
-    }
-
-    // pet (se sorteado)
-    if (reward.petSpecies) {
-      const sp = SPECIES[reward.petSpecies];
-      await supabase.from("monsters").insert({
-        owner_id: userId,
-        species: reward.petSpecies,
-        name: sp.name,
-        ...starterMonsterStats(reward.petSpecies),
-      is_shiny: reward.petShiny === true,
-      });
-    }
-
-    setChestResult({ tier, reward });
   }
 
   async function buyChestToInventory(tier: ChestTier, payWith: "coins" | "gems") {
     if (!profile || !userId) return;
     const c = CHESTS[tier];
-    const useCoins = payWith === "coins" && c.priceCoins != null;
-    const useGems = !useCoins && c.priceGems != null;
-    if (useCoins && profile.coins < (c.priceCoins ?? 0)) { toast.error("Moedas insuficientes!"); return; }
-    if (useGems && profile.gems < (c.priceGems ?? 0)) { toast.error("Gemas insuficientes!"); return; }
-    await patch({
-      coins: profile.coins - (useCoins ? (c.priceCoins ?? 0) : 0),
-      gems: profile.gems - (useGems ? (c.priceGems ?? 0) : 0),
-    });
-    await storeChest(userId, tier, 1);
-    toast.success(`📦 ${c.name} guardado no inventário!`);
+    try {
+      await buyChestInvFn({ data: { tier, payWith } });
+      await reload();
+      toast.success(`📦 ${c.name} guardado no inventário!`);
+    } catch (e: any) {
+      toast.error(e?.message ?? "Não foi possível comprar o baú.");
+    }
   }
-
 
   async function subscribeBattlePass() {
     if (!profile || !userId) return;
@@ -315,20 +234,26 @@ function ShopPage() {
 
   async function refillEnergy(petId: string) {
     if (!profile) return;
-    if (profile.gems < ENERGY_REFILL_GEM_COST) { toast.error("Gemas insuficientes!"); return; }
-    await patch({ gems: profile.gems - ENERGY_REFILL_GEM_COST });
-    await supabase.from("monsters").update({ battle_energy: MAX_BATTLE_ENERGY, battle_energy_at: new Date().toISOString() }).eq("id", petId);
-    await loadPets();
-    toast.success("⚡ Energia recarregada!");
+    try {
+      await refillEnergyFn({ data: { petId, all: false } });
+      await reload();
+      await loadPets();
+      toast.success("⚡ Energia recarregada!");
+    } catch (e: any) {
+      toast.error(e?.message ?? "Não foi possível recarregar.");
+    }
   }
 
   async function refillAll() {
     if (!profile || !userId) return;
-    if (profile.gems < ENERGY_REFILL_ALL_GEM_COST) { toast.error("Gemas insuficientes!"); return; }
-    await patch({ gems: profile.gems - ENERGY_REFILL_ALL_GEM_COST });
-    await supabase.from("monsters").update({ battle_energy: MAX_BATTLE_ENERGY, battle_energy_at: new Date().toISOString() }).eq("owner_id", userId);
-    await loadPets();
-    toast.success("⚡ Todo o time recarregado!");
+    try {
+      await refillEnergyFn({ data: { all: true } });
+      await reload();
+      await loadPets();
+      toast.success("⚡ Todo o time recarregado!");
+    } catch (e: any) {
+      toast.error(e?.message ?? "Não foi possível recarregar.");
+    }
   }
 
   return (

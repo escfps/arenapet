@@ -41,15 +41,7 @@ function RedeemPage() {
       // Chest: abre na hora em vez de mandar pro inventário
       if (rw.type === "chest" && rw.chestTier && userId && profile) {
         const tier = rw.chestTier as PendingChest["tier"];
-        const res = await openStoredChest({
-          userId,
-          tier,
-          profile: profile as unknown as Record<string, unknown> & { coins: number; gems: number },
-          patch: async (p) => {
-            const { supabase } = await import("@/integrations/supabase/client");
-            await supabase.from("profiles").update(p as never).eq("id", userId);
-          },
-        });
+        const res = await openStoredChest({ tier });
         if ("error" in res) {
           toast.error(res.error);
         } else {

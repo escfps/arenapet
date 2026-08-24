@@ -58,18 +58,14 @@ function InventoryPage() {
     if ((items[CHEST_ITEM_TYPE[tier]] ?? 0) <= 0) return;
     setBusy(tier);
     try {
-      const res = await openStoredChest({
-        userId,
-        tier,
-        profile: profile as unknown as Record<string, unknown> & { coins: number; gems: number },
-        patch,
-      });
+      const res = await openStoredChest({ tier });
       if ("error" in res) {
         toast.error(res.error);
       } else {
         setChestResult(res);
       }
       await load();
+      window.dispatchEvent(new Event("profile:reload"));
     } finally {
       setBusy(null);
     }

@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { BattleScene } from "./BattleScene";
+import { useServerFn } from "@tanstack/react-start";
+import { reportTournamentMatch } from "@/lib/tournament.functions";
 import { simulateBattle, toBattleMonster, type BattleLogEntry } from "@/lib/battle";
 import type { MonsterRow } from "./MonsterCard";
 import { getTier, SPECIES, skinFilter } from "@/lib/game-data";
@@ -75,6 +77,7 @@ export function TournamentBattle({
   const [arenaA, setArenaA] = useState<{ points: number; rank: number } | null>(null);
   const [arenaB, setArenaB] = useState<{ points: number; rank: number } | null>(null);
   const reportedRef = useRef(false);
+  const reportFn = useServerFn(reportTournamentMatch);
 
   const meOnLeft = meId && (meId === p1Id);
   const leftOwner = meOnLeft || mode === "watch" ? p1Id : p1Id;
@@ -117,15 +120,15 @@ export function TournamentBattle({
       reportedRef.current = true;
       const winnerId = result.winner === "team_a" ? p1Id : p2Id;
       (async () => {
-        const { error } = await supabase.rpc("report_match_result", {
-          p_match_id: matchId,
-          p_winner_id: winnerId,
-          p_log: result.log as unknown as never,
-        });
-        if (!error) onFinished?.(winnerId);
+        try {
+          const res = await reportFn({ data: { matchId } });
+          onFinished?.((res.winnerId as string) ?? winnerId);
+        } catch {
+          /* servidor rejeitou o resultado */
+        }
       })();
     }
-  }, [teamA, teamB, existingLog, existingWinner, log, matchId, mode, p1Id, p2Id, onFinished]);
+  }, [teamA, teamB, existingLog, existingWinner, log, matchId, mode, p1Id, p2Id, onFinished, reportFn]);
 
   useEffect(() => {
     if (!log) return;
