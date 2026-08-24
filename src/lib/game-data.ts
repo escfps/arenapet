@@ -1595,6 +1595,8 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   coruja_negra: ["aves", "sombras", "corujas"],
   coruja_psiquica: ["aves", "sombras", "corujas"],
   alakazam: ["sombras"],
+  gastly: ["sombras"],
+  haunter: ["sombras"],
 };
 
 export function getSpeciesCategories(speciesId: string): Category[] {
