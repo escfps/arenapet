@@ -181,6 +181,8 @@ import kabutopsImg from "@/assets/monsters/kabutops.png";
 import aerodactylImg from "@/assets/monsters/aerodactyl.png";
 import snorlaxImg from "@/assets/monsters/snorlax.png";
 import articunoImg from "@/assets/monsters/articuno.png";
+import mewtwoImg from "@/assets/monsters/mewtwo.png";
+import mewImg from "@/assets/monsters/mew.png";
 import zapdosImg from "@/assets/monsters/zapdos.png";
 import moltresImg from "@/assets/monsters/moltres.png";
 import dratiniImg from "@/assets/monsters/dratini.png";
