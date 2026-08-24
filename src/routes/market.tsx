@@ -78,6 +78,8 @@ function MarketPage() {
   const [badges, setBadges] = useState<string[]>([]);
   const [busy, setBusy] = useState<string | null>(null);
   const [filterKind, setFilterKind] = useState<"all" | "monster" | "item" | "badge">("all");
+  const [filterRarity, setFilterRarity] = useState<"all" | "common" | "rare" | "super_rare" | "epic" | "legendary" | "mythic">("all");
+  const [sortPrice, setSortPrice] = useState<"recent" | "asc" | "desc">("recent");
 
   // form
   const [sellKind, setSellKind] = useState<"monster" | "item" | "badge">("monster");
@@ -178,7 +180,20 @@ function MarketPage() {
     return <div className="min-h-screen flex items-center justify-center text-white">Carregando...</div>;
   }
 
-  const shown = listings.filter((l) => filterKind === "all" || l.kind === filterKind);
+  const RARITY_KEYS = ["common", "rare", "super_rare", "epic", "legendary", "mythic"] as const;
+  let shown = listings.filter((l) => filterKind === "all" || l.kind === filterKind);
+  if (filterRarity !== "all") {
+    shown = shown.filter((l) => {
+      if (l.kind !== "monster") return false;
+      const sp = SPECIES[l.snapshot?.species as string];
+      return sp?.rarity === filterRarity;
+    });
+  }
+  if (sortPrice === "asc") {
+    shown = [...shown].sort((a, b) => a.price - b.price);
+  } else if (sortPrice === "desc") {
+    shown = [...shown].sort((a, b) => b.price - a.price);
+  }
   const previewPrice = parseInt(sellPrice || "0", 10) || 0;
   const previewFee = previewPrice ? Math.max(1, Math.round(previewPrice * FEE_PCT)) : 0;
 
@@ -282,6 +297,38 @@ function MarketPage() {
                   key={k}
                   onClick={() => setFilterKind(k)}
                   className={`px-3 py-1.5 rounded-full text-[11px] font-bold ${filterKind === k ? "bg-yellow-300 text-violet-900" : "bg-white/15 text-white"}`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex gap-2 flex-wrap items-center">
+              <span className="text-[11px] font-bold text-white/70">Qualidade:</span>
+              <button
+                onClick={() => setFilterRarity("all")}
+                className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${filterRarity === "all" ? "bg-yellow-300 text-violet-900" : "bg-white/15 text-white"}`}
+              >
+                Todas
+              </button>
+              {RARITY_KEYS.map((r) => (
+                <button
+                  key={r}
+                  onClick={() => setFilterRarity(r)}
+                  className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${filterRarity === r ? "bg-yellow-300 text-violet-900" : "bg-white/15 text-white"}`}
+                >
+                  {RARITY_INFO[r].emoji} {RARITY_INFO[r].name}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex gap-2 items-center">
+              <span className="text-[11px] font-bold text-white/70">Preço:</span>
+              {([["recent", "🕒 Recentes"], ["asc", "⬆️ Menor"], ["desc", "⬇️ Maior"]] as const).map(([k, label]) => (
+                <button
+                  key={k}
+                  onClick={() => setSortPrice(k)}
+                  className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${sortPrice === k ? "bg-yellow-300 text-violet-900" : "bg-white/15 text-white"}`}
                 >
                   {label}
                 </button>
