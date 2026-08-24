@@ -79,21 +79,29 @@ export function ChestRewardPopup({
             <div className="text-6xl my-2 drop-shadow-lg">✨{meta.emoji}✨</div>
 
             {pet && (
-              <div className="my-3 p-3 rounded-2xl bg-black/30 animate-fade-in">
+              <div className={`my-3 p-3 rounded-2xl bg-black/30 animate-fade-in ${current.reward.petShiny ? "ring-4 ring-amber-300 shadow-[0_0_36px_rgba(252,211,77,0.9)]" : ""}`}>
+                {current.reward.petShiny && (
+                  <div className="mb-1 text-sm font-black text-amber-200 animate-pulse">✨ SHINY ULTRA RARO! ✨</div>
+                )}
                 <img
                   src={pet.image}
                   alt={pet.name}
                   className="h-32 mx-auto drop-shadow-2xl animate-in zoom-in duration-700"
+                  style={current.reward.petShiny ? { filter: "hue-rotate(150deg) saturate(1.6) brightness(1.12) drop-shadow(0 0 14px rgba(253,224,71,0.95))" } : undefined}
                 />
                 <div className="mt-2 font-extrabold text-base">
-                  {pet.emoji} {pet.name}
+                  {current.reward.petShiny ? "✨ " : ""}{pet.emoji} {pet.name}
                 </div>
                 <span
                   className={`inline-block mt-1 px-2 py-0.5 rounded-full ${RARITY_INFO[pet.rarity].color} text-[10px] font-extrabold`}
                 >
                   {RARITY_INFO[pet.rarity].emoji} {RARITY_INFO[pet.rarity].name}
                 </span>
+                {current.reward.petShiny && (
+                  <div className="mt-1 text-[10px] font-bold text-amber-100">+10% em todos os status • Aura Prismática</div>
+                )}
               </div>
+
             )}
 
             <div className="mt-3 space-y-1 text-sm font-bold animate-fade-in">
