@@ -2396,27 +2396,28 @@ export const CHESTS: Record<ChestTier, Chest> = {
   },
   gold: {
     id: "gold", name: "Baú de Ouro", emoji: "🥇",
-    description: "Pets fortes garantidos: raros, super raros e épicos.",
+    description: "Pets fortes garantidos: raros e super raros.",
     priceGems: 60,
     priceCoins: 20000,
     coins: [1500, 4000],
     rations: [6, 12],
     gemChance: 1, gems: [3, 6],
     petChance: 1,
-    petRarityWeights: { rare: 55, super_rare: 35, epic: 10 },
+    petRarityWeights: { rare: 55, super_rare: 45 },
   },
 
   legendary: {
     id: "legendary", name: "Baú Lendário", emoji: "👑",
-    description: "Recompensa suprema: épicos, lendários e até míticos!",
+    description: "Recompensa suprema: super raros, lendários e até míticos!",
     priceGems: 150,
     priceCoins: 80000,
     coins: [4000, 10000],
     rations: [12, 24],
     gemChance: 1, gems: [10, 20],
     petChance: 1,
-    petRarityWeights: { epic: 30, legendary: 55, mythic: 15 },
+    petRarityWeights: { super_rare: 30, legendary: 55, mythic: 15 },
   },
+
 
 
 };
@@ -2471,10 +2472,24 @@ export function rollChest(tier: ChestTier, forceRarity?: Rarity): ChestReward {
         if (r <= 0) { chosenRarity = rarity as Rarity; break; }
       }
     }
-    const pool = Object.values(SPECIES).filter((s) => s.rarity === chosenRarity && !s.hidden && !s.retired);
+    const activeSpecies = Object.values(SPECIES).filter((s) => !s.hidden && !s.retired);
+    // Ordem de fallback: se não existir pet ativo na raridade sorteada, desce/sobe para a mais próxima
+    const RARITY_ORDER: Rarity[] = ["common", "rare", "super_rare", "epic", "legendary", "mythic"];
+    let pool = activeSpecies.filter((s) => s.rarity === chosenRarity);
+    if (pool.length === 0) {
+      const idx = RARITY_ORDER.indexOf(chosenRarity);
+      for (let d = 1; d < RARITY_ORDER.length && pool.length === 0; d++) {
+        for (const alt of [RARITY_ORDER[idx - d], RARITY_ORDER[idx + d]]) {
+          if (!alt) continue;
+          const p = activeSpecies.filter((s) => s.rarity === alt);
+          if (p.length > 0) { pool = p; break; }
+        }
+      }
+    }
     if (pool.length > 0) {
       petSpecies = pool[Math.floor(Math.random() * pool.length)].id;
     }
+
   }
 
   const petShiny = petSpecies ? rollShiny() : false;
@@ -2485,7 +2500,7 @@ export function rollChest(tier: ChestTier, forceRarity?: Rarity): ChestReward {
 // Pity system: tier => { guaranteed rarities (any of), limit }
 export const CHEST_PITY: Partial<Record<ChestTier, { rarities: Rarity[]; limit: number }>> = {
   silver: { rarities: ["rare"], limit: 10 },
-  gold: { rarities: ["epic"], limit: 20 },
+  gold: { rarities: ["super_rare"], limit: 20 },
   legendary: { rarities: ["legendary", "mythic"], limit: 10 },
 };
 
