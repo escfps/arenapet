@@ -198,7 +198,7 @@ function GymsPage() {
           toast.error("Você precisa de 5 insígnias diferentes para desafiar! 🎖️");
           return;
         }
-        setBadges([]);
+        setBadges((prev) => [t, ...prev.filter((x) => x !== t)].slice(5));
         toast.info("🎖️ 5 insígnias consumidas para entrar no ginásio!");
       }
 
