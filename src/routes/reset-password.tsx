@@ -5,7 +5,7 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/reset-password")({
   component: ResetPasswordPage,
-  head: () => ({ meta: [{ title: "Redefinir senha — Arena Pet" }] }),
+  head: () => ({ meta: [{ title: "Redefinir senha — Poke Arena" }] }),
 });
 
 function ResetPasswordPage() {

@@ -54,7 +54,7 @@ export function HUD({ profile }: { profile: ProfileRow }) {
         <MobileDrawerButton onOpen={() => setDrawerOpen(true)} />
         <Link to="/" className="font-extrabold text-white items-center gap-1.5 hover:scale-105 transition hidden sm:flex">
           <span className="text-xl">🐲</span>
-          <span className="text-sm">ARENA PET</span>
+          <span className="text-sm">POKE ARENA</span>
         </Link>
         <Link to="/profile" className="text-white hover:scale-105 transition min-w-0 flex-1">
           <div className="text-base font-extrabold flex items-center gap-1.5 hover:underline leading-tight">

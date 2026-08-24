@@ -9,7 +9,7 @@ import arenaBg from "@/assets/arena-bg.jpg";
 
 export const Route = createFileRoute("/forge")({
   component: ForgePage,
-  head: () => ({ meta: [{ title: "Elevar — ARENA PET" }] }),
+  head: () => ({ meta: [{ title: "Elevar — POKE ARENA" }] }),
 });
 
 type ForgeMonster = {

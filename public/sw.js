@@ -1,4 +1,4 @@
-// Arena Pet — Service Worker
+// Poke Arena — Service Worker
 // Network-first para navegação (HTML) e cache de assets estáticos.
 // Atualiza automaticamente quando uma nova versão é publicada.
 const VERSION = "v1";

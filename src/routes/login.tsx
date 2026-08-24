@@ -7,7 +7,7 @@ import { GEM_PACKS } from "@/lib/game-data";
 
 export const Route = createFileRoute("/login")({
   component: LoginPage,
-  head: () => ({ meta: [{ title: "Entrar — Arena Pet" }] }),
+  head: () => ({ meta: [{ title: "Entrar — Poke Arena" }] }),
 });
 
 const REMEMBER_KEY = "arenapet:remember";
@@ -296,7 +296,7 @@ function LoginPage() {
               <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-white/15 backdrop-blur-sm border border-white/30 shadow-xl mb-3 text-5xl rotate-3 hover:rotate-0 transition-transform">
                 🦊
               </div>
-              <h1 className="text-3xl font-black text-white tracking-wider drop-shadow-lg">ARENA PET</h1>
+              <h1 className="text-3xl font-black text-white tracking-wider drop-shadow-lg">POKE ARENA</h1>
               <p className="text-white/80 text-xs mt-1 font-medium">Colecione · Treine · Batalhe</p>
             </div>
           </div>
@@ -425,7 +425,7 @@ function LoginPage() {
             <Link to="/refunds" className="underline hover:text-white">Política de Reembolso</Link>
           </nav>
           <p className="mt-2 text-white/40 text-[11px]">
-            © {new Date().getFullYear()} ARENA PET — Operado por Bruno Henrique Moura Bernardo.
+            © {new Date().getFullYear()} POKE ARENA — Operado por Bruno Henrique Moura Bernardo.
             Pagamentos por Paddle.com.
           </p>
         </footer>
