@@ -3055,7 +3055,7 @@ export function toOfficialElement(el: string): OfficialElement {
 
 /** Categorias = tipagens oficiais do pokémon (primária + secundária). */
 export function getSpeciesCategories(speciesId: string): Category[] {
-  const sp = SPECIES.find((s) => s.id === speciesId);
+  const sp = SPECIES[speciesId];
   if (!sp) return [];
   const out: Category[] = [toOfficialElement(sp.element)];
   if (sp.secondaryElement) {
