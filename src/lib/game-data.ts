@@ -241,6 +241,16 @@ import ninetalesShinyImg from "@/assets/monsters/shiny/ninetales.png";
 import jigglypuffShinyImg from "@/assets/monsters/shiny/jigglypuff.png";
 import wigglytuffShinyImg from "@/assets/monsters/shiny/wigglytuff.png";
 import dugtrioShinyImg from "@/assets/monsters/shiny/dugtrio.png";
+import meowthShinyImg from "@/assets/monsters/shiny/meowth.png";
+import persianShinyImg from "@/assets/monsters/shiny/persian.png";
+import psyduckShinyImg from "@/assets/monsters/shiny/psyduck.png";
+import golduckShinyImg from "@/assets/monsters/shiny/golduck.png";
+import mankeyShinyImg from "@/assets/monsters/shiny/mankey.png";
+import primeapeShinyImg from "@/assets/monsters/shiny/primeape.png";
+import growlitheShinyImg from "@/assets/monsters/shiny/growlithe.png";
+import arcanineShinyImg from "@/assets/monsters/shiny/arcanine.png";
+import poliwagShinyImg from "@/assets/monsters/shiny/poliwag.png";
+import poliwhirlShinyImg from "@/assets/monsters/shiny/poliwhirl.png";
 import metapodImg from "@/assets/monsters/metapod.png";
 import butterfreeImg from "@/assets/monsters/butterfree.png";
 import weedleImg from "@/assets/monsters/weedle.png";
@@ -1350,70 +1360,70 @@ export const SPECIES: Record<string, Species> = {
   },
   meowth: {
     id: "meowth", name: "Meowth", element: "earth", role: "assassin", rarity: "common",
-    emoji: "🐱💰", image: meowthImg, hidden: true,
+    emoji: "🐱💰", image: meowthImg, shinyImage: meowthShinyImg, hidden: true,
     description: "Gato ladrão de moedas com garras afiadas.",
     base: { hp: 30, atk: 12, def: 7, spd: 16, int: 8 },
     skill: { name: "Garra Afiada", emoji: "💥", kind: "guaranteed_crit", cooldown: 3, description: "Ataque com crítico garantido." },
   },
   persian: {
     id: "persian", name: "Persian", element: "earth", role: "assassin", rarity: "legendary",
-    emoji: "🐆✨", image: persianImg, hidden: true,
+    emoji: "🐆✨", image: persianImg, shinyImage: persianShinyImg, hidden: true,
     description: "Felino elegante e letal. Salta sobre a presa mais frágil.",
     base: { hp: 62, atk: 26, def: 14, spd: 27, int: 11 },
     skill: { name: "Salto Real", emoji: "🐾", kind: "pounce_stun", cooldown: 4, description: "Salta no alvo mais fraco e o atordoa." },
   },
   psyduck: {
     id: "psyduck", name: "Psyduck", element: "water", role: "mage", rarity: "common",
-    emoji: "🦆🤕", image: psyduckImg, hidden: true,
+    emoji: "🦆🤕", image: psyduckImg, shinyImage: psyduckShinyImg, hidden: true,
     description: "A dor de cabeça libera poder psíquico descontrolado.",
     base: { hp: 32, atk: 8, def: 8, spd: 10, int: 15 },
     skill: { name: "Dor de Cabeça", emoji: "🌀", kind: "silence_disable", cooldown: 4, description: "Confunde e silencia o alvo." },
   },
   golduck: {
     id: "golduck", name: "Golduck", element: "water", role: "mage", rarity: "legendary",
-    emoji: "🦆🌊", image: golduckImg, hidden: true,
+    emoji: "🦆🌊", image: golduckImg, shinyImage: golduckShinyImg, hidden: true,
     description: "Nadador psíquico. Domina as ondas e a mente.",
     base: { hp: 68, atk: 16, def: 16, spd: 21, int: 32 },
     skill: { name: "Onda Psíquica", emoji: "🌊", kind: "aoe_magic", cooldown: 4, description: "Onda mental que atinge todos os inimigos." },
   },
   mankey: {
     id: "mankey", name: "Mankey", element: "earth", role: "dps", rarity: "common",
-    emoji: "🐒", image: mankeyImg, hidden: true,
+    emoji: "🐒", image: mankeyImg, shinyImage: mankeyShinyImg, hidden: true,
     description: "Sempre furioso, ataca sem pensar.",
     base: { hp: 33, atk: 13, def: 8, spd: 13, int: 6 },
     skill: { name: "Fúria Súbita", emoji: "😤", kind: "berserker_rage", cooldown: 3, description: "Entra em fúria e aumenta o ATK." },
   },
   primeape: {
     id: "primeape", name: "Primeape", element: "earth", role: "dps", rarity: "super_rare",
-    emoji: "🐒🔥", image: primeapeImg, hidden: true,
+    emoji: "🐒🔥", image: primeapeImg, shinyImage: primeapeShinyImg, hidden: true,
     description: "A raiva nunca passa. Bate cada vez mais forte.",
     base: { hp: 58, atk: 24, def: 13, spd: 20, int: 8 },
     skill: { name: "Descontrole", emoji: "💢", kind: "double_strike", cooldown: 3, description: "Sequência furiosa de dois golpes." },
   },
   growlithe: {
     id: "growlithe", name: "Growlithe", element: "fire", role: "dps", rarity: "rare",
-    emoji: "🐕🔥", image: growlitheImg, hidden: true,
+    emoji: "🐕🔥", image: growlitheImg, shinyImage: growlitheShinyImg, hidden: true,
     description: "Cãozinho de fogo leal e destemido.",
     base: { hp: 46, atk: 17, def: 12, spd: 15, int: 12 },
     skill: { name: "Mordida Flamejante", emoji: "🔥", kind: "burn_dot", cooldown: 3, description: "Mordida que queima o alvo ao longo dos turnos." },
   },
   arcanine: {
     id: "arcanine", name: "Arcanine", element: "fire", role: "dps", rarity: "mythic",
-    emoji: "🐕‍🦺🔥", image: arcanineImg, hidden: true,
+    emoji: "🐕‍🦺🔥", image: arcanineImg, shinyImage: arcanineShinyImg, hidden: true,
     description: "Lenda flamejante. Corre mais rápido que o vento.",
     base: { hp: 84, atk: 34, def: 21, spd: 30, int: 18 },
     skill: { name: "Chama Lendária", emoji: "🌋", kind: "phoenix_rage", cooldown: 5, description: "Explosão de fogo devastadora em todos os inimigos." },
   },
   poliwag: {
     id: "poliwag", name: "Poliwag", element: "water", role: "mage", rarity: "common",
-    emoji: "🌀🐸", image: poliwagImg, hidden: true,
+    emoji: "🌀🐸", image: poliwagImg, shinyImage: poliwagShinyImg, hidden: true,
     description: "Girino hipnótico com espiral na barriga.",
     base: { hp: 31, atk: 9, def: 8, spd: 12, int: 13 },
     skill: { name: "Espiral Hipnótica", emoji: "🌀", kind: "sleep_strike", cooldown: 4, description: "Hipnotiza o alvo com chance de dormir." },
   },
   poliwhirl: {
     id: "poliwhirl", name: "Poliwhirl", element: "water", role: "dps", rarity: "rare",
-    emoji: "🌀👊", image: poliwhirlImg, hidden: true,
+    emoji: "🌀👊", image: poliwhirlImg, shinyImage: poliwhirlShinyImg, hidden: true,
     description: "Aprendeu a lutar sem perder o hipnotismo.",
     base: { hp: 50, atk: 17, def: 13, spd: 14, int: 16 },
     skill: { name: "Soco Aquático", emoji: "💦", kind: "double_strike", cooldown: 3, description: "Dois socos encharcados no alvo." },
