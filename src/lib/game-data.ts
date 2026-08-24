@@ -72,6 +72,9 @@ import gastlyImg from "@/assets/monsters/gastly.png";
 import haunterImg from "@/assets/monsters/haunter.png";
 import abraImg from "@/assets/monsters/abra.png";
 import kadabraImg from "@/assets/monsters/kadabra.png";
+import charmanderImg from "@/assets/monsters/charmander.png";
+import charmeleonImg from "@/assets/monsters/charmeleon.png";
+import charizardImg from "@/assets/monsters/charizard.png";
 import brasagartoImg from "@/assets/monsters/brasagarto.png";
 import cascatorugaImg from "@/assets/monsters/cascatoruga.png";
 import folhassauroImg from "@/assets/monsters/folhassauro.png";
@@ -820,6 +823,27 @@ export const SPECIES: Record<string, Species> = {
     description: "Segunda forma da linhagem psíquica. Com a colher em mãos, amplifica seus poderes mentais — um passo antes de se tornar Alakazam.",
     base: { hp: 60, atk: 9, def: 9, spd: 23, int: 31 },
     skill: { name: "Confusão Psíquica", emoji: "🧠", kind: "spectral_hunger", cooldown: 4, description: "Esmaga a mente do inimigo mais fraco (INT×1.9, ignora DEF). Se abater o alvo, encadeia na próxima mente mais fraca (1 vez). PASSIVA — Telecinese: +18% de esquiva enquanto estiver acima de 50% do HP." },
+  },
+  charmander: {
+    id: "charmander", name: "Charmander", element: "fire", role: "dps", rarity: "super_rare",
+    emoji: "🔥🦎", image: charmanderImg, hidden: true,
+    description: "Primeira forma da linhagem flamejante. Um lagartinho de cauda acesa — a chama nunca apaga e queima quem se aproxima demais.",
+    base: { hp: 46, atk: 15, def: 8, spd: 17, int: 9 },
+    skill: { name: "Brasa", emoji: "🔥", kind: "burn_dot", cooldown: 3, description: "Cospe brasa no alvo: dano agora + queimadura por 3 turnos." },
+  },
+  charmeleon: {
+    id: "charmeleon", name: "Charmeleon", element: "fire", role: "dps", rarity: "legendary",
+    emoji: "🔥🦖", image: charmeleonImg, hidden: true,
+    description: "Segunda forma da linhagem flamejante. Temperamento explosivo e garras afiadas — ataca duas vezes antes que o inimigo reaja.",
+    base: { hp: 66, atk: 21, def: 12, spd: 19, int: 11 },
+    skill: { name: "Garra Flamejante", emoji: "🗡️", kind: "double_strike", cooldown: 3, description: "Duas garradas em chamas no mesmo alvo (dano por golpe reduzido)." },
+  },
+  charizard: {
+    id: "charizard", name: "Charizard", element: "fire", role: "dps", rarity: "mythic",
+    emoji: "🐉🔥", image: charizardImg, hidden: true,
+    description: "Forma final da linhagem flamejante. Um dragão alado que cospe fogo capaz de derreter pedra — quanto mais ferido, mais furioso fica.",
+    base: { hp: 88, atk: 26, def: 15, spd: 22, int: 14 },
+    skill: { name: "Lança-Chamas", emoji: "🔥", kind: "phoenix_rage", cooldown: 4, description: "PASSIVA: cada 10% de HP perdido = +6% ATK (até +60% com 1 HP). ATIVA: jato de fogo devastador (2× dano)." },
   },
 };
 
@@ -1616,6 +1640,9 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   haunter: ["sombras"],
   abra: ["sombras"],
   kadabra: ["sombras"],
+  charmander: ["fogo"],
+  charmeleon: ["fogo", "dragoes"],
+  charizard: ["fogo", "dragoes"],
 };
 
 export function getSpeciesCategories(speciesId: string): Category[] {
