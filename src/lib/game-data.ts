@@ -82,6 +82,16 @@ import clefableImg from "@/assets/monsters/clefable.png";
 import vulpixImg from "@/assets/monsters/vulpix.png";
 import ninetalesImg from "@/assets/monsters/ninetales.png";
 import jigglypuffImg from "@/assets/monsters/jigglypuff.png";
+import wigglytuffImg from "@/assets/monsters/wigglytuff.png";
+import zubatImg from "@/assets/monsters/zubat.png";
+import golbatImg from "@/assets/monsters/golbat.png";
+import oddishImg from "@/assets/monsters/oddish.png";
+import gloomImg from "@/assets/monsters/gloom.png";
+import vileplumeImg from "@/assets/monsters/vileplume.png";
+import parasImg from "@/assets/monsters/paras.png";
+import parasectImg from "@/assets/monsters/parasect.png";
+import venonatImg from "@/assets/monsters/venonat.png";
+import venomothImg from "@/assets/monsters/venomoth.png";
 import alakazamImg from "@/assets/monsters/alakazam.png";
 import gastlyImg from "@/assets/monsters/gastly.png";
 import haunterImg from "@/assets/monsters/haunter.png";
@@ -1117,6 +1127,76 @@ export const SPECIES: Record<string, Species> = {
     base: { hp: 52, atk: 10, def: 10, spd: 11, int: 18 },
     skill: { name: "Canção de Ninar", emoji: "🎵", kind: "sleep_strike", cooldown: 4, description: "Canta e pode fazer o alvo dormir." },
   },
+  wigglytuff: {
+    id: "wigglytuff", name: "Wigglytuff", element: "grass", role: "healer", rarity: "legendary",
+    emoji: "🎀✨", image: wigglytuffImg, hidden: true,
+    description: "Canto encantado que cura todo o time.",
+    base: { hp: 74, atk: 14, def: 14, spd: 13, int: 29 },
+    skill: { name: "Canto Encantado", emoji: "🎶", kind: "team_heal", cooldown: 4, description: "Cura todo o time." },
+  },
+  zubat: {
+    id: "zubat", name: "Zubat", element: "shadow", role: "assassin", rarity: "common",
+    emoji: "🦇", image: zubatImg, hidden: true,
+    description: "Morcego cego que ataca por ecolocalização.",
+    base: { hp: 30, atk: 11, def: 7, spd: 16, int: 7 },
+    skill: { name: "Sanguessuga", emoji: "🩸", kind: "lifesteal_strike", cooldown: 3, description: "Morde e recupera parte do dano como HP." },
+  },
+  golbat: {
+    id: "golbat", name: "Golbat", element: "shadow", role: "assassin", rarity: "super_rare",
+    emoji: "🦇🌑", image: golbatImg, hidden: true,
+    description: "Morcego voraz. Drena o sangue dos inimigos.",
+    base: { hp: 58, atk: 20, def: 11, spd: 21, int: 10 },
+    skill: { name: "Presa Vampírica", emoji: "🧛", kind: "lifesteal_strike", cooldown: 3, description: "Mordida potente que cura conforme o dano." },
+  },
+  oddish: {
+    id: "oddish", name: "Oddish", element: "grass", role: "mage", rarity: "common",
+    emoji: "🌿", image: oddishImg, hidden: true,
+    description: "Erva viva que solta pó tóxico.",
+    base: { hp: 32, atk: 8, def: 8, spd: 10, int: 14 },
+    skill: { name: "Pó Ácido", emoji: "☠️", kind: "bleed_dot", cooldown: 3, description: "Aplica dano contínuo no alvo." },
+  },
+  gloom: {
+    id: "gloom", name: "Gloom", element: "grass", role: "mage", rarity: "rare",
+    emoji: "🌸🤢", image: gloomImg, hidden: true,
+    description: "Fedor paralisante e pólen corrosivo.",
+    base: { hp: 48, atk: 11, def: 12, spd: 11, int: 22 },
+    skill: { name: "Fedor Tóxico", emoji: "💜", kind: "burn_dot", cooldown: 4, description: "Nuvem tóxica que causa dano contínuo em todos." },
+  },
+  vileplume: {
+    id: "vileplume", name: "Vileplume", element: "grass", role: "mage", rarity: "legendary",
+    emoji: "🌺", image: vileplumeImg, hidden: true,
+    description: "Pétalas gigantes que liberam esporos devastadores.",
+    base: { hp: 68, atk: 15, def: 17, spd: 12, int: 31 },
+    skill: { name: "Tempestade de Esporos", emoji: "🌪️", kind: "aoe_magic", cooldown: 4, description: "Explosão de esporos em todos os inimigos." },
+  },
+  paras: {
+    id: "paras", name: "Paras", element: "grass", role: "dps", rarity: "common",
+    emoji: "🍄", image: parasImg, hidden: true,
+    description: "Insetinho com cogumelos parasitas nas costas.",
+    base: { hp: 34, atk: 12, def: 9, spd: 9, int: 7 },
+    skill: { name: "Garra Fúngica", emoji: "🍄", kind: "bleed_dot", cooldown: 3, description: "Corte que causa sangramento." },
+  },
+  parasect: {
+    id: "parasect", name: "Parasect", element: "grass", role: "tank", rarity: "rare",
+    emoji: "🍄🦀", image: parasectImg, hidden: true,
+    description: "O cogumelo tomou o controle. Casco resistente.",
+    base: { hp: 60, atk: 16, def: 18, spd: 9, int: 11 },
+    skill: { name: "Casco Fúngico", emoji: "🛡️", kind: "turtle_shell", cooldown: 4, description: "Escudo e redução de dano recebido." },
+  },
+  venonat: {
+    id: "venonat", name: "Venonat", element: "grass", role: "mage", rarity: "common",
+    emoji: "🟣🐛", image: venonatImg, hidden: true,
+    description: "Peludo e noturno, hipnotiza com os olhos grandes.",
+    base: { hp: 33, atk: 10, def: 8, spd: 11, int: 13 },
+    skill: { name: "Hipnose", emoji: "😴", kind: "sleep_strike", cooldown: 4, description: "Ataque com chance de adormecer o alvo." },
+  },
+  venomoth: {
+    id: "venomoth", name: "Venomoth", element: "grass", role: "mage", rarity: "super_rare",
+    emoji: "🦋💜", image: venomothImg, hidden: true,
+    description: "Mariposa tóxica que cega os inimigos com pó.",
+    base: { hp: 56, atk: 14, def: 12, spd: 19, int: 25 },
+    skill: { name: "Pó Cegante", emoji: "✨", kind: "blind_debuff", cooldown: 4, description: "Cega todos os inimigos por 3 turnos." },
+  },
 };
 
 
@@ -1950,6 +2030,16 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   vulpix: ["fogo"],
   ninetales: ["fogo"],
   jigglypuff: ["floresta"],
+  wigglytuff: ["floresta"],
+  zubat: ["sombras", "aves"],
+  golbat: ["sombras", "aves"],
+  oddish: ["floresta"],
+  gloom: ["floresta"],
+  vileplume: ["floresta"],
+  paras: ["floresta"],
+  parasect: ["floresta"],
+  venonat: ["floresta"],
+  venomoth: ["floresta", "aves"],
 };
 
 export function getSpeciesCategories(speciesId: string): Category[] {
