@@ -1941,6 +1941,15 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   sandslash: ["pedra"],
   nidoran_f: ["pedra"],
   nidorina: ["pedra"],
+  nidoqueen: ["pedra"],
+  nidoran_m: ["pedra"],
+  nidorino: ["pedra"],
+  nidoking: ["pedra"],
+  clefairy: ["floresta"],
+  clefable: ["floresta"],
+  vulpix: ["fogo"],
+  ninetales: ["fogo"],
+  jigglypuff: ["floresta"],
 };
 
 export function getSpeciesCategories(speciesId: string): Category[] {
