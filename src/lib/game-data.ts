@@ -955,6 +955,48 @@ export const SPECIES: Record<string, Species> = {
     base: { hp: 30, atk: 10, def: 7, spd: 14, int: 6 },
     skill: { name: "Rajada de Vento", emoji: "💨", kind: "blind_debuff", cooldown: 3, description: "Lança areia nos olhos do alvo: reduz a precisão dele por 2 turnos." },
   },
+  pidgeotto: {
+    id: "pidgeotto", name: "Pidgeotto", element: "grass", role: "dps", rarity: "rare",
+    emoji: "🕊️💨", image: pidgeottoImg, hidden: true,
+    description: "Segunda forma da linhagem alada. Patrulha o território do alto e desce em investidas cortantes.",
+    base: { hp: 48, atk: 16, def: 11, spd: 20, int: 9 },
+    skill: { name: "Ataque Aéreo", emoji: "🕊️", kind: "double_strike", cooldown: 3, description: "Duas investidas aéreas no mesmo alvo (dano por golpe reduzido)." },
+  },
+  pidgeot: {
+    id: "pidgeot", name: "Pidgeot", element: "grass", role: "dps", rarity: "super_rare",
+    emoji: "🦅🌪️", image: pidgeotImg, hidden: true,
+    description: "Forma final da linhagem alada. Voa a velocidades absurdas e mergulha como uma lança de vento.",
+    base: { hp: 68, atk: 22, def: 15, spd: 26, int: 12 },
+    skill: { name: "Tornado", emoji: "🌪️", kind: "guaranteed_crit", cooldown: 3, description: "Mergulho em velocidade máxima: acerto crítico garantido." },
+  },
+  rattata: {
+    id: "rattata", name: "Rattata", element: "grass", role: "assassin", rarity: "common",
+    emoji: "🐁🦷", image: rattataImg, hidden: true,
+    description: "Roedor teimoso de dentes afiados. Morde e não solta até tirar sangue.",
+    base: { hp: 30, atk: 12, def: 6, spd: 16, int: 5 },
+    skill: { name: "Mordida Rápida", emoji: "🦷", kind: "bleed_dot", cooldown: 3, description: "Morde o alvo e causa sangramento por 3 turnos." },
+  },
+  raticate: {
+    id: "raticate", name: "Raticate", element: "grass", role: "assassin", rarity: "rare",
+    emoji: "🐀💥", image: raticateImg, hidden: true,
+    description: "Roedor adulto e agressivo. Os incisivos roem até metal — e drenam a vida de quem morde.",
+    base: { hp: 46, atk: 18, def: 10, spd: 19, int: 8 },
+    skill: { name: "Superdente", emoji: "💥", kind: "lifesteal_strike", cooldown: 3, description: "Mordida brutal que rouba parte do dano como cura." },
+  },
+  fearow: {
+    id: "fearow", name: "Fearow", element: "grass", role: "assassin", rarity: "super_rare",
+    emoji: "🪶🗡️", image: fearowImg, hidden: true,
+    description: "Ave de bico longo e agressiva. Perfura o alvo mais fraco em investidas certeiras.",
+    base: { hp: 60, atk: 23, def: 12, spd: 24, int: 10 },
+    skill: { name: "Perfurar", emoji: "🗡️", kind: "execute", cooldown: 3, description: "Ataca o inimigo com menos HP causando dano extra." },
+  },
+  ekans: {
+    id: "ekans", name: "Ekans", element: "grass", role: "assassin", rarity: "common",
+    emoji: "🐍☠️", image: ekansImg, hidden: true,
+    description: "Serpente venenosa que se enrola para emboscar. O veneno faz o trabalho no tempo dele.",
+    base: { hp: 32, atk: 11, def: 7, spd: 15, int: 8 },
+    skill: { name: "Picada Venenosa", emoji: "☠️", kind: "bleed_dot", cooldown: 3, description: "Injeta veneno no alvo, causando dano por 3 turnos." },
+  },
 };
 
 
