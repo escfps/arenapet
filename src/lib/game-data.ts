@@ -280,6 +280,16 @@ import growlitheShinyImg from "@/assets/monsters/shiny/growlithe.png";
 import arcanineShinyImg from "@/assets/monsters/shiny/arcanine.png";
 import poliwagShinyImg from "@/assets/monsters/shiny/poliwag.png";
 import poliwhirlShinyImg from "@/assets/monsters/shiny/poliwhirl.png";
+import electrodeShinyImg from "@/assets/monsters/shiny/electrode.png";
+import exeggcuteShinyImg from "@/assets/monsters/shiny/exeggcute.png";
+import exeggutorShinyImg from "@/assets/monsters/shiny/exeggutor.png";
+import cuboneShinyImg from "@/assets/monsters/shiny/cubone.png";
+import marowakShinyImg from "@/assets/monsters/shiny/marowak.png";
+import hitmonleeShinyImg from "@/assets/monsters/shiny/hitmonlee.png";
+import hitmonchanShinyImg from "@/assets/monsters/shiny/hitmonchan.png";
+import lickitungShinyImg from "@/assets/monsters/shiny/lickitung.png";
+import koffingShinyImg from "@/assets/monsters/shiny/koffing.png";
+import weezingShinyImg from "@/assets/monsters/shiny/weezing.png";
 import cloysterShinyImg from "@/assets/monsters/shiny/cloyster.png";
 import gastlyShinyImg from "@/assets/monsters/shiny/gastly.png";
 import haunterShinyImg from "@/assets/monsters/shiny/haunter.png";
@@ -1700,70 +1710,70 @@ export const SPECIES: Record<string, Species> = {
   },
   electrode: {
     id: "electrode", name: "Electrode", element: "electric", role: "mage", rarity: "legendary",
-    emoji: "⚪⚡", image: electrodeImg, hidden: true,
+    emoji: "⚪⚡", image: electrodeImg, shinyImage: electrodeShinyImg, hidden: true,
     description: "Armazena energia até não caber mais — e solta tudo.",
     base: { hp: 68, atk: 24, def: 20, spd: 26, int: 32 },
     skill: { name: "Sobrecarga", emoji: "🌩️", kind: "lightning_charge", cooldown: 5, description: "Descarga brutal que paralisa o alvo." },
   },
   exeggcute: {
     id: "exeggcute", name: "Exeggcute", element: "grass", role: "mage", rarity: "common",
-    emoji: "🥚🌿", image: exeggcuteImg, hidden: true,
+    emoji: "🥚🌿", image: exeggcuteImg, shinyImage: exeggcuteShinyImg, hidden: true,
     description: "Seis ovos que pensam juntos.",
     base: { hp: 36, atk: 10, def: 12, spd: 8, int: 16 },
     skill: { name: "Bombardeio de Sementes", emoji: "🌰", kind: "thorn_burst", cooldown: 4, description: "Atinge todos os inimigos com sementes." },
   },
   exeggutor: {
     id: "exeggutor", name: "Exeggutor", element: "grass", role: "mage", rarity: "legendary",
-    emoji: "🌴", image: exeggutorImg, hidden: true,
+    emoji: "🌴", image: exeggutorImg, shinyImage: exeggutorShinyImg, hidden: true,
     description: "Palmeira psíquica de três cabeças pensantes.",
     base: { hp: 84, atk: 26, def: 22, spd: 12, int: 34 },
     skill: { name: "Psíquico Tropical", emoji: "🔮", kind: "thorn_burst", cooldown: 5, description: "Onda mental que atinge todos os inimigos." },
   },
   cubone: {
     id: "cubone", name: "Cubone", element: "earth", role: "dps", rarity: "rare",
-    emoji: "🦴", image: cuboneImg, hidden: true,
+    emoji: "🦴", image: cuboneImg, shinyImage: cuboneShinyImg, hidden: true,
     description: "Usa o crânio da mãe como elmo e o osso como arma.",
     base: { hp: 44, atk: 18, def: 14, spd: 12, int: 8 },
     skill: { name: "Bumerangue de Osso", emoji: "🦴", kind: "double_strike", cooldown: 3, description: "Dois golpes com o osso." },
   },
   marowak: {
     id: "marowak", name: "Marowak", element: "earth", role: "dps", rarity: "legendary",
-    emoji: "🦴💀", image: marowakImg, hidden: true,
+    emoji: "🦴💀", image: marowakImg, shinyImage: marowakShinyImg, hidden: true,
     description: "Guerreiro endurecido pela dor, mestre do osso.",
     base: { hp: 78, atk: 32, def: 26, spd: 16, int: 10 },
     skill: { name: "Fúria Óssea", emoji: "💀", kind: "berserker_rage", cooldown: 4, description: "Frenesi de golpes que aumenta o ATK." },
   },
   hitmonlee: {
     id: "hitmonlee", name: "Hitmonlee", element: "earth", role: "assassin", rarity: "legendary",
-    emoji: "🦵", image: hitmonleeImg, hidden: true,
+    emoji: "🦵", image: hitmonleeImg, shinyImage: hitmonleeShinyImg, hidden: true,
     description: "Pernas elásticas que golpeiam como chicotes.",
     base: { hp: 68, atk: 34, def: 18, spd: 26, int: 8 },
     skill: { name: "Chute Relâmpago", emoji: "🦵", kind: "guaranteed_crit", cooldown: 4, description: "Chute crítico no ponto fraco." },
   },
   hitmonchan: {
     id: "hitmonchan", name: "Hitmonchan", element: "earth", role: "assassin", rarity: "legendary",
-    emoji: "🥊", image: hitmonchanImg, hidden: true,
+    emoji: "🥊", image: hitmonchanImg, shinyImage: hitmonchanShinyImg, hidden: true,
     description: "Punhos mais rápidos que um trem-bala.",
     base: { hp: 70, atk: 32, def: 20, spd: 25, int: 10 },
     skill: { name: "Rajada de Socos", emoji: "🥊", kind: "double_strike", cooldown: 3, description: "Sequência veloz de socos." },
   },
   lickitung: {
     id: "lickitung", name: "Lickitung", element: "grass", role: "tank", rarity: "rare",
-    emoji: "👅", image: lickitungImg, hidden: true,
+    emoji: "👅", image: lickitungImg, shinyImage: lickitungShinyImg, hidden: true,
     description: "A língua de dois metros paralisa quem toca.",
     base: { hp: 58, atk: 14, def: 18, spd: 8, int: 10 },
     skill: { name: "Lambida Paralisante", emoji: "👅", kind: "sleep_strike", cooldown: 4, description: "Lambida nojenta que deixa o alvo fora de combate." },
   },
   koffing: {
     id: "koffing", name: "Koffing", element: "shadow", role: "mage", rarity: "common",
-    emoji: "☠️", image: koffingImg, hidden: true,
+    emoji: "☠️", image: koffingImg, shinyImage: koffingShinyImg, hidden: true,
     description: "Bola de gás tóxico prestes a estourar.",
     base: { hp: 34, atk: 11, def: 12, spd: 9, int: 15 },
     skill: { name: "Nuvem Tóxica", emoji: "☠️", kind: "bleed_dot", cooldown: 3, description: "Gás venenoso que causa dano contínuo." },
   },
   weezing: {
     id: "weezing", name: "Weezing", element: "shadow", role: "tank", rarity: "legendary",
-    emoji: "☠️☠️", image: weezingImg, hidden: true,
+    emoji: "☠️☠️", image: weezingImg, shinyImage: weezingShinyImg, hidden: true,
     description: "Duas cabeças de gás venenoso que envenenam o ar.",
     base: { hp: 82, atk: 22, def: 28, spd: 10, int: 28 },
     skill: { name: "Névoa Venenosa", emoji: "🟣", kind: "bleed_dot", cooldown: 4, description: "Envenena todos ao redor causando dano contínuo." },
