@@ -807,7 +807,22 @@ export const SPECIES: Record<string, Species> = {
     base: { hp: 64, atk: 10, def: 10, spd: 18, int: 29 },
     skill: { name: "Lambida Espectral", emoji: "👅", kind: "aoe_magic", cooldown: 4, description: "Onda sombria atinge TODOS os inimigos (~INT×1.5) com 25% de chance de silenciar cada um por 1 turno. PASSIVA — Devora Sonhos: ao abater um inimigo, recupera 8% do HP máx." },
   },
+  abra: {
+    id: "abra", name: "Abra", element: "shadow", role: "mage", rarity: "super_rare",
+    emoji: "🦊💤", image: abraImg, hidden: true,
+    description: "Primeira forma da linhagem psíquica. Dorme 18 horas por dia, mas mesmo adormecido projeta ondas mentais e se teleporta pra fugir do perigo.",
+    base: { hp: 42, atk: 6, def: 6, spd: 22, int: 25 },
+    skill: { name: "Onda Mental", emoji: "🌀", kind: "spectral_hunger", cooldown: 3, description: "Esmaga a mente do inimigo mais fraco (INT×1.6, ignora DEF). PASSIVA — Teleporte: +15% de esquiva enquanto estiver acima de 50% do HP." },
+  },
+  kadabra: {
+    id: "kadabra", name: "Kadabra", element: "shadow", role: "mage", rarity: "legendary",
+    emoji: "🥄🦊", image: kadabraImg, hidden: true,
+    description: "Segunda forma da linhagem psíquica. Com a colher em mãos, amplifica seus poderes mentais — um passo antes de se tornar Alakazam.",
+    base: { hp: 60, atk: 9, def: 9, spd: 23, int: 31 },
+    skill: { name: "Confusão Psíquica", emoji: "🧠", kind: "spectral_hunger", cooldown: 4, description: "Esmaga a mente do inimigo mais fraco (INT×1.9, ignora DEF). Se abater o alvo, encadeia na próxima mente mais fraca (1 vez). PASSIVA — Telecinese: +18% de esquiva enquanto estiver acima de 50% do HP." },
+  },
 };
+
 
 export const ELEMENT_COLORS: Record<Element, string> = {
   fire: "from-red-400 to-orange-500",
