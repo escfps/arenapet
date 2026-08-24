@@ -2273,6 +2273,16 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   machoke: ["macacos"],
   machamp: ["macacos"],
   bellsprout: ["floresta"],
+  weepinbell: ["floresta"],
+  victreebel: ["floresta"],
+  tentacool: ["abyssal"],
+  tentacruel: ["abyssal"],
+  geodude: ["pedra"],
+  graveler: ["pedra"],
+  golem: ["pedra"],
+  ponyta: ["fogo"],
+  rapidash: ["fogo"],
+  slowpoke: ["abyssal"],
 };
 
 export function getSpeciesCategories(speciesId: string): Category[] {
