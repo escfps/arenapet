@@ -23,6 +23,7 @@ import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PreviewChestRouteImport } from './routes/preview-chest'
 import { Route as NovidadesRouteImport } from './routes/novidades'
+import { Route as MarketRouteImport } from './routes/market'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as InventarioRouteImport } from './routes/inventario'
 import { Route as GymsRouteImport } from './routes/gyms'
@@ -107,6 +108,11 @@ const PreviewChestRoute = PreviewChestRouteImport.update({
 const NovidadesRoute = NovidadesRouteImport.update({
   id: '/novidades',
   path: '/novidades',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MarketRoute = MarketRouteImport.update({
+  id: '/market',
+  path: '/market',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -198,6 +204,7 @@ export interface FileRoutesByFullPath {
   '/gyms': typeof GymsRoute
   '/inventario': typeof InventarioRoute
   '/login': typeof LoginRoute
+  '/market': typeof MarketRoute
   '/novidades': typeof NovidadesRoute
   '/preview-chest': typeof PreviewChestRoute
   '/privacy': typeof PrivacyRoute
@@ -229,6 +236,7 @@ export interface FileRoutesByTo {
   '/gyms': typeof GymsRoute
   '/inventario': typeof InventarioRoute
   '/login': typeof LoginRoute
+  '/market': typeof MarketRoute
   '/novidades': typeof NovidadesRoute
   '/preview-chest': typeof PreviewChestRoute
   '/privacy': typeof PrivacyRoute
@@ -261,6 +269,7 @@ export interface FileRoutesById {
   '/gyms': typeof GymsRoute
   '/inventario': typeof InventarioRoute
   '/login': typeof LoginRoute
+  '/market': typeof MarketRoute
   '/novidades': typeof NovidadesRoute
   '/preview-chest': typeof PreviewChestRoute
   '/privacy': typeof PrivacyRoute
@@ -294,6 +303,7 @@ export interface FileRouteTypes {
     | '/gyms'
     | '/inventario'
     | '/login'
+    | '/market'
     | '/novidades'
     | '/preview-chest'
     | '/privacy'
@@ -325,6 +335,7 @@ export interface FileRouteTypes {
     | '/gyms'
     | '/inventario'
     | '/login'
+    | '/market'
     | '/novidades'
     | '/preview-chest'
     | '/privacy'
@@ -356,6 +367,7 @@ export interface FileRouteTypes {
     | '/gyms'
     | '/inventario'
     | '/login'
+    | '/market'
     | '/novidades'
     | '/preview-chest'
     | '/privacy'
@@ -388,6 +400,7 @@ export interface RootRouteChildren {
   GymsRoute: typeof GymsRoute
   InventarioRoute: typeof InventarioRoute
   LoginRoute: typeof LoginRoute
+  MarketRoute: typeof MarketRoute
   NovidadesRoute: typeof NovidadesRoute
   PreviewChestRoute: typeof PreviewChestRoute
   PrivacyRoute: typeof PrivacyRoute
@@ -505,6 +518,13 @@ declare module '@tanstack/react-router' {
       path: '/novidades'
       fullPath: '/novidades'
       preLoaderRoute: typeof NovidadesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/market': {
+      id: '/market'
+      path: '/market'
+      fullPath: '/market'
+      preLoaderRoute: typeof MarketRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -638,6 +658,7 @@ const rootRouteChildren: RootRouteChildren = {
   GymsRoute: GymsRoute,
   InventarioRoute: InventarioRoute,
   LoginRoute: LoginRoute,
+  MarketRoute: MarketRoute,
   NovidadesRoute: NovidadesRoute,
   PreviewChestRoute: PreviewChestRoute,
   PrivacyRoute: PrivacyRoute,

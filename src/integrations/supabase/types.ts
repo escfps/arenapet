@@ -373,6 +373,71 @@ export type Database = {
         }
         Relationships: []
       }
+      market_listings: {
+        Row: {
+          buyer_id: string | null
+          created_at: string
+          currency: string
+          fee: number
+          gym_type: string | null
+          id: string
+          item_type: string | null
+          kind: string
+          monster_id: string | null
+          price: number
+          quantity: number
+          seller_id: string
+          snapshot: Json
+          sold_at: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          buyer_id?: string | null
+          created_at?: string
+          currency: string
+          fee?: number
+          gym_type?: string | null
+          id?: string
+          item_type?: string | null
+          kind: string
+          monster_id?: string | null
+          price: number
+          quantity?: number
+          seller_id: string
+          snapshot?: Json
+          sold_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          buyer_id?: string | null
+          created_at?: string
+          currency?: string
+          fee?: number
+          gym_type?: string | null
+          id?: string
+          item_type?: string | null
+          kind?: string
+          monster_id?: string | null
+          price?: number
+          quantity?: number
+          seller_id?: string
+          snapshot?: Json
+          sold_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_listings_monster_id_fkey"
+            columns: ["monster_id"]
+            isOneToOne: false
+            referencedRelation: "monsters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       monsters: {
         Row: {
           atk: number
@@ -1112,6 +1177,20 @@ export type Database = {
       }
       gym_start_challenge: { Args: { p_type: string }; Returns: Json }
       join_tournament: { Args: { p_tournament_id: string }; Returns: Json }
+      market_buy: { Args: { p_id: string }; Returns: Json }
+      market_cancel_listing: { Args: { p_id: string }; Returns: Json }
+      market_create_listing: {
+        Args: {
+          p_currency: string
+          p_gym_type?: string
+          p_item_type?: string
+          p_kind: string
+          p_monster_id?: string
+          p_price: number
+          p_quantity?: number
+        }
+        Returns: Json
+      }
       report_match_result: {
         Args: { p_log: Json; p_match_id: string; p_winner_id: string }
         Returns: undefined

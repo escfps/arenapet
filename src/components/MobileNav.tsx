@@ -19,6 +19,7 @@ const bottomItems = [
 ] as const;
 
 const internalItems = [
+  { to: "/market", label: "Mercado", emoji: "🛒" },
   { to: "/gyms", label: "Ginásios", emoji: "🏛️" },
   { to: "/friends", label: "Amigos", emoji: "👥" },
   { to: "/shop", label: "Passe de Batalha", emoji: "🎟️", hash: "vip" },
