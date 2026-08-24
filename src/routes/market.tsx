@@ -80,6 +80,7 @@ function MarketPage() {
   const [filterKind, setFilterKind] = useState<"all" | "monster" | "item" | "badge">("all");
   const [filterRarity, setFilterRarity] = useState<"all" | "common" | "rare" | "super_rare" | "epic" | "legendary" | "mythic">("all");
   const [sortPrice, setSortPrice] = useState<"recent" | "asc" | "desc">("recent");
+  const [filterShiny, setFilterShiny] = useState(false);
 
   // form
   const [sellKind, setSellKind] = useState<"monster" | "item" | "badge">("monster");
@@ -188,6 +189,9 @@ function MarketPage() {
       const sp = SPECIES[l.snapshot?.species as string];
       return sp?.rarity === filterRarity;
     });
+  }
+  if (filterShiny) {
+    shown = shown.filter((l) => l.kind === "monster" && !!l.snapshot?.is_shiny);
   }
   if (sortPrice === "asc") {
     shown = [...shown].sort((a, b) => a.price - b.price);
@@ -320,6 +324,22 @@ function MarketPage() {
                   {RARITY_INFO[r].emoji} {RARITY_INFO[r].name}
                 </button>
               ))}
+            </div>
+
+            <div className="flex gap-2 items-center">
+              <span className="text-[11px] font-bold text-white/70">Brilho:</span>
+              <button
+                onClick={() => setFilterShiny(false)}
+                className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${!filterShiny ? "bg-yellow-300 text-violet-900" : "bg-white/15 text-white"}`}
+              >
+                Todos
+              </button>
+              <button
+                onClick={() => setFilterShiny(true)}
+                className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${filterShiny ? "bg-yellow-300 text-violet-900" : "bg-white/15 text-white"}`}
+              >
+                ✨ Shiny
+              </button>
             </div>
 
             <div className="flex gap-2 items-center">
