@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
-import { SPECIES, rankStars, RARITY_INFO, TRADE_FEE_COINS, TRADE_FEE_GEMS, MAX_TRADEABLE_RANK } from "@/lib/game-data";
+import { speciesImage, shinyFallbackFilter, SPECIES, rankStars, RARITY_INFO, TRADE_FEE_COINS, TRADE_FEE_GEMS, MAX_TRADEABLE_RANK } from "@/lib/game-data";
 import { createTrade, respondToTrade, confirmTrade, cancelTrade } from "@/lib/trades.functions";
 import { toast, Toaster } from "sonner";
 import arenaBg from "@/assets/arena-bg.jpg";
@@ -61,7 +61,7 @@ function TradePage() {
     if (!userId) return;
     const [tRes, mRes] = await Promise.all([
       supabase.from("trades").select("*").order("created_at", { ascending: false }).limit(50),
-      supabase.from("monsters").select("id,owner_id,species,name,rank,in_team").eq("owner_id", userId),
+      supabase.from("monsters").select("id,owner_id,species,name,rank,in_team,is_shiny").eq("owner_id", userId),
     ]);
     const tradesData = (tRes.data ?? []) as Trade[];
     setTrades(tradesData);
@@ -79,7 +79,7 @@ function TradePage() {
     if (monIds.size > 0) {
       const { data: mons } = await supabase
         .from("monsters")
-        .select("id,owner_id,species,name,rank,in_team")
+        .select("id,owner_id,species,name,rank,in_team,is_shiny")
         .in("id", Array.from(monIds));
       const map = new Map<string, Mon>();
       for (const m of (mons ?? []) as Mon[]) map.set(m.id, m);
@@ -308,7 +308,7 @@ function MonsterPick({ mon, selected, onClick }: { mon: Mon; selected: boolean; 
       onClick={onClick}
       className={`p-2 rounded-lg border-2 transition text-left ${selected ? "border-yellow-400 bg-yellow-400/20" : "border-white/20 bg-white/5 hover:bg-white/10"}`}
     >
-      <img src={sp.image} alt={sp.name} className="h-12 w-full object-contain" />
+      <img src={speciesImage(mon.species, (mon as any).is_shiny === true)} alt={sp.name} className="h-12 w-full object-contain" style={{ filter: shinyFallbackFilter(mon.species, (mon as any).is_shiny === true) }} />
       <div className="text-white text-[11px] font-extrabold truncate">{mon.name}</div>
       <div className="text-white/70 text-[10px]">{rankStars(mon.rank ?? 1)}</div>
     </button>
@@ -322,7 +322,7 @@ function MiniMon({ id, monstersById, fallback }: { id: string | null; monstersBy
   const sp = SPECIES[m.species];
   return (
     <div className="flex items-center gap-2">
-      {sp && <img src={sp.image} alt={sp.name} className="h-12 w-12 object-contain" />}
+      {sp && <img src={speciesImage(m.species, (m as any).is_shiny === true)} alt={sp.name} className="h-12 w-12 object-contain" style={{ filter: shinyFallbackFilter(m.species, (m as any).is_shiny === true) }} />}
       <div className="min-w-0">
         <div className="text-white text-xs font-extrabold truncate">{m.name}</div>
         <div className="text-white/70 text-[10px]">{sp?.name} • {rankStars(m.rank ?? 1)}</div>

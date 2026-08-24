@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { SPECIES, ELEMENT_COLORS, ELEMENT_NAMES, RARITY_INFO, ROLE_INFO, rollWelcomeChest, starterMonsterStats, getSpeciesCategories, CATEGORY_INFO, skinFilter, type Rarity, type Element, type Role, type Category } from "@/lib/game-data";
+import { speciesImage, shinyFallbackFilter, SPECIES, ELEMENT_COLORS, ELEMENT_NAMES, RARITY_INFO, ROLE_INFO, rollWelcomeChest, starterMonsterStats, getSpeciesCategories, CATEGORY_INFO, skinFilter, type Rarity, type Element, type Role, type Category } from "@/lib/game-data";
 import { MonsterCard, type MonsterRow } from "@/components/MonsterCard";
 import { HUD } from "@/components/HUD";
 import { WelcomeChestModal } from "@/components/WelcomeChestModal";
@@ -365,7 +365,7 @@ function PatioPage() {
                         className="absolute inset-0 flex items-center justify-center p-2"
                         title={m.name}
                       >
-                        <img src={sp.image} alt={sp.name} className="h-full w-auto drop-shadow-2xl pointer-events-none" style={{ filter: skinFilter(m.skin) }} />
+                        <img src={speciesImage(m.species, (m as any).is_shiny === true)} alt={sp.name} className="h-full w-auto drop-shadow-2xl pointer-events-none" style={{ filter: `${skinFilter(m.skin)} ${shinyFallbackFilter(m.species, (m as any).is_shiny === true)} ${(m as any).is_shiny ? "drop-shadow(0 0 10px rgba(253,224,71,0.9))" : ""}`.trim() }} />
                       </button>
                       <div className="absolute bottom-0 inset-x-0 bg-black/70 px-1 py-0.5 text-white text-[10px] font-extrabold truncate text-center pointer-events-none">
                         {m.name}

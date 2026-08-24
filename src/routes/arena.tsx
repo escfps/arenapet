@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { SPECIES, ELEMENT_COLORS, ROLE_INFO, RARITY_INFO, MAX_RANK, skinFilter, isVip, xpForNextLevel, rankStars, totalStats, ARENA_WIN_POINTS, ARENA_LOSS_POINTS, rollArenaPoints, getTier, divisionBounds, promoNeeded, type PromoSeries, computeBattleEnergy, MAX_BATTLE_ENERGY, hungerMultiplier, rollLevelUpRewards, tierPromotionChests, rollChest, CHESTS, tierRankIndex, starterMonsterStats, getSpeciesCategories, CATEGORY_INFO } from "@/lib/game-data";
+import { speciesImage, shinyFallbackFilter, SPECIES, ELEMENT_COLORS, ROLE_INFO, RARITY_INFO, MAX_RANK, skinFilter, isVip, xpForNextLevel, rankStars, totalStats, ARENA_WIN_POINTS, ARENA_LOSS_POINTS, rollArenaPoints, getTier, divisionBounds, promoNeeded, type PromoSeries, computeBattleEnergy, MAX_BATTLE_ENERGY, hungerMultiplier, rollLevelUpRewards, tierPromotionChests, rollChest, CHESTS, tierRankIndex, starterMonsterStats, getSpeciesCategories, CATEGORY_INFO } from "@/lib/game-data";
 import type { MonsterRow } from "@/components/MonsterCard";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
@@ -945,7 +945,7 @@ function ArenaPage() {
                           const sp = SPECIES[s.species];
                           return (
                             <div className={`flex items-center gap-1.5 p-1.5 rounded-md bg-black/40 border min-w-0 ${isMvp ? "border-yellow-300/80" : "border-white/15"}`}>
-                              {sp && <img src={sp.image} alt="" className="h-7 w-7 object-contain shrink-0" style={{ filter: skinFilter(s.skin) }} />}
+                              {sp && <img src={speciesImage(s.species, (s as any).is_shiny === true)} alt="" className="h-7 w-7 object-contain shrink-0" style={{ filter: `${skinFilter(s.skin)} ${shinyFallbackFilter(s.species, (s as any).is_shiny === true)}`.trim() }} />}
                               <div className="flex-1 min-w-0 text-left">
                                 <div className="text-[11px] font-bold text-white truncate flex items-center gap-1">
                                   {s.name}
@@ -1113,7 +1113,7 @@ function TeamPanel({ title, team, side, energies }: { title: string; team: FullM
           const en = energies?.[i];
           const content = (
             <div className={`flex items-center gap-2 p-2 rounded-lg bg-gradient-to-r ${ELEMENT_COLORS[sp.element]} ring-2 ${RARITY_INFO[sp.rarity].ringColor} ${(m.rank ?? 1) >= MAX_RANK ? "rank-max-glow" : ""} ${side === "left" ? "hover:brightness-110 transition cursor-pointer" : ""}`}>
-              <img src={sp.image} alt="" className="h-14 w-14 object-contain drop-shadow-lg" style={{ filter: skinFilter(m.skin) }} />
+              <img src={speciesImage(m.species, (m as any).is_shiny === true)} alt="" className="h-14 w-14 object-contain drop-shadow-lg" style={{ filter: `${skinFilter(m.skin)} ${shinyFallbackFilter(m.species, (m as any).is_shiny === true)}`.trim() }} />
               <div className="flex-1 min-w-0">
                 <div className="font-bold text-sm truncate flex items-center gap-1 flex-wrap">
                   {m.name}

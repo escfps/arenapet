@@ -624,7 +624,7 @@ function ShopPage() {
                 const full = en.energy >= MAX_BATTLE_ENERGY;
                 return (
                   <div key={m.id} className={`flex items-center gap-2 p-2 rounded-lg bg-gradient-to-r ${ELEMENT_COLORS[sp.element]} text-white`}>
-                    <img src={sp.image} alt="" className="h-12 w-12 object-contain drop-shadow" style={{ filter: skinFilter(m.skin) }} />
+                    <img src={speciesImage(m.species, (m as any).is_shiny === true)} alt="" className="h-12 w-12 object-contain drop-shadow" style={{ filter: `${skinFilter(m.skin)} ${shinyFallbackFilter(m.species, (m as any).is_shiny === true)}`.trim() }} />
                     <div className="flex-1 min-w-0">
                       <div className="font-bold text-sm truncate">{m.name} {m.in_team && <span className="text-[9px] bg-yellow-400 text-yellow-950 px-1 rounded">TIME</span>}</div>
                       <div className="text-[11px] font-bold">⚡ {en.energy}/{MAX_BATTLE_ENERGY}</div>
