@@ -78,6 +78,9 @@ import charizardImg from "@/assets/monsters/charizard.png";
 import squirtleImg from "@/assets/monsters/squirtle.png";
 import wartortleImg from "@/assets/monsters/wartortle.png";
 import blastoiseImg from "@/assets/monsters/blastoise.png";
+import bulbasaurImg from "@/assets/monsters/bulbasaur.png";
+import ivysaurImg from "@/assets/monsters/ivysaur.png";
+import venusaurImg from "@/assets/monsters/venusaur.png";
 import brasagartoImg from "@/assets/monsters/brasagarto.png";
 import cascatorugaImg from "@/assets/monsters/cascatoruga.png";
 import folhassauroImg from "@/assets/monsters/folhassauro.png";
@@ -868,6 +871,27 @@ export const SPECIES: Record<string, Species> = {
     description: "Forma final da linhagem aquática. Dois canhões nas costas disparam jatos capazes de furar aço — muralha e artilharia no mesmo pet.",
     base: { hp: 104, atk: 19, def: 25, spd: 15, int: 14 },
     skill: { name: "Hidrocanhão", emoji: "🔫", kind: "aoe_strike_def_down", cooldown: 4, description: "Dispara os canhões em TODOS os inimigos (1.3× dano cada) e reduz a DEF de todos em 15% por 2 turnos." },
+  },
+  bulbasaur: {
+    id: "bulbasaur", name: "Bulbasaur", element: "grass", role: "healer", rarity: "super_rare",
+    emoji: "🌱🦕", image: bulbasaurImg, hidden: true,
+    description: "Primeira forma da linhagem vegetal. O bulbo nas costas guarda esporos que curam o aliado mais ferido.",
+    base: { hp: 52, atk: 10, def: 12, spd: 11, int: 24 },
+    skill: { name: "Esporo Vital", emoji: "🌱", kind: "heal_lowest", cooldown: 3, description: "Libera esporos curativos no aliado mais ferido (~INT×1.3)." },
+  },
+  ivysaur: {
+    id: "ivysaur", name: "Ivysaur", element: "grass", role: "healer", rarity: "legendary",
+    emoji: "🌷🦕", image: ivysaurImg, hidden: true,
+    description: "Segunda forma da linhagem vegetal. O botão floral já espalha pólen restaurador por todo o time.",
+    base: { hp: 72, atk: 14, def: 17, spd: 13, int: 30 },
+    skill: { name: "Pólen Restaurador", emoji: "🌷", kind: "team_heal", cooldown: 4, description: "Cura TODOS os aliados (~INT×0.9 cada)." },
+  },
+  venusaur: {
+    id: "venusaur", name: "Venusaur", element: "grass", role: "healer", rarity: "mythic",
+    emoji: "🌸🦖", image: venusaurImg, hidden: true,
+    description: "Forma final da linhagem vegetal. A flor gigantesca dispara espinhos em toda a arena enquanto sustenta o time.",
+    base: { hp: 98, atk: 18, def: 22, spd: 14, int: 36 },
+    skill: { name: "Tempestade de Folhas", emoji: "🌸", kind: "thorn_burst", cooldown: 4, description: "Golpeia TODOS os inimigos com folhas afiadas. PASSIVA: reflete parte do dano recebido." },
   },
 };
 
@@ -1670,6 +1694,9 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   squirtle: ["abyssal", "repteis"],
   wartortle: ["abyssal", "repteis"],
   blastoise: ["abyssal", "repteis"],
+  bulbasaur: ["floresta", "repteis"],
+  ivysaur: ["floresta", "repteis"],
+  venusaur: ["floresta", "repteis"],
 };
 
 export function getSpeciesCategories(speciesId: string): Category[] {
