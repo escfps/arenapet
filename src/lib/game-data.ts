@@ -230,6 +230,16 @@ import sandshrewShinyImg from "@/assets/monsters/shiny/sandshrew.png";
 import sandslashShinyImg from "@/assets/monsters/shiny/sandslash.png";
 import nidoranFShinyImg from "@/assets/monsters/shiny/nidoran_f.png";
 import nidorinaShinyImg from "@/assets/monsters/shiny/nidorina.png";
+import nidoqueenShinyImg from "@/assets/monsters/shiny/nidoqueen.png";
+import nidoranMShinyImg from "@/assets/monsters/shiny/nidoran_m.png";
+import nidorinoShinyImg from "@/assets/monsters/shiny/nidorino.png";
+import nidokingShinyImg from "@/assets/monsters/shiny/nidoking.png";
+import clefairyShinyImg from "@/assets/monsters/shiny/clefairy.png";
+import clefableShinyImg from "@/assets/monsters/shiny/clefable.png";
+import vulpixShinyImg from "@/assets/monsters/shiny/vulpix.png";
+import ninetalesShinyImg from "@/assets/monsters/shiny/ninetales.png";
+import jigglypuffShinyImg from "@/assets/monsters/shiny/jigglypuff.png";
+import wigglytuffShinyImg from "@/assets/monsters/shiny/wigglytuff.png";
 import metapodImg from "@/assets/monsters/metapod.png";
 import butterfreeImg from "@/assets/monsters/butterfree.png";
 import weedleImg from "@/assets/monsters/weedle.png";
@@ -1192,70 +1202,70 @@ export const SPECIES: Record<string, Species> = {
   },
   nidoqueen: {
     id: "nidoqueen", name: "Nidoqueen", element: "earth", role: "tank", rarity: "legendary",
-    emoji: "👑🦏", image: nidoqueenImg, hidden: true,
+    emoji: "👑🦏", image: nidoqueenImg, shinyImage: nidoqueenShinyImg, hidden: true,
     description: "Rainha blindada. Escudo do time com contra-ataque devastador.",
     base: { hp: 82, atk: 22, def: 21, spd: 14, int: 12 },
     skill: { name: "Golpe Real", emoji: "👑", kind: "horn_charge", cooldown: 4, description: "Investida real com dano alto e redução de DEF do alvo." },
   },
   nidoran_m: {
     id: "nidoran_m", name: "Nidoran♂", element: "earth", role: "dps", rarity: "common",
-    emoji: "💜🐭", image: nidoranMImg, hidden: true,
+    emoji: "💜🐭", image: nidoranMImg, shinyImage: nidoranMShinyImg, hidden: true,
     description: "Pequeno e venenoso, ataca com o chifre tóxico.",
     base: { hp: 34, atk: 12, def: 8, spd: 13, int: 6 },
     skill: { name: "Chifre Tóxico", emoji: "☠️", kind: "bleed_dot", cooldown: 3, description: "Ataque que pode envenenar o alvo." },
   },
   nidorino: {
     id: "nidorino", name: "Nidorino", element: "earth", role: "dps", rarity: "rare",
-    emoji: "💜🦏", image: nidorinoImg, hidden: true,
+    emoji: "💜🦏", image: nidorinoImg, shinyImage: nidorinoShinyImg, hidden: true,
     description: "Agressivo e rápido, perfura com o chifre venenoso.",
     base: { hp: 50, atk: 19, def: 12, spd: 15, int: 9 },
     skill: { name: "Perfurar", emoji: "🗡️", kind: "bleed_dot", cooldown: 3, description: "Perfuração venenosa com dano elevado." },
   },
   nidoking: {
     id: "nidoking", name: "Nidoking", element: "earth", role: "dps", rarity: "legendary",
-    emoji: "👑💜", image: nidokingImg, hidden: true,
+    emoji: "👑💜", image: nidokingImg, shinyImage: nidokingShinyImg, hidden: true,
     description: "Rei do veneno. Força bruta com chifre perfurante.",
     base: { hp: 76, atk: 27, def: 17, spd: 16, int: 12 },
     skill: { name: "Fúria do Rei", emoji: "👑", kind: "bleed_dot", cooldown: 4, description: "Golpe brutal que envenena e causa dano massivo." },
   },
   clefairy: {
     id: "clefairy", name: "Clefairy", element: "grass", role: "healer", rarity: "rare",
-    emoji: "🌸✨", image: clefairyImg, hidden: true,
+    emoji: "🌸✨", image: clefairyImg, shinyImage: clefairyShinyImg, hidden: true,
     description: "Fada estelar que canta para curar os aliados.",
     base: { hp: 46, atk: 9, def: 11, spd: 12, int: 22 },
     skill: { name: "Luz Lunar", emoji: "🌙", kind: "heal_lowest", cooldown: 3, description: "Cura o aliado mais ferido." },
   },
   clefable: {
     id: "clefable", name: "Clefable", element: "grass", role: "healer", rarity: "legendary",
-    emoji: "🌟🌸", image: clefableImg, hidden: true,
+    emoji: "🌟🌸", image: clefableImg, shinyImage: clefableShinyImg, hidden: true,
     description: "Fada mística. Cura o time inteiro com magia estelar.",
     base: { hp: 70, atk: 13, def: 16, spd: 14, int: 31 },
     skill: { name: "Bênção Estelar", emoji: "🌟", kind: "team_heal", cooldown: 4, description: "Cura todo o time." },
   },
   vulpix: {
     id: "vulpix", name: "Vulpix", element: "fire", role: "dps", rarity: "rare",
-    emoji: "🔥🦊", image: vulpixImg, hidden: true,
+    emoji: "🔥🦊", image: vulpixImg, shinyImage: vulpixShinyImg, hidden: true,
     description: "Raposinha de fogo com seis caudas flamejantes.",
     base: { hp: 42, atk: 15, def: 10, spd: 16, int: 14 },
     skill: { name: "Brasa Veloz", emoji: "🔥", kind: "burn_dot", cooldown: 3, description: "Ataque de fogo que pode queimar." },
   },
   ninetales: {
     id: "ninetales", name: "Ninetales", element: "fire", role: "mage", rarity: "legendary",
-    emoji: "🔥✨", image: ninetalesImg, hidden: true,
+    emoji: "🔥✨", image: ninetalesImg, shinyImage: ninetalesShinyImg, hidden: true,
     description: "Raposa mística de nove caudas. Fogo amaldiçoado.",
     base: { hp: 66, atk: 17, def: 15, spd: 22, int: 30 },
     skill: { name: "Fogo Fantasma", emoji: "👻", kind: "burn_dot", cooldown: 4, description: "Chama espectral em área que queima os inimigos." },
   },
   jigglypuff: {
     id: "jigglypuff", name: "Jigglypuff", element: "grass", role: "healer", rarity: "rare",
-    emoji: "🎵🎀", image: jigglypuffImg, hidden: true,
+    emoji: "🎵🎀", image: jigglypuffImg, shinyImage: jigglypuffShinyImg, hidden: true,
     description: "Canta uma canção que faz os inimigos dormirem.",
     base: { hp: 52, atk: 10, def: 10, spd: 11, int: 18 },
     skill: { name: "Canção de Ninar", emoji: "🎵", kind: "sleep_strike", cooldown: 4, description: "Canta e pode fazer o alvo dormir." },
   },
   wigglytuff: {
     id: "wigglytuff", name: "Wigglytuff", element: "grass", role: "healer", rarity: "legendary",
-    emoji: "🎀✨", image: wigglytuffImg, hidden: true,
+    emoji: "🎀✨", image: wigglytuffImg, shinyImage: wigglytuffShinyImg, hidden: true,
     description: "Canto encantado que cura todo o time.",
     base: { hp: 74, atk: 14, def: 14, spd: 13, int: 29 },
     skill: { name: "Canto Encantado", emoji: "🎶", kind: "team_heal", cooldown: 4, description: "Cura todo o time." },
