@@ -8,7 +8,7 @@ import {
   rollEgg, skinFilter, isVip,
   MAX_BATTLE_ENERGY, ENERGY_REFILL_GEM_COST, ENERGY_REFILL_ALL_GEM_COST, computeBattleEnergy,
   CHESTS, rollChest, RARITY_INFO, starterMonsterStats,
-  CHEST_PITY, PITY_COLUMN,
+  CHEST_PITY, PITY_COLUMN, CHEST_PITY_MYTHIC, PITY_MYTHIC_COLUMN,
   type ChestTier, type ChestReward, type Rarity,
 } from "@/lib/game-data";
 import { useServerFn } from "@tanstack/react-start";
