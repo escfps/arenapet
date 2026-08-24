@@ -132,7 +132,7 @@ function MonsterPage() {
       await patchMonster(updates);
       toast.success(`+2% CRIT! (${used + 1}/${limit})`);
     } else {
-      const gain = stat === "hp" ? 20 + Math.floor(Math.random() * 6) : stat === "spd" ? 3 + Math.floor(Math.random() * 3) : 1 + Math.floor(Math.random() * 2);
+      const gain = stat === "hp" ? 20 + Math.floor(Math.random() * 6) : stat === "spd" || stat === "def" ? 3 + Math.floor(Math.random() * 3) : 1 + Math.floor(Math.random() * 2);
       updates[stat] = (monster[stat] ?? 0) + gain;
       await patchMonster(updates);
       toast.success(`+${gain} ${stat.toUpperCase()}! (${used + 1}/${limit})`);
