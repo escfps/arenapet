@@ -3,7 +3,6 @@ import {
   SHINY_SKILL,
   ROLE_SKILLS,
   RARITY_INFO,
-  defensiveMultiplier,
   totalStats,
   getSkill,
   hungerMultiplier,
@@ -24,6 +23,7 @@ import {
   stabBonus,
   type Move,
   type MoveEffect,
+  type PokeType,
 } from "./moves";
 
 
