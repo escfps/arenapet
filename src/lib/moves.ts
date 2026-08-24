@@ -70,8 +70,8 @@ export function effectivenessLabel(mult: number): string {
   if (mult === 0) return "🚫 Imune";
   if (mult >= 4) return "💥💥 Super efetivo (4x)";
   if (mult >= 2) return "💥 Super efetivo (2x)";
-  if (mult <= 0.25) return "🛡️🛡️ Muito resistido (0.25x)";
-  if (mult < 1) return "🛡️ Resistido (0.5x)";
+  if (mult <= 0.25) return "🛡️🛡️ Muita resistência (0.25x)";
+  if (mult < 1) return "🛡️ Resistência (0.5x)";
   return "➖ Normal";
 }
 
