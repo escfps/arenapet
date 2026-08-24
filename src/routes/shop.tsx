@@ -379,6 +379,10 @@ function ShopPage() {
                 const pityCol = PITY_COLUMN[c.id];
                 const currentPity = pityCol ? ((profile as Record<string, unknown>)[pityCol] as number ?? 0) : 0;
                 const pityLeft = pity ? Math.max(0, pity.limit - currentPity) : 0;
+                const mythicPity = CHEST_PITY_MYTHIC[c.id];
+                const mythicPityCol = PITY_MYTHIC_COLUMN[c.id];
+                const currentMythicPity = mythicPityCol ? ((profile as Record<string, unknown>)[mythicPityCol] as number ?? 0) : 0;
+                const mythicLeft = mythicPity ? Math.max(0, mythicPity.limit - currentMythicPity) : 0;
                 return (
                   <div key={c.id} className="rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 p-4 text-white">
                     <div className="text-center">
@@ -394,6 +398,17 @@ function ShopPage() {
                           {pityLeft === 1
                             ? `🔥 Próximo baú garante ${label}!`
                             : `${pityLeft <= 3 ? "🔥" : "🎯"} Faltam ${pityLeft} pra garantir ${label}`}
+                        </div>
+                      );
+                    })()}
+
+                    {mythicPity && (() => {
+                      const mythicLabel = `${RARITY_INFO.mythic.emoji} ${RARITY_INFO.mythic.name}`;
+                      return (
+                        <div className={`text-center text-xs font-extrabold mb-2 px-2 py-1.5 rounded-lg ${mythicLeft <= 5 ? "bg-fuchsia-500/30 text-fuchsia-100 animate-pulse" : "bg-black/30 text-cyan-200"}`}>
+                          {mythicLeft === 1
+                            ? `🔥 Próximo baú garante ${mythicLabel} puro!`
+                            : `${mythicLeft <= 5 ? "🔥" : "💀"} Faltam ${mythicLeft} pra garantir ${mythicLabel}`}
                         </div>
                       );
                     })()}
