@@ -1110,6 +1110,7 @@ export type Database = {
         Args: { p_pure: boolean; p_type: string; p_won: boolean }
         Returns: Json
       }
+      gym_start_challenge: { Args: { p_type: string }; Returns: Json }
       join_tournament: { Args: { p_tournament_id: string }; Returns: Json }
       report_match_result: {
         Args: { p_log: Json; p_match_id: string; p_winner_id: string }
