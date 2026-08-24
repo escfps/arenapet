@@ -6,6 +6,8 @@ import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
 import { toast, Toaster } from "sonner";
 import arenaBg from "@/assets/arena-bg.jpg";
+import { useServerFn } from "@tanstack/react-start";
+import { fusePets } from "@/lib/economy.functions";
 
 export const Route = createFileRoute("/forge")({
   component: ForgePage,
@@ -27,6 +29,7 @@ function ForgePage() {
   const { userId, profile, loading } = useProfile();
   const [monsters, setMonsters] = useState<ForgeMonster[]>([]);
   const [fusing, setFusing] = useState(false);
+  const fuseFn = useServerFn(fusePets);
 
   const load = useCallback(async () => {
     if (!userId) return;
