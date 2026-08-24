@@ -210,7 +210,7 @@ export const MOVESETS: Record<string, Moveset> = {
   "magikarp": { types: ["water"], moves: ["splash", "tackle", "quick_attack", "waterfall"], status: "harden" },
   "gyarados": { types: ["water", "flying"], moves: ["waterfall", "crunch", "aqua_tail", "ice_fang"], status: "dragon_dance" },
   "lapras": { types: ["water", "ice"], moves: ["ice_beam", "surf", "hydro_pump", "body_slam"], status: "rest" },
-  "ditto": { types: ["normal"], moves: ["transform", "tackle", "quick_attack", "body_slam"], status: "refresh" },
+  "ditto": { types: ["normal"], moves: [""tackle", "quick_attack", "body_slam"], status: "transform" },
   "eevee": { types: ["normal"], moves: ["quick_attack", "bite", "body_slam", "slash"], status: "swords_dance" },
   "vaporeon": { types: ["water"], moves: ["surf", "ice_beam", "hydro_pump", "water_gun"], status: "rest" },
   "jolteon": { types: ["electric"], moves: ["thunderbolt", "pin_missile", "thunder", "electro_ball"], status: "agility" },
