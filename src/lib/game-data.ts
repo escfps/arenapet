@@ -66,6 +66,16 @@ import escorpiaoDesertoImg from "@/assets/monsters/escorpiao_deserto.png";
 import corujaNegraImg from "@/assets/monsters/coruja_negra.png";
 import corujaPsiquicaImg from "@/assets/monsters/coruja_psiquica.png";
 import gengarImg from "@/assets/monsters/gengar.png";
+import brasagartoImg from "@/assets/monsters/brasagarto.png";
+import cascatorugaImg from "@/assets/monsters/cascatoruga.png";
+import folhassauroImg from "@/assets/monsters/folhassauro.png";
+import faiscoratoImg from "@/assets/monsters/faiscorato.png";
+import rochapunhoImg from "@/assets/monsters/rochapunho.png";
+import chamaloboImg from "@/assets/monsters/chamalobo.png";
+import psicolunaImg from "@/assets/monsters/psicoluna.png";
+import vespanoxaImg from "@/assets/monsters/vespanoxa.png";
+import ventasaImg from "@/assets/monsters/ventasa.png";
+import dracomarinoImg from "@/assets/monsters/dracomarino.png";
 
 export type Element = "fire" | "water" | "grass" | "electric" | "shadow" | "earth";
 export type Role = "tank" | "dps" | "assassin" | "mage" | "healer";
@@ -1459,6 +1469,87 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   porco_espinho: ["floresta", "pedra"],
   urubu_carniceiro: ["aves", "sombras"],
   gengar: ["sombras"],
+  brasagarto: ["fogo", "repteis"],
+  cascatoruga: ["repteis", "abyssal"],
+  folhassauro: ["floresta", "repteis"],
+  faiscorato: ["relampago"],
+  rochapunho: ["pedra"],
+  chamalobo: ["fogo"],
+  psicoluna: ["felinos", "sombras"],
+  vespanoxa: ["floresta", "sombras"],
+  ventasa: ["aves", "relampago"],
+  dracomarino: ["dragoes", "abyssal", "sombras"],
+  // ===== NOVA LINHAGEM (ocultos até liberação) =====
+  brasagarto: {
+    id: "brasagarto", name: "Brasagarto", element: "fire", role: "dps", rarity: "rare",
+    emoji: "🦎🔥", image: brasagartoImg, hidden: true,
+    description: "Lagarto de escamas incandescentes com uma chama viva na ponta da cauda. Ataca com fúria ardente.",
+    base: { hp: 58, atk: 17, def: 10, spd: 14, int: 9 },
+    skill: { name: "Garra Brasa", emoji: "🔥", kind: "heavy_strike", cooldown: 3, description: "Golpe flamejante pesado: 2.2× o dano normal num alvo único." },
+  },
+  cascatoruga: {
+    id: "cascatoruga", name: "Cascatoruga", element: "water", role: "tank", rarity: "rare",
+    emoji: "🐢💧", image: cascatorugaImg, hidden: true,
+    description: "Tartaruga de casco rochoso que se fecha e devolve jatos d'água nos inimigos.",
+    base: { hp: 72, atk: 11, def: 16, spd: 9, int: 12 },
+    skill: { name: "Casco Torrente", emoji: "🛡️", kind: "turtle_shell", cooldown: 3, description: "Ganha escudo (30% do HP máx) e reduz o dano recebido em 20% por 2 turnos." },
+  },
+  folhassauro: {
+    id: "folhassauro", name: "Folhassauro", element: "grass", role: "healer", rarity: "rare",
+    emoji: "🌸🦕", image: folhassauroImg, hidden: true,
+    description: "Dinossauro de dorso florido. Espalha pólen curativo pelo campo de batalha.",
+    base: { hp: 70, atk: 10, def: 13, spd: 10, int: 23 },
+    skill: { name: "Pólen Vital", emoji: "🌸", kind: "heal_lowest", cooldown: 3, description: "Cura o aliado mais ferido (~INT×1.2)." },
+  },
+  faiscorato: {
+    id: "faiscorato", name: "Faiscorato", element: "electric", role: "assassin", rarity: "super_rare",
+    emoji: "⚡🐭", image: faiscoratoImg, hidden: true,
+    description: "Roedor elétrico veloz com cauda em forma de raio. Paralisa antes que o inimigo reaja.",
+    base: { hp: 62, atk: 15, def: 9, spd: 19, int: 10 },
+    skill: { name: "Investida Faiscante", emoji: "⚡", kind: "lightning_charge", cooldown: 3, description: "Investida elétrica no inimigo mais forte (2× dano) + 60% de chance de ⚡ paralisar. PASSIVA: ataque básico tem 30% de paralisar." },
+  },
+  rochapunho: {
+    id: "rochapunho", name: "Rochapunho", element: "earth", role: "tank", rarity: "common",
+    emoji: "🪨👊", image: rochapunhoImg, hidden: true,
+    description: "Golem de pedregulhos com punhos maciços. Aguenta o que vier e devolve em dobro.",
+    base: { hp: 60, atk: 12, def: 15, spd: 8, int: 7 },
+    skill: { name: "Punho de Rocha", emoji: "🪨", kind: "thorn_burst", cooldown: 4, description: "Ataca todos os inimigos com 1.0× ATK físico. PASSIVA: reflete 10% do dano recebido." },
+  },
+  chamalobo: {
+    id: "chamalobo", name: "Chamalobo", element: "fire", role: "dps", rarity: "common",
+    emoji: "🐺🔥", image: chamaloboImg, hidden: true,
+    description: "Filhote de lobo com juba em brasa. Caça em disparada e queima o que morde.",
+    base: { hp: 50, atk: 14, def: 9, spd: 13, int: 7 },
+    skill: { name: "Mordida Ígnea", emoji: "🔥", kind: "heavy_strike", cooldown: 3, description: "Golpe pesado: 2.2× o dano normal num alvo único." },
+  },
+  psicoluna: {
+    id: "psicoluna", name: "Psicoluna", element: "shadow", role: "mage", rarity: "super_rare",
+    emoji: "🌙🐈", image: psicolunaImg, hidden: true,
+    description: "Felino psíquico com lua crescente na fronte. Explode a mente dos inimigos.",
+    base: { hp: 66, atk: 12, def: 11, spd: 15, int: 25 },
+    skill: { name: "Eco Lunar", emoji: "🔮", kind: "aoe_magic", cooldown: 4, description: "Explosão mágica que atinge TODOS os inimigos (1.2× cada, ignora defesa)." },
+  },
+  vespanoxa: {
+    id: "vespanoxa", name: "Vespanoxa", element: "grass", secondaryElement: "shadow", role: "assassin", rarity: "common",
+    emoji: "🐝☠️", image: vespanoxaImg, hidden: true,
+    description: "Vespa de ferrão venenoso. Rápida, cruel e sempre mira no mais fraco.",
+    base: { hp: 44, atk: 13, def: 8, spd: 17, int: 8 },
+    skill: { name: "Ferrão Tóxico", emoji: "🗡️", kind: "guaranteed_crit", cooldown: 3, description: "Ataque garantido CRÍTICO no inimigo mais fraco, ignorando 60% da DEF." },
+  },
+  ventasa: {
+    id: "ventasa", name: "Ventasa", element: "electric", role: "dps", rarity: "common",
+    emoji: "🐦⚡", image: ventasaImg, hidden: true,
+    description: "Pássaro de tempestade que corta o ar com asas eletrizadas e um grito ensurdecedor.",
+    base: { hp: 46, atk: 13, def: 9, spd: 16, int: 9 },
+    skill: { name: "Grito Tempestuoso", emoji: "🌪️", kind: "terror_screech", cooldown: 3, description: "Reduz o ATK de todos os inimigos em 20% por 2 turnos." },
+  },
+  dracomarino: {
+    id: "dracomarino", name: "Dracomarino", element: "water", secondaryElement: "shadow", role: "mage", rarity: "epic",
+    emoji: "🐉🌊", image: dracomarinoImg, hidden: true,
+    description: "Dragão dos abismos de escamas violáceas. Sua névoa corrói armaduras.",
+    base: { hp: 74, atk: 13, def: 12, spd: 13, int: 27 },
+    skill: { name: "Névoa Abissal", emoji: "🌊", kind: "ash_breath", cooldown: 3, description: "Dano mágico (~INT×1.5) e reduz a DEF do alvo em 20% por 2 turnos." },
+  },
   // ===== PETS OCULTOS =====
   rinoceronte_guardiao: ["floresta", "pedra"],
   elefante_ancestral: ["floresta", "pedra"],
