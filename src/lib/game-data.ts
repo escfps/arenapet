@@ -1753,6 +1753,13 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   bulbasaur: ["floresta", "repteis"],
   ivysaur: ["floresta", "repteis"],
   venusaur: ["floresta", "repteis"],
+  caterpie: ["floresta"],
+  metapod: ["floresta"],
+  butterfree: ["floresta", "aves"],
+  weedle: ["floresta"],
+  kakuna: ["floresta"],
+  beedrill: ["floresta", "aves"],
+  pidgey: ["aves"],
 };
 
 export function getSpeciesCategories(speciesId: string): Category[] {
