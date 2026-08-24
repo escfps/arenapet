@@ -25,7 +25,7 @@ const TEAM_MAX = 3;
 const ALL_RARITIES: Rarity[] = ["common", "rare", "super_rare", "epic", "legendary", "mythic"];
 const ALL_ELEMENTS: Element[] = ["normal", "fire", "water", "grass", "electric", "ice", "fighting", "poison", "ground", "flying", "psychic", "bug", "rock", "ghost", "dragon", "dark", "steel", "fairy"];
 const ALL_ROLES: Role[] = ["tank", "dps", "assassin", "mage", "healer"];
-const ALL_CATEGORIES: Category[] = ["floresta","sombras","felinos","repteis","abyssal","dragoes","gelo","aves","fogo","pedra","relampago"];
+const ALL_CATEGORIES: Category[] = ["normal","fire","water","grass","electric","ice","fighting","poison","ground","flying","psychic","bug","rock","ghost","dragon","dark","steel","fairy"];
 
 function PatioPage() {
   const navigate = useNavigate();
