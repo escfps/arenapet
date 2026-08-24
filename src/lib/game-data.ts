@@ -1862,6 +1862,12 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   rattata: ["floresta"],
   raticate: ["floresta"],
   ekans: ["repteis"],
+  arbok: ["repteis"],
+  raichu: ["relampago"],
+  sandshrew: ["deserto"],
+  sandslash: ["deserto"],
+  nidoran_f: ["deserto"],
+  nidorina: ["deserto"],
 };
 
 export function getSpeciesCategories(speciesId: string): Category[] {
