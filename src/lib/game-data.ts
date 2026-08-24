@@ -1864,10 +1864,10 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   ekans: ["repteis"],
   arbok: ["repteis"],
   raichu: ["relampago"],
-  sandshrew: ["deserto"],
-  sandslash: ["deserto"],
-  nidoran_f: ["deserto"],
-  nidorina: ["deserto"],
+  sandshrew: ["pedra"],
+  sandslash: ["pedra"],
+  nidoran_f: ["pedra"],
+  nidorina: ["pedra"],
 };
 
 export function getSpeciesCategories(speciesId: string): Category[] {
