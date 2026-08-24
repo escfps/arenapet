@@ -1667,9 +1667,9 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   charmander: ["fogo"],
   charmeleon: ["fogo", "dragoes"],
   charizard: ["fogo", "dragoes"],
-  squirtle: ["agua"],
-  wartortle: ["agua"],
-  blastoise: ["agua"],
+  squirtle: ["abyssal", "repteis"],
+  wartortle: ["abyssal", "repteis"],
+  blastoise: ["abyssal", "repteis"],
 };
 
 export function getSpeciesCategories(speciesId: string): Category[] {
