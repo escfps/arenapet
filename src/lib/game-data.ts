@@ -109,6 +109,16 @@ import machopImg from "@/assets/monsters/machop.png";
 import machokeImg from "@/assets/monsters/machoke.png";
 import machampImg from "@/assets/monsters/machamp.png";
 import bellsproutImg from "@/assets/monsters/bellsprout.png";
+import weepinbellImg from "@/assets/monsters/weepinbell.png";
+import victreebelImg from "@/assets/monsters/victreebel.png";
+import tentacoolImg from "@/assets/monsters/tentacool.png";
+import tentacruelImg from "@/assets/monsters/tentacruel.png";
+import geodudeImg from "@/assets/monsters/geodude.png";
+import gravelerImg from "@/assets/monsters/graveler.png";
+import golemImg from "@/assets/monsters/golem.png";
+import ponytaImg from "@/assets/monsters/ponyta.png";
+import rapidashImg from "@/assets/monsters/rapidash.png";
+import slowpokeImg from "@/assets/monsters/slowpoke.png";
 import alakazamImg from "@/assets/monsters/alakazam.png";
 import gastlyImg from "@/assets/monsters/gastly.png";
 import haunterImg from "@/assets/monsters/haunter.png";
@@ -1333,6 +1343,76 @@ export const SPECIES: Record<string, Species> = {
     base: { hp: 30, atk: 11, def: 7, spd: 12, int: 14 },
     skill: { name: "Chicote de Cipó", emoji: "🌿", kind: "bleed_dot", cooldown: 3, description: "Chicoteia causando sangramento." },
   },
+  weepinbell: {
+    id: "weepinbell", name: "Weepinbell", element: "grass", role: "mage", rarity: "rare",
+    emoji: "🌿🔔", image: weepinbellImg, hidden: true,
+    description: "Sino carnívoro que solta pó ácido.",
+    base: { hp: 48, atk: 16, def: 11, spd: 13, int: 18 },
+    skill: { name: "Pó Ácido", emoji: "🧪", kind: "bleed_dot", cooldown: 3, description: "Cobre o alvo de ácido causando dano contínuo." },
+  },
+  victreebel: {
+    id: "victreebel", name: "Victreebel", element: "grass", role: "mage", rarity: "legendary",
+    emoji: "🪴", image: victreebelImg, hidden: true,
+    description: "Planta devoradora que engole presas inteiras.",
+    base: { hp: 76, atk: 26, def: 18, spd: 16, int: 30 },
+    skill: { name: "Devorar", emoji: "😱", kind: "sleep_strike", cooldown: 4, description: "Engole o alvo, podendo deixá-lo dormindo." },
+  },
+  tentacool: {
+    id: "tentacool", name: "Tentacool", element: "water", role: "mage", rarity: "common",
+    emoji: "🪼", image: tentacoolImg, hidden: true,
+    description: "Água-viva translúcida cheia de veneno.",
+    base: { hp: 30, atk: 10, def: 8, spd: 12, int: 15 },
+    skill: { name: "Ferrão Tóxico", emoji: "☠️", kind: "bleed_dot", cooldown: 3, description: "Ferroada venenosa que causa dano contínuo." },
+  },
+  tentacruel: {
+    id: "tentacruel", name: "Tentacruel", element: "water", role: "mage", rarity: "legendary",
+    emoji: "🪼⚡", image: tentacruelImg, hidden: true,
+    description: "Oitenta tentáculos paralisantes nas profundezas.",
+    base: { hp: 74, atk: 25, def: 19, spd: 18, int: 29 },
+    skill: { name: "Cerco de Tentáculos", emoji: "🌊", kind: "lightning_charge", cooldown: 5, description: "Envolve o alvo e o paralisa." },
+  },
+  geodude: {
+    id: "geodude", name: "Geodude", element: "earth", role: "tank", rarity: "common",
+    emoji: "🪨", image: geodudeImg, hidden: true,
+    description: "Pedra com braços que adora dar socos.",
+    base: { hp: 38, atk: 12, def: 13, spd: 8, int: 5 },
+    skill: { name: "Soco de Pedra", emoji: "👊", kind: "heavy_strike", cooldown: 3, description: "Golpe rochoso pesado." },
+  },
+  graveler: {
+    id: "graveler", name: "Graveler", element: "earth", role: "tank", rarity: "super_rare",
+    emoji: "🪨🪨", image: gravelerImg, hidden: true,
+    description: "Rola morro abaixo esmagando tudo.",
+    base: { hp: 64, atk: 20, def: 22, spd: 10, int: 6 },
+    skill: { name: "Rolagem", emoji: "🌀", kind: "shield_taunt", cooldown: 4, description: "Provoca os inimigos e endurece a rocha." },
+  },
+  golem: {
+    id: "golem", name: "Golem", element: "earth", role: "tank", rarity: "legendary",
+    emoji: "🗿", image: golemImg, hidden: true,
+    description: "Couraça de pedra viva, praticamente indestrutível.",
+    base: { hp: 96, atk: 26, def: 30, spd: 11, int: 8 },
+    skill: { name: "Terremoto", emoji: "💥", kind: "thorn_burst", cooldown: 5, description: "Sacode o campo atingindo todos os inimigos." },
+  },
+  ponyta: {
+    id: "ponyta", name: "Ponyta", element: "fire", role: "dps", rarity: "rare",
+    emoji: "🐴🔥", image: ponytaImg, hidden: true,
+    description: "Potro de crina flamejante e cascos rápidos.",
+    base: { hp: 46, atk: 19, def: 11, spd: 22, int: 10 },
+    skill: { name: "Investida Ardente", emoji: "🔥", kind: "bleed_dot", cooldown: 3, description: "Corrida flamejante que queima o alvo." },
+  },
+  rapidash: {
+    id: "rapidash", name: "Rapidash", element: "fire", role: "dps", rarity: "legendary",
+    emoji: "🦄🔥", image: rapidashImg, hidden: true,
+    description: "Galopa a 240 km/h com chamas na crina.",
+    base: { hp: 72, atk: 32, def: 17, spd: 34, int: 12 },
+    skill: { name: "Galope Infernal", emoji: "💫", kind: "double_strike", cooldown: 4, description: "Duas investidas incendiárias velozes." },
+  },
+  slowpoke: {
+    id: "slowpoke", name: "Slowpoke", element: "water", role: "tank", rarity: "common",
+    emoji: "🐷💤", image: slowpokeImg, hidden: true,
+    description: "Demora 5 segundos para sentir dor.",
+    base: { hp: 42, atk: 10, def: 12, spd: 5, int: 9 },
+    skill: { name: "Bocejo Lento", emoji: "💤", kind: "sleep_strike", cooldown: 4, description: "Bocejo contagioso que pode fazer o alvo dormir." },
+  },
 };
 
 
@@ -2193,6 +2273,16 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   machoke: ["macacos"],
   machamp: ["macacos"],
   bellsprout: ["floresta"],
+  weepinbell: ["floresta"],
+  victreebel: ["floresta"],
+  tentacool: ["abyssal"],
+  tentacruel: ["abyssal"],
+  geodude: ["pedra"],
+  graveler: ["pedra"],
+  golem: ["pedra"],
+  ponyta: ["fogo"],
+  rapidash: ["fogo"],
+  slowpoke: ["abyssal"],
 };
 
 export function getSpeciesCategories(speciesId: string): Category[] {
