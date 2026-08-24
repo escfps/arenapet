@@ -188,6 +188,16 @@ import moltresImg from "@/assets/monsters/moltres.png";
 import dratiniImg from "@/assets/monsters/dratini.png";
 import dragonairImg from "@/assets/monsters/dragonair.png";
 import dragoniteImg from "@/assets/monsters/dragonite.png";
+import kabutoShinyImg from "@/assets/monsters/shiny/kabuto.png";
+import kabutopsShinyImg from "@/assets/monsters/shiny/kabutops.png";
+import aerodactylShinyImg from "@/assets/monsters/shiny/aerodactyl.png";
+import snorlaxShinyImg from "@/assets/monsters/shiny/snorlax.png";
+import articunoShinyImg from "@/assets/monsters/shiny/articuno.png";
+import zapdosShinyImg from "@/assets/monsters/shiny/zapdos.png";
+import moltresShinyImg from "@/assets/monsters/shiny/moltres.png";
+import dratiniShinyImg from "@/assets/monsters/shiny/dratini.png";
+import dragonairShinyImg from "@/assets/monsters/shiny/dragonair.png";
+import dragoniteShinyImg from "@/assets/monsters/shiny/dragonite.png";
 import alakazamImg from "@/assets/monsters/alakazam.png";
 import gastlyImg from "@/assets/monsters/gastly.png";
 import haunterImg from "@/assets/monsters/haunter.png";
@@ -2005,70 +2015,70 @@ export const SPECIES: Record<string, Species> = {
   },
   kabuto: {
     id: "kabuto", name: "Kabuto", element: "water", role: "tank", rarity: "rare",
-    emoji: "🦀", image: kabutoImg, hidden: true,
+    emoji: "🦀", image: kabutoImg, shinyImage: kabutoShinyImg, hidden: true,
     description: "Fóssil de carapaça dura que vive escondido nas rochas.",
     base: { hp: 60, atk: 20, def: 30, spd: 14, int: 10 },
     skill: { name: "Carapaça Fóssil", emoji: "🛡️", kind: "turtle_shell", cooldown: 4, description: "Endurece a carapaça e reduz o dano recebido." },
   },
   kabutops: {
     id: "kabutops", name: "Kabutops", element: "water", role: "assassin", rarity: "legendary",
-    emoji: "🗡️", image: kabutopsImg, hidden: true,
+    emoji: "🗡️", image: kabutopsImg, shinyImage: kabutopsShinyImg, hidden: true,
     description: "Ceifa as presas com foices afiadíssimas.",
     base: { hp: 74, atk: 42, def: 26, spd: 32, int: 12 },
     skill: { name: "Foices Ceifadoras", emoji: "🗡️", kind: "bleed_dot", cooldown: 4, description: "Cortes profundos que causam sangramento." },
   },
   aerodactyl: {
     id: "aerodactyl", name: "Aerodactyl", element: "earth", role: "assassin", rarity: "legendary",
-    emoji: "🦅", image: aerodactylImg, hidden: true,
+    emoji: "🦅", image: aerodactylImg, shinyImage: aerodactylShinyImg, hidden: true,
     description: "Predador pré-histórico dos céus.",
     base: { hp: 76, atk: 40, def: 22, spd: 40, int: 12 },
     skill: { name: "Rasante Ancestral", emoji: "💨", kind: "guaranteed_crit", cooldown: 4, description: "Investida aérea com crítico garantido." },
   },
   snorlax: {
     id: "snorlax", name: "Snorlax", element: "earth", role: "tank", rarity: "legendary",
-    emoji: "😴", image: snorlaxImg, hidden: true,
+    emoji: "😴", image: snorlaxImg, shinyImage: snorlaxShinyImg, hidden: true,
     description: "Come, dorme e aguenta tudo.",
     base: { hp: 130, atk: 30, def: 34, spd: 8, int: 10 },
     skill: { name: "Corpo Descansado", emoji: "🛡️", kind: "shield_taunt", cooldown: 4, description: "Provoca os inimigos e ganha um escudo enorme." },
   },
   articuno: {
     id: "articuno", name: "Articuno", element: "water", role: "mage", rarity: "mythic",
-    emoji: "❄️", image: articunoImg, hidden: true,
+    emoji: "❄️", image: articunoImg, shinyImage: articunoShinyImg, hidden: true,
     description: "Ave lendária que traz o inverno em suas asas.",
     base: { hp: 88, atk: 26, def: 26, spd: 30, int: 42 },
     skill: { name: "Sopro Glacial", emoji: "❄️", kind: "freeze_strike", cooldown: 5, description: "Vendaval gélido com chance de congelar." },
   },
   zapdos: {
     id: "zapdos", name: "Zapdos", element: "electric", role: "mage", rarity: "mythic",
-    emoji: "⚡", image: zapdosImg, hidden: true,
+    emoji: "⚡", image: zapdosImg, shinyImage: zapdosShinyImg, hidden: true,
     description: "Ave lendária feita de tempestade pura.",
     base: { hp: 86, atk: 30, def: 24, spd: 36, int: 42 },
     skill: { name: "Tempestade de Raios", emoji: "⚡", kind: "chain_lightning", cooldown: 5, description: "Raios que saltam entre os inimigos." },
   },
   moltres: {
     id: "moltres", name: "Moltres", element: "fire", role: "mage", rarity: "mythic",
-    emoji: "🔥", image: moltresImg, hidden: true,
+    emoji: "🔥", image: moltresImg, shinyImage: moltresShinyImg, hidden: true,
     description: "Ave lendária cujas asas queimam como o sol.",
     base: { hp: 88, atk: 34, def: 24, spd: 32, int: 42 },
     skill: { name: "Asas Incandescentes", emoji: "🔥", kind: "burn_dot", cooldown: 5, description: "Chamas que queimam todos os inimigos." },
   },
   dratini: {
     id: "dratini", name: "Dratini", element: "water", role: "dps", rarity: "rare",
-    emoji: "🐍", image: dratiniImg, hidden: true,
+    emoji: "🐍", image: dratiniImg, shinyImage: dratiniShinyImg, hidden: true,
     description: "Dragão recém-nascido que troca de pele ao crescer.",
     base: { hp: 50, atk: 22, def: 16, spd: 22, int: 16 },
     skill: { name: "Investida Dracônica", emoji: "💧", kind: "double_strike", cooldown: 3, description: "Duas investidas velozes." },
   },
   dragonair: {
     id: "dragonair", name: "Dragonair", element: "water", role: "mage", rarity: "super_rare",
-    emoji: "🐉", image: dragonairImg, hidden: true,
+    emoji: "🐉", image: dragonairImg, shinyImage: dragonairShinyImg, hidden: true,
     description: "Controla o clima com as esferas de cristal.",
     base: { hp: 68, atk: 26, def: 22, spd: 26, int: 30 },
     skill: { name: "Dança do Clima", emoji: "🌀", kind: "ash_breath", cooldown: 4, description: "Rajada mística que reduz a DEF do alvo." },
   },
   dragonite: {
     id: "dragonite", name: "Dragonite", element: "water", role: "dps", rarity: "mythic",
-    emoji: "🐲", image: dragoniteImg, hidden: true,
+    emoji: "🐲", image: dragoniteImg, shinyImage: dragoniteShinyImg, hidden: true,
     description: "Dragão gentil, mas devastador quando provocado.",
     base: { hp: 98, atk: 48, def: 32, spd: 32, int: 24 },
     skill: { name: "Cometa Dracônico", emoji: "☄️", kind: "true_damage_nuke", cooldown: 5, description: "Impacto puro que ignora DEF e elemento." },
