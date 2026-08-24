@@ -148,6 +148,8 @@ export const adminUpdatePetStat = createServerFn({ method: "POST" })
           nextValue += 1;
         } else if (data.stat === "hp") {
           nextValue += 20 + Math.floor(Math.random() * 6); // 20..25
+        } else if (data.stat === "spd") {
+          nextValue += 3 + Math.floor(Math.random() * 3); // 3..5
         } else {
           nextValue += 1 + Math.floor(Math.random() * 2); // 1..2
         }
