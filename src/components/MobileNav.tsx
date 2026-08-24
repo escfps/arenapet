@@ -14,6 +14,7 @@ const bottomItems = [
   { to: "/ranking", label: "Ranking", emoji: "📊" },
   { to: "/tournament", label: "Copa", emoji: "🏆" },
   { to: "/forge", label: "Elevar", emoji: "⭐" },
+  { to: "/shop", label: "Loja", emoji: "🏪" },
   { to: "/collection", label: "Coleção", emoji: "🎒" },
 ] as const;
 
