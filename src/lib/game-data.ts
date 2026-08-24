@@ -366,7 +366,14 @@ import vespanoxaImg from "@/assets/monsters/vespanoxa.png";
 import ventasaImg from "@/assets/monsters/ventasa.png";
 import dracomarinoImg from "@/assets/monsters/dracomarino.png";
 
-export type Element = "fire" | "water" | "grass" | "electric" | "shadow" | "earth" | "psychic" | "fairy";
+/**
+ * Os 18 tipos oficiais + "shadow"/"earth" (legado, só pets antigos aposentados).
+ */
+export type Element =
+  | "normal" | "fire" | "water" | "grass" | "electric" | "ice"
+  | "fighting" | "poison" | "ground" | "flying" | "psychic" | "bug"
+  | "rock" | "ghost" | "dragon" | "dark" | "steel" | "fairy"
+  | "shadow" | "earth";
 export type Role = "tank" | "dps" | "assassin" | "mage" | "healer";
 export type Rarity = "common" | "rare" | "super_rare" | "epic" | "legendary" | "mythic";
 
