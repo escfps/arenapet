@@ -1,7 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import {
-  CHESTS, CHEST_PITY, PITY_COLUMN, rollChest, SPECIES, starterMonsterStats,
-  type ChestTier, type ChestReward,
+  CHESTS, CHEST_PITY, PITY_COLUMN, CHEST_PITY_MYTHIC, PITY_MYTHIC_COLUMN, rollChest, SPECIES, starterMonsterStats,
+  type ChestTier, type ChestReward, type Rarity,
 } from "@/lib/game-data";
 
 export const CHEST_ITEM_TYPE: Record<ChestTier, string> = {
