@@ -814,9 +814,10 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
 
           if (skill.kind === "aoe_magic") {
             const isPsychic = attacker.species === "coruja_psiquica";
-            const intMult = isPsychic ? 1.6 : 2.2;
-            const flatMult = isPsychic ? 1.0 : 1.2;
-            const silenceChance = isPsychic ? 0.4 : 0;
+            const isGengar = attacker.species === "gengar";
+            const intMult = isPsychic ? 1.6 : isGengar ? 1.8 : 2.2;
+            const flatMult = isPsychic ? 1.0 : isGengar ? 1.0 : 1.2;
+            const silenceChance = isPsychic ? 0.4 : isGengar ? 0.35 : 0;
             const targets = enemies.filter((e) => e.current > 0);
             for (const t of targets) {
               const eff = defensiveMultiplier(getElement(attacker.species), t.species);
@@ -838,9 +839,26 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
                 effective: eff,
                 remainingHp: t.current,
                 targetShield: t.shield,
-                message: `${skill.emoji} ${attacker.name} → ${t.name}: ${dmg} de dano ${isPsychic ? "psíquico" : "arcano"}${silenced ? " 🤐 (silenciado 1 turno)" : ""}`,
+                message: `${skill.emoji} ${attacker.name} → ${t.name}: ${dmg} de dano ${isPsychic ? "psíquico" : isGengar ? "sombrio" : "arcano"}${silenced ? " 🤐 (silenciado 1 turno)" : ""}`,
               });
               if (t.current <= 0) {
+                // PASSIVA — Devora Sonhos: Gengar recupera 12% do HP máx ao abater
+                if (isGengar && attacker.current > 0) {
+                  const heal = Math.round(attacker.maxHp * 0.12);
+                  attacker.current = Math.min(attacker.maxHp, attacker.current + heal);
+                  log.push({
+                    turn,
+                    actor: side,
+                    actorName: attacker.name,
+                    targetName: attacker.name,
+                    damage: -heal,
+                    crit: false,
+                    effective: 1,
+                    remainingHp: attacker.current,
+                    targetShield: attacker.shield,
+                    message: `👻 Devora Sonhos: ${attacker.name} recuperou ${heal} HP`,
+                  });
+                }
                 log.push({
                   turn,
                   actor: side,
