@@ -280,6 +280,16 @@ import growlitheShinyImg from "@/assets/monsters/shiny/growlithe.png";
 import arcanineShinyImg from "@/assets/monsters/shiny/arcanine.png";
 import poliwagShinyImg from "@/assets/monsters/shiny/poliwag.png";
 import poliwhirlShinyImg from "@/assets/monsters/shiny/poliwhirl.png";
+import rhyhornShinyImg from "@/assets/monsters/shiny/rhyhorn.png";
+import rhydonShinyImg from "@/assets/monsters/shiny/rhydon.png";
+import chanseyShinyImg from "@/assets/monsters/shiny/chansey.png";
+import tangelaShinyImg from "@/assets/monsters/shiny/tangela.png";
+import kangaskhanShinyImg from "@/assets/monsters/shiny/kangaskhan.png";
+import horseaShinyImg from "@/assets/monsters/shiny/horsea.png";
+import seadraShinyImg from "@/assets/monsters/shiny/seadra.png";
+import goldeenShinyImg from "@/assets/monsters/shiny/goldeen.png";
+import seakingShinyImg from "@/assets/monsters/shiny/seaking.png";
+import staryuShinyImg from "@/assets/monsters/shiny/staryu.png";
 import electrodeShinyImg from "@/assets/monsters/shiny/electrode.png";
 import exeggcuteShinyImg from "@/assets/monsters/shiny/exeggcute.png";
 import exeggutorShinyImg from "@/assets/monsters/shiny/exeggutor.png";
@@ -1780,70 +1790,70 @@ export const SPECIES: Record<string, Species> = {
   },
   rhyhorn: {
     id: "rhyhorn", name: "Rhyhorn", element: "earth", role: "tank", rarity: "rare",
-    emoji: "🦏", image: rhyhornImg, hidden: true,
+    emoji: "🦏", image: rhyhornImg, shinyImage: rhyhornShinyImg, hidden: true,
     description: "Corre em linha reta e não sabe parar.",
     base: { hp: 56, atk: 18, def: 20, spd: 8, int: 5 },
     skill: { name: "Investida de Pedra", emoji: "🪨", kind: "shield_taunt", cooldown: 4, description: "Avança protegido pela couraça de pedra." },
   },
   rhydon: {
     id: "rhydon", name: "Rhydon", element: "earth", role: "tank", rarity: "legendary",
-    emoji: "🦏💪", image: rhydonImg, hidden: true,
+    emoji: "🦏💪", image: rhydonImg, shinyImage: rhydonShinyImg, hidden: true,
     description: "A broca do chifre perfura rocha maciça.",
     base: { hp: 96, atk: 34, def: 32, spd: 12, int: 6 },
     skill: { name: "Broca Perfurante", emoji: "🔩", kind: "guaranteed_crit", cooldown: 4, description: "Chifre giratório que ignora armadura." },
   },
   chansey: {
     id: "chansey", name: "Chansey", element: "grass", role: "healer", rarity: "legendary",
-    emoji: "🥚💗", image: chanseyImg, hidden: true,
+    emoji: "🥚💗", image: chanseyImg, shinyImage: chanseyShinyImg, hidden: true,
     description: "Seu ovo cura qualquer ferida.",
     base: { hp: 110, atk: 8, def: 14, spd: 14, int: 30 },
     skill: { name: "Ovo da Sorte", emoji: "🥚", kind: "team_heal", cooldown: 4, description: "Cura o time inteiro com energia vital." },
   },
   tangela: {
     id: "tangela", name: "Tangela", element: "grass", role: "tank", rarity: "rare",
-    emoji: "🌿🔵", image: tangelaImg, hidden: true,
+    emoji: "🌿🔵", image: tangelaImg, shinyImage: tangelaShinyImg, hidden: true,
     description: "Cipós azuis que prendem qualquer coisa.",
     base: { hp: 60, atk: 15, def: 20, spd: 9, int: 14 },
     skill: { name: "Emaranhado", emoji: "🌿", kind: "sleep_strike", cooldown: 4, description: "Prende o alvo com cipós, impedindo sua ação." },
   },
   kangaskhan: {
     id: "kangaskhan", name: "Kangaskhan", element: "earth", role: "tank", rarity: "legendary",
-    emoji: "🦘", image: kangaskhanImg, hidden: true,
+    emoji: "🦘", image: kangaskhanImg, shinyImage: kangaskhanShinyImg, hidden: true,
     description: "Mãe furiosa que protege o filhote a qualquer custo.",
     base: { hp: 94, atk: 32, def: 26, spd: 18, int: 10 },
     skill: { name: "Fúria Maternal", emoji: "💥", kind: "berserker_rage", cooldown: 4, description: "Entra em frenesi para defender o filhote." },
   },
   horsea: {
     id: "horsea", name: "Horsea", element: "water", role: "mage", rarity: "common",
-    emoji: "🐠", image: horseaImg, hidden: true,
+    emoji: "🐠", image: horseaImg, shinyImage: horseaShinyImg, hidden: true,
     description: "Cospe tinta e jatos d'água com precisão.",
     base: { hp: 32, atk: 11, def: 10, spd: 13, int: 16 },
     skill: { name: "Jato d'Água", emoji: "💧", kind: "chain_lightning", cooldown: 3, description: "Jato preciso que atravessa os inimigos." },
   },
   seadra: {
     id: "seadra", name: "Seadra", element: "water", role: "mage", rarity: "legendary",
-    emoji: "🐉💧", image: seadraImg, hidden: true,
+    emoji: "🐉💧", image: seadraImg, shinyImage: seadraShinyImg, hidden: true,
     description: "Espinhos venenosos e correntes que ele domina.",
     base: { hp: 70, atk: 24, def: 22, spd: 24, int: 34 },
     skill: { name: "Redemoinho Dracônico", emoji: "🌊", kind: "thorn_burst", cooldown: 5, description: "Vórtice de água que atinge todos os inimigos." },
   },
   goldeen: {
     id: "goldeen", name: "Goldeen", element: "water", role: "dps", rarity: "common",
-    emoji: "🐟", image: goldeenImg, hidden: true,
+    emoji: "🐟", image: goldeenImg, shinyImage: goldeenShinyImg, hidden: true,
     description: "Elegante na água, letal com o chifre.",
     base: { hp: 34, atk: 14, def: 10, spd: 15, int: 6 },
     skill: { name: "Chifre Furioso", emoji: "🦄", kind: "double_strike", cooldown: 3, description: "Duas estocadas rápidas com o chifre." },
   },
   seaking: {
     id: "seaking", name: "Seaking", element: "water", role: "dps", rarity: "super_rare",
-    emoji: "🐠⚔️", image: seakingImg, hidden: true,
+    emoji: "🐠⚔️", image: seakingImg, shinyImage: seakingShinyImg, hidden: true,
     description: "Perfura rochas com o chifre para fazer seu ninho.",
     base: { hp: 62, atk: 28, def: 18, spd: 20, int: 10 },
     skill: { name: "Perfuração", emoji: "🦄", kind: "guaranteed_crit", cooldown: 4, description: "Estocada crítica direto no ponto fraco." },
   },
   staryu: {
     id: "staryu", name: "Staryu", element: "water", role: "mage", rarity: "common",
-    emoji: "⭐", image: staryuImg, hidden: true,
+    emoji: "⭐", image: staryuImg, shinyImage: staryuShinyImg, hidden: true,
     description: "O núcleo brilha em sintonia com as estrelas.",
     base: { hp: 33, atk: 11, def: 10, spd: 15, int: 17 },
     skill: { name: "Raio Estelar", emoji: "✨", kind: "chain_lightning", cooldown: 3, description: "Feixe de luz que salta entre os inimigos." },
