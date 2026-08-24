@@ -156,6 +156,16 @@ import horseaImg from "@/assets/monsters/horsea.png";
 import seadraImg from "@/assets/monsters/seadra.png";
 import goldeenImg from "@/assets/monsters/goldeen.png";
 import seakingImg from "@/assets/monsters/seaking.png";
+import staryuImg from "@/assets/monsters/staryu.png";
+import starmieImg from "@/assets/monsters/starmie.png";
+import mrmimeImg from "@/assets/monsters/mrmime.png";
+import scytherImg from "@/assets/monsters/scyther.png";
+import jynxImg from "@/assets/monsters/jynx.png";
+import electabuzzImg from "@/assets/monsters/electabuzz.png";
+import magmarImg from "@/assets/monsters/magmar.png";
+import pinsirImg from "@/assets/monsters/pinsir.png";
+import taurosImg from "@/assets/monsters/tauros.png";
+import magikarpImg from "@/assets/monsters/magikarp.png";
 import alakazamImg from "@/assets/monsters/alakazam.png";
 import gastlyImg from "@/assets/monsters/gastly.png";
 import haunterImg from "@/assets/monsters/haunter.png";
@@ -1709,7 +1719,78 @@ export const SPECIES: Record<string, Species> = {
     base: { hp: 62, atk: 28, def: 18, spd: 20, int: 10 },
     skill: { name: "Perfuração", emoji: "🦄", kind: "guaranteed_crit", cooldown: 4, description: "Estocada crítica direto no ponto fraco." },
   },
+  staryu: {
+    id: "staryu", name: "Staryu", element: "water", role: "mage", rarity: "common",
+    emoji: "⭐", image: staryuImg, hidden: true,
+    description: "O núcleo brilha em sintonia com as estrelas.",
+    base: { hp: 33, atk: 11, def: 10, spd: 15, int: 17 },
+    skill: { name: "Raio Estelar", emoji: "✨", kind: "chain_lightning", cooldown: 3, description: "Feixe de luz que salta entre os inimigos." },
+  },
+  starmie: {
+    id: "starmie", name: "Starmie", element: "water", role: "mage", rarity: "legendary",
+    emoji: "🌟", image: starmieImg, hidden: true,
+    description: "Gema psíquica que emite sinais misteriosos.",
+    base: { hp: 70, atk: 24, def: 22, spd: 32, int: 36 },
+    skill: { name: "Onda Psíquica", emoji: "🔮", kind: "thorn_burst", cooldown: 5, description: "Pulso mental que atinge todos os inimigos." },
+  },
+  mrmime: {
+    id: "mrmime", name: "Mr. Mime", element: "shadow", role: "healer", rarity: "legendary",
+    emoji: "🤡", image: mrmimeImg, hidden: true,
+    description: "Ergue barreiras invisíveis com pura mímica.",
+    base: { hp: 74, atk: 18, def: 24, spd: 20, int: 34 },
+    skill: { name: "Barreira", emoji: "🛡️", kind: "shield_taunt", cooldown: 4, description: "Cria uma barreira que protege o time." },
+  },
+  scyther: {
+    id: "scyther", name: "Scyther", element: "grass", role: "assassin", rarity: "legendary",
+    emoji: "🗡️", image: scytherImg, hidden: true,
+    description: "Lâminas tão rápidas que o corte nem é visto.",
+    base: { hp: 68, atk: 36, def: 18, spd: 34, int: 10 },
+    skill: { name: "Dança das Lâminas", emoji: "🗡️", kind: "double_strike", cooldown: 3, description: "Dois cortes velozes com as foices." },
+  },
+  jynx: {
+    id: "jynx", name: "Jynx", element: "water", role: "mage", rarity: "legendary",
+    emoji: "💋❄️", image: jynxImg, hidden: true,
+    description: "Sua dança hipnótica congela a mente do inimigo.",
+    base: { hp: 66, atk: 20, def: 18, spd: 22, int: 36 },
+    skill: { name: "Beijo Congelante", emoji: "❄️", kind: "sleep_strike", cooldown: 4, description: "Congela o alvo, impedindo sua ação." },
+  },
+  electabuzz: {
+    id: "electabuzz", name: "Electabuzz", element: "electric", role: "dps", rarity: "legendary",
+    emoji: "⚡🐯", image: electabuzzImg, hidden: true,
+    description: "Corpo carregado que faz o ar crepitar.",
+    base: { hp: 70, atk: 32, def: 20, spd: 30, int: 26 },
+    skill: { name: "Punho Trovão", emoji: "⚡", kind: "lightning_charge", cooldown: 5, description: "Soco elétrico que paralisa o alvo." },
+  },
+  magmar: {
+    id: "magmar", name: "Magmar", element: "fire", role: "dps", rarity: "legendary",
+    emoji: "🔥🦎", image: magmarImg, hidden: true,
+    description: "Nasce nas crateras e respira chamas vivas.",
+    base: { hp: 72, atk: 34, def: 22, spd: 24, int: 26 },
+    skill: { name: "Punho de Fogo", emoji: "🔥", kind: "bleed_dot", cooldown: 4, description: "Soco flamejante que queima o alvo por turnos." },
+  },
+  pinsir: {
+    id: "pinsir", name: "Pinsir", element: "earth", role: "dps", rarity: "legendary",
+    emoji: "🪲", image: pinsirImg, hidden: true,
+    description: "As pinças esmagam tudo que conseguem agarrar.",
+    base: { hp: 76, atk: 36, def: 24, spd: 22, int: 8 },
+    skill: { name: "Esmagamento", emoji: "🪲", kind: "guaranteed_crit", cooldown: 4, description: "Pinçada crítica que quebra a guarda." },
+  },
+  tauros: {
+    id: "tauros", name: "Tauros", element: "earth", role: "dps", rarity: "super_rare",
+    emoji: "🐂", image: taurosImg, hidden: true,
+    description: "Chicoteia as três caudas antes de atropelar tudo.",
+    base: { hp: 68, atk: 30, def: 20, spd: 28, int: 6 },
+    skill: { name: "Estouro da Boiada", emoji: "💨", kind: "berserker_rage", cooldown: 4, description: "Investida furiosa que aumenta o ATK." },
+  },
+  magikarp: {
+    id: "magikarp", name: "Magikarp", element: "water", role: "dps", rarity: "common",
+    emoji: "🐟", image: magikarpImg, hidden: true,
+    description: "Só sabe se debater... por enquanto.",
+    base: { hp: 28, atk: 6, def: 8, spd: 18, int: 4 },
+    skill: { name: "Splash", emoji: "💦", kind: "double_strike", cooldown: 3, description: "Se debate com força surpreendente." },
+  },
 };
+
 
 
 
@@ -2619,6 +2700,16 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   seadra: ["abyssal"],
   goldeen: ["abyssal"],
   seaking: ["abyssal"],
+  staryu: ["abyssal"],
+  starmie: ["abyssal"],
+  mrmime: ["sombras"],
+  scyther: ["floresta"],
+  jynx: ["abyssal"],
+  electabuzz: ["relampago"],
+  magmar: ["fogo"],
+  pinsir: ["pedra"],
+  tauros: ["pedra"],
+  magikarp: ["abyssal"],
 };
 
 export function getSpeciesCategories(speciesId: string): Category[] {
