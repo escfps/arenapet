@@ -80,6 +80,7 @@ function MarketPage() {
   const [filterKind, setFilterKind] = useState<"all" | "monster" | "item" | "badge">("all");
   const [filterRarity, setFilterRarity] = useState<"all" | "common" | "rare" | "super_rare" | "epic" | "legendary" | "mythic">("all");
   const [sortPrice, setSortPrice] = useState<"recent" | "asc" | "desc">("recent");
+  const [filterShiny, setFilterShiny] = useState(false);
 
   // form
   const [sellKind, setSellKind] = useState<"monster" | "item" | "badge">("monster");
