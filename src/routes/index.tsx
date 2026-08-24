@@ -23,7 +23,7 @@ export const Route = createFileRoute("/")({
 
 const TEAM_MAX = 3;
 const ALL_RARITIES: Rarity[] = ["common", "rare", "super_rare", "epic", "legendary", "mythic"];
-const ALL_ELEMENTS: Element[] = ["fire", "water", "grass", "electric", "shadow", "earth"];
+const ALL_ELEMENTS: Element[] = ["normal", "fire", "water", "grass", "electric", "ice", "fighting", "poison", "ground", "flying", "psychic", "bug", "rock", "ghost", "dragon", "dark", "steel", "fairy"];
 const ALL_ROLES: Role[] = ["tank", "dps", "assassin", "mage", "healer"];
 const ALL_CATEGORIES: Category[] = ["floresta","sombras","felinos","repteis","abyssal","dragoes","gelo","aves","fogo","pedra","relampago"];
 
