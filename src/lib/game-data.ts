@@ -1640,6 +1640,9 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   haunter: ["sombras"],
   abra: ["sombras"],
   kadabra: ["sombras"],
+  charmander: ["fogo"],
+  charmeleon: ["fogo", "dragoes"],
+  charizard: ["fogo", "dragoes"],
 };
 
 export function getSpeciesCategories(speciesId: string): Category[] {
