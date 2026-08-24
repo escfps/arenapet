@@ -10,6 +10,8 @@ import { SynergyBadges } from "@/components/SynergyBadges";
 import { useProfile } from "@/lib/use-profile";
 import { toast, Toaster } from "sonner";
 import arenaBg from "@/assets/arena-bg.jpg";
+import { useServerFn } from "@tanstack/react-start";
+import { openWelcomeChest as openWelcomeChestFnDef } from "@/lib/economy.functions";
 
 export const Route = createFileRoute("/")({
   component: PatioPage,
@@ -30,6 +32,7 @@ const ALL_CATEGORIES: Category[] = ["normal","fire","water","grass","electric","
 function PatioPage() {
   const navigate = useNavigate();
   const { userId, profile, loading, reload } = useProfile();
+  const welcomeChestFn = useServerFn(openWelcomeChestFnDef);
   const [monsters, setMonsters] = useState<MonsterRow[]>([]);
   const [hatching, setHatching] = useState(false);
   const [welcomeReveal, setWelcomeReveal] = useState<string[] | null>(null);
