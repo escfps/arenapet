@@ -79,6 +79,13 @@ import squirtleImg from "@/assets/monsters/squirtle.png";
 import wartortleImg from "@/assets/monsters/wartortle.png";
 import blastoiseImg from "@/assets/monsters/blastoise.png";
 import bulbasaurImg from "@/assets/monsters/bulbasaur.png";
+import caterpieImg from "@/assets/monsters/caterpie.png";
+import metapodImg from "@/assets/monsters/metapod.png";
+import butterfreeImg from "@/assets/monsters/butterfree.png";
+import weedleImg from "@/assets/monsters/weedle.png";
+import kakunaImg from "@/assets/monsters/kakuna.png";
+import beedrillImg from "@/assets/monsters/beedrill.png";
+import pidgeyImg from "@/assets/monsters/pidgey.png";
 import ivysaurImg from "@/assets/monsters/ivysaur.png";
 import venusaurImg from "@/assets/monsters/venusaur.png";
 import brasagartoImg from "@/assets/monsters/brasagarto.png";
@@ -893,6 +900,55 @@ export const SPECIES: Record<string, Species> = {
     base: { hp: 98, atk: 18, def: 22, spd: 14, int: 36 },
     skill: { name: "Tempestade de Folhas", emoji: "🌸", kind: "thorn_burst", cooldown: 4, description: "Golpeia TODOS os inimigos com folhas afiadas. PASSIVA: reflete parte do dano recebido." },
   },
+  caterpie: {
+    id: "caterpie", name: "Caterpie", element: "grass", role: "tank", rarity: "super_rare",
+    emoji: "🐛🌿", image: caterpieImg, hidden: true,
+    description: "Primeira forma da linhagem inseto. Solta um fio grudento que atrasa o inimigo mais rápido.",
+    base: { hp: 50, atk: 11, def: 12, spd: 13, int: 9 },
+    skill: { name: "Fio da Seda", emoji: "🕸️", kind: "blind_debuff", cooldown: 3, description: "Cobre o alvo de seda: reduz a precisão dele por 2 turnos." },
+  },
+  metapod: {
+    id: "metapod", name: "Metapod", element: "grass", role: "tank", rarity: "legendary",
+    emoji: "🛡️🌿", image: metapodImg, hidden: true,
+    description: "Casca endurecida. Aguenta tudo enquanto a metamorfose acontece por dentro.",
+    base: { hp: 76, atk: 12, def: 22, spd: 10, int: 12 },
+    skill: { name: "Endurecer", emoji: "🛡️", kind: "turtle_shell", cooldown: 3, description: "Endurece a casca: reduz muito o dano recebido por 2 turnos e devolve parte do dano." },
+  },
+  butterfree: {
+    id: "butterfree", name: "Butterfree", element: "grass", role: "mage", rarity: "mythic",
+    emoji: "🦋✨", image: butterfreeImg, hidden: true,
+    description: "Forma final da linhagem inseto. Espalha pó soporífero em toda a arena e ataca com poder psíquico.",
+    base: { hp: 84, atk: 15, def: 15, spd: 24, int: 34 },
+    skill: { name: "Pó do Sono", emoji: "💤", kind: "sleep_strike", cooldown: 4, description: "Golpe mágico que pode adormecer o alvo por 1 turno." },
+  },
+  weedle: {
+    id: "weedle", name: "Weedle", element: "grass", role: "assassin", rarity: "super_rare",
+    emoji: "🐛🗡️", image: weedleImg, hidden: true,
+    description: "Primeira forma da linhagem ferroada. O espinho na cabeça injeta veneno em quem chega perto.",
+    base: { hp: 46, atk: 15, def: 9, spd: 17, int: 8 },
+    skill: { name: "Ferroada Tóxica", emoji: "☠️", kind: "bleed_dot", cooldown: 3, description: "Fura o alvo com o espinho e aplica veneno por 3 turnos." },
+  },
+  kakuna: {
+    id: "kakuna", name: "Kakuna", element: "grass", role: "tank", rarity: "legendary",
+    emoji: "🟡🛡️", image: kakunaImg, hidden: true,
+    description: "Casulo rígido da linhagem ferroada. Imóvel por fora, letal por dentro.",
+    base: { hp: 74, atk: 14, def: 21, spd: 11, int: 11 },
+    skill: { name: "Casca de Ferro", emoji: "🛡️", kind: "turtle_shell", cooldown: 3, description: "Fecha o casulo: reduz o dano recebido por 2 turnos e devolve parte do dano." },
+  },
+  beedrill: {
+    id: "beedrill", name: "Beedrill", element: "grass", role: "assassin", rarity: "mythic",
+    emoji: "🐝🗡️", image: beedrillImg, hidden: true,
+    description: "Forma final da linhagem ferroada. Três lanças venenosas atacando em velocidade absurda.",
+    base: { hp: 82, atk: 27, def: 14, spd: 26, int: 12 },
+    skill: { name: "Broca Dupla", emoji: "🗡️", kind: "double_strike", cooldown: 3, description: "Duas perfurações venenosas no mesmo alvo (dano por golpe reduzido)." },
+  },
+  pidgey: {
+    id: "pidgey", name: "Pidgey", element: "grass", role: "dps", rarity: "rare",
+    emoji: "🐦💨", image: pidgeyImg, hidden: true,
+    description: "Pequeno pássaro comum, mas incrivelmente rápido. Levanta rajadas de areia com as asas.",
+    base: { hp: 42, atk: 13, def: 9, spd: 18, int: 8 },
+    skill: { name: "Rajada de Vento", emoji: "💨", kind: "blind_debuff", cooldown: 3, description: "Lança areia nos olhos do alvo: reduz a precisão dele por 2 turnos." },
+  },
 };
 
 
@@ -1697,6 +1753,13 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   bulbasaur: ["floresta", "repteis"],
   ivysaur: ["floresta", "repteis"],
   venusaur: ["floresta", "repteis"],
+  caterpie: ["floresta"],
+  metapod: ["floresta"],
+  butterfree: ["floresta", "aves"],
+  weedle: ["floresta"],
+  kakuna: ["floresta"],
+  beedrill: ["floresta", "aves"],
+  pidgey: ["aves"],
 };
 
 export function getSpeciesCategories(speciesId: string): Category[] {
