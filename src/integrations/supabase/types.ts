@@ -323,6 +323,7 @@ export type Database = {
           id: string
           in_team: boolean
           int: number
+          is_shiny: boolean
           last_tick: string
           name: string
           owner_id: string
@@ -347,6 +348,7 @@ export type Database = {
           id?: string
           in_team?: boolean
           int?: number
+          is_shiny?: boolean
           last_tick?: string
           name: string
           owner_id: string
@@ -371,6 +373,7 @@ export type Database = {
           id?: string
           in_team?: boolean
           int?: number
+          is_shiny?: boolean
           last_tick?: string
           name?: string
           owner_id?: string

@@ -1,0 +1,1 @@
+ALTER TABLE public.monsters ADD COLUMN IF NOT EXISTS is_shiny boolean NOT NULL DEFAULT false;
