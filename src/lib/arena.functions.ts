@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import type { ChestReward, ChestTier } from "./game-data";
 
 const PromoSchema = z
   .object({
@@ -197,7 +198,7 @@ export const arenaFinish = createServerFn({ method: "POST" })
     let delta = 0;
     let promoMsg: string | undefined;
     let nextPromo = promo;
-    const chests: Array<{ tier: "wood" | "silver" | "gold" | "legendary" | "mythic"; label: string; reward: unknown }> = [];
+    const chests: Array<{ tier: ChestTier; label: string; reward: ChestReward }> = [];
     const messages: string[] = [];
     let rationsDropped = 0;
 
