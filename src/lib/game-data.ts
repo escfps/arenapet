@@ -211,6 +211,16 @@ import squirtleShinyImg from "@/assets/monsters/shiny/squirtle.png";
 import wartortleShinyImg from "@/assets/monsters/shiny/wartortle.png";
 import blastoiseShinyImg from "@/assets/monsters/shiny/blastoise.png";
 import caterpieShinyImg from "@/assets/monsters/shiny/caterpie.png";
+import metapodShinyImg from "@/assets/monsters/shiny/metapod.png";
+import butterfreeShinyImg from "@/assets/monsters/shiny/butterfree.png";
+import weedleShinyImg from "@/assets/monsters/shiny/weedle.png";
+import kakunaShinyImg from "@/assets/monsters/shiny/kakuna.png";
+import beedrillShinyImg from "@/assets/monsters/shiny/beedrill.png";
+import pidgeyShinyImg from "@/assets/monsters/shiny/pidgey.png";
+import pidgeottoShinyImg from "@/assets/monsters/shiny/pidgeotto.png";
+import pidgeotShinyImg from "@/assets/monsters/shiny/pidgeot.png";
+import rattataShinyImg from "@/assets/monsters/shiny/rattata.png";
+import raticateShinyImg from "@/assets/monsters/shiny/raticate.png";
 import metapodImg from "@/assets/monsters/metapod.png";
 import butterfreeImg from "@/assets/monsters/butterfree.png";
 import weedleImg from "@/assets/monsters/weedle.png";
@@ -1047,70 +1057,70 @@ export const SPECIES: Record<string, Species> = {
   },
   metapod: {
     id: "metapod", name: "Metapod", element: "grass", role: "tank", rarity: "super_rare",
-    emoji: "🛡️🌿", image: metapodImg, hidden: true,
+    emoji: "🛡️🌿", image: metapodImg, shinyImage: metapodShinyImg, hidden: true,
     description: "Casca endurecida. Aguenta tudo enquanto a metamorfose acontece por dentro.",
     base: { hp: 60, atk: 11, def: 17, spd: 10, int: 10 },
     skill: { name: "Endurecer", emoji: "🛡️", kind: "turtle_shell", cooldown: 3, description: "Endurece a casca: reduz muito o dano recebido por 2 turnos e devolve parte do dano." },
   },
   butterfree: {
     id: "butterfree", name: "Butterfree", element: "grass", role: "mage", rarity: "legendary",
-    emoji: "🦋✨", image: butterfreeImg, hidden: true,
+    emoji: "🦋✨", image: butterfreeImg, shinyImage: butterfreeShinyImg, hidden: true,
     description: "Forma final da linhagem inseto. Espalha pó soporífero em toda a arena e ataca com poder psíquico.",
     base: { hp: 70, atk: 14, def: 14, spd: 21, int: 29 },
     skill: { name: "Pó do Sono", emoji: "💤", kind: "sleep_strike", cooldown: 4, description: "Golpe mágico que pode adormecer o alvo por 1 turno." },
   },
   weedle: {
     id: "weedle", name: "Weedle", element: "grass", role: "assassin", rarity: "rare",
-    emoji: "🐛🗡️", image: weedleImg, hidden: true,
+    emoji: "🐛🗡️", image: weedleImg, shinyImage: weedleShinyImg, hidden: true,
     description: "Primeira forma da linhagem ferroada. O espinho na cabeça injeta veneno em quem chega perto.",
     base: { hp: 36, atk: 12, def: 8, spd: 15, int: 7 },
     skill: { name: "Ferroada Tóxica", emoji: "☠️", kind: "bleed_dot", cooldown: 3, description: "Fura o alvo com o espinho e aplica veneno por 3 turnos." },
   },
   kakuna: {
     id: "kakuna", name: "Kakuna", element: "grass", role: "tank", rarity: "super_rare",
-    emoji: "🟡🛡️", image: kakunaImg, hidden: true,
+    emoji: "🟡🛡️", image: kakunaImg, shinyImage: kakunaShinyImg, hidden: true,
     description: "Casulo rígido da linhagem ferroada. Imóvel por fora, letal por dentro.",
     base: { hp: 58, atk: 12, def: 16, spd: 11, int: 10 },
     skill: { name: "Casca de Ferro", emoji: "🛡️", kind: "turtle_shell", cooldown: 3, description: "Fecha o casulo: reduz o dano recebido por 2 turnos e devolve parte do dano." },
   },
   beedrill: {
     id: "beedrill", name: "Beedrill", element: "grass", role: "assassin", rarity: "legendary",
-    emoji: "🐝🗡️", image: beedrillImg, hidden: true,
+    emoji: "🐝🗡️", image: beedrillImg, shinyImage: beedrillShinyImg, hidden: true,
     description: "Forma final da linhagem ferroada. Três lanças venenosas atacando em velocidade absurda.",
     base: { hp: 66, atk: 22, def: 12, spd: 23, int: 11 },
     skill: { name: "Broca Dupla", emoji: "🗡️", kind: "double_strike", cooldown: 3, description: "Duas perfurações venenosas no mesmo alvo (dano por golpe reduzido)." },
   },
   pidgey: {
     id: "pidgey", name: "Pidgey", element: "grass", role: "dps", rarity: "common",
-    emoji: "🐦💨", image: pidgeyImg, hidden: true,
+    emoji: "🐦💨", image: pidgeyImg, shinyImage: pidgeyShinyImg, hidden: true,
     description: "Pequeno pássaro comum, mas incrivelmente rápido. Levanta rajadas de areia com as asas.",
     base: { hp: 30, atk: 10, def: 7, spd: 14, int: 6 },
     skill: { name: "Rajada de Vento", emoji: "💨", kind: "blind_debuff", cooldown: 3, description: "Lança areia nos olhos do alvo: reduz a precisão dele por 2 turnos." },
   },
   pidgeotto: {
     id: "pidgeotto", name: "Pidgeotto", element: "grass", role: "dps", rarity: "rare",
-    emoji: "🕊️💨", image: pidgeottoImg, hidden: true,
+    emoji: "🕊️💨", image: pidgeottoImg, shinyImage: pidgeottoShinyImg, hidden: true,
     description: "Segunda forma da linhagem alada. Patrulha o território do alto e desce em investidas cortantes.",
     base: { hp: 48, atk: 16, def: 11, spd: 20, int: 9 },
     skill: { name: "Ataque Aéreo", emoji: "🕊️", kind: "double_strike", cooldown: 3, description: "Duas investidas aéreas no mesmo alvo (dano por golpe reduzido)." },
   },
   pidgeot: {
     id: "pidgeot", name: "Pidgeot", element: "grass", role: "dps", rarity: "super_rare",
-    emoji: "🦅🌪️", image: pidgeotImg, hidden: true,
+    emoji: "🦅🌪️", image: pidgeotImg, shinyImage: pidgeotShinyImg, hidden: true,
     description: "Forma final da linhagem alada. Voa a velocidades absurdas e mergulha como uma lança de vento.",
     base: { hp: 68, atk: 22, def: 15, spd: 26, int: 12 },
     skill: { name: "Tornado", emoji: "🌪️", kind: "guaranteed_crit", cooldown: 3, description: "Mergulho em velocidade máxima: acerto crítico garantido." },
   },
   rattata: {
     id: "rattata", name: "Rattata", element: "grass", role: "assassin", rarity: "common",
-    emoji: "🐁🦷", image: rattataImg, hidden: true,
+    emoji: "🐁🦷", image: rattataImg, shinyImage: rattataShinyImg, hidden: true,
     description: "Roedor teimoso de dentes afiados. Morde e não solta até tirar sangue.",
     base: { hp: 30, atk: 12, def: 6, spd: 16, int: 5 },
     skill: { name: "Mordida Rápida", emoji: "🦷", kind: "bleed_dot", cooldown: 3, description: "Morde o alvo e causa sangramento por 3 turnos." },
   },
   raticate: {
     id: "raticate", name: "Raticate", element: "grass", role: "assassin", rarity: "rare",
-    emoji: "🐀💥", image: raticateImg, hidden: true,
+    emoji: "🐀💥", image: raticateImg, shinyImage: raticateShinyImg, hidden: true,
     description: "Roedor adulto e agressivo. Os incisivos roem até metal — e drenam a vida de quem morde.",
     base: { hp: 46, atk: 18, def: 10, spd: 19, int: 8 },
     skill: { name: "Superdente", emoji: "💥", kind: "lifesteal_strike", cooldown: 3, description: "Mordida brutal que rouba parte do dano como cura." },
