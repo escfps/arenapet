@@ -66,6 +66,7 @@ import escorpiaoDesertoImg from "@/assets/monsters/escorpiao_deserto.png";
 import corujaNegraImg from "@/assets/monsters/coruja_negra.png";
 import corujaPsiquicaImg from "@/assets/monsters/coruja_psiquica.png";
 import gengarImg from "@/assets/monsters/gengar.png";
+import pikachuImg from "@/assets/monsters/pikachu.png";
 import brasagartoImg from "@/assets/monsters/brasagarto.png";
 import cascatorugaImg from "@/assets/monsters/cascatoruga.png";
 import folhassauroImg from "@/assets/monsters/folhassauro.png";
@@ -632,6 +633,13 @@ export const SPECIES: Record<string, Species> = {
   },
 
   // ===== NOVA LINHAGEM (ocultos até liberação) =====
+  pikachu: {
+    id: "pikachu", name: "Pikachu", element: "electric", role: "assassin", rarity: "super_rare",
+    emoji: "⚡🐭", image: pikachuImg, hidden: true,
+    description: "Roedor elétrico de bochechas faiscantes. Solta descargas devastadoras antes que o inimigo pisque.",
+    base: { hp: 64, atk: 15, def: 9, spd: 20, int: 12 },
+    skill: { name: "Choque do Trovão", emoji: "⚡", kind: "lightning_charge", cooldown: 3, description: "Investida elétrica no inimigo mais forte (2× dano) + 60% de chance de ⚡ paralisar. PASSIVA: ataque básico tem 30% de paralisar." },
+  },
   brasagarto: {
     id: "brasagarto", name: "Brasagarto", element: "fire", role: "dps", rarity: "rare",
     emoji: "🦎🔥", image: brasagartoImg, hidden: true,
@@ -1540,6 +1548,7 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   porco_espinho: ["floresta", "pedra"],
   urubu_carniceiro: ["aves", "sombras"],
   gengar: ["sombras"],
+  pikachu: ["relampago"],
   brasagarto: ["fogo", "repteis"],
   cascatoruga: ["repteis", "abyssal"],
   folhassauro: ["floresta", "repteis"],
