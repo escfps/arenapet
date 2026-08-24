@@ -195,7 +195,7 @@ export function BattleScene({
       const newItem = {
         id,
         side: actorSide,
-        image: speciesImage(m.species, (m as any).is_shiny === true),
+        image: speciesImage(actorMon.species, (actorMon as any).is_shiny === true),
         actorName: entry.actorName,
         skillEmoji,
         skillLabel,
