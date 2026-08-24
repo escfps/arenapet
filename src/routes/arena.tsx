@@ -589,10 +589,12 @@ function ArenaPage() {
             <div className="grid md:grid-cols-2 gap-4">
               <TeamPanel title="Seu time" team={myTeam} side="left" energies={teamEnergies} />
               {opponent ? (
-                <TeamPanel title={`vs ${opponent.ownerName}`} team={opponent.team} side="right" />
-                {gymLeaders[opponent.ownerId] && (
-                  <div className="flex justify-center mt-1"><GymLeaderTitle types={gymLeaders[opponent.ownerId]} /></div>
-                )}
+                <div>
+                  <TeamPanel title={`vs ${opponent.ownerName}`} team={opponent.team} side="right" />
+                  {gymLeaders[opponent.ownerId] && (
+                    <div className="flex justify-center mt-1"><GymLeaderTitle types={gymLeaders[opponent.ownerId]} /></div>
+                  )}
+                </div>
               ) : (
                 <div className="rounded-2xl bg-white/10 backdrop-blur-md border-2 border-dashed border-white/30 flex items-center justify-center p-8 text-white/70 text-center">
                   ❓<br/>Nenhum oponente ainda
