@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
-import {
+import { speciesImage, shinyFallbackFilter,
   SPECIES,
   ELEMENT_COLORS,
   EXPEDITION_DURATIONS,
