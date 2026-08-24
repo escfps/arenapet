@@ -1338,7 +1338,7 @@ export const SPECIES: Record<string, Species> = {
     emoji: "🐦🗡️", image: spearowImg, shinyImage: spearowShinyImg,
     description: "Passarinho briguento de bico rosa. Não voa bem, mas voa direto ao olho do alvo.",
     base: { hp: 36, atk: 14, def: 7, spd: 18, int: 8 },
-    skill: { name: "Bicada Fury", emoji: "🗡️", kind: "bleed_strike", cooldown: 3, description: "Bicada feroz que causa sangramento por 3 turnos." },
+    skill: { name: "Bicada Fury", emoji: "🗡️", kind: "bleed_dot", cooldown: 3, description: "Bicada feroz que causa sangramento por 3 turnos." },
   },
   fearow: {
     id: "fearow", name: "Fearow", element: "normal", secondaryElement: "flying", role: "assassin", rarity: "super_rare",
