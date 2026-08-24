@@ -280,6 +280,16 @@ import growlitheShinyImg from "@/assets/monsters/shiny/growlithe.png";
 import arcanineShinyImg from "@/assets/monsters/shiny/arcanine.png";
 import poliwagShinyImg from "@/assets/monsters/shiny/poliwag.png";
 import poliwhirlShinyImg from "@/assets/monsters/shiny/poliwhirl.png";
+import cloysterShinyImg from "@/assets/monsters/shiny/cloyster.png";
+import gastlyShinyImg from "@/assets/monsters/shiny/gastly.png";
+import haunterShinyImg from "@/assets/monsters/shiny/haunter.png";
+import gengarShinyImg from "@/assets/monsters/shiny/gengar.png";
+import onixShinyImg from "@/assets/monsters/shiny/onix.png";
+import drowzeeShinyImg from "@/assets/monsters/shiny/drowzee.png";
+import hypnoShinyImg from "@/assets/monsters/shiny/hypno.png";
+import krabbyShinyImg from "@/assets/monsters/shiny/krabby.png";
+import kinglerShinyImg from "@/assets/monsters/shiny/kingler.png";
+import voltorbShinyImg from "@/assets/monsters/shiny/voltorb.png";
 import metapodImg from "@/assets/monsters/metapod.png";
 import butterfreeImg from "@/assets/monsters/butterfree.png";
 import weedleImg from "@/assets/monsters/weedle.png";
@@ -728,7 +738,7 @@ export const SPECIES: Record<string, Species> = {
   },
   gengar: {
     id: "gengar", name: "Gengar", element: "shadow", role: "mage", rarity: "mythic",
-    emoji: "👻", image: gengarImg,
+    emoji: "👻", image: gengarImg, shinyImage: gengarShinyImg,
     description: "Fantasma púrpura de sorriso malicioso. Manipula as sombras para devorar os sonhos dos inimigos e crescer em poder.",
     base: { hp: 86, atk: 12, def: 13, spd: 17, int: 34 },
     skill: { name: "Esfera Sombria", emoji: "🔮", kind: "aoe_magic", cooldown: 4, description: "Bola de energia sombria atinge TODOS os inimigos (~INT×1.8) com 35% de chance de silenciar cada um por 1 turno. PASSIVA — Devora Sonhos: ao abater um inimigo, Gengar recupera 12% do HP máx." },
@@ -1018,14 +1028,14 @@ export const SPECIES: Record<string, Species> = {
   },
   gastly: {
     id: "gastly", name: "Gastly", element: "shadow", role: "mage", rarity: "super_rare",
-    emoji: "💜👻", image: gastlyImg, hidden: true,
+    emoji: "💜👻", image: gastlyImg, shinyImage: gastlyShinyImg, hidden: true,
     description: "Primeira forma da linhagem sombria. Uma bolha de gás venenoso com olhos famintos — frágil, mas corrói a defesa de quem se aproxima.",
     base: { hp: 44, atk: 7, def: 7, spd: 16, int: 24 },
     skill: { name: "Gás Venenoso", emoji: "☠️", kind: "ash_breath", cooldown: 3, description: "Sopra gás tóxico no alvo (~INT×1.5) e reduz a DEF dele em 20% por 2 turnos." },
   },
   haunter: {
     id: "haunter", name: "Haunter", element: "shadow", role: "mage", rarity: "legendary",
-    emoji: "🖐️👻", image: haunterImg, hidden: true,
+    emoji: "🖐️👻", image: haunterImg, shinyImage: haunterShinyImg, hidden: true,
     description: "Segunda forma da linhagem sombria. Mãos flutuantes que lambem a alma dos inimigos — um passo antes de se tornar Gengar.",
     base: { hp: 64, atk: 10, def: 10, spd: 18, int: 29 },
     skill: { name: "Lambida Espectral", emoji: "👅", kind: "aoe_magic", cooldown: 4, description: "Onda sombria atinge TODOS os inimigos (~INT×1.5) com 25% de chance de silenciar cada um por 1 turno. PASSIVA — Devora Sonhos: ao abater um inimigo, recupera 8% do HP máx." },
@@ -1641,49 +1651,49 @@ export const SPECIES: Record<string, Species> = {
   },
   cloyster: {
     id: "cloyster", name: "Cloyster", element: "water", role: "tank", rarity: "legendary",
-    emoji: "🐚❄️", image: cloysterImg, hidden: true,
+    emoji: "🐚❄️", image: cloysterImg, shinyImage: cloysterShinyImg, hidden: true,
     description: "Armadura de gelo com espinhos afiadíssimos.",
     base: { hp: 86, atk: 28, def: 30, spd: 12, int: 16 },
     skill: { name: "Lança de Gelo", emoji: "🧊", kind: "frost_pounce", cooldown: 4, description: "Espinhos gelados com chance de congelar." },
   },
   onix: {
     id: "onix", name: "Onix", element: "earth", role: "tank", rarity: "legendary",
-    emoji: "🪨🐍", image: onixImg, hidden: true,
+    emoji: "🪨🐍", image: onixImg, shinyImage: onixShinyImg, hidden: true,
     description: "Serpente de rocha que cava túneis a alta velocidade.",
     base: { hp: 100, atk: 24, def: 32, spd: 11, int: 8 },
     skill: { name: "Prisão de Pedra", emoji: "🪨", kind: "shield_taunt", cooldown: 4, description: "Ergue muralhas, provoca e ganha escudo." },
   },
   drowzee: {
     id: "drowzee", name: "Drowzee", element: "shadow", role: "mage", rarity: "rare",
-    emoji: "😴", image: drowzeeImg, hidden: true,
+    emoji: "😴", image: drowzeeImg, shinyImage: drowzeeShinyImg, hidden: true,
     description: "Devora sonhos de quem dorme perto dele.",
     base: { hp: 48, atk: 12, def: 12, spd: 10, int: 20 },
     skill: { name: "Hipnose", emoji: "💤", kind: "sleep_strike", cooldown: 4, description: "Adormece o alvo com ondas mentais." },
   },
   hypno: {
     id: "hypno", name: "Hypno", element: "shadow", role: "mage", rarity: "legendary",
-    emoji: "🌀", image: hypnoImg, hidden: true,
+    emoji: "🌀", image: hypnoImg, shinyImage: hypnoShinyImg, hidden: true,
     description: "Com o pêndulo, domina a mente dos inimigos.",
     base: { hp: 74, atk: 20, def: 22, spd: 15, int: 34 },
     skill: { name: "Pêndulo Sombrio", emoji: "🌀", kind: "sleep_strike", cooldown: 5, description: "Hipnotiza o alvo e drena sua mente." },
   },
   krabby: {
     id: "krabby", name: "Krabby", element: "water", role: "dps", rarity: "common",
-    emoji: "🦀", image: krabbyImg, hidden: true,
+    emoji: "🦀", image: krabbyImg, shinyImage: krabbyShinyImg, hidden: true,
     description: "Caranguejo briguento das praias.",
     base: { hp: 36, atk: 15, def: 10, spd: 12, int: 6 },
     skill: { name: "Pinça Dupla", emoji: "🦀", kind: "double_strike", cooldown: 3, description: "Duas pinçadas rápidas." },
   },
   kingler: {
     id: "kingler", name: "Kingler", element: "water", role: "dps", rarity: "legendary",
-    emoji: "🦀💪", image: kinglerImg, hidden: true,
+    emoji: "🦀💪", image: kinglerImg, shinyImage: kinglerShinyImg, hidden: true,
     description: "Sua pinça gigante esmaga qualquer armadura.",
     base: { hp: 76, atk: 34, def: 22, spd: 16, int: 10 },
     skill: { name: "Martelo de Pinça", emoji: "🔨", kind: "guaranteed_crit", cooldown: 4, description: "Golpe crítico devastador." },
   },
   voltorb: {
     id: "voltorb", name: "Voltorb", element: "electric", role: "mage", rarity: "common",
-    emoji: "🔴⚡", image: voltorbImg, hidden: true,
+    emoji: "🔴⚡", image: voltorbImg, shinyImage: voltorbShinyImg, hidden: true,
     description: "Esfera instável que explode ao menor toque.",
     base: { hp: 32, atk: 12, def: 9, spd: 14, int: 15 },
     skill: { name: "Autodestruição", emoji: "💥", kind: "chain_lightning", cooldown: 4, description: "Descarga explosiva que salta entre inimigos." },
