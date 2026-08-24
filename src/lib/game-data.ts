@@ -136,6 +136,16 @@ import drowzeeImg from "@/assets/monsters/drowzee.png";
 import hypnoImg from "@/assets/monsters/hypno.png";
 import krabbyImg from "@/assets/monsters/krabby.png";
 import kinglerImg from "@/assets/monsters/kingler.png";
+import voltorbImg from "@/assets/monsters/voltorb.png";
+import electrodeImg from "@/assets/monsters/electrode.png";
+import exeggcuteImg from "@/assets/monsters/exeggcute.png";
+import exeggutorImg from "@/assets/monsters/exeggutor.png";
+import cuboneImg from "@/assets/monsters/cubone.png";
+import marowakImg from "@/assets/monsters/marowak.png";
+import hitmonleeImg from "@/assets/monsters/hitmonlee.png";
+import hitmonchanImg from "@/assets/monsters/hitmonchan.png";
+import lickitungImg from "@/assets/monsters/lickitung.png";
+import koffingImg from "@/assets/monsters/koffing.png";
 import alakazamImg from "@/assets/monsters/alakazam.png";
 import gastlyImg from "@/assets/monsters/gastly.png";
 import haunterImg from "@/assets/monsters/haunter.png";
@@ -1549,7 +1559,78 @@ export const SPECIES: Record<string, Species> = {
     base: { hp: 76, atk: 34, def: 22, spd: 16, int: 10 },
     skill: { name: "Martelo de Pinça", emoji: "🔨", kind: "guaranteed_crit", cooldown: 4, description: "Golpe crítico devastador." },
   },
+  voltorb: {
+    id: "voltorb", name: "Voltorb", element: "electric", role: "mage", rarity: "common",
+    emoji: "🔴⚡", image: voltorbImg, hidden: true,
+    description: "Esfera instável que explode ao menor toque.",
+    base: { hp: 32, atk: 12, def: 9, spd: 14, int: 15 },
+    skill: { name: "Autodestruição", emoji: "💥", kind: "chain_lightning", cooldown: 4, description: "Descarga explosiva que salta entre inimigos." },
+  },
+  electrode: {
+    id: "electrode", name: "Electrode", element: "electric", role: "mage", rarity: "legendary",
+    emoji: "⚪⚡", image: electrodeImg, hidden: true,
+    description: "Armazena energia até não caber mais — e solta tudo.",
+    base: { hp: 68, atk: 24, def: 20, spd: 26, int: 32 },
+    skill: { name: "Sobrecarga", emoji: "🌩️", kind: "lightning_charge", cooldown: 5, description: "Descarga brutal que paralisa o alvo." },
+  },
+  exeggcute: {
+    id: "exeggcute", name: "Exeggcute", element: "grass", role: "mage", rarity: "common",
+    emoji: "🥚🌿", image: exeggcuteImg, hidden: true,
+    description: "Seis ovos que pensam juntos.",
+    base: { hp: 36, atk: 10, def: 12, spd: 8, int: 16 },
+    skill: { name: "Bombardeio de Sementes", emoji: "🌰", kind: "thorn_burst", cooldown: 4, description: "Atinge todos os inimigos com sementes." },
+  },
+  exeggutor: {
+    id: "exeggutor", name: "Exeggutor", element: "grass", role: "mage", rarity: "legendary",
+    emoji: "🌴", image: exeggutorImg, hidden: true,
+    description: "Palmeira psíquica de três cabeças pensantes.",
+    base: { hp: 84, atk: 26, def: 22, spd: 12, int: 34 },
+    skill: { name: "Psíquico Tropical", emoji: "🔮", kind: "thorn_burst", cooldown: 5, description: "Onda mental que atinge todos os inimigos." },
+  },
+  cubone: {
+    id: "cubone", name: "Cubone", element: "earth", role: "dps", rarity: "rare",
+    emoji: "🦴", image: cuboneImg, hidden: true,
+    description: "Usa o crânio da mãe como elmo e o osso como arma.",
+    base: { hp: 44, atk: 18, def: 14, spd: 12, int: 8 },
+    skill: { name: "Bumerangue de Osso", emoji: "🦴", kind: "double_strike", cooldown: 3, description: "Dois golpes com o osso." },
+  },
+  marowak: {
+    id: "marowak", name: "Marowak", element: "earth", role: "dps", rarity: "legendary",
+    emoji: "🦴💀", image: marowakImg, hidden: true,
+    description: "Guerreiro endurecido pela dor, mestre do osso.",
+    base: { hp: 78, atk: 32, def: 26, spd: 16, int: 10 },
+    skill: { name: "Fúria Óssea", emoji: "💀", kind: "berserker_rage", cooldown: 4, description: "Frenesi de golpes que aumenta o ATK." },
+  },
+  hitmonlee: {
+    id: "hitmonlee", name: "Hitmonlee", element: "earth", role: "assassin", rarity: "legendary",
+    emoji: "🦵", image: hitmonleeImg, hidden: true,
+    description: "Pernas elásticas que golpeiam como chicotes.",
+    base: { hp: 68, atk: 34, def: 18, spd: 26, int: 8 },
+    skill: { name: "Chute Relâmpago", emoji: "🦵", kind: "guaranteed_crit", cooldown: 4, description: "Chute crítico no ponto fraco." },
+  },
+  hitmonchan: {
+    id: "hitmonchan", name: "Hitmonchan", element: "earth", role: "assassin", rarity: "legendary",
+    emoji: "🥊", image: hitmonchanImg, hidden: true,
+    description: "Punhos mais rápidos que um trem-bala.",
+    base: { hp: 70, atk: 32, def: 20, spd: 25, int: 10 },
+    skill: { name: "Rajada de Socos", emoji: "🥊", kind: "double_strike", cooldown: 3, description: "Sequência veloz de socos." },
+  },
+  lickitung: {
+    id: "lickitung", name: "Lickitung", element: "grass", role: "tank", rarity: "rare",
+    emoji: "👅", image: lickitungImg, hidden: true,
+    description: "A língua de dois metros paralisa quem toca.",
+    base: { hp: 58, atk: 14, def: 18, spd: 8, int: 10 },
+    skill: { name: "Lambida Paralisante", emoji: "👅", kind: "sleep_strike", cooldown: 4, description: "Lambida nojenta que deixa o alvo fora de combate." },
+  },
+  koffing: {
+    id: "koffing", name: "Koffing", element: "shadow", role: "mage", rarity: "common",
+    emoji: "☠️", image: koffingImg, hidden: true,
+    description: "Bola de gás tóxico prestes a estourar.",
+    base: { hp: 34, atk: 11, def: 12, spd: 9, int: 15 },
+    skill: { name: "Nuvem Tóxica", emoji: "☠️", kind: "bleed_dot", cooldown: 3, description: "Gás venenoso que causa dano contínuo." },
+  },
 };
+
 
 
 
@@ -2437,6 +2518,16 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   hypno: ["sombras"],
   krabby: ["abyssal"],
   kingler: ["abyssal"],
+  voltorb: ["relampago"],
+  electrode: ["relampago"],
+  exeggcute: ["floresta"],
+  exeggutor: ["floresta"],
+  cubone: ["pedra"],
+  marowak: ["pedra"],
+  hitmonlee: ["pedra"],
+  hitmonchan: ["pedra"],
+  lickitung: ["floresta"],
+  koffing: ["sombras"],
 };
 
 export function getSpeciesCategories(speciesId: string): Category[] {
