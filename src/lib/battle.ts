@@ -230,6 +230,125 @@ function isCCImmune(mon: Live): boolean {
   return mon.species === "elefante_ancestral";
 }
 
+/** Um golpe de status só vale a pena se ainda pode surtir efeito. */
+function statusMoveUseful(move: Move, self: Live, target: Live): boolean {
+  const e = move.effect;
+  if (!e) return false;
+  switch (e.kind) {
+    case "heal": return self.current < self.maxHp * 0.75;
+    case "shield": return self.shield <= 0;
+    case "cleanse": return self.burnTurns > 0 || self.poisonTurns > 0 || self.bleedTurns > 0 || self.atkDebuffTurns > 0 || self.defDebuffTurns > 0 || self.confuseTurns > 0;
+    case "atk_up": return self.atkBuffTurns <= 0;
+    case "def_up": return self.defBuffTurns <= 0;
+    case "spd_up": return self.spdBuffTurns <= 0;
+    case "sleep": return target.sleepTurns <= 0 && !isCCImmune(target);
+    case "freeze": return target.freezeTurns <= 0 && !isCCImmune(target);
+    case "paralyze": return target.stunTurns <= 0 && !isCCImmune(target);
+    case "confuse": return target.confuseTurns <= 0 && !isCCImmune(target);
+    case "poison": return target.poisonTurns <= 0;
+    case "burn": return target.burnTurns <= 0 && !isCCImmune(target);
+    case "silence": return target.silenceTurns <= 0 && !isCCImmune(target);
+    case "atk_down": return target.atkDebuffTurns <= 0;
+    case "def_down": return target.defDebuffTurns <= 0;
+    case "spd_down": return target.spdBuffTurns <= 0;
+    default: return true;
+  }
+}
+
+/** Aplica o efeito secundário de um golpe. Retorna o texto do que aconteceu (ou null). */
+function applyMoveEffect(
+  self: Live, target: Live, e: MoveEffect, damage: number,
+  rand: () => number, ccBonus = 0,
+): string | null {
+  const chance = Math.min(1, (e.chance ?? 1) + ccBonus);
+  if (rand() > chance) return null;
+  const turns = e.turns ?? 2;
+  const val = e.value ?? 0.2;
+  const ccBlocked = isCCImmune(target);
+  switch (e.kind) {
+    case "burn":
+      if (ccBlocked) return null;
+      target.burnTurns = Math.max(target.burnTurns, turns);
+      target.burnDmg = Math.max(target.burnDmg, Math.max(1, Math.round(target.maxHp * 0.05)));
+      return "🔥 queimou";
+    case "poison":
+      target.poisonTurns = Math.max(target.poisonTurns, turns);
+      target.poisonDmg = Math.max(target.poisonDmg, Math.max(1, Math.round(target.maxHp * 0.06)));
+      return "☠️ envenenou";
+    case "paralyze":
+      if (ccBlocked) return null;
+      target.stunTurns = Math.max(target.stunTurns, turns);
+      return "⚡ paralisou";
+    case "freeze":
+      if (ccBlocked) return null;
+      target.freezeTurns = Math.max(target.freezeTurns, turns);
+      return "❄️ congelou";
+    case "sleep":
+      if (ccBlocked) return null;
+      target.sleepTurns = Math.max(target.sleepTurns, turns);
+      return "😴 adormeceu";
+    case "confuse":
+      if (ccBlocked) return null;
+      target.confuseTurns = Math.max(target.confuseTurns, turns);
+      return "💫 ficou confuso";
+    case "silence":
+      if (ccBlocked) return null;
+      target.silenceTurns = Math.max(target.silenceTurns, turns);
+      return "🤐 foi silenciado";
+    case "atk_down":
+      target.atkDebuffTurns = Math.max(target.atkDebuffTurns, turns);
+      target.atkDebuffPct = Math.max(target.atkDebuffPct, val);
+      return `⬇️ perdeu ${Math.round(val * 100)}% de ATK`;
+    case "def_down":
+      target.defDebuffTurns = Math.max(target.defDebuffTurns, turns);
+      target.defDebuffPct = Math.max(target.defDebuffPct, val);
+      return `🛡️⬇️ perdeu ${Math.round(val * 100)}% de DEF`;
+    case "spd_down":
+      target.spdBuffTurns = Math.max(target.spdBuffTurns, turns);
+      target.spdBuffPct = -val;
+      return `🐌 perdeu ${Math.round(val * 100)}% de SPD`;
+    case "atk_up":
+      self.atkBuffTurns = Math.max(self.atkBuffTurns, turns);
+      self.atkBuffPct = Math.max(self.atkBuffPct, val);
+      return `💪 +${Math.round(val * 100)}% ATK`;
+    case "def_up":
+      self.defBuffTurns = Math.max(self.defBuffTurns, turns);
+      self.defBuffPct = Math.max(self.defBuffPct, val);
+      return `🛡️ +${Math.round(val * 100)}% DEF`;
+    case "spd_up":
+      self.spdBuffTurns = Math.max(self.spdBuffTurns, turns);
+      self.spdBuffPct = Math.max(self.spdBuffPct, val);
+      return `💨 +${Math.round(val * 100)}% SPD`;
+    case "heal": {
+      const h = Math.round(self.maxHp * val);
+      const before = self.current;
+      self.current = Math.min(self.maxHp, self.current + h);
+      return `💚 recuperou ${self.current - before} HP`;
+    }
+    case "shield": {
+      const s = Math.round(self.maxHp * val);
+      self.shield += s;
+      self.tempShieldAmount += s;
+      self.tempShieldTurns = Math.max(self.tempShieldTurns, turns);
+      return `🛡️ ganhou ${s} de escudo`;
+    }
+    case "drain": {
+      const h = Math.round(damage * val);
+      self.current = Math.min(self.maxHp, self.current + h);
+      return `🩸 roubou ${h} HP`;
+    }
+    case "cleanse":
+      self.burnTurns = 0; self.poisonTurns = 0; self.bleedTurns = 0;
+      self.atkDebuffTurns = 0; self.atkDebuffPct = 0;
+      self.defDebuffTurns = 0; self.defDebuffPct = 0;
+      self.confuseTurns = 0; self.blindTurns = 0;
+      return "🌀 limpou os efeitos negativos";
+    default:
+      return null;
+  }
+}
+
+
 
 
 function applyDamage(target: Live, raw: number): number {
