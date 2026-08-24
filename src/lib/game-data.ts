@@ -299,6 +299,16 @@ import magmarShinyImg from "@/assets/monsters/shiny/magmar.png";
 import pinsirShinyImg from "@/assets/monsters/shiny/pinsir.png";
 import taurosShinyImg from "@/assets/monsters/shiny/tauros.png";
 import magikarpShinyImg from "@/assets/monsters/shiny/magikarp.png";
+import gyaradosShinyImg from "@/assets/monsters/shiny/gyarados.png";
+import laprasShinyImg from "@/assets/monsters/shiny/lapras.png";
+import dittoShinyImg from "@/assets/monsters/shiny/ditto.png";
+import eeveeShinyImg from "@/assets/monsters/shiny/eevee.png";
+import vaporeonShinyImg from "@/assets/monsters/shiny/vaporeon.png";
+import jolteonShinyImg from "@/assets/monsters/shiny/jolteon.png";
+import flareonShinyImg from "@/assets/monsters/shiny/flareon.png";
+import porygonShinyImg from "@/assets/monsters/shiny/porygon.png";
+import omanyteShinyImg from "@/assets/monsters/shiny/omanyte.png";
+import omastarShinyImg from "@/assets/monsters/shiny/omastar.png";
 import electrodeShinyImg from "@/assets/monsters/shiny/electrode.png";
 import exeggcuteShinyImg from "@/assets/monsters/shiny/exeggcute.png";
 import exeggutorShinyImg from "@/assets/monsters/shiny/exeggutor.png";
@@ -1932,63 +1942,63 @@ export const SPECIES: Record<string, Species> = {
   },
   gyarados: {
     id: "gyarados", name: "Gyarados", element: "water", role: "dps", rarity: "mythic",
-    emoji: "🐉", image: gyaradosImg, hidden: true,
+    emoji: "🐉", image: gyaradosImg, shinyImage: gyaradosShinyImg, hidden: true,
     description: "A fúria da serpente marinha arrasa cidades inteiras.",
     base: { hp: 95, atk: 46, def: 28, spd: 30, int: 12 },
     skill: { name: "Fúria do Dragão", emoji: "🌊", kind: "berserker_rage", cooldown: 4, description: "Explode em fúria, aumentando muito o ATK." },
   },
   lapras: {
     id: "lapras", name: "Lapras", element: "water", role: "tank", rarity: "legendary",
-    emoji: "🐢", image: laprasImg, hidden: true,
+    emoji: "🐢", image: laprasImg, shinyImage: laprasShinyImg, hidden: true,
     description: "Carrega viajantes pelos mares mais gelados.",
     base: { hp: 108, atk: 26, def: 32, spd: 14, int: 20 },
     skill: { name: "Canto Gelado", emoji: "❄️", kind: "freeze_strike", cooldown: 5, description: "Congela o inimigo com um canto ancestral." },
   },
   ditto: {
     id: "ditto", name: "Ditto", element: "shadow", role: "mage", rarity: "super_rare",
-    emoji: "🫠", image: dittoImg, hidden: true,
+    emoji: "🫠", image: dittoImg, shinyImage: dittoShinyImg, hidden: true,
     description: "Copia qualquer forma que enxerga.",
     base: { hp: 62, atk: 20, def: 18, spd: 20, int: 22 },
     skill: { name: "Transformar", emoji: "🔄", kind: "berserker_rage", cooldown: 4, description: "Imita o mais forte e fortalece o time." },
   },
   eevee: {
     id: "eevee", name: "Eevee", element: "earth", role: "dps", rarity: "rare",
-    emoji: "🦊", image: eeveeImg, hidden: true,
+    emoji: "🦊", image: eeveeImg, shinyImage: eeveeShinyImg, hidden: true,
     description: "Um potencial evolutivo infinito.",
     base: { hp: 52, atk: 20, def: 16, spd: 22, int: 14 },
     skill: { name: "Investida Adaptável", emoji: "✨", kind: "double_strike", cooldown: 3, description: "Dois golpes rápidos e precisos." },
   },
   vaporeon: {
     id: "vaporeon", name: "Vaporeon", element: "water", role: "healer", rarity: "legendary",
-    emoji: "💧", image: vaporeonImg, hidden: true,
+    emoji: "💧", image: vaporeonImg, shinyImage: vaporeonShinyImg, hidden: true,
     description: "Suas células se fundem com a água.",
     base: { hp: 84, atk: 24, def: 22, spd: 20, int: 32 },
     skill: { name: "Cura Aquática", emoji: "💧", kind: "team_heal", cooldown: 5, description: "Banha o time em água curativa." },
   },
   jolteon: {
     id: "jolteon", name: "Jolteon", element: "electric", role: "assassin", rarity: "legendary",
-    emoji: "⚡", image: jolteonImg, hidden: true,
+    emoji: "⚡", image: jolteonImg, shinyImage: jolteonShinyImg, hidden: true,
     description: "Pelos que disparam agulhas elétricas.",
     base: { hp: 62, atk: 34, def: 16, spd: 40, int: 20 },
     skill: { name: "Agulhas de Raio", emoji: "⚡", kind: "lightning_charge", cooldown: 4, description: "Descarga que paralisa o alvo." },
   },
   flareon: {
     id: "flareon", name: "Flareon", element: "fire", role: "dps", rarity: "legendary",
-    emoji: "🔥", image: flareonImg, hidden: true,
+    emoji: "🔥", image: flareonImg, shinyImage: flareonShinyImg, hidden: true,
     description: "Sua bolsa de fogo queima a mais de 900 graus.",
     base: { hp: 70, atk: 40, def: 20, spd: 26, int: 18 },
     skill: { name: "Explosão Flamejante", emoji: "🔥", kind: "burn_dot", cooldown: 4, description: "Chamas que queimam por vários turnos." },
   },
   porygon: {
     id: "porygon", name: "Porygon", element: "electric", role: "mage", rarity: "super_rare",
-    emoji: "🖥️", image: porygonImg, hidden: true,
+    emoji: "🖥️", image: porygonImg, shinyImage: porygonShinyImg, hidden: true,
     description: "Um ser feito de código, capaz de viajar pela rede.",
     base: { hp: 58, atk: 18, def: 20, spd: 20, int: 30 },
     skill: { name: "Raio Programado", emoji: "💠", kind: "chain_lightning", cooldown: 4, description: "Descarga digital que salta entre inimigos." },
   },
   omanyte: {
     id: "omanyte", name: "Omanyte", element: "water", role: "tank", rarity: "rare",
-    emoji: "🐚", image: omanyteImg, hidden: true,
+    emoji: "🐚", image: omanyteImg, shinyImage: omanyteShinyImg, hidden: true,
     description: "Fóssil ressuscitado dos mares antigos.",
     base: { hp: 66, atk: 18, def: 30, spd: 12, int: 16 },
     skill: { name: "Concha Ancestral", emoji: "🛡️", kind: "shield_taunt", cooldown: 4, description: "Se fecha na concha e provoca os inimigos." },
@@ -2065,7 +2075,7 @@ export const SPECIES: Record<string, Species> = {
   },
   omastar: {
     id: "omastar", name: "Omastar", element: "water", role: "tank", rarity: "legendary",
-    emoji: "🦑", image: omastarImg, hidden: true,
+    emoji: "🦑", image: omastarImg, shinyImage: omastarShinyImg, hidden: true,
     description: "Prende a presa com tentáculos e quebra a casca dela.",
     base: { hp: 88, atk: 30, def: 36, spd: 14, int: 22 },
     skill: { name: "Abraço dos Tentáculos", emoji: "🌀", kind: "bleed_dot", cooldown: 4, description: "Aperta o alvo causando sangramento." },
