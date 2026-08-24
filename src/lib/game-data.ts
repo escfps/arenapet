@@ -2363,6 +2363,16 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   ponyta: ["fogo"],
   rapidash: ["fogo"],
   slowpoke: ["abyssal"],
+  slowbro: ["abyssal"],
+  magnemite: ["relampago"],
+  magneton: ["relampago"],
+  farfetchd: ["aves"],
+  doduo: ["aves"],
+  dodrio: ["aves"],
+  seel: ["abyssal"],
+  dewgong: ["abyssal"],
+  grimer: ["sombras"],
+  muk: ["sombras"],
 };
 
 export function getSpeciesCategories(speciesId: string): Category[] {
