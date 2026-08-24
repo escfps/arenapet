@@ -38,6 +38,7 @@ function PatioPage() {
   const [elementFilter, setElementFilter] = useState<Element | "all">("all");
   const [roleFilter, setRoleFilter] = useState<Role | "all">("all");
   const [categoryFilter, setCategoryFilter] = useState<Category | "all">("all");
+  const [shinyFilter, setShinyFilter] = useState<"all" | "shiny" | "normal">("all");
   const [groupModal, setGroupModal] = useState<string | null>(null);
   const [slotPicker, setSlotPicker] = useState<number | null>(null);
   const [pickerSearch, setPickerSearch] = useState("");
@@ -100,6 +101,9 @@ function PatioPage() {
     const q = search.trim().toLowerCase();
     return monsters.filter((m) => {
       const sp = SPECIES[m.species];
+      const shiny = m.is_shiny === true;
+      if (shinyFilter === "shiny" && !shiny) return false;
+      if (shinyFilter === "normal" && shiny) return false;
       if (!sp) return true;
       if (rarityFilter !== "all" && sp.rarity !== rarityFilter) return false;
       if (elementFilter !== "all" && sp.element !== elementFilter && sp.secondaryElement !== elementFilter) return false;
@@ -111,21 +115,33 @@ function PatioPage() {
       }
       return true;
     });
-  }, [monsters, search, rarityFilter, elementFilter, roleFilter, categoryFilter]);
+  }, [monsters, search, rarityFilter, elementFilter, roleFilter, categoryFilter, shinyFilter]);
 
   const groupedSpecies = useMemo(() => {
     const map = new Map<string, MonsterRow[]>();
     for (const m of filteredMonsters) {
-      if (!map.has(m.species)) map.set(m.species, []);
-      map.get(m.species)!.push(m);
+      // pilhas separadas: shiny nunca junta com normal
+      const key = m.is_shiny === true ? `${m.species}::shiny` : m.species;
+      if (!map.has(key)) map.set(key, []);
+      map.get(key)!.push(m);
     }
-    return Array.from(map.entries()).map(([species, list]) => {
-      const sorted = [...list].sort((a, b) => {
-        if (a.in_team !== b.in_team) return a.in_team ? -1 : 1;
-        return (b.rank ?? 1) - (a.rank ?? 1);
-      });
-      return { species, list: sorted, rep: sorted[0], teamCount: list.filter((x) => x.in_team).length };
-    });
+    return Array.from(map.entries())
+      .map(([key, list]) => {
+        const sorted = [...list].sort((a, b) => {
+          if (a.in_team !== b.in_team) return a.in_team ? -1 : 1;
+          return (b.rank ?? 1) - (a.rank ?? 1);
+        });
+        return {
+          species: key,
+          speciesId: sorted[0].species,
+          shiny: sorted[0].is_shiny === true,
+          list: sorted,
+          rep: sorted[0],
+          teamCount: list.filter((x) => x.in_team).length,
+        };
+      })
+      // shiny primeiro, pra achar fácil
+      .sort((a, b) => (a.shiny === b.shiny ? 0 : a.shiny ? -1 : 1));
   }, [filteredMonsters]);
 
   const groupModalList = groupModal ? (groupedSpecies.find((g) => g.species === groupModal)?.list ?? []) : [];
@@ -442,6 +458,30 @@ function PatioPage() {
                 </div>
               </div>
               <div className="space-y-1">
+                <div className="text-white/70 text-[10px] font-extrabold uppercase tracking-wider px-1">Shiny</div>
+                <div className="flex flex-wrap gap-1.5">
+                  {([
+                    { v: "all", label: "Todos" },
+                    { v: "shiny", label: "✨ Só shiny" },
+                    { v: "normal", label: "Só normais" },
+                  ] as const).map(({ v, label }) => (
+                    <button
+                      key={v}
+                      onClick={() => setShinyFilter(v)}
+                      className={`px-3 py-1 rounded-full text-[11px] font-extrabold transition ${
+                        shinyFilter === v
+                          ? v === "shiny"
+                            ? "bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-400 text-amber-950 ring-2 ring-white"
+                            : "bg-yellow-400 text-yellow-950"
+                          : "bg-white/10 text-white hover:bg-white/20"
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="space-y-1">
                 <div className="text-white/70 text-[10px] font-extrabold uppercase tracking-wider px-1">Elemento</div>
                 <div className="flex flex-wrap gap-1.5">
                   <button
@@ -663,7 +703,8 @@ function PatioPage() {
           <div className="max-w-3xl w-full max-h-[85vh] overflow-y-auto rounded-3xl bg-gradient-to-br from-slate-900 to-slate-800 border-2 border-white/20 shadow-2xl p-5 text-white animate-in zoom-in" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-extrabold">
-                {SPECIES[groupModal]?.emoji} {SPECIES[groupModal]?.name}
+                {groupModal.endsWith("::shiny") ? "✨ " : ""}
+                {SPECIES[groupModal.replace("::shiny", "")]?.emoji} {SPECIES[groupModal.replace("::shiny", "")]?.name}
                 <span className="ml-2 text-sm font-bold text-white/60">x{groupModalList.length}</span>
               </h2>
               <button onClick={() => setGroupModal(null)} className="text-white/70 hover:text-white text-2xl leading-none">×</button>
