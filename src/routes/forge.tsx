@@ -78,22 +78,16 @@ function ForgePage() {
 
 
     setFusing(true);
-    const { error: delErr } = await supabase.from("monsters").delete().eq("id", consume.id);
-    if (delErr) {
+    try {
+      const res = await fuseFn({ data: { species: group.species, rank: group.rank } });
+      toast.success(`${res.shiny ? "✨" : "🔨"} ${res.name} subiu para ${rankStars(res.rank)}!${res.shiny ? " (Shiny mantido)" : ""}`);
+    } catch (e: any) {
+      toast.error((e as Error).message ?? "Erro ao fundir");
       setFusing(false);
-      toast.error("Erro ao fundir: " + delErr.message);
       return;
     }
-    const { error: updErr } = await supabase
-      .from("monsters")
-      .update({ rank: newRank, is_shiny: keepShiny })
-      .eq("id", keep.id);
     setFusing(false);
-    if (updErr) {
-      toast.error("Erro ao upar rank: " + updErr.message);
-      return;
-    }
-    toast.success(`${keepShiny ? "✨" : "🔨"} ${keep.name} subiu para ${rankStars(newRank)}!${keepShiny ? " (Shiny mantido)" : ""}`);
+    void newRank; void keep; void keepShiny; void sp;
     load();
   }
 
