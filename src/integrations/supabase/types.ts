@@ -516,6 +516,62 @@ export type Database = {
         }
         Relationships: []
       }
+      player_gifts: {
+        Row: {
+          claimed_at: string | null
+          created_at: string
+          id: string
+          item_type: string | null
+          kind: string
+          message: string | null
+          monster_id: string | null
+          quantity: number
+          receiver_id: string
+          sender_id: string
+          snapshot: Json
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          claimed_at?: string | null
+          created_at?: string
+          id?: string
+          item_type?: string | null
+          kind: string
+          message?: string | null
+          monster_id?: string | null
+          quantity?: number
+          receiver_id: string
+          sender_id: string
+          snapshot?: Json
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          claimed_at?: string | null
+          created_at?: string
+          id?: string
+          item_type?: string | null
+          kind?: string
+          message?: string | null
+          monster_id?: string | null
+          quantity?: number
+          receiver_id?: string
+          sender_id?: string
+          snapshot?: Json
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "player_gifts_monster_id_fkey"
+            columns: ["monster_id"]
+            isOneToOne: false
+            referencedRelation: "monsters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           arena_points: number
@@ -1170,6 +1226,19 @@ export type Database = {
       }
       end_season: { Args: { p_season_id: string }; Returns: undefined }
       ensure_tournament: { Args: { slot: string }; Returns: string }
+      gift_cancel: { Args: { p_id: string }; Returns: Json }
+      gift_claim: { Args: { p_id: string }; Returns: Json }
+      gift_send: {
+        Args: {
+          p_item_type?: string
+          p_kind: string
+          p_message?: string
+          p_monster_id?: string
+          p_quantity?: number
+          p_to_username: string
+        }
+        Returns: Json
+      }
       gym_claim_reward: { Args: { p_type: string }; Returns: Json }
       gym_report_result: {
         Args: { p_pure: boolean; p_type: string; p_won: boolean }

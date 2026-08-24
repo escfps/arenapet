@@ -8,6 +8,7 @@ import { speciesImage, shinyFallbackFilter, SPECIES, rankStars, RARITY_INFO, TRA
 import { createTrade, respondToTrade, confirmTrade, cancelTrade } from "@/lib/trades.functions";
 import { toast, Toaster } from "sonner";
 import arenaBg from "@/assets/arena-bg.jpg";
+import { GiftPanel } from "@/components/GiftPanel";
 
 export const Route = createFileRoute("/trade")({
   component: TradePage,
@@ -36,7 +37,7 @@ type Trade = {
   created_at: string;
 };
 
-type Tab = "received" | "sent" | "new";
+type Tab = "received" | "sent" | "new" | "gift";
 
 function TradePage() {
   const navigate = useNavigate();
@@ -189,7 +190,12 @@ function TradePage() {
             <TabBtn active={tab === "received"} onClick={() => setTab("received")}>📥 Recebidas ({received.filter((t) => t.status === "pending" || t.status === "accepted").length})</TabBtn>
             <TabBtn active={tab === "sent"} onClick={() => setTab("sent")}>📤 Enviadas ({sent.filter((t) => t.status === "pending" || t.status === "accepted").length})</TabBtn>
             <TabBtn active={tab === "new"} onClick={() => setTab("new")}>➕ Nova</TabBtn>
+            <TabBtn active={tab === "gift"} onClick={() => setTab("gift")}>🎁 Presente</TabBtn>
           </div>
+
+          {tab === "gift" && userId && (
+            <GiftPanel userId={userId} gems={profile.gems ?? 0} onChanged={() => { reload(); }} />
+          )}
 
           {tab === "new" && (
             <section className="rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 p-4 space-y-3">
