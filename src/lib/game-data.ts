@@ -250,6 +250,16 @@ import machokeShinyImg from "@/assets/monsters/shiny/machoke.png";
 import machampShinyImg from "@/assets/monsters/shiny/machamp.png";
 import bellsproutShinyImg from "@/assets/monsters/shiny/bellsprout.png";
 import weepinbellShinyImg from "@/assets/monsters/shiny/weepinbell.png";
+import victreebelShinyImg from "@/assets/monsters/shiny/victreebel.png";
+import tentacoolShinyImg from "@/assets/monsters/shiny/tentacool.png";
+import tentacruelShinyImg from "@/assets/monsters/shiny/tentacruel.png";
+import geodudeShinyImg from "@/assets/monsters/shiny/geodude.png";
+import gravelerShinyImg from "@/assets/monsters/shiny/graveler.png";
+import golemShinyImg from "@/assets/monsters/shiny/golem.png";
+import ponytaShinyImg from "@/assets/monsters/shiny/ponyta.png";
+import rapidashShinyImg from "@/assets/monsters/shiny/rapidash.png";
+import slowpokeShinyImg from "@/assets/monsters/shiny/slowpoke.png";
+import slowbroShinyImg from "@/assets/monsters/shiny/slowbro.png";
 import meowthShinyImg from "@/assets/monsters/shiny/meowth.png";
 import persianShinyImg from "@/assets/monsters/shiny/persian.png";
 import psyduckShinyImg from "@/assets/monsters/shiny/psyduck.png";
@@ -1481,70 +1491,70 @@ export const SPECIES: Record<string, Species> = {
   },
   victreebel: {
     id: "victreebel", name: "Victreebel", element: "grass", role: "mage", rarity: "legendary",
-    emoji: "🪴", image: victreebelImg, hidden: true,
+    emoji: "🪴", image: victreebelImg, shinyImage: victreebelShinyImg, hidden: true,
     description: "Planta devoradora que engole presas inteiras.",
     base: { hp: 76, atk: 26, def: 18, spd: 16, int: 30 },
     skill: { name: "Devorar", emoji: "😱", kind: "sleep_strike", cooldown: 4, description: "Engole o alvo, podendo deixá-lo dormindo." },
   },
   tentacool: {
     id: "tentacool", name: "Tentacool", element: "water", role: "mage", rarity: "common",
-    emoji: "🪼", image: tentacoolImg, hidden: true,
+    emoji: "🪼", image: tentacoolImg, shinyImage: tentacoolShinyImg, hidden: true,
     description: "Água-viva translúcida cheia de veneno.",
     base: { hp: 30, atk: 10, def: 8, spd: 12, int: 15 },
     skill: { name: "Ferrão Tóxico", emoji: "☠️", kind: "bleed_dot", cooldown: 3, description: "Ferroada venenosa que causa dano contínuo." },
   },
   tentacruel: {
     id: "tentacruel", name: "Tentacruel", element: "water", role: "mage", rarity: "legendary",
-    emoji: "🪼⚡", image: tentacruelImg, hidden: true,
+    emoji: "🪼⚡", image: tentacruelImg, shinyImage: tentacruelShinyImg, hidden: true,
     description: "Oitenta tentáculos paralisantes nas profundezas.",
     base: { hp: 74, atk: 25, def: 19, spd: 18, int: 29 },
     skill: { name: "Cerco de Tentáculos", emoji: "🌊", kind: "lightning_charge", cooldown: 5, description: "Envolve o alvo e o paralisa." },
   },
   geodude: {
     id: "geodude", name: "Geodude", element: "earth", role: "tank", rarity: "common",
-    emoji: "🪨", image: geodudeImg, hidden: true,
+    emoji: "🪨", image: geodudeImg, shinyImage: geodudeShinyImg, hidden: true,
     description: "Pedra com braços que adora dar socos.",
     base: { hp: 38, atk: 12, def: 13, spd: 8, int: 5 },
     skill: { name: "Soco de Pedra", emoji: "👊", kind: "heavy_strike", cooldown: 3, description: "Golpe rochoso pesado." },
   },
   graveler: {
     id: "graveler", name: "Graveler", element: "earth", role: "tank", rarity: "super_rare",
-    emoji: "🪨🪨", image: gravelerImg, hidden: true,
+    emoji: "🪨🪨", image: gravelerImg, shinyImage: gravelerShinyImg, hidden: true,
     description: "Rola morro abaixo esmagando tudo.",
     base: { hp: 64, atk: 20, def: 22, spd: 10, int: 6 },
     skill: { name: "Rolagem", emoji: "🌀", kind: "shield_taunt", cooldown: 4, description: "Provoca os inimigos e endurece a rocha." },
   },
   golem: {
     id: "golem", name: "Golem", element: "earth", role: "tank", rarity: "legendary",
-    emoji: "🗿", image: golemImg, hidden: true,
+    emoji: "🗿", image: golemImg, shinyImage: golemShinyImg, hidden: true,
     description: "Couraça de pedra viva, praticamente indestrutível.",
     base: { hp: 96, atk: 26, def: 30, spd: 11, int: 8 },
     skill: { name: "Terremoto", emoji: "💥", kind: "thorn_burst", cooldown: 5, description: "Sacode o campo atingindo todos os inimigos." },
   },
   ponyta: {
     id: "ponyta", name: "Ponyta", element: "fire", role: "dps", rarity: "rare",
-    emoji: "🐴🔥", image: ponytaImg, hidden: true,
+    emoji: "🐴🔥", image: ponytaImg, shinyImage: ponytaShinyImg, hidden: true,
     description: "Potro de crina flamejante e cascos rápidos.",
     base: { hp: 46, atk: 19, def: 11, spd: 22, int: 10 },
     skill: { name: "Investida Ardente", emoji: "🔥", kind: "bleed_dot", cooldown: 3, description: "Corrida flamejante que queima o alvo." },
   },
   rapidash: {
     id: "rapidash", name: "Rapidash", element: "fire", role: "dps", rarity: "legendary",
-    emoji: "🦄🔥", image: rapidashImg, hidden: true,
+    emoji: "🦄🔥", image: rapidashImg, shinyImage: rapidashShinyImg, hidden: true,
     description: "Galopa a 240 km/h com chamas na crina.",
     base: { hp: 72, atk: 32, def: 17, spd: 34, int: 12 },
     skill: { name: "Galope Infernal", emoji: "💫", kind: "double_strike", cooldown: 4, description: "Duas investidas incendiárias velozes." },
   },
   slowpoke: {
     id: "slowpoke", name: "Slowpoke", element: "water", role: "tank", rarity: "common",
-    emoji: "🐷💤", image: slowpokeImg, hidden: true,
+    emoji: "🐷💤", image: slowpokeImg, shinyImage: slowpokeShinyImg, hidden: true,
     description: "Demora 5 segundos para sentir dor.",
     base: { hp: 42, atk: 10, def: 12, spd: 5, int: 9 },
     skill: { name: "Bocejo Lento", emoji: "💤", kind: "sleep_strike", cooldown: 4, description: "Bocejo contagioso que pode fazer o alvo dormir." },
   },
   slowbro: {
     id: "slowbro", name: "Slowbro", element: "water", role: "tank", rarity: "legendary",
-    emoji: "🐚🧠", image: slowbroImg, hidden: true,
+    emoji: "🐚🧠", image: slowbroImg, shinyImage: slowbroShinyImg, hidden: true,
     description: "Com a concha na cauda, ficou surpreendentemente resistente.",
     base: { hp: 92, atk: 22, def: 28, spd: 9, int: 26 },
     skill: { name: "Concha Protetora", emoji: "🐚", kind: "turtle_shell", cooldown: 4, description: "Escudo grosso e redução do dano recebido." },
