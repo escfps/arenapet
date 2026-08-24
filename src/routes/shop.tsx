@@ -122,9 +122,17 @@ function ShopPage() {
     const pity = CHEST_PITY[tier];
     const pityCol = PITY_COLUMN[tier];
     const currentPity = pityCol ? ((profile as Record<string, unknown>)[pityCol] as number ?? 0) : 0;
-    const forceRarity = pity && currentPity + 1 >= pity.limit
-      ? pity.rarities[Math.floor(Math.random() * pity.rarities.length)]
-      : undefined;
+    const mythicPity = CHEST_PITY_MYTHIC[tier];
+    const mythicPityCol = PITY_MYTHIC_COLUMN[tier];
+    const currentMythicPity = mythicPityCol ? ((profile as Record<string, unknown>)[mythicPityCol] as number ?? 0) : 0;
+
+    // Pity mítico (teto 50) tem prioridade — força MÍTICO puro
+    let forceRarity: Rarity | undefined;
+    if (mythicPity && mythicPityCol && currentMythicPity + 1 >= mythicPity.limit) {
+      forceRarity = "mythic";
+    } else if (pity && currentPity + 1 >= pity.limit) {
+      forceRarity = pity.rarities[Math.floor(Math.random() * pity.rarities.length)];
+    }
 
     const reward = rollChest(tier, forceRarity);
 
@@ -133,10 +141,13 @@ function ShopPage() {
       gems: profile.gems - (useGems ? (c.priceGems ?? 0) : 0) + reward.gems,
     };
 
-    // Atualiza contador de pity: zera se pegou alguma das raridades garantidas, senão +1
+    // Atualiza contadores de pity: zera se pegou alguma raridade garantida, senão +1
+    const gotRarity = reward.petSpecies ? SPECIES[reward.petSpecies].rarity : null;
     if (pity && pityCol) {
-      const gotRarity = reward.petSpecies ? SPECIES[reward.petSpecies].rarity : null;
       patchObj[pityCol] = gotRarity && pity.rarities.includes(gotRarity) ? 0 : currentPity + 1;
+    }
+    if (mythicPity && mythicPityCol) {
+      patchObj[mythicPityCol] = gotRarity === "mythic" ? 0 : currentMythicPity + 1;
     }
 
     await patch(patchObj);
