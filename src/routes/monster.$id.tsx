@@ -251,9 +251,9 @@ function MonsterPage() {
                 ))}
               </div>
               {(() => {
-                const stats = totalStats2(monster.species, monster.rank, {
+                const stats = totalStats(monster.species, monster.rank, {
                   hp: monster.hp ?? 0, atk: monster.atk ?? 0, def: monster.def ?? 0, spd: monster.spd ?? 0, int: monster.int ?? 0,
-                });
+                }, (monster as any).is_shiny === true);
                 return (
                   <>
                     <div className="mt-2 space-y-1 text-xs">
@@ -312,9 +312,9 @@ function MonsterPage() {
           const rarity = RARITY_INFO[sp.rarity];
           const role = ROLE_INFO[sp.role];
           const skillMult = rarity.skillMult;
-          const stats = totalStats2(monster.species, monster.rank, {
+          const stats = totalStats(monster.species, monster.rank, {
             hp: monster.hp ?? 0, atk: monster.atk ?? 0, def: monster.def ?? 0, spd: monster.spd ?? 0, int: monster.int ?? 0,
-          });
+          }, (monster as any).is_shiny === true);
           const atk = monster.atk ?? stats.atk;
           const int = monster.int ?? stats.int;
           const maxHp = stats.hp;
