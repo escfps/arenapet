@@ -1,6 +1,6 @@
 {
   "appId": "com.arenapet.app",
-  "appName": "Arena Pet",
+  "appName": "Poke Arena",
   "webDir": "dist/client",
   "server": {
     "url": "https://arenapet.lovable.app",

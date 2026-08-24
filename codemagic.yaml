@@ -27,12 +27,12 @@ workflows:
           ls dist/client/
           if [ ! -f dist/client/index.html ]; then
             cp dist/client/$(ls dist/client/ | grep -i 'index\|app' | head -1) dist/client/index.html 2>/dev/null || \
-            echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Arena Pet</title></head><body><div id="root"></div></body></html>' > dist/client/index.html
+            echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Poke Arena</title></head><body><div id="root"></div></body></html>' > dist/client/index.html
           fi
       - name: Verify Capacitor config
         script: |
           if [ ! -f capacitor.config.json ]; then
-            ./node_modules/.bin/cap init "Arena Pet" com.arenapet.app --web-dir dist/client
+            ./node_modules/.bin/cap init "Poke Arena" com.arenapet.app --web-dir dist/client
           fi
           echo "Using capacitor.config.json:"
           cat capacitor.config.json
@@ -149,12 +149,12 @@ workflows:
           ls dist/client/
           if [ ! -f dist/client/index.html ]; then
             cp dist/client/$(ls dist/client/ | grep -i 'index\|app' | head -1) dist/client/index.html 2>/dev/null || \
-            echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Arena Pet</title></head><body><div id="root"></div></body></html>' > dist/client/index.html
+            echo '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Poke Arena</title></head><body><div id="root"></div></body></html>' > dist/client/index.html
           fi
       - name: Verify Capacitor config
         script: |
           if [ ! -f capacitor.config.json ]; then
-            ./node_modules/.bin/cap init "Arena Pet" com.arenapet.app --web-dir dist/client
+            ./node_modules/.bin/cap init "Poke Arena" com.arenapet.app --web-dir dist/client
           fi
           echo "Using capacitor.config.json:"
           cat capacitor.config.json

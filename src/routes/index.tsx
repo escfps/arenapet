@@ -15,7 +15,7 @@ export const Route = createFileRoute("/")({
   component: PatioPage,
   head: () => ({
     meta: [
-      { title: "ARENA PET — Colecione e batalhe" },
+      { title: "POKE ARENA — Colecione e batalhe" },
       { name: "description", content: "Treine monstrinhos e batalhe contra jogadores reais." },
     ],
   }),

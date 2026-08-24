@@ -118,7 +118,7 @@ export function MobileNav({ open, onClose }: { open: boolean; onClose: () => voi
           <aside className="absolute left-0 top-0 bottom-0 w-72 max-w-[80%] bg-purple-950 border-r-2 border-purple-400/30 shadow-2xl flex flex-col animate-in slide-in-from-left duration-200">
             <div className="flex items-center justify-between p-4 border-b border-white/10">
               <span className="font-extrabold text-white flex items-center gap-2">
-                <span className="text-2xl">🐲</span> ARENA PET
+                <span className="text-2xl">🐲</span> POKE ARENA
               </span>
               <button
                 onClick={onClose}

@@ -69,7 +69,7 @@ export function WelcomeChestModal({ hatching, reveal, onOpen, onDone }: Props) {
               {phase === "shaking" ? "Abrindo seu baú..." : "Baú de Boas-Vindas!"}
             </h2>
             <p className="text-white/90 mt-2 text-sm">
-              Bem-vindo à <b>ARENA PET</b>! Abra seu baú de cadastro e ganhe<br />
+              Bem-vindo à <b>POKE ARENA</b>! Abra seu baú de cadastro e ganhe<br />
               <b>2 bichinhos comuns</b> + <b>1 raro</b> totalmente aleatórios.
             </p>
             <button

@@ -1,7 +1,7 @@
 {
-  "name": "Arena Pet",
-  "short_name": "ArenaPet",
-  "description": "Colete pets, monte seu time e batalhe!",
+  "name": "Poke Arena",
+  "short_name": "PokeArena",
+  "description": "Colete Pokémon, monte seu time e batalhe na Poke Arena!",
   "start_url": "/",
   "scope": "/",
   "id": "/",

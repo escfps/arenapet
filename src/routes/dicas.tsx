@@ -5,8 +5,8 @@ export const Route = createFileRoute("/dicas")({
   component: DicasPage,
   head: () => ({
     meta: [
-      { title: "Dicas — Arena Pet" },
-      { name: "description", content: "Aprenda os melhores truques e estratégias do Arena Pet." },
+      { title: "Dicas — Poke Arena" },
+      { name: "description", content: "Aprenda os melhores truques e estratégias do Poke Arena." },
     ],
   }),
 });
@@ -46,7 +46,7 @@ function DicasPage() {
         </div>
 
         <header className="text-center space-y-2">
-          <h1 className="text-3xl sm:text-4xl font-extrabold">💡 Dicas do Arena Pet</h1>
+          <h1 className="text-3xl sm:text-4xl font-extrabold">💡 Dicas do Poke Arena</h1>
           <p className="text-white/70 text-sm">Tudo o que você precisa saber para dominar a arena!</p>
         </header>
 

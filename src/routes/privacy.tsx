@@ -4,8 +4,8 @@ export const Route = createFileRoute("/privacy")({
   component: PrivacyPage,
   head: () => ({
     meta: [
-      { title: "Política de Privacidade — Arena Pet" },
-      { name: "description", content: "Como o Arena Pet coleta e trata seus dados pessoais." },
+      { title: "Política de Privacidade — Poke Arena" },
+      { name: "description", content: "Como o Poke Arena coleta e trata seus dados pessoais." },
     ],
   }),
 });
@@ -21,8 +21,8 @@ function PrivacyPage() {
         <section className="space-y-3 text-sm leading-relaxed">
           <h2 className="text-xl font-bold mt-4">1. Controlador dos dados</h2>
           <p>
-            <b>ARENA PET</b>, operada por Bruno Henrique Moura Bernardo (pessoa física), é a controladora dos dados
-            pessoais coletados pelo Arena Pet, conforme a Lei Geral de Proteção de Dados
+            <b>POKE ARENA</b>, operada por Bruno Henrique Moura Bernardo (pessoa física), é a controladora dos dados
+            pessoais coletados pelo Poke Arena, conforme a Lei Geral de Proteção de Dados
             (LGPD - Lei 13.709/2018).
           </p>
 
@@ -75,7 +75,7 @@ function PrivacyPage() {
             <li>informações sobre compartilhamentos.</li>
           </ul>
           <p>
-            Para exercer seus direitos, entre em contato pelos canais oficiais do Arena Pet
+            Para exercer seus direitos, entre em contato pelos canais oficiais do Poke Arena
             no app. Responderemos em até 15 dias.
           </p>
 
@@ -100,7 +100,7 @@ function PrivacyPage() {
 
           <h2 className="text-xl font-bold mt-4">10. Contato</h2>
           <p>
-            Dúvidas sobre privacidade: entre em contato pelos canais oficiais do Arena Pet
+            Dúvidas sobre privacidade: entre em contato pelos canais oficiais do Poke Arena
             no app.
           </p>
         </section>
