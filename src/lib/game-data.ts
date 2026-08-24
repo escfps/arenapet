@@ -75,6 +75,9 @@ import kadabraImg from "@/assets/monsters/kadabra.png";
 import charmanderImg from "@/assets/monsters/charmander.png";
 import charmeleonImg from "@/assets/monsters/charmeleon.png";
 import charizardImg from "@/assets/monsters/charizard.png";
+import squirtleImg from "@/assets/monsters/squirtle.png";
+import wartortleImg from "@/assets/monsters/wartortle.png";
+import blastoiseImg from "@/assets/monsters/blastoise.png";
 import brasagartoImg from "@/assets/monsters/brasagarto.png";
 import cascatorugaImg from "@/assets/monsters/cascatoruga.png";
 import folhassauroImg from "@/assets/monsters/folhassauro.png";
@@ -844,6 +847,27 @@ export const SPECIES: Record<string, Species> = {
     description: "Forma final da linhagem flamejante. Um dragão alado que cospe fogo capaz de derreter pedra — quanto mais ferido, mais furioso fica.",
     base: { hp: 88, atk: 26, def: 15, spd: 22, int: 14 },
     skill: { name: "Lança-Chamas", emoji: "🔥", kind: "phoenix_rage", cooldown: 4, description: "PASSIVA: cada 10% de HP perdido = +6% ATK (até +60% com 1 HP). ATIVA: jato de fogo devastador (2× dano)." },
+  },
+  squirtle: {
+    id: "squirtle", name: "Squirtle", element: "water", role: "tank", rarity: "super_rare",
+    emoji: "💧🐢", image: squirtleImg, hidden: true,
+    description: "Primeira forma da linhagem aquática. Se esconde no casco pra aguentar o pior e responde com jatos de água pressurizada.",
+    base: { hp: 58, atk: 10, def: 14, spd: 12, int: 9 },
+    skill: { name: "Jato d'Água", emoji: "💧", kind: "turtle_shell", cooldown: 3, description: "Recolhe-se no casco: reduz o dano recebido por 2 turnos e devolve parte do dano em jato d'água." },
+  },
+  wartortle: {
+    id: "wartortle", name: "Wartortle", element: "water", role: "tank", rarity: "legendary",
+    emoji: "🌊🐢", image: wartortleImg, hidden: true,
+    description: "Segunda forma da linhagem aquática. As orelhas e a cauda peluda guiam seus contra-ataques — um passo antes de se tornar Blastoise.",
+    base: { hp: 78, atk: 14, def: 19, spd: 14, int: 12 },
+    skill: { name: "Redemoinho", emoji: "🌊", kind: "turtle_shell", cooldown: 3, description: "Gira no casco: reduz o dano recebido por 2 turnos e devolve parte do dano ao agressor." },
+  },
+  blastoise: {
+    id: "blastoise", name: "Blastoise", element: "water", role: "tank", rarity: "mythic",
+    emoji: "🔫🐢", image: blastoiseImg, hidden: true,
+    description: "Forma final da linhagem aquática. Dois canhões nas costas disparam jatos capazes de furar aço — muralha e artilharia no mesmo pet.",
+    base: { hp: 104, atk: 19, def: 25, spd: 15, int: 14 },
+    skill: { name: "Hidrocanhão", emoji: "🔫", kind: "aoe_strike_def_down", cooldown: 4, description: "Dispara os canhões em TODOS os inimigos (1.3× dano cada) e reduz a DEF de todos em 15% por 2 turnos." },
   },
 };
 
@@ -1643,6 +1667,9 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   charmander: ["fogo"],
   charmeleon: ["fogo", "dragoes"],
   charizard: ["fogo", "dragoes"],
+  squirtle: ["abyssal", "repteis"],
+  wartortle: ["abyssal", "repteis"],
+  blastoise: ["abyssal", "repteis"],
 };
 
 export function getSpeciesCategories(speciesId: string): Category[] {
