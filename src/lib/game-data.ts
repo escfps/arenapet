@@ -2434,8 +2434,8 @@ export const CHESTS: Record<ChestTier, Chest> = {
 };
 
 // ===== SHINY =====
-/** Chance de um pet sorteado em baú vir Shiny: 1 em 1.000 (0,1%). */
-export const SHINY_CHANCE = 0.001;
+/** Chance de um pet sorteado em baú vir Shiny: 1% (1 em 100) — bem difícil. */
+export const SHINY_CHANCE = 0.01;
 /** Shiny ganha +10% em TODOS os status. */
 export const SHINY_STAT_MULT = 1.1;
 /** Skill exclusiva passiva de todo pet Shiny. */
@@ -2456,7 +2456,7 @@ export type ChestReward = {
   gems: number;
   rations: number;
   petSpecies?: string; // id da espécie sorteada (se caiu pet)
-  petShiny?: boolean; // ✨ ultra raro (1 em 1.000)
+  petShiny?: boolean; // ✨ ultra raro (1% de chance)
 };
 
 
