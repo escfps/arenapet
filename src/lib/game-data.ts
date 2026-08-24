@@ -2251,7 +2251,9 @@ export function rollChest(tier: ChestTier, forceRarity?: Rarity): ChestReward {
     }
   }
 
-  return { coins, gems, rations, petSpecies };
+  const petShiny = petSpecies ? rollShiny() : false;
+  return { coins, gems, rations, petSpecies, petShiny };
+
 }
 
 // Pity system: tier => { guaranteed rarities (any of), limit }
