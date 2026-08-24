@@ -2512,6 +2512,14 @@ export const PITY_COLUMN: Partial<Record<ChestTier, "pity_silver" | "pity_gold" 
   legendary: "pity_legendary",
 };
 
+// Pity extra (apenas baú Lendário): garante um MÍTICO puro a cada 50 aberturas sem mitico
+export const CHEST_PITY_MYTHIC: Partial<Record<ChestTier, { limit: number }>> = {
+  legendary: { limit: 50 },
+};
+export const PITY_MYTHIC_COLUMN: Partial<Record<ChestTier, "pity_mythic">> = {
+  legendary: "pity_mythic",
+};
+
 // Baú de boas-vindas: 2 comuns aleatórios + 1 raro aleatório
 export function rollWelcomeChest(): string[] {
   const all = Object.values(SPECIES).filter((s) => !s.hidden && !s.retired);
