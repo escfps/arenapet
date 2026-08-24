@@ -16,21 +16,22 @@ const bottomItems = [
   { to: "/collection", label: "Coleção", emoji: "🎒" },
 ] as const;
 
-const drawerItems = [
+const internalItems = [
   { to: "/friends", label: "Amigos", emoji: "👥" },
   { to: "/shop", label: "Loja", emoji: "🏪" },
   { to: "/shop", label: "Passe de Batalha", emoji: "🎟️", hash: "vip" },
   { to: "/inventario", label: "Inventário", emoji: "🎒" },
   { to: "/profile", label: "Perfil", emoji: "👤" },
-  
   { to: "/trade", label: "Trocas", emoji: "🔄" },
   { to: "/expeditions", label: "Expedições", emoji: "🗺️" },
   { to: "/dicas", label: "Dicas", emoji: "💡" },
   { to: "/novidades", label: "Novidades", emoji: "📢" },
   { to: "/redeem", label: "Resgatar Código", emoji: "🎁" },
   { to: "/support", label: "Suporte", emoji: "💬" },
-  { to: "https://discord.gg/C4bsUaWhxq", label: "Discord", emoji: "💬", external: true },
+] as const;
 
+const externalItems = [
+  { to: "https://discord.gg/C4bsUaWhxq", label: "Discord", emoji: "💬" },
 ] as const;
 
 export function MobileDrawerButton({ onOpen }: { onOpen: () => void }) {
