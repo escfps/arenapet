@@ -2430,6 +2430,13 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   dewgong: ["abyssal"],
   grimer: ["sombras"],
   muk: ["sombras"],
+  shellder: ["abyssal"],
+  cloyster: ["abyssal"],
+  onix: ["pedra"],
+  drowzee: ["sombras"],
+  hypno: ["sombras"],
+  krabby: ["abyssal"],
+  kingler: ["abyssal"],
 };
 
 export function getSpeciesCategories(speciesId: string): Category[] {
