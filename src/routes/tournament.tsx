@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { toast, Toaster } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { GymLeaderTitle, useGymLeaders } from "@/components/GymLeaderTitle";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
 import { TournamentBattle } from "@/components/TournamentBattle";
@@ -299,6 +300,7 @@ function TournamentPage() {
     void refresh();
   }
 
+  const gymLeaders = useGymLeaders();
   const pName = (id?: string | null) => (id ? profs[id]?.username ?? "…" : "—");
   const pIsBot = (id?: string | null) => (id ? profs[id]?.is_bot ?? false : false);
 
@@ -341,6 +343,7 @@ function TournamentPage() {
               <div className="text-xs opacity-90">Campeão da última copa</div>
               <div className="text-lg font-extrabold text-yellow-100 drop-shadow">
                 {pName(lastT.champion_id)}
+                {lastT.champion_id && <span className="ml-1 align-middle"><GymLeaderTitle types={gymLeaders[lastT.champion_id]} /></span>}
               </div>
               {lastT.champion_id === userId && (
                 <button
@@ -489,11 +492,11 @@ function TournamentPage() {
                           <div className="flex items-center justify-between gap-2 mb-2">
                             <div className="font-bold truncate">
                               <span className={m.winner_id === m.p1_id ? "text-emerald-300" : m.status === "done" ? "opacity-50 line-through" : ""}>
-                                {m.p1_id === userId ? "👤 " : ""}{pName(m.p1_id)}{pIsBot(m.p1_id) && " 🤖"}
+                                {m.p1_id === userId ? "👤 " : ""}{pName(m.p1_id)}{pIsBot(m.p1_id) && " 🤖"}{m.p1_id && <GymLeaderTitle types={gymLeaders[m.p1_id]} compact />}
                               </span>
                               <span className="opacity-60 mx-1">vs</span>
                               <span className={m.winner_id === m.p2_id ? "text-emerald-300" : m.status === "done" ? "opacity-50 line-through" : ""}>
-                                {m.p2_id === userId ? "👤 " : ""}{pName(m.p2_id)}{pIsBot(m.p2_id) && " 🤖"}
+                                {m.p2_id === userId ? "👤 " : ""}{pName(m.p2_id)}{pIsBot(m.p2_id) && " 🤖"}{m.p2_id && <GymLeaderTitle types={gymLeaders[m.p2_id]} compact />}
                               </span>
                             </div>
                           </div>
@@ -541,10 +544,10 @@ function TournamentPage() {
                                 return (
                                   <div key={m.id} className={`rounded-lg p-1.5 text-[10px] space-y-0.5 border ${mine ? "bg-yellow-400/20 border-yellow-300/70 ring-1 ring-yellow-300/60" : "bg-white/10 border-white/20"}`} style={{ marginBottom: `${(Math.pow(2, r) - 1) * 16}px` }}>
                                     <div className={`flex justify-between gap-1 px-1 py-0.5 rounded ${w === m.p1_id ? "bg-emerald-500/30 font-extrabold" : m.status === "done" ? "opacity-50" : ""}`}>
-                                      <span className="truncate">{pName(m.p1_id)}{pIsBot(m.p1_id) && " 🤖"}</span>
+                                      <span className="truncate">{pName(m.p1_id)}{pIsBot(m.p1_id) && " 🤖"}</span>{m.p1_id && <GymLeaderTitle types={gymLeaders[m.p1_id]} compact />}
                                     </div>
                                     <div className={`flex justify-between gap-1 px-1 py-0.5 rounded ${w === m.p2_id ? "bg-emerald-500/30 font-extrabold" : m.status === "done" ? "opacity-50" : ""}`}>
-                                      <span className="truncate">{pName(m.p2_id)}{pIsBot(m.p2_id) && " 🤖"}</span>
+                                      <span className="truncate">{pName(m.p2_id)}{pIsBot(m.p2_id) && " 🤖"}</span>{m.p2_id && <GymLeaderTitle types={gymLeaders[m.p2_id]} compact />}
                                     </div>
                                   </div>
                                 );
@@ -570,7 +573,7 @@ function TournamentPage() {
                     <div className="text-xs opacity-80">Copa de {new Date(lastT.slot_at).toLocaleString("pt-BR", { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "2-digit" })}</div>
                     {lastT.champion_id ? (
                       <div className="mt-1 text-xl font-extrabold">
-                        🏆 Campeão: <span className="text-yellow-300">{pName(lastT.champion_id)}</span>
+                        🏆 Campeão: <span className="text-yellow-300">{pName(lastT.champion_id)}</span>{lastT.champion_id && <GymLeaderTitle types={gymLeaders[lastT.champion_id]} />}
                         
                       </div>
                     ) : (
@@ -591,10 +594,10 @@ function TournamentPage() {
                                 return (
                                   <div key={m.id} className={`rounded-lg p-1.5 text-[10px] space-y-0.5 border ${mine ? "bg-yellow-400/20 border-yellow-300/70 ring-1 ring-yellow-300/60" : "bg-white/10 border-white/20"}`} style={{ marginBottom: `${(Math.pow(2, r) - 1) * 16}px` }}>
                                     <div className={`flex justify-between gap-1 px-1 py-0.5 rounded ${w === m.p1_id ? "bg-emerald-500/30 font-extrabold" : "opacity-70"}`}>
-                                      <span className="truncate">{m.p1_id === userId ? "👤 " : ""}{pName(m.p1_id)}{pIsBot(m.p1_id) && " 🤖"}</span>
+                                      <span className="truncate">{m.p1_id === userId ? "👤 " : ""}{pName(m.p1_id)}{pIsBot(m.p1_id) && " 🤖"}{m.p1_id && <GymLeaderTitle types={gymLeaders[m.p1_id]} compact />}</span>
                                     </div>
                                     <div className={`flex justify-between gap-1 px-1 py-0.5 rounded ${w === m.p2_id ? "bg-emerald-500/30 font-extrabold" : "opacity-70"}`}>
-                                      <span className="truncate">{m.p2_id === userId ? "👤 " : ""}{pName(m.p2_id)}{pIsBot(m.p2_id) && " 🤖"}</span>
+                                      <span className="truncate">{m.p2_id === userId ? "👤 " : ""}{pName(m.p2_id)}{pIsBot(m.p2_id) && " 🤖"}{m.p2_id && <GymLeaderTitle types={gymLeaders[m.p2_id]} compact />}</span>
                                     </div>
                                   </div>
                                 );
@@ -622,7 +625,7 @@ function TournamentPage() {
                     return (
                       <li key={c.user_id} className={`flex items-center gap-2 px-3 py-2 rounded-xl ${i === 0 ? "bg-yellow-500/30 border border-yellow-400/60" : i === 1 ? "bg-gray-300/20" : i === 2 ? "bg-amber-700/30" : "bg-white/5"}`}>
                         <span className="w-8 text-center font-extrabold">{i + 1}º</span>
-                        <span className="flex-1 truncate font-bold">{i === 0 ? "👑 " : ""}{c.username}</span>
+                        <span className="flex-1 truncate font-bold inline-flex items-center gap-1 min-w-0"><span className="truncate">{i === 0 ? "👑 " : ""}{c.username}</span><GymLeaderTitle types={gymLeaders[c.user_id]} compact /></span>
                         <div className="flex items-center gap-1">
                           {team.slice(0, 3).map((p, idx) => {
                             const sp = SPECIES[p.species];

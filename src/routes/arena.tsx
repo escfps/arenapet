@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { speciesImage, shinyFallbackFilter, SPECIES, ELEMENT_COLORS, ROLE_INFO, RARITY_INFO, MAX_RANK, skinFilter, isVip, xpForNextLevel, rankStars, totalStats, ARENA_WIN_POINTS, ARENA_LOSS_POINTS, rollArenaPoints, getTier, divisionBounds, promoNeeded, type PromoSeries, computeBattleEnergy, MAX_BATTLE_ENERGY, hungerMultiplier, rollLevelUpRewards, tierPromotionChests, rollChest, CHESTS, tierRankIndex, starterMonsterStats, getSpeciesCategories, CATEGORY_INFO } from "@/lib/game-data";
 import type { MonsterRow } from "@/components/MonsterCard";
+import { GymLeaderTitle, useGymLeaders } from "@/components/GymLeaderTitle";
 import { HUD } from "@/components/HUD";
 import { useProfile } from "@/lib/use-profile";
 import { simulateBattle, computeRewards, toBattleMonster, computeWinnerFromVisibleLog, type BattleLogEntry } from "@/lib/battle";
@@ -65,6 +66,7 @@ async function fetchOpponentProfiles(ownerIds: string[]) {
 function ArenaPage() {
   const navigate = useNavigate();
   const { userId, profile, reload, loading } = useProfile();
+  const gymLeaders = useGymLeaders();
   const startFight = useServerFn(arenaStart);
   const finishFight = useServerFn(arenaFinish);
   const [myTeam, setMyTeam] = useState<FullMonster[]>([]);
@@ -587,7 +589,12 @@ function ArenaPage() {
             <div className="grid md:grid-cols-2 gap-4">
               <TeamPanel title="Seu time" team={myTeam} side="left" energies={teamEnergies} />
               {opponent ? (
-                <TeamPanel title={`vs ${opponent.ownerName}`} team={opponent.team} side="right" />
+                <div>
+                  <TeamPanel title={`vs ${opponent.ownerName}`} team={opponent.team} side="right" />
+                  {gymLeaders[opponent.ownerId] && (
+                    <div className="flex justify-center mt-1"><GymLeaderTitle types={gymLeaders[opponent.ownerId]} /></div>
+                  )}
+                </div>
               ) : (
                 <div className="rounded-2xl bg-white/10 backdrop-blur-md border-2 border-dashed border-white/30 flex items-center justify-center p-8 text-white/70 text-center">
                   ❓<br/>Nenhum oponente ainda
