@@ -233,6 +233,7 @@ import pidgeottoShinyImg from "@/assets/monsters/shiny/pidgeotto.png";
 import pidgeotShinyImg from "@/assets/monsters/shiny/pidgeot.png";
 import rattataShinyImg from "@/assets/monsters/shiny/rattata.png";
 import raticateShinyImg from "@/assets/monsters/shiny/raticate.png";
+import spearowShinyImg from "@/assets/monsters/shiny/spearow.png";
 import fearowShinyImg from "@/assets/monsters/shiny/fearow.png";
 import ekansShinyImg from "@/assets/monsters/shiny/ekans.png";
 import arbokShinyImg from "@/assets/monsters/shiny/arbok.png";
@@ -351,6 +352,7 @@ import pidgeottoImg from "@/assets/monsters/pidgeotto.png";
 import pidgeotImg from "@/assets/monsters/pidgeot.png";
 import rattataImg from "@/assets/monsters/rattata.png";
 import raticateImg from "@/assets/monsters/raticate.png";
+import spearowImg from "@/assets/monsters/spearow.png";
 import fearowImg from "@/assets/monsters/fearow.png";
 import ekansImg from "@/assets/monsters/ekans.png";
 import ivysaurImg from "@/assets/monsters/ivysaur.png";
@@ -1330,6 +1332,13 @@ export const SPECIES: Record<string, Species> = {
     description: "Roedor adulto e agressivo. Os incisivos roem até metal — e drenam a vida de quem morde.",
     base: { hp: 46, atk: 18, def: 10, spd: 19, int: 8 },
     skill: { name: "Superdente", emoji: "💥", kind: "lifesteal_strike", cooldown: 3, description: "Mordida brutal que rouba parte do dano como cura." },
+  },
+  spearow: {
+    id: "spearow", name: "Spearow", element: "normal", secondaryElement: "flying", role: "assassin", rarity: "common",
+    emoji: "🐦🗡️", image: spearowImg, shinyImage: spearowShinyImg,
+    description: "Passarinho briguento de bico rosa. Não voa bem, mas voa direto ao olho do alvo.",
+    base: { hp: 36, atk: 14, def: 7, spd: 18, int: 8 },
+    skill: { name: "Bicada Fury", emoji: "🗡️", kind: "bleed_dot", cooldown: 3, description: "Bicada feroz que causa sangramento por 3 turnos." },
   },
   fearow: {
     id: "fearow", name: "Fearow", element: "normal", secondaryElement: "flying", role: "assassin", rarity: "super_rare",
