@@ -180,7 +180,20 @@ function MarketPage() {
     return <div className="min-h-screen flex items-center justify-center text-white">Carregando...</div>;
   }
 
-  const shown = listings.filter((l) => filterKind === "all" || l.kind === filterKind);
+  const RARITY_KEYS = ["common", "rare", "super_rare", "epic", "legendary", "mythic"] as const;
+  let shown = listings.filter((l) => filterKind === "all" || l.kind === filterKind);
+  if (filterRarity !== "all") {
+    shown = shown.filter((l) => {
+      if (l.kind !== "monster") return false;
+      const sp = SPECIES[l.snapshot?.species as string];
+      return sp?.rarity === filterRarity;
+    });
+  }
+  if (sortPrice === "asc") {
+    shown = [...shown].sort((a, b) => a.price - b.price);
+  } else if (sortPrice === "desc") {
+    shown = [...shown].sort((a, b) => b.price - a.price);
+  }
   const previewPrice = parseInt(sellPrice || "0", 10) || 0;
   const previewFee = previewPrice ? Math.max(1, Math.round(previewPrice * FEE_PCT)) : 0;
 
