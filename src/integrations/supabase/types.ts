@@ -1260,6 +1260,7 @@ export type Database = {
         Args: { p_tournament_id: string }
         Returns: undefined
       }
+      debug_who: { Args: never; Returns: Json }
       end_season: { Args: { p_season_id: string }; Returns: undefined }
       ensure_tournament: { Args: { slot: string }; Returns: string }
       gift_cancel: { Args: { p_id: string }; Returns: Json }
