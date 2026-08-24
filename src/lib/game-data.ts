@@ -2195,12 +2195,32 @@ export const CHESTS: Record<ChestTier, Chest> = {
 
 };
 
+// ===== SHINY =====
+/** Chance de um pet sorteado em baú vir Shiny: 1 em 1.000 (0,1%). */
+export const SHINY_CHANCE = 0.001;
+/** Shiny ganha +10% em TODOS os status. */
+export const SHINY_STAT_MULT = 1.1;
+/** Skill exclusiva passiva de todo pet Shiny. */
+export const SHINY_SKILL = {
+  name: "Aura Prismática",
+  emoji: "✨",
+  description:
+    "PASSIVA EXCLUSIVA SHINY: começa a batalha com escudo de 15% do HP máximo e regenera 3% do HP máximo por turno.",
+  startShieldPct: 0.15,
+  regenPct: 0.03,
+} as const;
+export function rollShiny(rand: () => number = Math.random): boolean {
+  return rand() < SHINY_CHANCE;
+}
+
 export type ChestReward = {
   coins: number;
   gems: number;
   rations: number;
   petSpecies?: string; // id da espécie sorteada (se caiu pet)
+  petShiny?: boolean; // ✨ ultra raro (1 em 1.000)
 };
+
 
 export function rollChest(tier: ChestTier, forceRarity?: Rarity): ChestReward {
   const c = CHESTS[tier];
