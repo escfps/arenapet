@@ -366,7 +366,7 @@ import vespanoxaImg from "@/assets/monsters/vespanoxa.png";
 import ventasaImg from "@/assets/monsters/ventasa.png";
 import dracomarinoImg from "@/assets/monsters/dracomarino.png";
 
-export type Element = "fire" | "water" | "grass" | "electric" | "shadow" | "earth";
+export type Element = "fire" | "water" | "grass" | "electric" | "shadow" | "earth" | "psychic" | "fairy";
 export type Role = "tank" | "dps" | "assassin" | "mage" | "healer";
 export type Rarity = "common" | "rare" | "super_rare" | "epic" | "legendary" | "mythic";
 
@@ -2172,14 +2172,14 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Abraço dos Tentáculos", emoji: "🌀", kind: "bleed_dot", cooldown: 4, description: "Aperta o alvo causando sangramento." },
   },
   mewtwo: {
-    id: "mewtwo", name: "Mewtwo", element: "shadow", role: "mage", rarity: "mythic",
+    id: "mewtwo", name: "Mewtwo", element: "psychic", role: "mage", rarity: "mythic",
     emoji: "🧠", image: mewtwoImg, shinyImage: mewtwoShinyImg, hidden: true,
     description: "Criado em laboratório, o poder psíquico mais devastador já visto.",
     base: { hp: 92, atk: 34, def: 26, spd: 38, int: 50 },
     skill: { name: "Explosão Psíquica", emoji: "🌌", kind: "true_damage_nuke", cooldown: 5, description: "Onda mental pura que ignora DEF e elemento." },
   },
   mew: {
-    id: "mew", name: "Mew", element: "shadow", role: "mage", rarity: "mythic",
+    id: "mew", name: "Mew", element: "psychic", secondaryElement: "fairy", role: "mage", rarity: "mythic",
     emoji: "✨", image: mewImg, shinyImage: mewShinyImg, hidden: true,
     description: "Ancestral de todos os pets, contém todo o DNA conhecido.",
     base: { hp: 90, atk: 30, def: 28, spd: 36, int: 48 },
@@ -2201,6 +2201,8 @@ export const ELEMENT_COLORS: Record<Element, string> = {
   electric: "from-yellow-300 to-amber-500",
   shadow: "from-purple-500 to-fuchsia-700",
   earth: "from-amber-700 to-stone-600",
+  psychic: "from-fuchsia-400 to-purple-600",
+  fairy: "from-pink-300 to-rose-500",
 };
 
 export const ELEMENT_NAMES: Record<Element, string> = {
@@ -2210,6 +2212,8 @@ export const ELEMENT_NAMES: Record<Element, string> = {
   electric: "Elétrico",
   shadow: "Sombra",
   earth: "Terra",
+  psychic: "Psíquico",
+  fairy: "Fada",
 };
 
 // Type effectiveness (multiplier on damage)
@@ -2218,8 +2222,10 @@ export const TYPE_CHART: Record<Element, Partial<Record<Element, number>>> = {
   water: { fire: 1.5, grass: 0.7, water: 0.8, earth: 1.5 },
   grass: { water: 1.5, fire: 0.7, grass: 0.8, earth: 1.5 },
   electric: { water: 1.5, grass: 0.7, electric: 0.8, earth: 0.5 },
-  shadow: { shadow: 0.8 },
+  shadow: { shadow: 0.8, psychic: 1.5, fairy: 0.7 },
   earth: { fire: 1.5, electric: 1.5, grass: 0.7, water: 0.7, earth: 0.8 },
+  psychic: { psychic: 0.8, shadow: 1.5, fairy: 0.7 },
+  fairy: { fairy: 0.8, psychic: 0.7, shadow: 1.5 },
 };
 
 // ===== Items =====

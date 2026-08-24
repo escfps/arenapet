@@ -31,7 +31,7 @@ type RarityFilter = Rarity | "all";
 type ElementFilter = Element | "all";
 
 const ALL_RARITIES: Rarity[] = ["common", "rare", "super_rare", "epic", "legendary", "mythic"];
-const ALL_ELEMENTS: Element[] = ["fire", "water", "grass", "electric", "shadow", "earth"];
+const ALL_ELEMENTS: Element[] = ["fire", "water", "grass", "electric", "shadow", "earth", "psychic", "fairy"];
 
 function CollectionPage() {
   const navigate = useNavigate();

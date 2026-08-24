@@ -229,7 +229,7 @@ export const MOVESETS: Record<string, Moveset> = {
   "dragonite": { types: ["dragon", "flying"], moves: ["dragon_claw", "hurricane", "outrage", "brave_bird"], status: "dragon_dance" },
   "omastar": { types: ["rock", "water"], moves: ["hydro_pump", "rock_slide", "stone_edge", "surf"], status: "iron_defense" },
   "mewtwo": { types: ["psychic"], moves: ["psychic", "psystrike", "shadow_ball", "aura_sphere"], status: "recover" },
-  "mew": { types: ["psychic"], moves: ["psychic", "aura_sphere", "ice_beam", "dazzling_gleam"], status: "recover" },
+  "mew": { types: ["psychic", "fairy"], moves: ["psychic", "aura_sphere", "ice_beam", "dazzling_gleam"], status: "recover" },
 };
 
 export const SHINY_PASSIVES: Record<string, ShinyPassive> = {
