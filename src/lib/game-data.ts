@@ -2357,21 +2357,22 @@ export function rankStars(rank: number): string {
 // quando bots de alto rank encontram pets squishy.
 export const HP_BASE_MULT = 2.56;
 
-export function totalStats(species: string, rank = 1, bonus = { hp: 0, atk: 0, def: 0, spd: 0, int: 0 }) {
+export function totalStats(species: string, rank = 1, bonus = { hp: 0, atk: 0, def: 0, spd: 0, int: 0 }, shiny = false) {
   const s = SPECIES[species];
   if (!s) return { hp: 0, atk: 0, def: 0, spd: 0, int: 0 };
   const r = RANK_MULT[Math.min(Math.max(rank, 1), MAX_RANK)] ?? 1;
+  const sh = shiny ? SHINY_STAT_MULT : 1;
   const exactBase = species === "borboleta_sonifera" || species === "urso_polar" || species === "lobo_lua_sangrenta";
   if (exactBase) {
     return {
-      hp: Math.round(s.base.hp * r * HP_BASE_MULT) + (bonus.hp ?? 0),
-      atk: Math.round(s.base.atk * r) + (bonus.atk ?? 0),
-      def: Math.round(s.base.def * r) + (bonus.def ?? 0),
-      spd: Math.round(s.base.spd * r) + (bonus.spd ?? 0),
-      int: Math.round(s.base.int * r) + (bonus.int ?? 0),
+      hp: Math.round(s.base.hp * r * HP_BASE_MULT * sh) + (bonus.hp ?? 0),
+      atk: Math.round(s.base.atk * r * sh) + (bonus.atk ?? 0),
+      def: Math.round(s.base.def * r * sh) + (bonus.def ?? 0),
+      spd: Math.round(s.base.spd * r * sh) + (bonus.spd ?? 0),
+      int: Math.round(s.base.int * r * sh) + (bonus.int ?? 0),
     };
   }
-  const mult = RARITY_INFO[s.rarity].statMult * r;
+  const mult = RARITY_INFO[s.rarity].statMult * r * sh;
   return {
     hp: Math.round(s.base.hp * mult * HP_BASE_MULT) + (bonus.hp ?? 0),
     atk: Math.round(s.base.atk * mult) + (bonus.atk ?? 0),
@@ -2380,6 +2381,7 @@ export function totalStats(species: string, rank = 1, bonus = { hp: 0, atk: 0, d
     int: Math.round(s.base.int * mult) + (bonus.int ?? 0),
   };
 }
+
 
 export function starterMonsterStats(speciesId: string) {
   const sp = SPECIES[speciesId];
