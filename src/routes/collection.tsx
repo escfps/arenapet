@@ -72,7 +72,7 @@ function CollectionPage() {
       });
   }, [userId]);
 
-  const allSpecies = useMemo(() => Object.values(SPECIES), []);
+  const allSpecies = useMemo(() => Object.values(SPECIES).filter((s) => !s.retired), []);
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     return allSpecies.filter((s) => {

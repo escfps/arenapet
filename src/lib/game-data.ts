@@ -390,6 +390,8 @@ export type Species = {
    * remover esta flag (ou setar para false) e publicar.
    */
   hidden?: boolean;
+  /** Pet legado desativado do jogo (oculto em tudo, mas mantido para pets já existentes) */
+  retired?: boolean;
 };
 
 export const ROLE_INFO: Record<Role, { name: string; emoji: string; description: string; color: string }> = {
@@ -500,6 +502,7 @@ export function getSkill(speciesId: string): Skill {
 export const SPECIES: Record<string, Species> = {
   // ===== PUROS (raros) =====
   flarepup: {
+    retired: true,
     id: "flarepup", name: "Flarepup", element: "fire", role: "dps", rarity: "rare",
     emoji: "🔥", image: flarepupImg,
     description: "Raposinha de fogo puro. DPS clássico de dano alto.",
@@ -507,6 +510,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Fogareu", emoji: "🔥", kind: "burn_dot", cooldown: 3, description: "Queima o alvo: dano agora + dano por 3 turnos." },
   },
   aquakitty: {
+    retired: true,
     id: "aquakitty", name: "Aquakitty", element: "water", role: "healer", rarity: "rare",
     emoji: "💧", image: aquakittyImg,
     description: "Gatinho aquático puro. Cura o time a cada 2 turnos.",
@@ -514,6 +518,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Bolha Curativa", emoji: "🫧", kind: "shield_ally", cooldown: 3, description: "Envolve o aliado mais ferido com escudo (INT×1.5) e +30% DEF por 2 turnos." },
   },
   leafox: {
+    retired: true,
     id: "leafox", name: "Leafox", element: "grass", role: "tank", rarity: "rare",
     emoji: "🌿", image: leafoxImg,
     description: "Raposa-folha pura. Tank: provoca e absorve dano.",
@@ -521,6 +526,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Casca de Carvalho", emoji: "🌳", kind: "shield_taunt", cooldown: 3, description: "Provoca todos por 2 turnos e ganha escudo de 25% do HP máx (cd curto)." },
   },
   voltbun: {
+    retired: true,
     id: "voltbun", name: "Voltbun", element: "electric", role: "assassin", rarity: "rare",
     emoji: "⚡", image: voltbunImg,
     description: "Coelhinho elétrico puro. Assassino veloz com muito crit.",
@@ -528,6 +534,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Tempo Acelerado", emoji: "⚡", kind: "double_strike", cooldown: 3, description: "Ataca 2× o alvo de maior ATK inimigo (1.2× cada golpe)." },
   },
   shadepup: {
+    retired: true,
     id: "shadepup", name: "Shadepup", element: "shadow", role: "mage", rarity: "rare",
     emoji: "🌙", image: shadepupImg,
     description: "Lobinho das sombras puro. Mago: dano ignora defesa.",
@@ -535,6 +542,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Uivo Silenciador", emoji: "🌑", kind: "silence_disable", cooldown: 4, description: "Dano mágico no alvo e silencia (anula a próxima skill dele)." },
   },
   rato_bomba: {
+    retired: true,
     id: "rato_bomba", name: "Rato Bomba", element: "fire", role: "dps", rarity: "rare",
     emoji: "💣", image: ratoBombaImg,
     description: "Ratinho kamikaze de pavio curto. Frágil, mas quando cai, explode em chamas — e leva o inimigo mais ferido junto.",
@@ -545,6 +553,7 @@ export const SPECIES: Record<string, Species> = {
 
   // ===== MESTIÇOS (comuns) =====
   steamcub: {
+    retired: true,
     id: "steamcub", name: "Steamcub", element: "fire", secondaryElement: "water", role: "tank", rarity: "common",
     emoji: "♨️", image: steamcubImg,
     description: "Ursinho de vapor. Tank meio fogo, meio água.",
@@ -552,6 +561,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Cortina de Vapor", emoji: "♨️", kind: "shield_taunt", cooldown: 4, description: "Solta vapor: provoca todos por 2 turnos e ganha 28% HP de escudo." },
   },
   emberleaf: {
+    retired: true,
     id: "emberleaf", name: "Emberleaf", element: "fire", secondaryElement: "grass", role: "dps", rarity: "common",
     emoji: "🍂", image: emberleafImg,
     description: "Raposa de folhas em brasa. DPS de outono.",
@@ -559,6 +569,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Tornado de Brasas", emoji: "🍂", kind: "heavy_strike", cooldown: 3, description: "Investida em redemoinho: 2.1× de dano num alvo." },
   },
   sparkpup: {
+    retired: true,
     id: "sparkpup", name: "Sparkpup", element: "fire", secondaryElement: "electric", role: "assassin", rarity: "common",
     emoji: "⚡🔥", image: sparkpupImg,
     description: "Filhote chamuscado e elétrico. Assassino rápido.",
@@ -566,6 +577,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Estouro Elétrico", emoji: "💥", kind: "guaranteed_crit", cooldown: 3, description: "Crítico garantido no inimigo mais fraco, ignora 60% da DEF." },
   },
   cinderwisp: {
+    retired: true,
     id: "cinderwisp", name: "Cinderwisp", element: "fire", secondaryElement: "shadow", role: "mage", rarity: "common",
     emoji: "👻🔥", image: cinderwispImg,
     description: "Fantasminha de brasa. Mago ofensivo.",
@@ -573,6 +585,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Chuva de Cinzas", emoji: "🔥", kind: "aoe_magic", cooldown: 4, description: "Cobre o campo com cinzas mágicas: dano em todos inimigos (1.15× cada)." },
   },
   mossfin: {
+    retired: true,
     id: "mossfin", name: "Mossfin", element: "water", secondaryElement: "grass", role: "healer", rarity: "common",
     emoji: "🐸", image: mossfinImg,
     description: "Sapinho do brejo. Healer rústico.",
@@ -580,6 +593,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Orvalho do Brejo", emoji: "🌧️", kind: "team_heal", cooldown: 4, description: "Cura todos os aliados (~INT×1.7 + 10% HP máx)." },
   },
   stormtad: {
+    retired: true,
     id: "stormtad", name: "Stormtad", element: "water", secondaryElement: "electric", role: "mage", rarity: "common",
     emoji: "⚡💧", image: stormtadImg,
     description: "Girino-relâmpago. Mago elétrico.",
@@ -587,6 +601,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Tempestade Elétrica", emoji: "⚡", kind: "aoe_magic", cooldown: 4, description: "Solta raios em todos os inimigos (1.15× cada, ignora defesa)." },
   },
   tidewraith: {
+    retired: true,
     id: "tidewraith", name: "Tidewraith", element: "water", secondaryElement: "shadow", role: "assassin", rarity: "common",
     emoji: "🌊👻", image: tidewraithImg,
     description: "Fantasma das marés. Assassino furtivo.",
@@ -594,6 +609,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Bote da Maré", emoji: "🌊", kind: "guaranteed_crit", cooldown: 3, description: "Crítico garantido no inimigo mais fraco, ignora 60% da DEF." },
   },
   voltsprout: {
+    retired: true,
     id: "voltsprout", name: "Voltsprout", element: "grass", secondaryElement: "electric", role: "healer", rarity: "common",
     emoji: "🌱⚡", image: voltsproutImg,
     description: "Broto voltaico. Healer com punch.",
@@ -601,6 +617,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Seiva Restauradora", emoji: "🌱", kind: "team_heal", cooldown: 4, description: "Espalha seiva pelo time, curando todos os aliados (~INT×1.7 + 10% HP máx)." },
   },
   nightbloom: {
+    retired: true,
     id: "nightbloom", name: "Nightbloom", element: "grass", secondaryElement: "shadow", role: "mage", rarity: "common",
     emoji: "🌸🌙", image: nightbloomImg,
     description: "Flor noturna. Mago de controle.",
@@ -608,6 +625,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Pólen Tóxico", emoji: "🌸", kind: "aoe_magic", cooldown: 4, description: "Nuvem tóxica em todos os inimigos (1.15× cada, ignora defesa)." },
   },
   voidspark: {
+    retired: true,
     id: "voidspark", name: "Voidspark", element: "electric", secondaryElement: "shadow", role: "assassin", rarity: "common",
     emoji: "🌑⚡", image: voidsparkImg,
     description: "Orbe de raios sombrios. Assassino caótico.",
@@ -617,6 +635,7 @@ export const SPECIES: Record<string, Species> = {
 
   // ===== TERRA =====
   rockpup: {
+    retired: true,
     id: "rockpup", name: "Rockpup", element: "earth", role: "tank", rarity: "rare",
     emoji: "🪨", image: rockpupImg,
     description: "Cãozinho de pedregulho puro. Tank rochoso com defesa absurda.",
@@ -624,6 +643,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Muralha de Pedra", emoji: "🪨", kind: "shield_taunt", cooldown: 3, description: "Vira uma muralha: provoca todos por 2 turnos e ganha 35% HP de escudo." },
   },
   magmaboulder: {
+    retired: true,
     id: "magmaboulder", name: "Magmaboulder", element: "earth", secondaryElement: "fire", role: "tank", rarity: "common",
     emoji: "🌋", image: magmaboulderImg,
     description: "Rocha vulcânica. Tank que queima quem encosta.",
@@ -631,6 +651,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Crosta Vulcânica", emoji: "🌋", kind: "shield_taunt", cooldown: 3, description: "Endurece a casca de magma: provoca todos por 2 turnos e ganha 30% HP de escudo." },
   },
   mudpaw: {
+    retired: true,
     id: "mudpaw", name: "Mudpaw", element: "earth", secondaryElement: "water", role: "dps", rarity: "common",
     emoji: "🟫", image: mudpawImg,
     description: "Golem de lama. DPS pesado que afunda os inimigos.",
@@ -638,6 +659,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Soco de Lama", emoji: "👊", kind: "heavy_strike", cooldown: 3, description: "Soco pesadão num alvo: 2.3× dano." },
   },
   crystalsprite: {
+    retired: true,
     id: "crystalsprite", name: "Crystalsprite", element: "earth", secondaryElement: "electric", role: "mage", rarity: "common",
     emoji: "💎", image: crystalspriteImg,
     description: "Geodo mágico cristalino. Mago de cristal com raios.",
@@ -647,6 +669,7 @@ export const SPECIES: Record<string, Species> = {
 
   // ===== EVENTO (lendários) =====
   onca_sombria: {
+    retired: true,
     id: "onca_sombria", name: "Onça Sombria", element: "shadow", role: "assassin", rarity: "legendary",
     emoji: "🐆", image: oncaSombriaImg,
     description: "Onça-pintada das sombras. Crítico letal nos mais fracos.",
@@ -654,6 +677,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Bote Mortal", emoji: "🐆", kind: "execute", cooldown: 3, description: "Execução: alvos com menos de 30% HP recebem dano TRIPLO. Senão, 1.8× dano normal." },
   },
   leao_dourado: {
+    retired: true,
     id: "leao_dourado", name: "Leão Dourado", element: "earth", role: "dps", rarity: "legendary",
     emoji: "🦁", image: leaoDouradoImg,
     description: "Rei dourado. Dano consistente avassalador.",
@@ -661,6 +685,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Rugido Real", emoji: "🦁", kind: "lifesteal_strike", cooldown: 3, description: "Golpe régio (2× dano) que cura o leão em 50% do dano causado." },
   },
   tigre_infernal: {
+    retired: true,
     id: "tigre_infernal", name: "Tigre Infernal", element: "fire", role: "dps", rarity: "legendary",
     emoji: "🔥", image: tigreInfernalImg,
     description: "Tigre de chamas eternas. Investida devastadora em fogo.",
@@ -668,6 +693,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Fúria das Chamas", emoji: "🔥", kind: "berserker_rage", cooldown: 5, description: "Entra em fúria: +60% ATK por 3 turnos (perde 25% DEF nesse período)." },
   },
   pantera_negra: {
+    retired: true,
     id: "pantera_negra", name: "Pantera Negra", element: "shadow", role: "assassin", rarity: "legendary",
     emoji: "🐈‍⬛", image: panteraNegraImg,
     description: "Olhos vermelhos no escuro. Mortal e ágil.",
@@ -675,6 +701,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Garra Fantasma", emoji: "👻", kind: "execute", cooldown: 3, description: "Execução fantasma: alvos com menos de 35% HP morrem instantâneo. Senão, 1.7× dano." },
   },
   pantera_aurea: {
+    retired: true,
     id: "pantera_aurea", name: "Pantera Áurea", element: "shadow", role: "mage", rarity: "legendary",
     emoji: "✨", image: panteraAureaImg,
     description: "Olhos dourados — variante ultra-rara da Pantera Negra. Mago sombrio supremo.",
@@ -684,6 +711,7 @@ export const SPECIES: Record<string, Species> = {
 
   // ===== SUPER RAROS =====
   macaco_prego: {
+    retired: true,
     id: "macaco_prego", name: "Macaco-Prego", element: "grass", role: "assassin", rarity: "super_rare",
     emoji: "🐒", image: macacoPregoImg,
     description: "Macaquinho astuto da floresta. Rouba turnos com agilidade e crítico afiado.",
@@ -691,6 +719,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Pancada Dupla", emoji: "🐒", kind: "double_strike", cooldown: 3, description: "Bate 2× no alvo de maior ATK (1.3× cada golpe) — desarma adversários." },
   },
   tubarao_abissal: {
+    retired: true,
     id: "tubarao_abissal", name: "Tubarão Abissal", element: "water", role: "dps", rarity: "super_rare",
     emoji: "🦈", image: tubaraoAbissalImg,
     description: "Predador das profundezas azuis. Mordida feroz que rasga qualquer presa.",
@@ -698,6 +727,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Mordida Sanguinária", emoji: "🦈", kind: "lifesteal_strike", cooldown: 3, description: "Crava os dentes (2× dano) e cura o tubarão em 25% do dano causado." },
   },
   polvo_venenoso: {
+    retired: true,
     id: "polvo_venenoso", name: "Polvo Venenoso", element: "water", secondaryElement: "shadow", role: "mage", rarity: "super_rare",
     emoji: "🐙", image: polvoVenenosoImg,
     description: "Polvo místico das fossas tóxicas. Mago de veneno: corrói os inimigos turno após turno.",
@@ -705,6 +735,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Tinta Venenosa", emoji: "☠️", kind: "burn_dot", cooldown: 3, description: "Cospe tinta venenosa: dano mágico agora + veneno corrosivo por 3 turnos (INT×0.65 cada turno)." },
   },
   cobra_sangrenta: {
+    retired: true,
     id: "cobra_sangrenta", name: "Cobra Sangrenta", element: "shadow", secondaryElement: "grass", role: "dps", rarity: "super_rare",
     emoji: "🐍", image: cobraSangrentaImg,
     description: "Víbora ancestral de presas afiadas. Sua mordida provoca hemorragia turno após turno.",
@@ -712,6 +743,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Presa Dilacerante", emoji: "🩸", kind: "bleed_dot", cooldown: 3, description: "Crava as presas no alvo: dano físico agora + sangramento (ATK×0.35) por 3 turnos." },
   },
   borboleta_sonifera: {
+    retired: true,
     id: "borboleta_sonifera", name: "Borboleta Sonífera", element: "shadow", secondaryElement: "grass", role: "mage", rarity: "super_rare",
     emoji: "🦋💤", image: borboletaSoniferaImg,
     description: "Borboleta onírica de asas hipnóticas. Espalha pó do sono que faz qualquer inimigo cair em sono profundo no meio da batalha.",
@@ -719,6 +751,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Pó do Sono", emoji: "💤", kind: "sleep_strike", cooldown: 4, description: "PASSIVA: ataque básico tem 50% de chance de adormecer o alvo por 2 turnos. ATIVA: dano mágico no alvo com 80% de chance de adormecê-lo por 2 turnos." },
   },
   urso_polar: {
+    retired: true,
     id: "urso_polar", name: "Urso Polar", element: "water", role: "tank", rarity: "super_rare",
     emoji: "🐻‍❄️❄️", image: ursoPolarImg,
     description: "Urso ártico de pelagem nevada. Cada pata congelada paralisa o inimigo no meio do golpe.",
@@ -729,6 +762,7 @@ export const SPECIES: Record<string, Species> = {
 
   // ===== ÉPICOS =====
   jacare_ancestral: {
+    retired: true,
     id: "jacare_ancestral", name: "Jacaré Ancestral", element: "water", secondaryElement: "earth", role: "dps", rarity: "epic",
     emoji: "🐊", image: jacareAncestralImg,
     description: "Predador ancestral dos rios esmeralda. Mordida devastadora que ignora defesa leve.",
@@ -736,6 +770,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Mordida Esmeralda", emoji: "🐊", kind: "lifesteal_strike", cooldown: 3, description: "Crava as mandíbulas (2× dano) e cura 30% do dano causado." },
   },
   gorila_titan: {
+    retired: true,
     id: "gorila_titan", name: "Gorila Titã", element: "earth", role: "tank", rarity: "epic",
     emoji: "🦍", image: gorilaTitanImg,
     description: "Titã das montanhas com cristais místicos. Tank brutal que provoca e contra-ataca.",
@@ -743,6 +778,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Fúria Titânica", emoji: "🦍", kind: "berserker_rage", cooldown: 5, description: "Bate no peito: +70% ATK por 3 turnos (perde 30% DEF). Pra trocar dano." },
   },
   aguia_cega: {
+    retired: true,
     id: "aguia_cega", name: "Águia Ofuscante", element: "earth", secondaryElement: "electric", role: "assassin", rarity: "epic",
     emoji: "🦅", image: aguiaCegaImg,
     description: "Águia marrom ancestral das montanhas. Ágil e implacável: mergulha em alta velocidade e cega os inimigos com um clarão dourado.",
@@ -750,6 +786,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Visão Ofuscante", emoji: "😵‍💫", kind: "blind_debuff", cooldown: 4, description: "Mergulha solta um clarão dourado: dano agora + cega TODOS os inimigos por 1 turno (50% de chance de errar ataques básicos)." },
   },
   lobo_lua_sangrenta: {
+    retired: true,
     id: "lobo_lua_sangrenta", name: "Lobo da Lua Sangrenta", element: "shadow", secondaryElement: "fire", role: "assassin", rarity: "epic",
     emoji: "🐺", image: loboLuaSangrentaImg,
     description: "Predador noturno banhado pela lua escarlate. Cada mordida drena a essência vital do inimigo.",
@@ -760,6 +797,7 @@ export const SPECIES: Record<string, Species> = {
 
   // ===== MÍTICOS =====
   dragao_branco: {
+    retired: true,
     id: "dragao_branco", name: "Dragão Branco", element: "water", role: "healer", rarity: "mythic",
     emoji: "🐉", image: dragaoBrancoImg,
     description: "Dragão místico de escamas brancas e olhos de safira. Cura divina que ressoa pelo time.",
@@ -767,6 +805,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Sopro da Vida", emoji: "🐉", kind: "revive_ally", cooldown: 6, description: "Ressuscita o aliado caído mais recente com 40% do HP máx. Se ninguém caiu, cura todos." },
   },
   dragao_negro: {
+    retired: true,
     id: "dragao_negro", name: "Dragão Negro", element: "shadow", role: "dps", rarity: "mythic",
     emoji: "🐲", image: dragaoNegroImg,
     description: "Dragão obsidiana de olhos vermelhos. Dano apocalíptico que devasta inimigos.",
@@ -774,6 +813,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Apocalipse Obsidiana", emoji: "🐲", kind: "true_damage_nuke", cooldown: 5, description: "Sopro apocalíptico: dano VERDADEIRO num alvo (~ATK×3, ignora 100% DEF e elemento)." },
   },
   fenix_vermelha: {
+    retired: true,
     id: "fenix_vermelha", name: "Fênix Vermelha", element: "fire", role: "dps", rarity: "mythic",
     emoji: "🔥🦅", image: fenixVermelhaImg,
     description: "Fênix carmesim envolta em chamas eternas. Quanto mais sofre, mais perigosa fica.",
@@ -781,6 +821,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Brasa Renascida", emoji: "🔥", kind: "phoenix_rage", cooldown: 4, description: "PASSIVA: cada 10% de HP perdido = +6% ATK (até +60% com 1 HP). ATIVA: golpe de fogo (2× dano)." },
   },
   fenix_negra: {
+    retired: true,
     id: "fenix_negra", name: "Fênix Negra", element: "shadow", role: "dps", rarity: "mythic",
     emoji: "🌑🦅", image: fenixNegraImg,
     description: "Fênix obsidiana de chamas violetas. Devora a essência dos inimigos e cresce sem fim.",
@@ -795,6 +836,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Esfera Sombria", emoji: "🔮", kind: "aoe_magic", cooldown: 4, description: "Bola de energia sombria atinge TODOS os inimigos (~INT×1.8) com 35% de chance de silenciar cada um por 1 turno. PASSIVA — Devora Sonhos: ao abater um inimigo, Gengar recupera 12% do HP máx." },
   },
   fenix_azul: {
+    retired: true,
     id: "fenix_azul", name: "Fênix Azul", element: "water", secondaryElement: "fire", role: "healer", rarity: "rare",
     emoji: "🔵🦅", image: fenixAzulImg,
     description: "Filhote de fênix de plumas azuis e chamas geladas. Cura aliados com brasas frias.",
@@ -802,6 +844,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Chama Gelada", emoji: "❄️", kind: "heal_lowest", cooldown: 3, description: "Cura o aliado mais ferido (~INT×1.2). PASSIVA — Pluma Glacial: cada cura aplica um 🛡️ escudo de 15% do HP máx no alvo por 1 turno." },
   },
   dragao_fogo: {
+    retired: true,
     id: "dragao_fogo", name: "Dragão de Fogo", element: "fire", secondaryElement: "shadow", role: "mage", rarity: "rare",
     emoji: "🐲", image: dragaoFogoImg,
     description: "Filhote de dragão de escamas em brasa. Cospe cinzas que corroem a armadura dos inimigos.",
@@ -809,6 +852,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Baforada de Cinzas", emoji: "🌋", kind: "ash_breath", cooldown: 3, description: "Dano mágico (~INT×1.5) e reduz a DEF do alvo em 20% por 2 turnos." },
   },
   foca_glacial: {
+    retired: true,
     id: "foca_glacial", name: "Foca Glacial", element: "water", role: "healer", rarity: "common",
     emoji: "🦭", image: focaGlacialImg,
     description: "Filhote de foca coberto de cristais de gelo. Cura aliados e enfraquece o inimigo mais forte com seu sopro ártico.",
@@ -816,6 +860,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Sopro Ártico", emoji: "🥶", kind: "chill_heal", cooldown: 4, description: "Cura o aliado mais ferido (~INT×1.3) e reduz ATK do inimigo mais forte em 15% por 2 turnos." },
   },
   lobo_artico: {
+    retired: true,
     id: "lobo_artico", name: "Lobo Ártico", element: "water", role: "assassin", rarity: "rare",
     emoji: "🐺", image: loboArticoImg,
     description: "Lobo de pelagem branca e olhos de gelo. Caça os mais fracos com um bote gelado e implacável.",
@@ -823,6 +868,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Bote Gelado", emoji: "🥶", kind: "frost_pounce", cooldown: 3, description: "Crítico GARANTIDO no inimigo mais fraco + 40% de chance de congelar por 1 turno." },
   },
   tartaruga_ancestral: {
+    retired: true,
     id: "tartaruga_ancestral", name: "Tartaruga Ancestral", element: "water", secondaryElement: "earth", role: "tank", rarity: "rare",
     emoji: "🐢", image: tartarugaAncestralImg,
     description: "Tartaruga milenar de carapaça rúnica. Encolhe na carapaça e se torna quase indestrutível.",
@@ -830,6 +876,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Carapaça Milenar", emoji: "🛡️", kind: "turtle_shell", cooldown: 3, description: "Ganha escudo de 30% do HP máx e reduz todo dano recebido em 20% por 2 turnos." },
   },
   corvo_sombras: {
+    retired: true,
     id: "corvo_sombras", name: "Corvo das Sombras", element: "shadow", role: "mage", rarity: "rare",
     emoji: "🐦‍⬛", image: corvoSombrasImg,
     description: "Corvo de penas violeta. Seu grasnido é um agouro que enfraquece os mais imponentes.",
@@ -837,6 +884,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Grasnido Agouro", emoji: "🪶", kind: "doom_curse", cooldown: 4, description: "Maldição no inimigo com mais HP: reduz ATK e DEF dele em 20% por 3 turnos." },
   },
   lince_dourado: {
+    retired: true,
     id: "lince_dourado", name: "Lince Dourado", element: "electric", role: "assassin", rarity: "rare",
     emoji: "🐈", image: linceDouradoImg,
     description: "Felino dourado de pelos elétricos. Pula no inimigo mais fraco com garras crepitantes.",
@@ -844,6 +892,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Pounce Relâmpago", emoji: "⚡", kind: "pounce_stun", cooldown: 3, description: "Crítico GARANTIDO no inimigo mais fraco + 30% de chance de atordoar por 1 turno." },
   },
   leoa_trovao: {
+    retired: true,
     id: "leoa_trovao", name: "Leoa Trovão", element: "electric", role: "assassin", rarity: "epic",
     emoji: "⚡🦁", image: leoaTrovaoImg,
     description: "Rainha elétrica de juba crepitante. Cada garra solta faíscas que paralisam a presa.",
@@ -851,6 +900,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Bote Relâmpago", emoji: "⚡", kind: "lightning_charge", cooldown: 3, description: "PASSIVA: ataque básico tem 30% de chance de paralisar o alvo por 1 turno. ATIVA: investida elétrica no inimigo mais forte (2× dano) + 60% de paralisar por 1 turno." },
   },
   panda: {
+    retired: true,
     id: "panda", name: "Panda", element: "grass", role: "healer", rarity: "legendary",
     emoji: "🐼", image: pandaImg,
     description: "Guardião milenar do bambuzal. Equilíbrio absoluto entre força protetora e cura constante.",
@@ -858,6 +908,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Equilíbrio da Floresta", emoji: "🌿", kind: "forest_balance", cooldown: 4, description: "PASSIVA: a cada turno cura o aliado com menos HP (INT×0.8). ATIVA: cura todos os aliados (INT×1.5) e ganha escudo de 25% HP máx." },
   },
   golem_pedra: {
+    retired: true,
     id: "golem_pedra", name: "Golem de Pedra", element: "earth", secondaryElement: "electric", role: "healer", rarity: "epic",
     emoji: "💎", image: golemPedraImg,
     description: "Gigante de pedra com cristais elétricos pulsantes. Cura aliados e reforça a defesa do time inteiro.",
@@ -865,6 +916,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Ressonância Cristalina", emoji: "💎", kind: "crystal_resonance", cooldown: 4, description: "Cura todos os aliados (INT×1.2) e aumenta a DEF de todo o time em 15% por 2 turnos." },
   },
   trex: {
+    retired: true,
     id: "trex", name: "T-Rex", element: "fire", secondaryElement: "earth", role: "assassin", rarity: "legendary",
     emoji: "🦖", image: trexImg,
     description: "Rei dos dinossauros, predador supremo. Cada presa abatida o torna mais forte na batalha.",
@@ -872,6 +924,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Rugido do Rei", emoji: "🦖", kind: "king_roar", cooldown: 3, description: "PASSIVA: cada kill aumenta o ATK do T-Rex em 15% permanente na batalha. ATIVA: mordida devastadora no inimigo mais forte (2.5× dano)." },
   },
   pterossauro: {
+    retired: true,
     id: "pterossauro", name: "Pterossauro", element: "electric", role: "assassin", rarity: "rare",
     emoji: "🪶", image: pterossauroImg,
     description: "Réptil voador das tempestades antigas. Mergulha em alta velocidade carregado de eletricidade.",
@@ -879,6 +932,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Mergulho Rasante", emoji: "🪶", kind: "pounce_stun", cooldown: 3, description: "Crítico GARANTIDO no inimigo mais fraco + 40% de chance de atordoar por 1 turno." },
   },
   triceratops_colossal: {
+    retired: true,
     id: "triceratops_colossal", name: "Triceratops Colossal", element: "earth", role: "tank", rarity: "super_rare",
     emoji: "🦕", image: triceratopsColossalImg,
     description: "Couraça viva de chifres rúnicos. Quem ousar atacá-lo sente o impacto de volta.",
@@ -886,6 +940,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Investida de Chifres", emoji: "🦕", kind: "horn_charge", cooldown: 3, description: "Provoca todos os inimigos por 2 turnos e ganha escudo de 35% HP máx. PASSIVA: todo inimigo que atacar recebe 15% do dano de volta." },
   },
   fantasminha: {
+    retired: true,
     id: "fantasminha", name: "???", element: "shadow", role: "mage", rarity: "mythic",
     emoji: "👻", image: fantasminhaImg,
     description: "Espectro travesso com fome insaciável. Devora a essência do mais fraco e, se o derrota, vai atrás do próximo.",
@@ -893,6 +948,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Fome Espectral", emoji: "👻", kind: "spectral_hunger", cooldown: 4, description: "Ataque mágico no inimigo mais fraco ignorando DEF. PASSIVA: se matar o alvo, ataca mais uma vez o próximo mais fraco (máx 2 ataques)." },
   },
   raposa_espectral: {
+    retired: true,
     id: "raposa_espectral", name: "Raposa Espectral", element: "shadow", role: "assassin", rarity: "epic",
     emoji: "🦊", image: raposaEspectralImg,
     description: "Caçadora silenciosa entre sombras. Cada bote é certeiro e atravessa qualquer guarda.",
@@ -900,6 +956,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Bote Certeiro", emoji: "🦊", kind: "spectral_pounce", cooldown: 4, description: "ATIVA: ataca o inimigo mais fraco com crítico garantido. PASSIVA: todo ataque básico tem 30% de chance de critar." },
   },
   orangotango: {
+    retired: true,
     id: "orangotango", name: "Orangotango", element: "grass", role: "healer", rarity: "mythic",
     emoji: "🦧", image: orangotangoImg,
     description: "Sábio ancestral da floresta. Manipula o fluxo do tempo dos aliados, fazendo suas habilidades fluírem mais rápido.",
@@ -907,6 +964,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Ritual Ancestral", emoji: "🦧", kind: "cooldown_reduction", cooldown: 3, description: "ATIVA: reduz 1 turno de cooldown de TODOS os aliados — o time inteiro solta skill mais rápido. PASSIVA: a cada turno reduz 1 cooldown do aliado mais travado (maior cd acumulado)." },
   },
   porco_espinho: {
+    retired: true,
     id: "porco_espinho", name: "Porco-Espinho", element: "earth", role: "tank", rarity: "rare",
     emoji: "🦔", image: porcoEspinhoImg,
     description: "Pequeno mas intocável. Cada espinho é uma punição para quem ousa atacá-lo.",
@@ -914,6 +972,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Chuva de Espinhos", emoji: "🦔", kind: "thorn_burst", cooldown: 4, description: "Dispara espinhos em todos os inimigos (1.0× dano cada). PASSIVA: todo inimigo que atacar o Porco-Espinho recebe 10% do dano de volta." },
   },
   urubu_carniceiro: {
+    retired: true,
     id: "urubu_carniceiro", name: "Urubu Carniceiro", element: "shadow", secondaryElement: "shadow", role: "dps", rarity: "epic",
     emoji: "🦅", image: urubuCarniceiroImg,
     description: "Ave necrófaga das sombras. Quanto mais ferido fica, mais rápido se torna — e seu grito gela o sangue dos inimigos.",
@@ -930,6 +989,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Choque do Trovão", emoji: "⚡", kind: "lightning_charge", cooldown: 3, description: "Investida elétrica no inimigo mais forte (2× dano) + 60% de chance de ⚡ paralisar. PASSIVA: ataque básico tem 30% de paralisar." },
   },
   brasagarto: {
+    retired: true,
     id: "brasagarto", name: "Brasagarto", element: "fire", role: "dps", rarity: "rare",
     emoji: "🦎🔥", image: brasagartoImg, hidden: true,
     description: "Lagarto de escamas incandescentes com uma chama viva na ponta da cauda. Ataca com fúria ardente.",
@@ -937,6 +997,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Garra Brasa", emoji: "🔥", kind: "heavy_strike", cooldown: 3, description: "Golpe flamejante pesado: 2.2× o dano normal num alvo único." },
   },
   cascatoruga: {
+    retired: true,
     id: "cascatoruga", name: "Cascatoruga", element: "water", role: "tank", rarity: "rare",
     emoji: "🐢💧", image: cascatorugaImg, hidden: true,
     description: "Tartaruga de casco rochoso que se fecha e devolve jatos d'água nos inimigos.",
@@ -944,6 +1005,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Casco Torrente", emoji: "🛡️", kind: "turtle_shell", cooldown: 3, description: "Ganha escudo (30% do HP máx) e reduz o dano recebido em 20% por 2 turnos." },
   },
   folhassauro: {
+    retired: true,
     id: "folhassauro", name: "Folhassauro", element: "grass", role: "healer", rarity: "rare",
     emoji: "🌸🦕", image: folhassauroImg, hidden: true,
     description: "Dinossauro de dorso florido. Espalha pólen curativo pelo campo de batalha.",
@@ -951,6 +1013,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Pólen Vital", emoji: "🌸", kind: "heal_lowest", cooldown: 3, description: "Cura o aliado mais ferido (~INT×1.2)." },
   },
   faiscorato: {
+    retired: true,
     id: "faiscorato", name: "Faiscorato", element: "electric", role: "assassin", rarity: "super_rare",
     emoji: "⚡🐭", image: faiscoratoImg, hidden: true,
     description: "Roedor elétrico veloz com cauda em forma de raio. Paralisa antes que o inimigo reaja.",
@@ -958,6 +1021,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Investida Faiscante", emoji: "⚡", kind: "lightning_charge", cooldown: 3, description: "Investida elétrica no inimigo mais forte (2× dano) + 60% de chance de ⚡ paralisar. PASSIVA: ataque básico tem 30% de paralisar." },
   },
   rochapunho: {
+    retired: true,
     id: "rochapunho", name: "Rochapunho", element: "earth", role: "tank", rarity: "common",
     emoji: "🪨👊", image: rochapunhoImg, hidden: true,
     description: "Golem de pedregulhos com punhos maciços. Aguenta o que vier e devolve em dobro.",
@@ -965,6 +1029,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Punho de Rocha", emoji: "🪨", kind: "thorn_burst", cooldown: 4, description: "Ataca todos os inimigos com 1.0× ATK físico. PASSIVA: reflete 10% do dano recebido." },
   },
   chamalobo: {
+    retired: true,
     id: "chamalobo", name: "Chamalobo", element: "fire", role: "dps", rarity: "common",
     emoji: "🐺🔥", image: chamaloboImg, hidden: true,
     description: "Filhote de lobo com juba em brasa. Caça em disparada e queima o que morde.",
@@ -972,6 +1037,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Mordida Ígnea", emoji: "🔥", kind: "heavy_strike", cooldown: 3, description: "Golpe pesado: 2.2× o dano normal num alvo único." },
   },
   psicoluna: {
+    retired: true,
     id: "psicoluna", name: "Psicoluna", element: "shadow", role: "mage", rarity: "super_rare",
     emoji: "🌙🐈", image: psicolunaImg, hidden: true,
     description: "Felino psíquico com lua crescente na fronte. Explode a mente dos inimigos.",
@@ -979,6 +1045,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Eco Lunar", emoji: "🔮", kind: "aoe_magic", cooldown: 4, description: "Explosão mágica que atinge TODOS os inimigos (1.2× cada, ignora defesa)." },
   },
   vespanoxa: {
+    retired: true,
     id: "vespanoxa", name: "Vespanoxa", element: "grass", secondaryElement: "shadow", role: "assassin", rarity: "common",
     emoji: "🐝☠️", image: vespanoxaImg, hidden: true,
     description: "Vespa de ferrão venenoso. Rápida, cruel e sempre mira no mais fraco.",
@@ -986,6 +1053,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Ferrão Tóxico", emoji: "🗡️", kind: "guaranteed_crit", cooldown: 3, description: "Ataque garantido CRÍTICO no inimigo mais fraco, ignorando 60% da DEF." },
   },
   ventasa: {
+    retired: true,
     id: "ventasa", name: "Ventasa", element: "electric", role: "dps", rarity: "common",
     emoji: "🐦⚡", image: ventasaImg, hidden: true,
     description: "Pássaro de tempestade que corta o ar com asas eletrizadas e um grito ensurdecedor.",
@@ -993,6 +1061,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Grito Tempestuoso", emoji: "🌪️", kind: "terror_screech", cooldown: 3, description: "Reduz o ATK de todos os inimigos em 20% por 2 turnos." },
   },
   dracomarino: {
+    retired: true,
     id: "dracomarino", name: "Dracomarino", element: "water", secondaryElement: "shadow", role: "mage", rarity: "epic",
     emoji: "🐉🌊", image: dracomarinoImg, hidden: true,
     description: "Dragão dos abismos de escamas violáceas. Sua névoa corrói armaduras.",
@@ -1001,6 +1070,7 @@ export const SPECIES: Record<string, Species> = {
   },
   // ===== PETS OCULTOS (em testes — só aparecem na conta admin) =====
   rinoceronte_guardiao: {
+    retired: true,
     id: "rinoceronte_guardiao", name: "Rinoceronte Guardião", element: "earth", role: "tank", rarity: "super_rare",
     emoji: "🦏", image: rinoceronteGuardiaoImg, hidden: true,
     description: "Muralha viva da floresta de pedra. Sua presença atrai todos os ataques inimigos enquanto sua casca grossa absorve tudo.",
@@ -1008,6 +1078,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Investida Purificadora", emoji: "🦏", kind: "cleanse_shield", cooldown: 3, description: "PASSIVA: provoca — inimigos atacam ele primeiro. ATIVA: remove TODOS os debuffs (sono, congelamento, silêncio, cegueira, atordoamento, queimadura, sangramento, marca, DEF/ATK reduzidos) de todos os aliados e ganha escudo de 25% do HP máx." },
   },
   elefante_ancestral: {
+    retired: true,
     id: "elefante_ancestral", name: "Elefante Ancestral", element: "earth", role: "tank", rarity: "legendary",
     emoji: "🐘", image: elefanteAncestralImg, hidden: true,
     description: "Colosso milenar imune a controle de massa. Provoca o campo inteiro com um trompetear que faz a terra tremer.",
@@ -1015,6 +1086,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Trompete Ancião", emoji: "🐘", kind: "aoe_strike_def_down", cooldown: 4, description: "PASSIVA: completamente imune a sono, marca, congelamento, silêncio, queimadura e cegueira durante toda a batalha. ATIVA: golpe de tromba em todos os inimigos (1.3× dano cada) e reduz a DEF de todos em 15% por 2 turnos." },
   },
   arara_corsaria: {
+    retired: true,
     id: "arara_corsaria", name: "Arara Corsária", element: "fire", secondaryElement: "fire", role: "dps", rarity: "rare",
     emoji: "🦜", image: araraCorsariaImg,
     description: "Pirata dos céus. Ataca em rajadas múltiplas, sempre roubando o brilho dos inimigos.",
@@ -1022,6 +1094,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Rajada Corsária", emoji: "🦜", kind: "corsair_volley", cooldown: 3, description: "Realiza 3 investidas rápidas em alvos ALEATÓRIOS (podem repetir no mesmo alvo, até as 3 no mesmo). Cada hit causa ATK×0.6 e tem 35% de chance de aplicar 🩸 sangramento por 2 turnos (15% do ATK por turno, máx 1 stack por alvo)." },
   },
   tigre_relampago: {
+    retired: true,
     id: "tigre_relampago", name: "Tigre Relâmpago", element: "electric", role: "assassin", rarity: "super_rare",
     emoji: "🐯", image: tigreRelampagoImg, hidden: true,
     description: "Predador feito de raios. Quanto mais rápido fica, mais devastadora é sua investida elétrica.",
@@ -1029,6 +1102,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Blitz Relâmpago", emoji: "⚡", kind: "lightning_charge", cooldown: 4, description: "Avança contra o alvo causando 130% do ATK. Se tiver SPD maior que o alvo, desfere um segundo golpe de 70% do ATK. PASSIVA: ganha +4% de Esquiva a cada 10 pontos de SPD." },
   },
   leopardo_fantasma: {
+    retired: true,
     id: "leopardo_fantasma", name: "Leopardo Fantasma", element: "shadow", role: "assassin", rarity: "epic",
     emoji: "🐆", image: leopardoFantasmaImg, hidden: true,
     description: "Caçador silencioso vindo do reino das sombras. Aparece atrás do mais frágil e crava o bote final.",
@@ -1036,6 +1110,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Caçada Sombria", emoji: "🌑", kind: "spectral_pounce", cooldown: 3, description: "Surge atrás do alvo mais fraco causando 120% do ATK, com +2% de dano para cada ponto de SPD a mais que o alvo (máx +60%, até 180% do ATK). PASSIVA: se agir antes do alvo, o ataque básico é crítico garantido (1.7× dano)." },
   },
   hiena_carniceira: {
+    retired: true,
     id: "hiena_carniceira", name: "Hiena Carniceira", element: "shadow", role: "dps", rarity: "rare",
     emoji: "🐺", image: hienaCarniceiraImg,
     description: "Necrófaga das sombras. Sente o cheiro do moribundo e termina o serviço com uma mordida devastadora.",
@@ -1043,6 +1118,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Investida Carniceira", emoji: "🦷", kind: "hyena_hunt", cooldown: 3, description: "Causa 140% do ATK no alvo e aplica 🏴 Marca da Caça por 2 turnos (alvos marcados: +25% dano recebido e não esquivam). PASSIVA — Frenesi do Predador: ao acertar inimigo marcado (skill ou básico), a Hiena ganha +20% SPD no próximo turno." },
   },
   coruja_branca: {
+    retired: true,
     id: "coruja_branca", name: "Coruja Branca", element: "water", secondaryElement: "water", role: "healer", rarity: "super_rare",
     emoji: "🦉", image: corujaBrancaImg, hidden: true,
     description: "Sábia do inverno eterno. Suas penas geladas restauram aliados e congelam a fúria inimiga.",
@@ -1050,6 +1126,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Olhar Penetrante", emoji: "🏴", kind: "night_mark", cooldown: 4, description: "Aplica 🏴 Marca da Morte em todos os inimigos por 2 turnos e concede +15% de SPD a todos os aliados por 2 turnos. PASSIVA — Olhos da Noite: sempre que um inimigo marcado é derrotado, o aliado com menor HP recupera 12% do HP máximo." },
   },
   escorpiao_deserto: {
+    retired: true,
     id: "escorpiao_deserto", name: "Escorpião do Deserto", element: "earth", role: "assassin", rarity: "rare",
     emoji: "🦂", image: escorpiaoDesertoImg,
     description: "Ferrão venenoso vindo das dunas. Um único golpe pode paralisar a presa mais corajosa.",
@@ -1057,6 +1134,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Ferroada Venenosa", emoji: "🦂", kind: "scorpion_sting", cooldown: 3, description: "Ferroada no inimigo mais fraco causando 110% do ATK + aplica 🏴 Marca da Morte e ☠️ Veneno por 2 turnos. Se o alvo já estiver marcado, causa 130% do ATK e o veneno dura +1 turno. PASSIVA — Veneno Rastreador: inimigos com 🏴 Marca da Morte sofrem +15% de dano de veneno." },
   },
   coruja_negra: {
+    retired: true,
     id: "coruja_negra", name: "Coruja Negra", element: "shadow", role: "mage", rarity: "epic",
     emoji: "🦉", image: corujaNegraImg, hidden: true,
     description: "Arcanista das sombras. Marca suas presas e detona ataques arcanos que reverberam pelo campo inteiro.",
@@ -1064,6 +1142,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Julgamento Arcano", emoji: "🔮", kind: "arcane_mark", cooldown: 3, description: "Ataca o inimigo com mais HP causando 130% do INT. Se o alvo estiver com 🏴 Marca da Morte, causa 200% do INT e aplica 🤐 silêncio por 1 turno. PASSIVA — Marca Final: sempre que ataca (skill ou básico) um inimigo com 🏴 Marca da Morte, a Coruja Negra recupera 25% do HP máximo." },
   },
   coruja_psiquica: {
+    retired: true,
     id: "coruja_psiquica", name: "Coruja Psíquica", element: "shadow", secondaryElement: "shadow", role: "mage", rarity: "mythic",
     emoji: "🦉", image: corujaPsiquicaImg, hidden: true,
     description: "Coruja psíquica que dobra colheres com o pensamento e manipula o tempo com seu cronômetro. Sua mente é uma arma de destruição em massa.",
@@ -2176,8 +2255,8 @@ export type Egg = {
 };
 
 // Helpers to build weight tables
-const ALL_COMMON = Object.values(SPECIES).filter((s) => s.rarity === "common" && !s.hidden).map((s) => s.id);
-const ALL_RARE = Object.values(SPECIES).filter((s) => s.rarity === "rare" && !s.hidden).map((s) => s.id);
+const ALL_COMMON = Object.values(SPECIES).filter((s) => s.rarity === "common" && !s.hidden && !s.retired).map((s) => s.id);
+const ALL_RARE = Object.values(SPECIES).filter((s) => s.rarity === "rare" && !s.hidden && !s.retired).map((s) => s.id);
 
 function makeWeights(commonW: number, rareW: number): Record<string, number> {
   const w: Record<string, number> = {};
@@ -2386,7 +2465,7 @@ export function rollChest(tier: ChestTier, forceRarity?: Rarity): ChestReward {
         if (r <= 0) { chosenRarity = rarity as Rarity; break; }
       }
     }
-    const pool = Object.values(SPECIES).filter((s) => s.rarity === chosenRarity && !s.hidden);
+    const pool = Object.values(SPECIES).filter((s) => s.rarity === chosenRarity && !s.hidden && !s.retired);
     if (pool.length > 0) {
       petSpecies = pool[Math.floor(Math.random() * pool.length)].id;
     }
@@ -2412,7 +2491,7 @@ export const PITY_COLUMN: Partial<Record<ChestTier, "pity_silver" | "pity_gold" 
 
 // Baú de boas-vindas: 2 comuns aleatórios + 1 raro aleatório
 export function rollWelcomeChest(): string[] {
-  const all = Object.values(SPECIES).filter((s) => !s.hidden);
+  const all = Object.values(SPECIES).filter((s) => !s.hidden && !s.retired);
   const commons = all.filter((s) => s.rarity === "common");
   const rares = all.filter((s) => s.rarity === "rare");
   const pickN = <T,>(arr: T[], n: number): T[] => {
