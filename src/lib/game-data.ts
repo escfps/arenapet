@@ -2202,29 +2202,53 @@ export const SPECIES: Record<string, Species> = {
 
 
 export const ELEMENT_COLORS: Record<Element, string> = {
+  normal: "from-stone-300 to-neutral-500",
   fire: "from-red-400 to-orange-500",
   water: "from-cyan-400 to-blue-500",
   grass: "from-emerald-400 to-green-600",
   electric: "from-yellow-300 to-amber-500",
+  ice: "from-cyan-200 to-sky-400",
+  fighting: "from-orange-600 to-red-700",
+  poison: "from-purple-400 to-violet-700",
+  ground: "from-amber-600 to-yellow-800",
+  flying: "from-sky-300 to-indigo-400",
+  psychic: "from-fuchsia-400 to-purple-600",
+  bug: "from-lime-400 to-green-700",
+  rock: "from-stone-500 to-amber-800",
+  ghost: "from-indigo-500 to-purple-800",
+  dragon: "from-indigo-400 to-blue-700",
+  dark: "from-neutral-700 to-stone-900",
+  steel: "from-slate-300 to-slate-600",
+  fairy: "from-pink-300 to-rose-500",
   shadow: "from-purple-500 to-fuchsia-700",
   earth: "from-amber-700 to-stone-600",
-  psychic: "from-fuchsia-400 to-purple-600",
-  fairy: "from-pink-300 to-rose-500",
 };
 
 export const ELEMENT_NAMES: Record<Element, string> = {
-  fire: "Fogo",
-  water: "Água",
-  grass: "Planta",
-  electric: "Elétrico",
+  normal: "⚪ Normal",
+  fire: "🔥 Fogo",
+  water: "💧 Água",
+  grass: "🌱 Planta",
+  electric: "⚡ Elétrico",
+  ice: "🧊 Gelo",
+  fighting: "🥊 Lutador",
+  poison: "☠️ Veneno",
+  ground: "🟫 Terrestre",
+  flying: "🪽 Voador",
+  psychic: "🔮 Psíquico",
+  bug: "🐛 Inseto",
+  rock: "🪨 Pedra",
+  ghost: "👻 Fantasma",
+  dragon: "🐉 Dragão",
+  dark: "🌑 Sombrio",
+  steel: "⚙️ Aço",
+  fairy: "✨ Fada",
   shadow: "Sombra",
   earth: "Terra",
-  psychic: "Psíquico",
-  fairy: "Fada",
 };
 
-// Type effectiveness (multiplier on damage)
-export const TYPE_CHART: Record<Element, Partial<Record<Element, number>>> = {
+// Type effectiveness (multiplier on damage) — LEGADO (a batalha usa POKE_TYPE_CHART em moves.ts)
+export const TYPE_CHART: Partial<Record<Element, Partial<Record<Element, number>>>> = {
   fire: { grass: 1.5, water: 0.7, fire: 0.8, earth: 0.7 },
   water: { fire: 1.5, grass: 0.7, water: 0.8, earth: 1.5 },
   grass: { water: 1.5, fire: 0.7, grass: 0.8, earth: 1.5 },
