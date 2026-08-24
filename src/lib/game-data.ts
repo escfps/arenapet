@@ -73,6 +73,15 @@ import sandshrewImg from "@/assets/monsters/sandshrew.png";
 import sandslashImg from "@/assets/monsters/sandslash.png";
 import nidoranFImg from "@/assets/monsters/nidoran_f.png";
 import nidorinaImg from "@/assets/monsters/nidorina.png";
+import nidoqueenImg from "@/assets/monsters/nidoqueen.png";
+import nidoranMImg from "@/assets/monsters/nidoran_m.png";
+import nidorinoImg from "@/assets/monsters/nidorino.png";
+import nidokingImg from "@/assets/monsters/nidoking.png";
+import clefairyImg from "@/assets/monsters/clefairy.png";
+import clefableImg from "@/assets/monsters/clefable.png";
+import vulpixImg from "@/assets/monsters/vulpix.png";
+import ninetalesImg from "@/assets/monsters/ninetales.png";
+import jigglypuffImg from "@/assets/monsters/jigglypuff.png";
 import alakazamImg from "@/assets/monsters/alakazam.png";
 import gastlyImg from "@/assets/monsters/gastly.png";
 import haunterImg from "@/assets/monsters/haunter.png";
@@ -1057,52 +1066,52 @@ export const SPECIES: Record<string, Species> = {
     emoji: "💜🐭", image: nidoranMImg, hidden: true,
     description: "Pequeno e venenoso, ataca com o chifre tóxico.",
     base: { hp: 34, atk: 12, def: 8, spd: 13, int: 6 },
-    skill: { name: "Chifre Tóxico", emoji: "☠️", kind: "poison_strike", cooldown: 3, description: "Ataque que pode envenenar o alvo." },
+    skill: { name: "Chifre Tóxico", emoji: "☠️", kind: "bleed_dot", cooldown: 3, description: "Ataque que pode envenenar o alvo." },
   },
   nidorino: {
     id: "nidorino", name: "Nidorino", element: "earth", role: "dps", rarity: "rare",
     emoji: "💜🦏", image: nidorinoImg, hidden: true,
     description: "Agressivo e rápido, perfura com o chifre venenoso.",
     base: { hp: 50, atk: 19, def: 12, spd: 15, int: 9 },
-    skill: { name: "Perfurar", emoji: "🗡️", kind: "poison_strike", cooldown: 3, description: "Perfuração venenosa com dano elevado." },
+    skill: { name: "Perfurar", emoji: "🗡️", kind: "bleed_dot", cooldown: 3, description: "Perfuração venenosa com dano elevado." },
   },
   nidoking: {
     id: "nidoking", name: "Nidoking", element: "earth", role: "dps", rarity: "legendary",
     emoji: "👑💜", image: nidokingImg, hidden: true,
     description: "Rei do veneno. Força bruta com chifre perfurante.",
     base: { hp: 76, atk: 27, def: 17, spd: 16, int: 12 },
-    skill: { name: "Fúria do Rei", emoji: "👑", kind: "poison_strike", cooldown: 4, description: "Golpe brutal que envenena e causa dano massivo." },
+    skill: { name: "Fúria do Rei", emoji: "👑", kind: "bleed_dot", cooldown: 4, description: "Golpe brutal que envenena e causa dano massivo." },
   },
   clefairy: {
-    id: "clefairy", name: "Clefairy", element: "light", role: "healer", rarity: "rare",
+    id: "clefairy", name: "Clefairy", element: "grass", role: "healer", rarity: "rare",
     emoji: "🌸✨", image: clefairyImg, hidden: true,
     description: "Fada estelar que canta para curar os aliados.",
     base: { hp: 46, atk: 9, def: 11, spd: 12, int: 22 },
-    skill: { name: "Luz Lunar", emoji: "🌙", kind: "heal_ally", cooldown: 3, description: "Cura o aliado mais ferido." },
+    skill: { name: "Luz Lunar", emoji: "🌙", kind: "heal_lowest", cooldown: 3, description: "Cura o aliado mais ferido." },
   },
   clefable: {
-    id: "clefable", name: "Clefable", element: "light", role: "healer", rarity: "legendary",
+    id: "clefable", name: "Clefable", element: "grass", role: "healer", rarity: "legendary",
     emoji: "🌟🌸", image: clefableImg, hidden: true,
     description: "Fada mística. Cura o time inteiro com magia estelar.",
     base: { hp: 70, atk: 13, def: 16, spd: 14, int: 31 },
-    skill: { name: "Bênção Estelar", emoji: "🌟", kind: "heal_team", cooldown: 4, description: "Cura todo o time." },
+    skill: { name: "Bênção Estelar", emoji: "🌟", kind: "team_heal", cooldown: 4, description: "Cura todo o time." },
   },
   vulpix: {
     id: "vulpix", name: "Vulpix", element: "fire", role: "dps", rarity: "rare",
     emoji: "🔥🦊", image: vulpixImg, hidden: true,
     description: "Raposinha de fogo com seis caudas flamejantes.",
     base: { hp: 42, atk: 15, def: 10, spd: 16, int: 14 },
-    skill: { name: "Brasa Veloz", emoji: "🔥", kind: "burn_strike", cooldown: 3, description: "Ataque de fogo que pode queimar." },
+    skill: { name: "Brasa Veloz", emoji: "🔥", kind: "burn_dot", cooldown: 3, description: "Ataque de fogo que pode queimar." },
   },
   ninetales: {
     id: "ninetales", name: "Ninetales", element: "fire", role: "mage", rarity: "legendary",
     emoji: "🔥✨", image: ninetalesImg, hidden: true,
     description: "Raposa mística de nove caudas. Fogo amaldiçoado.",
     base: { hp: 66, atk: 17, def: 15, spd: 22, int: 30 },
-    skill: { name: "Fogo Fantasma", emoji: "👻", kind: "burn_strike", cooldown: 4, description: "Chama espectral em área que queima os inimigos." },
+    skill: { name: "Fogo Fantasma", emoji: "👻", kind: "burn_dot", cooldown: 4, description: "Chama espectral em área que queima os inimigos." },
   },
   jigglypuff: {
-    id: "jigglypuff", name: "Jigglypuff", element: "light", role: "support", rarity: "rare",
+    id: "jigglypuff", name: "Jigglypuff", element: "grass", role: "healer", rarity: "rare",
     emoji: "🎵🎀", image: jigglypuffImg, hidden: true,
     description: "Canta uma canção que faz os inimigos dormirem.",
     base: { hp: 52, atk: 10, def: 10, spd: 11, int: 18 },
