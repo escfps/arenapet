@@ -1284,6 +1284,55 @@ export const SPECIES: Record<string, Species> = {
     base: { hp: 84, atk: 34, def: 21, spd: 30, int: 18 },
     skill: { name: "Chama Lendária", emoji: "🌋", kind: "phoenix_rage", cooldown: 5, description: "Explosão de fogo devastadora em todos os inimigos." },
   },
+  poliwag: {
+    id: "poliwag", name: "Poliwag", element: "water", role: "mage", rarity: "common",
+    emoji: "🌀🐸", image: poliwagImg, hidden: true,
+    description: "Girino hipnótico com espiral na barriga.",
+    base: { hp: 31, atk: 9, def: 8, spd: 12, int: 13 },
+    skill: { name: "Espiral Hipnótica", emoji: "🌀", kind: "sleep_strike", cooldown: 4, description: "Hipnotiza o alvo com chance de dormir." },
+  },
+  poliwhirl: {
+    id: "poliwhirl", name: "Poliwhirl", element: "water", role: "dps", rarity: "rare",
+    emoji: "🌀👊", image: poliwhirlImg, hidden: true,
+    description: "Aprendeu a lutar sem perder o hipnotismo.",
+    base: { hp: 50, atk: 17, def: 13, spd: 14, int: 16 },
+    skill: { name: "Soco Aquático", emoji: "💦", kind: "double_strike", cooldown: 3, description: "Dois socos encharcados no alvo." },
+  },
+  poliwrath: {
+    id: "poliwrath", name: "Poliwrath", element: "water", role: "tank", rarity: "legendary",
+    emoji: "🌀🥊", image: poliwrathImg, hidden: true,
+    description: "Lutador aquático de força bruta e couro grosso.",
+    base: { hp: 82, atk: 24, def: 22, spd: 14, int: 14 },
+    skill: { name: "Muralha de Ondas", emoji: "🛡️", kind: "shield_taunt", cooldown: 4, description: "Provoca os inimigos e ganha escudo." },
+  },
+  machop: {
+    id: "machop", name: "Machop", element: "earth", role: "dps", rarity: "common",
+    emoji: "💪", image: machopImg, hidden: true,
+    description: "Treina todo dia para ficar mais forte.",
+    base: { hp: 35, atk: 14, def: 9, spd: 11, int: 6 },
+    skill: { name: "Golpe Treinado", emoji: "👊", kind: "heavy_strike", cooldown: 3, description: "Golpe pesado no alvo." },
+  },
+  machoke: {
+    id: "machoke", name: "Machoke", element: "earth", role: "dps", rarity: "super_rare",
+    emoji: "💪🔥", image: machokeImg, hidden: true,
+    description: "Músculos de aço e cinturão de campeão.",
+    base: { hp: 62, atk: 23, def: 16, spd: 13, int: 8 },
+    skill: { name: "Chave de Braço", emoji: "🤼", kind: "pounce_stun", cooldown: 4, description: "Imobiliza e atordoa o alvo." },
+  },
+  machamp: {
+    id: "machamp", name: "Machamp", element: "earth", role: "dps", rarity: "mythic",
+    emoji: "💪💪", image: machampImg, hidden: true,
+    description: "Quatro braços, quatro socos. Ninguém escapa.",
+    base: { hp: 88, atk: 36, def: 22, spd: 18, int: 10 },
+    skill: { name: "Quatro Socos", emoji: "👊", kind: "berserker_rage", cooldown: 5, description: "Rajada furiosa que aumenta muito o ATK e golpeia forte." },
+  },
+  bellsprout: {
+    id: "bellsprout", name: "Bellsprout", element: "grass", role: "mage", rarity: "common",
+    emoji: "🌱", image: bellsproutImg, hidden: true,
+    description: "Broto carnívoro que chicoteia com o caule.",
+    base: { hp: 30, atk: 11, def: 7, spd: 12, int: 14 },
+    skill: { name: "Chicote de Cipó", emoji: "🌿", kind: "bleed_dot", cooldown: 3, description: "Chicoteia causando sangramento." },
+  },
 };
 
 
