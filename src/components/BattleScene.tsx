@@ -11,7 +11,17 @@ type HpMap = Map<string, { cur: number; max: number }>;
 type ShieldMap = Map<string, number>;
 type SkillFxKind = "heal" | "bite" | "explosion" | "lightning" | "fire" | "shield" | "slash" | "skull" | "fury" | "silence" | "magic" | "revive" | "true" | "cooldown" | "impact";
 type MissLabel = { key: string; kind: "dodge" | "miss" } | null;
-type Fx = { actor: string | null; target: string | null; dmg: number | null; shieldGain: number | null; crit: boolean; skillFx: SkillFxKind | null; targets: string[]; miss: MissLabel };
+type Fx = { actor: string | null; target: string | null; dmg: number | null; shieldGain: number | null; crit: boolean; skillFx: SkillFxKind | null; targets: string[]; miss: MissLabel; eff: number };
+
+/** Badge de efetividade de tipo (multiplicativo: 4x / 2x / 0.5x / 0.25x / 0x). */
+function effBadge(eff: number): { text: string; cls: string } | null {
+  if (eff >= 4) return { text: "💥💥 SUPER EFETIVO 4x", cls: "from-fuchsia-400 via-red-500 to-orange-400 text-black border-fuchsia-200 shadow-[0_0_22px_rgba(232,121,249,.95)]" };
+  if (eff >= 2) return { text: "💥 SUPER EFETIVO 2x", cls: "from-orange-300 via-red-500 to-red-600 text-black border-orange-200 shadow-[0_0_18px_rgba(249,115,22,.9)]" };
+  if (eff === 0) return { text: "🚫 IMUNE", cls: "from-slate-500 via-slate-700 to-slate-900 text-slate-100 border-slate-400 shadow-[0_0_14px_rgba(148,163,184,.7)]" };
+  if (eff <= 0.25) return { text: "🛡️🛡️ MUITO RESISTIDO", cls: "from-sky-300 via-blue-500 to-indigo-600 text-black border-sky-200 shadow-[0_0_16px_rgba(56,189,248,.85)]" };
+  if (eff < 1) return { text: "🛡️ RESISTIDO", cls: "from-cyan-200 via-sky-400 to-blue-500 text-black border-cyan-100 shadow-[0_0_12px_rgba(34,211,238,.8)]" };
+  return null;
+}
 type StatusKind = "burn" | "poison" | "bleed" | "blind" | "sleep" | "freeze" | "silence" | "rage" | "shield" | "stun" | "mark";
 type StatusMap = Map<string, Set<StatusKind>>;
 type EffectBanner = {
@@ -127,7 +137,7 @@ export function BattleScene({
 
   const [hp, setHp] = useState<HpMap>(initialHp);
   const [shields, setShields] = useState<ShieldMap>(new Map());
-  const [fx, setFx] = useState<Fx>({ actor: null, target: null, dmg: null, shieldGain: null, crit: false, skillFx: null, targets: [], miss: null });
+  const [fx, setFx] = useState<Fx>({ actor: null, target: null, dmg: null, shieldGain: null, crit: false, skillFx: null, targets: [], miss: null, eff: 1 });
   const [banner, setBanner] = useState<EffectBanner>(null);
   const [statuses, setStatuses] = useState<StatusMap>(new Map());
   const [turnFlash, setTurnFlash] = useState<{ id: number; turn: number } | null>(null);
@@ -151,7 +161,7 @@ export function BattleScene({
   useEffect(() => {
     setHp(new Map(initialHp));
     setShields(new Map());
-    setFx({ actor: null, target: null, dmg: null, shieldGain: null, crit: false, skillFx: null, targets: [], miss: null });
+    setFx({ actor: null, target: null, dmg: null, shieldGain: null, crit: false, skillFx: null, targets: [], miss: null, eff: 1 });
     setBanner(null);
     setStatuses(new Map());
     setTurnFlash(null);
@@ -338,7 +348,7 @@ export function BattleScene({
       miss = { key: actorKey, kind: "miss" };
     }
 
-    setFx({ actor: actorKey, target: effectiveTarget, dmg: entry.damage, shieldGain, crit: entry.crit, skillFx, targets, miss });
+    setFx({ actor: actorKey, target: effectiveTarget, dmg: entry.damage, shieldGain, crit: entry.crit, skillFx, targets, miss, eff: entry.effective ?? 1 });
 
     // ===== Sound FX =====
     if (miss?.kind === "dodge") {
@@ -415,7 +425,7 @@ export function BattleScene({
 
 
     const t = setTimeout(
-      () => setFx({ actor: null, target: null, dmg: null, shieldGain: null, crit: false, skillFx: null, targets: [], miss: null }),
+      () => setFx({ actor: null, target: null, dmg: null, shieldGain: null, crit: false, skillFx: null, targets: [], miss: null, eff: 1 }),
       1400
     );
     const tb = setTimeout(() => setBanner(null), 1100);
@@ -654,6 +664,18 @@ function ArenaLineup({
             {hasSkillFx && fx.skillFx && (
               <SkillFxOverlay kind={fx.skillFx} keyId={`${fx.actor}-${key}-${fx.dmg}`} />
             )}
+            {isTarget && (() => {
+              const b = effBadge(fx.eff);
+              if (!b) return null;
+              if (fx.eff !== 0 && (fx.dmg === null || fx.dmg <= 0)) return null;
+              return (
+                <div className={`absolute ${fx.crit ? "-top-20" : "-top-14"} left-1/2 -translate-x-1/2 pointer-events-none z-40 animate-crit-badge`}>
+                  <div className={`px-2.5 py-0.5 rounded-md bg-gradient-to-r ${b.cls} text-[10px] font-black tracking-widest border whitespace-nowrap`}>
+                    {b.text}
+                  </div>
+                </div>
+              );
+            })()}
             {isTarget && fx.crit && fx.dmg !== null && fx.dmg > 0 && (
               <div className="absolute -top-14 left-1/2 -translate-x-1/2 pointer-events-none z-40 animate-crit-badge">
                 <div className="px-2.5 py-0.5 rounded-md bg-gradient-to-r from-yellow-300 via-orange-400 to-red-500 text-black text-[10px] font-black tracking-widest shadow-[0_0_18px_rgba(250,204,21,.9)] border border-yellow-200">
