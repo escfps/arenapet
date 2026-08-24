@@ -1734,7 +1734,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Onda Psíquica", emoji: "🔮", kind: "thorn_burst", cooldown: 5, description: "Pulso mental que atinge todos os inimigos." },
   },
   mrmime: {
-    id: "mrmime", name: "Mr. Mime", element: "shadow", role: "support", rarity: "legendary",
+    id: "mrmime", name: "Mr. Mime", element: "shadow", role: "healer", rarity: "legendary",
     emoji: "🤡", image: mrmimeImg, hidden: true,
     description: "Ergue barreiras invisíveis com pura mímica.",
     base: { hp: 74, atk: 18, def: 24, spd: 20, int: 34 },
