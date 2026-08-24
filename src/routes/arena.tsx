@@ -1133,7 +1133,7 @@ function TeamPanel({ title, team, side, energies }: { title: string; team: FullM
                   ))}
                 </div>
                 {(() => {
-                  const st = totalStats(m.species, m.rank ?? 1, { hp: m.hp ?? 0, atk: m.atk ?? 0, def: m.def ?? 0, spd: m.spd ?? 0, int: m.int ?? 0 });
+                  const st = totalStats(m.species, m.rank ?? 1, { hp: m.hp ?? 0, atk: m.atk ?? 0, def: m.def ?? 0, spd: m.spd ?? 0, int: m.int ?? 0 }, (m as any).is_shiny === true);
                   const baseCritPct = sp.role === "assassin" ? 35 : m.species === "raposa_espectral" ? 30 : 12;
                   const critPct = Math.min(95, baseCritPct + ((m.crit ?? 0) * 2));
                   return (

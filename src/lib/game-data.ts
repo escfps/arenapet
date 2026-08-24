@@ -2195,12 +2195,32 @@ export const CHESTS: Record<ChestTier, Chest> = {
 
 };
 
+// ===== SHINY =====
+/** Chance de um pet sorteado em baú vir Shiny: 1 em 1.000 (0,1%). */
+export const SHINY_CHANCE = 0.001;
+/** Shiny ganha +10% em TODOS os status. */
+export const SHINY_STAT_MULT = 1.1;
+/** Skill exclusiva passiva de todo pet Shiny. */
+export const SHINY_SKILL = {
+  name: "Aura Prismática",
+  emoji: "✨",
+  description:
+    "PASSIVA EXCLUSIVA SHINY: começa a batalha com escudo de 15% do HP máximo e regenera 3% do HP máximo por turno.",
+  startShieldPct: 0.15,
+  regenPct: 0.03,
+} as const;
+export function rollShiny(rand: () => number = Math.random): boolean {
+  return rand() < SHINY_CHANCE;
+}
+
 export type ChestReward = {
   coins: number;
   gems: number;
   rations: number;
   petSpecies?: string; // id da espécie sorteada (se caiu pet)
+  petShiny?: boolean; // ✨ ultra raro (1 em 1.000)
 };
+
 
 export function rollChest(tier: ChestTier, forceRarity?: Rarity): ChestReward {
   const c = CHESTS[tier];
@@ -2231,7 +2251,9 @@ export function rollChest(tier: ChestTier, forceRarity?: Rarity): ChestReward {
     }
   }
 
-  return { coins, gems, rations, petSpecies };
+  const petShiny = petSpecies ? rollShiny() : false;
+  return { coins, gems, rations, petSpecies, petShiny };
+
 }
 
 // Pity system: tier => { guaranteed rarities (any of), limit }
@@ -2335,21 +2357,22 @@ export function rankStars(rank: number): string {
 // quando bots de alto rank encontram pets squishy.
 export const HP_BASE_MULT = 2.56;
 
-export function totalStats(species: string, rank = 1, bonus = { hp: 0, atk: 0, def: 0, spd: 0, int: 0 }) {
+export function totalStats(species: string, rank = 1, bonus = { hp: 0, atk: 0, def: 0, spd: 0, int: 0 }, shiny = false) {
   const s = SPECIES[species];
   if (!s) return { hp: 0, atk: 0, def: 0, spd: 0, int: 0 };
   const r = RANK_MULT[Math.min(Math.max(rank, 1), MAX_RANK)] ?? 1;
+  const sh = shiny ? SHINY_STAT_MULT : 1;
   const exactBase = species === "borboleta_sonifera" || species === "urso_polar" || species === "lobo_lua_sangrenta";
   if (exactBase) {
     return {
-      hp: Math.round(s.base.hp * r * HP_BASE_MULT) + (bonus.hp ?? 0),
-      atk: Math.round(s.base.atk * r) + (bonus.atk ?? 0),
-      def: Math.round(s.base.def * r) + (bonus.def ?? 0),
-      spd: Math.round(s.base.spd * r) + (bonus.spd ?? 0),
-      int: Math.round(s.base.int * r) + (bonus.int ?? 0),
+      hp: Math.round(s.base.hp * r * HP_BASE_MULT * sh) + (bonus.hp ?? 0),
+      atk: Math.round(s.base.atk * r * sh) + (bonus.atk ?? 0),
+      def: Math.round(s.base.def * r * sh) + (bonus.def ?? 0),
+      spd: Math.round(s.base.spd * r * sh) + (bonus.spd ?? 0),
+      int: Math.round(s.base.int * r * sh) + (bonus.int ?? 0),
     };
   }
-  const mult = RARITY_INFO[s.rarity].statMult * r;
+  const mult = RARITY_INFO[s.rarity].statMult * r * sh;
   return {
     hp: Math.round(s.base.hp * mult * HP_BASE_MULT) + (bonus.hp ?? 0),
     atk: Math.round(s.base.atk * mult) + (bonus.atk ?? 0),
@@ -2358,6 +2381,7 @@ export function totalStats(species: string, rank = 1, bonus = { hp: 0, atk: 0, d
     int: Math.round(s.base.int * mult) + (bonus.int ?? 0),
   };
 }
+
 
 export function starterMonsterStats(speciesId: string) {
   const sp = SPECIES[speciesId];

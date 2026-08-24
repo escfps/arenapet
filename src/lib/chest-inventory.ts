@@ -101,6 +101,7 @@ export async function openStoredChest(opts: {
       species: reward.petSpecies,
       name: sp.name,
       ...starterMonsterStats(reward.petSpecies),
+      is_shiny: reward.petShiny === true,
     });
   }
 

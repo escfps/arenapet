@@ -34,6 +34,7 @@ async function applyChest(userId: string, tier: ChestTier): Promise<ChestReward>
       species: reward.petSpecies,
       name: sp.name,
       ...starterMonsterStats(reward.petSpecies),
+      is_shiny: reward.petShiny === true,
     });
   }
   return reward;

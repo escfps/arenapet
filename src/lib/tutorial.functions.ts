@@ -79,6 +79,7 @@ export const claimTutorialReward = createServerFn({ method: "POST" })
         species: reward.petSpecies,
         name: sp.name,
         ...starterMonsterStats(reward.petSpecies),
+      is_shiny: reward.petShiny === true,
       });
     }
 

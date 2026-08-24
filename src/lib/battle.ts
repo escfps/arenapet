@@ -1,5 +1,6 @@
 import {
   SPECIES,
+  SHINY_SKILL,
   ROLE_SKILLS,
   RARITY_INFO,
   defensiveMultiplier,
@@ -29,6 +30,7 @@ export type BattleMonster = {
   role: Role;
   rarity: Rarity;
   position: number; // 0 frontline, 1 middle, 2 backline
+  shiny?: boolean; // ✨ Shiny: +10% stats + passiva Aura Prismática
 };
 
 export type BattleLogEntry = {
@@ -65,18 +67,20 @@ export type DBMonster = {
   rank?: number;
   hunger?: number;
   team_position?: number;
+  is_shiny?: boolean;
 };
 
 export function toBattleMonster(m: DBMonster): BattleMonster {
   const sp = SPECIES[m.species];
   const rank = m.rank ?? 1;
+  const shiny = m.is_shiny === true;
   const stats = totalStats(m.species, rank, {
     hp: m.hp ?? 0,
     atk: m.atk ?? 0,
     def: m.def ?? 0,
     spd: m.spd ?? 0,
     int: m.int ?? 0,
-  });
+  }, shiny);
   const mult = hungerMultiplier(m.hunger ?? 100);
   return {
     id: m.id,
@@ -93,6 +97,7 @@ export function toBattleMonster(m: DBMonster): BattleMonster {
     role: sp?.role ?? "dps",
     rarity: sp?.rarity ?? "common",
     position: Math.max(0, Math.min(2, m.team_position ?? 0)),
+    shiny,
   };
 }
 
@@ -235,7 +240,7 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
     maxHp: m.hp,
     healCd: 0,
     skillCd: 1,
-    shield: 0,
+    shield: m.shiny ? Math.round(m.hp * SHINY_SKILL.startShieldPct) : 0,
     tauntTargetId: null,
     tauntTurns: 0,
     burnDmg: 0,
@@ -518,6 +523,23 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
         if (attacker.tauntTurns > 0) {
           attacker.tauntTurns -= 1;
           if (attacker.tauntTurns === 0) attacker.tauntTargetId = null;
+        }
+        // ✨ SHINY — Aura Prismática: regenera 3% do HP máximo por turno
+        if (attacker.shiny && attacker.current > 0 && attacker.current < attacker.maxHp) {
+          const regen = Math.max(1, Math.round(attacker.maxHp * SHINY_SKILL.regenPct));
+          const healed = Math.min(regen, attacker.maxHp - attacker.current);
+          attacker.current += healed;
+          log.push({
+            turn,
+            actor: side,
+            actorName: attacker.name,
+            targetName: attacker.name,
+            damage: 0,
+            crit: false,
+            effective: 1,
+            remainingHp: attacker.current,
+            message: `✨ Aura Prismática curou ${healed} de ${attacker.name}`,
+          });
         }
         // tick burn (DoT)
         if (attacker.burnTurns > 0 && attacker.current > 0) {
