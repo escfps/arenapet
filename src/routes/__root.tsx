@@ -110,7 +110,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:description", content: "🐾 Colecione Pokémon, evolua criaturas raras e lute em batalhas épicas na Duelo Pokemon! Suba de rank, desbloqueie Pokémon lendários e torne-se o mestre definitivo!" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@PokeArena" },
+      { name: "twitter:site", content: "@DueloPokemon" },
       { name: "twitter:title", content: "Duelo Pokemon" },
       { name: "twitter:description", content: "🐾 Colecione Pokémon, evolua criaturas raras e lute em batalhas épicas na Duelo Pokemon! Suba de rank, desbloqueie Pokémon lendários e torne-se o mestre definitivo!" },
       { property: "og:image", content: "https://arenapet.lovable.app/og-image.jpg" },
@@ -119,7 +119,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
-      { name: "apple-mobile-web-app-title", content: "PokeArena" },
+      { name: "apple-mobile-web-app-title", content: "DueloPokemon" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
