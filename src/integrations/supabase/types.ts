@@ -634,6 +634,39 @@ export type Database = {
         }
         Relationships: []
       }
+      species_ref: {
+        Row: {
+          atk: number
+          def: number
+          hp: number
+          id: string
+          name: string
+          rarity: string
+          role: string
+          spd: number
+        }
+        Insert: {
+          atk: number
+          def: number
+          hp: number
+          id: string
+          name: string
+          rarity: string
+          role: string
+          spd: number
+        }
+        Update: {
+          atk?: number
+          def?: number
+          hp?: number
+          id?: string
+          name?: string
+          rarity?: string
+          role?: string
+          spd?: number
+        }
+        Relationships: []
+      }
       tournament_champions: {
         Row: {
           last_win_at: string | null
