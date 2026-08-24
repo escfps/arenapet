@@ -236,7 +236,7 @@ export const getFriendProfile = createServerFn({ method: "POST" })
 
     const { data: team } = await supabaseAdmin
       .from("monsters")
-      .select("id, name, species, rank, hp, atk, def, spd, int, in_team, team_position")
+      .select("id, name, species, rank, hp, atk, def, spd, int, in_team, team_position, is_shiny")
       .eq("owner_id", data.friendId)
       .eq("in_team", true)
       .order("team_position", { ascending: true })
