@@ -241,6 +241,15 @@ import ninetalesShinyImg from "@/assets/monsters/shiny/ninetales.png";
 import jigglypuffShinyImg from "@/assets/monsters/shiny/jigglypuff.png";
 import wigglytuffShinyImg from "@/assets/monsters/shiny/wigglytuff.png";
 import dugtrioShinyImg from "@/assets/monsters/shiny/dugtrio.png";
+import poliwrathShinyImg from "@/assets/monsters/shiny/poliwrath.png";
+import abraShinyImg from "@/assets/monsters/shiny/abra.png";
+import kadabraShinyImg from "@/assets/monsters/shiny/kadabra.png";
+import alakazamShinyImg from "@/assets/monsters/shiny/alakazam.png";
+import machopShinyImg from "@/assets/monsters/shiny/machop.png";
+import machokeShinyImg from "@/assets/monsters/shiny/machoke.png";
+import machampShinyImg from "@/assets/monsters/shiny/machamp.png";
+import bellsproutShinyImg from "@/assets/monsters/shiny/bellsprout.png";
+import weepinbellShinyImg from "@/assets/monsters/shiny/weepinbell.png";
 import meowthShinyImg from "@/assets/monsters/shiny/meowth.png";
 import persianShinyImg from "@/assets/monsters/shiny/persian.png";
 import psyduckShinyImg from "@/assets/monsters/shiny/psyduck.png";
@@ -982,7 +991,7 @@ export const SPECIES: Record<string, Species> = {
   },
   alakazam: {
     id: "alakazam", name: "Alakazam", element: "shadow", role: "mage", rarity: "mythic",
-    emoji: "🥄🧠", image: alakazamImg, hidden: true,
+    emoji: "🥄🧠", image: alakazamImg, shinyImage: alakazamShinyImg, hidden: true,
     description: "Mestre psíquico de QI 5000 que dobra colheres com a mente. Teletransporta e esmaga o cérebro dos inimigos mais fracos sem que eles percebam.",
     base: { hp: 78, atk: 10, def: 10, spd: 24, int: 38 },
     skill: { name: "Poder Psíquico", emoji: "🧠", kind: "spectral_hunger", cooldown: 4, description: "Esmaga a mente do inimigo mais fraco (INT×2.2, ignora DEF). Se abater o alvo, devora a próxima mente mais fraca em cadeia (até 2 vezes). PASSIVA — Telecinese: +20% de esquiva enquanto estiver acima de 50% do HP." },
@@ -1003,14 +1012,14 @@ export const SPECIES: Record<string, Species> = {
   },
   abra: {
     id: "abra", name: "Abra", element: "shadow", role: "mage", rarity: "super_rare",
-    emoji: "🦊💤", image: abraImg, hidden: true,
+    emoji: "🦊💤", image: abraImg, shinyImage: abraShinyImg, hidden: true,
     description: "Primeira forma da linhagem psíquica. Dorme 18 horas por dia, mas mesmo adormecido projeta ondas mentais e se teleporta pra fugir do perigo.",
     base: { hp: 42, atk: 6, def: 6, spd: 22, int: 25 },
     skill: { name: "Onda Mental", emoji: "🌀", kind: "spectral_hunger", cooldown: 3, description: "Esmaga a mente do inimigo mais fraco (INT×1.6, ignora DEF). PASSIVA — Teleporte: +15% de esquiva enquanto estiver acima de 50% do HP." },
   },
   kadabra: {
     id: "kadabra", name: "Kadabra", element: "shadow", role: "mage", rarity: "legendary",
-    emoji: "🥄🦊", image: kadabraImg, hidden: true,
+    emoji: "🥄🦊", image: kadabraImg, shinyImage: kadabraShinyImg, hidden: true,
     description: "Segunda forma da linhagem psíquica. Com a colher em mãos, amplifica seus poderes mentais — um passo antes de se tornar Alakazam.",
     base: { hp: 60, atk: 9, def: 9, spd: 23, int: 31 },
     skill: { name: "Confusão Psíquica", emoji: "🧠", kind: "spectral_hunger", cooldown: 4, description: "Esmaga a mente do inimigo mais fraco (INT×1.9, ignora DEF). Se abater o alvo, encadeia na próxima mente mais fraca (1 vez). PASSIVA — Telecinese: +18% de esquiva enquanto estiver acima de 50% do HP." },
@@ -1430,42 +1439,42 @@ export const SPECIES: Record<string, Species> = {
   },
   poliwrath: {
     id: "poliwrath", name: "Poliwrath", element: "water", role: "tank", rarity: "legendary",
-    emoji: "🌀🥊", image: poliwrathImg, hidden: true,
+    emoji: "🌀🥊", image: poliwrathImg, shinyImage: poliwrathShinyImg, hidden: true,
     description: "Lutador aquático de força bruta e couro grosso.",
     base: { hp: 82, atk: 24, def: 22, spd: 14, int: 14 },
     skill: { name: "Muralha de Ondas", emoji: "🛡️", kind: "shield_taunt", cooldown: 4, description: "Provoca os inimigos e ganha escudo." },
   },
   machop: {
     id: "machop", name: "Machop", element: "earth", role: "dps", rarity: "common",
-    emoji: "💪", image: machopImg, hidden: true,
+    emoji: "💪", image: machopImg, shinyImage: machopShinyImg, hidden: true,
     description: "Treina todo dia para ficar mais forte.",
     base: { hp: 35, atk: 14, def: 9, spd: 11, int: 6 },
     skill: { name: "Golpe Treinado", emoji: "👊", kind: "heavy_strike", cooldown: 3, description: "Golpe pesado no alvo." },
   },
   machoke: {
     id: "machoke", name: "Machoke", element: "earth", role: "dps", rarity: "super_rare",
-    emoji: "💪🔥", image: machokeImg, hidden: true,
+    emoji: "💪🔥", image: machokeImg, shinyImage: machokeShinyImg, hidden: true,
     description: "Músculos de aço e cinturão de campeão.",
     base: { hp: 62, atk: 23, def: 16, spd: 13, int: 8 },
     skill: { name: "Chave de Braço", emoji: "🤼", kind: "pounce_stun", cooldown: 4, description: "Imobiliza e atordoa o alvo." },
   },
   machamp: {
     id: "machamp", name: "Machamp", element: "earth", role: "dps", rarity: "mythic",
-    emoji: "💪💪", image: machampImg, hidden: true,
+    emoji: "💪💪", image: machampImg, shinyImage: machampShinyImg, hidden: true,
     description: "Quatro braços, quatro socos. Ninguém escapa.",
     base: { hp: 88, atk: 36, def: 22, spd: 18, int: 10 },
     skill: { name: "Quatro Socos", emoji: "👊", kind: "berserker_rage", cooldown: 5, description: "Rajada furiosa que aumenta muito o ATK e golpeia forte." },
   },
   bellsprout: {
     id: "bellsprout", name: "Bellsprout", element: "grass", role: "mage", rarity: "common",
-    emoji: "🌱", image: bellsproutImg, hidden: true,
+    emoji: "🌱", image: bellsproutImg, shinyImage: bellsproutShinyImg, hidden: true,
     description: "Broto carnívoro que chicoteia com o caule.",
     base: { hp: 30, atk: 11, def: 7, spd: 12, int: 14 },
     skill: { name: "Chicote de Cipó", emoji: "🌿", kind: "bleed_dot", cooldown: 3, description: "Chicoteia causando sangramento." },
   },
   weepinbell: {
     id: "weepinbell", name: "Weepinbell", element: "grass", role: "mage", rarity: "rare",
-    emoji: "🌿🔔", image: weepinbellImg, hidden: true,
+    emoji: "🌿🔔", image: weepinbellImg, shinyImage: weepinbellShinyImg, hidden: true,
     description: "Sino carnívoro que solta pó ácido.",
     base: { hp: 48, atk: 16, def: 11, spd: 13, int: 18 },
     skill: { name: "Pó Ácido", emoji: "🧪", kind: "bleed_dot", cooldown: 3, description: "Cobre o alvo de ácido causando dano contínuo." },
