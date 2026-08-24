@@ -20,6 +20,7 @@ export type MonsterRow = {
   battle_energy_at?: string;
   team_position?: number;
   train_count?: number;
+  is_shiny?: boolean;
 };
 
 type Props = {
@@ -33,9 +34,10 @@ export function MonsterCard({ monster, onClick, compact, selected }: Props) {
   const sp = SPECIES[monster.species];
   if (!sp) return null;
   const rank = monster.rank ?? 1;
+  const shiny = monster.is_shiny === true;
   const stats = totalStats(monster.species, rank, {
     hp: monster.hp ?? 0, atk: monster.atk ?? 0, def: monster.def ?? 0, spd: monster.spd ?? 0, int: monster.int ?? 0,
-  });
+  }, shiny);
   const gradient = ELEMENT_COLORS[sp.element];
 
   const isMax = rank >= MAX_RANK;
@@ -44,7 +46,7 @@ export function MonsterCard({ monster, onClick, compact, selected }: Props) {
       onClick={onClick}
       className={`relative w-full text-left rounded-2xl overflow-hidden border-2 transition-transform hover:scale-[1.02] ${
         selected ? "border-yellow-400 ring-4 ring-yellow-300/50" : "border-white/30"
-      } shadow-xl backdrop-blur-sm ring-2 ${RARITY_INFO[sp.rarity].ringColor} ${isMax ? "rank-max-glow" : ""}`}
+      } shadow-xl backdrop-blur-sm ring-2 ${shiny ? "ring-amber-300 shadow-[0_0_28px_rgba(252,211,77,0.85)]" : RARITY_INFO[sp.rarity].ringColor} ${isMax ? "rank-max-glow" : ""}`}
     >
       {monster.in_team && (
         <span className="absolute top-2 left-2 z-10 px-2 py-0.5 rounded-full bg-yellow-400 text-yellow-950 text-[10px] font-extrabold shadow">
@@ -72,18 +74,23 @@ export function MonsterCard({ monster, onClick, compact, selected }: Props) {
             </span>
           ))}
         </div>
+        {shiny && (
+          <span className="absolute top-1 right-1 z-20 px-1.5 py-0.5 rounded-full bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-400 text-amber-950 text-[9px] font-extrabold shadow animate-pulse">
+            ✨ SHINY
+          </span>
+        )}
         <div className={`flex items-center justify-center ${compact ? "h-20" : "h-32"}`}>
           <img
             src={sp.image}
             alt={sp.name}
             loading="lazy"
             className="h-full w-auto object-contain drop-shadow-2xl"
-            style={{ filter: skinFilter(monster.skin) }}
+            style={{ filter: shiny ? `${skinFilter(monster.skin)} hue-rotate(150deg) saturate(1.6) brightness(1.12) drop-shadow(0 0 10px rgba(253,224,71,0.9))` : skinFilter(monster.skin) }}
           />
         </div>
       </div>
       <div className="p-2 bg-card/95 backdrop-blur-sm">
-        <div className="font-extrabold text-sm truncate">{monster.name}</div>
+        <div className="font-extrabold text-sm truncate">{shiny ? "✨ " : ""}{monster.name}</div>
         <div className="text-[10px] text-muted-foreground">
           {sp.emoji} {sp.name} • {ELEMENT_NAMES[sp.element]}{sp.secondaryElement ? ` / ${ELEMENT_NAMES[sp.secondaryElement]}` : ""}
         </div>
