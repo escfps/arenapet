@@ -1219,6 +1219,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      bot_jobs_lock: { Args: never; Returns: boolean }
       cleanup_battles: { Args: never; Returns: undefined }
       close_tournament_registration: {
         Args: { p_tournament_id: string }
