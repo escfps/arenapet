@@ -10,6 +10,9 @@ import type { MonsterRow } from "@/components/MonsterCard";
 import { SPECIES, computeBattleEnergy } from "@/lib/game-data";
 import { POKE_TYPES, TYPE_INFO, getTypes, type PokeType } from "@/lib/moves";
 import arenaBg from "@/assets/arena-bg.jpg";
+import { vacantLeaderName } from "@/lib/gym-npc";
+import { useServerFn } from "@tanstack/react-start";
+import { gymChallengeStart, gymChallengeFinish } from "@/lib/gyms.functions";
 
 export const Route = createFileRoute("/gyms")({
   component: GymsPage,
@@ -39,74 +42,6 @@ type GymRow = {
 const BADGES_REQUIRED = 5;
 const REWARD_GEMS = 50;
 
-/** Espécies ativas de um tipo específico. */
-function speciesOfType(t: PokeType): string[] {
-  return Object.values(SPECIES)
-    .filter((s) => !s.retired && !s.hidden)
-    .map((s) => s.id)
-    .filter((id) => getTypes(id).includes(t));
-}
-
-/** Nomes de treinador fixos por ginásio vago (parecem players de verdade). */
-const VACANT_LEADER_NAMES: Record<string, string> = {
-  normal: "LuKaS_92",
-  fire: "BrunaFlames",
-  water: "TidalRafa",
-  grass: "Leaf_Duda",
-  electric: "ThiagoVolt",
-  ice: "Nay_Frost",
-  fighting: "MarcosKO",
-  poison: "ToxicJhow",
-  ground: "PedroQuake",
-  flying: "SkyLarih",
-  psychic: "MindGus",
-  bug: "BiaSwarm",
-  rock: "RochaVitor",
-  ghost: "SombraKarl",
-  dragon: "DrakeIgor",
-  dark: "NoiteLeo",
-  steel: "AcoRenan",
-  fairy: "LariGlow",
-};
-
-function vacantLeaderName(t: PokeType): string {
-  return VACANT_LEADER_NAMES[t] ?? "Treinador";
-}
-
-/** Time do líder NPC quando o ginásio está vago. */
-function buildNpcTeam(t: PokeType): Team {
-  const pool = speciesOfType(t);
-  const order: Record<string, number> = { common: 0, rare: 1, super_rare: 2, epic: 3, legendary: 4, mythic: 5 };
-  const sorted = [...pool].sort((a, b) => (order[SPECIES[b]?.rarity ?? "common"] ?? 0) - (order[SPECIES[a]?.rarity ?? "common"] ?? 0));
-  // pega bons, mas não os 3 mais fortes sempre: mistura um pouco
-  const top = sorted.slice(0, Math.max(3, Math.min(8, sorted.length)));
-  const picked: string[] = [];
-  while (picked.length < Math.min(3, top.length)) {
-    const c = top[Math.floor(Math.random() * top.length)];
-    if (!picked.includes(c)) picked.push(c);
-  }
-  return picked.map((sp, i) => ({
-    id: `npc-${t}-${i}`,
-    owner_id: `npc-${t}`,
-    species: sp,
-    name: SPECIES[sp]?.name ?? "Líder",
-    hp: 90,
-    atk: 12,
-    def: 12,
-    spd: 10,
-    int: 12,
-    crit: 0,
-    hunger: 100,
-    energy: 100,
-    happiness: 100,
-    skin: "default",
-    in_team: true,
-    rank: 3,
-    team_position: i,
-    is_shiny: false,
-  }));
-}
-
 function GymsPage() {
   const { profile, userId, reload } = useProfile();
   const [gyms, setGyms] = useState<GymRow[]>([]);
@@ -124,6 +59,9 @@ function GymsPage() {
   const [pureTeam, setPureTeam] = useState(false);
   const [busy, setBusy] = useState(false);
   const appliedRef = useRef(false);
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const startChallengeFn = useServerFn(gymChallengeStart);
+  const finishChallengeFn = useServerFn(gymChallengeFinish);
 
   const battleFinished = !!battleLog && shownLog.length >= battleLog.length;
 
@@ -173,25 +111,20 @@ function GymsPage() {
 
   // Aplica resultado no servidor quando a animação termina
   useEffect(() => {
-    if (!battleFinished || !winner || !active || appliedRef.current) return;
+    if (!battleFinished || !winner || !sessionId || appliedRef.current) return;
     appliedRef.current = true;
-    const won = winner === "team_a";
+    const sid = sessionId;
+    const turns = battleLog?.length ?? 0;
     (async () => {
       try {
-        const { data, error } = await (supabase as any).rpc("gym_report_result", {
-          p_type: active,
-          p_won: won,
-          p_pure: won && pureTeam,
-        });
-        if (error) throw error;
-        const res = (data ?? {}) as { badge_earned?: boolean; became_leader?: boolean };
-        setOutcome({ badge: !!res.badge_earned, leader: !!res.became_leader });
+        const res = await finishChallengeFn({ data: { sessionId: sid, visibleTurns: turns, forfeit: false } });
+        setOutcome({ badge: res.badge, leader: res.leader });
         await Promise.all([loadAll(), reload()]);
       } catch (e: any) {
         toast.error(e?.message ?? "Erro ao registrar o desafio");
       }
     })();
-  }, [battleFinished, winner, active, pureTeam, loadAll, reload]);
+  }, [battleFinished, winner, sessionId, battleLog, finishChallengeFn, loadAll, reload]);
 
   const badgeSet = useMemo(() => new Set(badges), [badges]);
   const distinctBadges = badgeSet.size;
@@ -218,60 +151,27 @@ function GymsPage() {
 
     setBusy(true);
     try {
+      const res = await startChallengeFn({ data: { type: t } });
       if (!gym.starter) {
-        const { error: spendErr } = await (supabase as any).rpc("gym_start_challenge", { p_type: t });
-        if (spendErr) {
-          toast.error("Você precisa de 5 insígnias diferentes para desafiar! 🎖️");
-          return;
-        }
         setBadges((prev) => [t, ...prev.filter((x) => x !== t)].slice(5));
         toast.info("🎖️ 5 insígnias consumidas para entrar no ginásio!");
       }
-
-      let team: Team = [];
-      let name = vacantLeaderName(t);
-      let isNpc = true;
-      if (gym.leader_id) {
-        const { data } = await supabase
-          .from("monsters").select("*")
-          .eq("owner_id", gym.leader_id).eq("in_team", true)
-          .order("team_position", { ascending: true }).limit(3);
-        const rows = ((data as Team) ?? []).slice(0, 3);
-        if (rows.length === 3) {
-          team = rows;
-          name = leaderNames[gym.leader_id] ?? "Líder";
-          isNpc = false;
-        }
-      }
-      if (team.length !== 3) team = buildNpcTeam(t);
-      if (team.length !== 3) { toast.error("Este ginásio ainda não tem líder disponível."); return; }
-
-      // consome energia/fome
-      const hungerLoss = myTeam.map(() => 1 + Math.floor(Math.random() * 3));
-      await Promise.all(myTeam.map(async (m, i) => {
-        const e = teamEnergies[i];
-        await supabase.from("monsters").update({
-          battle_energy: Math.max(0, e.energy - 1),
-          battle_energy_at: e.nextStoredAt,
-          hunger: Math.max(0, (m.hunger ?? 100) - hungerLoss[i]),
-        }).eq("id", m.id);
-      }));
-      setMyTeam((prev) => prev.map((m, i) => ({
-        ...m,
-        battle_energy: Math.max(0, teamEnergies[i].energy - 1),
-        battle_energy_at: teamEnergies[i].nextStoredAt,
-        hunger: Math.max(0, (m.hunger ?? 100) - hungerLoss[i]),
-      })));
-
-      const result = simulateBattle(myTeam.map(toBattleMonster), team.map(toBattleMonster));
       appliedRef.current = false;
       setOutcome(null);
-      setPureTeam(myTeamIsPure(t));
+      setPureTeam(res.pure);
       setActive(t);
-      setEnemy({ team, name, isNpc });
+      setEnemy({
+        team: res.enemyTeam as unknown as Team,
+        name: res.enemyName || vacantLeaderName(t),
+        isNpc: res.isNpc,
+      });
+      setMyTeam(res.myTeam as unknown as Team);
       setShownLog([]);
-      setWinner(result.winner);
-      setBattleLog(result.log);
+      setSessionId(res.sessionId);
+      setWinner(res.winner);
+      setBattleLog(res.log);
+    } catch (e: any) {
+      toast.error(e?.message ?? "Não foi possível desafiar agora.");
     } finally {
       setBusy(false);
     }
@@ -289,6 +189,7 @@ function GymsPage() {
   }
 
   function closeBattle() {
+    setSessionId(null);
     setBattleLog(null);
     setShownLog([]);
     setWinner(null);
