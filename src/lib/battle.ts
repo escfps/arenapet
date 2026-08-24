@@ -2034,12 +2034,14 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           }
 
           if (skill.kind === "spectral_hunger") {
-            for (let hit = 0; hit < 2; hit++) {
+            const shMult = attacker.species === "abra" ? 1.6 : attacker.species === "kadabra" ? 1.9 : 2.2;
+            const shHits = attacker.species === "abra" ? 1 : 2;
+            for (let hit = 0; hit < shHits; hit++) {
               const aliveEnemies = enemies.filter((e) => e.current > 0);
               if (aliveEnemies.length === 0) break;
               const target = aliveEnemies.reduce((x, y) => (x.current < y.current ? x : y));
               const eff = defensiveMultiplier(getElement(attacker.species), target.species);
-              const dmg = Math.max(1, Math.round(effInt * 2.2 * eff * skillMult));
+              const dmg = Math.max(1, Math.round(effInt * shMult * eff * skillMult));
               const wasAlive = target.current > 0;
               applyDamage(target, dmg);
               log.push({
