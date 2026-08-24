@@ -815,9 +815,10 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           if (skill.kind === "aoe_magic") {
             const isPsychic = attacker.species === "coruja_psiquica";
             const isGengar = attacker.species === "gengar";
-            const intMult = isPsychic ? 1.6 : isGengar ? 1.8 : 2.2;
-            const flatMult = isPsychic ? 1.0 : isGengar ? 1.0 : 1.2;
-            const silenceChance = isPsychic ? 0.4 : isGengar ? 0.35 : 0;
+            const isHaunter = attacker.species === "haunter";
+            const intMult = isPsychic ? 1.6 : isGengar ? 1.8 : isHaunter ? 1.5 : 2.2;
+            const flatMult = isPsychic ? 1.0 : isGengar ? 1.0 : isHaunter ? 1.0 : 1.2;
+            const silenceChance = isPsychic ? 0.4 : isGengar ? 0.35 : isHaunter ? 0.25 : 0;
             const targets = enemies.filter((e) => e.current > 0);
             for (const t of targets) {
               const eff = defensiveMultiplier(getElement(attacker.species), t.species);
