@@ -61,7 +61,7 @@ function TradePage() {
     if (!userId) return;
     const [tRes, mRes] = await Promise.all([
       supabase.from("trades").select("*").order("created_at", { ascending: false }).limit(50),
-      supabase.from("monsters").select("id,owner_id,species,name,rank,in_team").eq("owner_id", userId),
+      supabase.from("monsters").select("id,owner_id,species,name,rank,in_team,is_shiny").eq("owner_id", userId),
     ]);
     const tradesData = (tRes.data ?? []) as Trade[];
     setTrades(tradesData);
@@ -79,7 +79,7 @@ function TradePage() {
     if (monIds.size > 0) {
       const { data: mons } = await supabase
         .from("monsters")
-        .select("id,owner_id,species,name,rank,in_team")
+        .select("id,owner_id,species,name,rank,in_team,is_shiny")
         .in("id", Array.from(monIds));
       const map = new Map<string, Mon>();
       for (const m of (mons ?? []) as Mon[]) map.set(m.id, m);
