@@ -2516,8 +2516,11 @@ export function rollChest(tier: ChestTier, forceRarity?: Rarity): ChestReward {
 
   }
 
-  // ✨ Shiny só pode sair no Baú Lendário
-  const petShiny = petSpecies && (tier === "legendary" || tier === "mythic") ? rollShiny() : false;
+  // ✨ Shiny só pode sair no Baú Lendário/Mítico; chance escala por raridade (mítico ~20x mais raro)
+  const chosenRarityResolved: Rarity = petSpecies
+    ? (Object.values(SPECIES).find((s) => s.id === petSpecies)?.rarity ?? "legendary")
+    : "legendary";
+  const petShiny = petSpecies && (tier === "legendary" || tier === "mythic") ? rollShinyForRarity(chosenRarityResolved) : false;
 
   return { coins, gems, rations, petSpecies, petShiny };
 
