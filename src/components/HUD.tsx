@@ -8,6 +8,7 @@ import { ChallengeNotifier } from "./ChallengeNotifier";
 import { isVip, getTier } from "@/lib/game-data";
 import { supabase } from "@/integrations/supabase/client";
 import { heartbeat } from "@/lib/friends.functions";
+import pokeballIcon from "@/assets/pokeball.png";
 
 export type ProfileRow = {
   id: string;
@@ -53,7 +54,7 @@ export function HUD({ profile }: { profile: ProfileRow }) {
 
         <MobileDrawerButton onOpen={() => setDrawerOpen(true)} />
         <Link to="/" className="font-extrabold text-white items-center gap-1.5 hover:scale-105 transition hidden sm:flex">
-          <span className="text-xl">🐲</span>
+          <img src={pokeballIcon} alt="Poke Arena" width={20} height={20} className="inline-block" />
           <span className="text-sm">POKE ARENA</span>
         </Link>
         <Link to="/profile" className="text-white hover:scale-105 transition min-w-0 flex-1">
