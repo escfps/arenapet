@@ -213,8 +213,9 @@ function GymsPage() {
     .sort((a, b) => Number(b.starter) - Number(a.starter));
 
   return (
-    <div className="min-h-screen bg-cover bg-center pb-24" style={{ backgroundImage: `url(${arenaBg})` }}>
-      <div className="min-h-screen bg-purple-950/80 backdrop-blur-sm">
+    <div className="min-h-screen bg-cover bg-center" style={{ backgroundImage: `url(${arenaBg})` }}>
+      <div className="min-h-screen bg-purple-950/80 backdrop-blur-sm pb-40">
+
         <HUD profile={profile} />
         <Toaster position="top-center" richColors />
 
