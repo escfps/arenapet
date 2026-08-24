@@ -147,7 +147,7 @@ export const adminUpdatePetStat = createServerFn({ method: "POST" })
           if (nextValue >= critCap) break;
           nextValue += 1;
         } else if (data.stat === "hp") {
-          nextValue += 3 + Math.floor(Math.random() * 3); // 3..5
+          nextValue += 20 + Math.floor(Math.random() * 6); // 20..25
         } else {
           nextValue += 1 + Math.floor(Math.random() * 2); // 1..2
         }
