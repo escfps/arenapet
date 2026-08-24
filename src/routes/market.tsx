@@ -342,6 +342,8 @@ function MarketPage() {
               </button>
             </div>
 
+            <div className="flex gap-2 items-center">
+              <span className="text-[11px] font-bold text-white/70">Preço:</span>
               {([["recent", "🕒 Recentes"], ["asc", "⬆️ Menor"], ["desc", "⬇️ Maior"]] as const).map(([k, label]) => (
                 <button
                   key={k}
