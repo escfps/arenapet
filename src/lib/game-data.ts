@@ -2120,6 +2120,16 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   parasect: ["floresta"],
   venonat: ["floresta"],
   venomoth: ["floresta", "aves"],
+  diglett: ["pedra"],
+  dugtrio: ["pedra"],
+  meowth: ["felinos"],
+  persian: ["felinos"],
+  psyduck: ["abyssal"],
+  golduck: ["abyssal"],
+  mankey: ["macacos"],
+  primeape: ["macacos"],
+  growlithe: ["fogo"],
+  arcanine: ["fogo"],
 };
 
 export function getSpeciesCategories(speciesId: string): Category[] {
