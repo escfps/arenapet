@@ -66,6 +66,7 @@ async function fetchOpponentProfiles(ownerIds: string[]) {
 function ArenaPage() {
   const navigate = useNavigate();
   const { userId, profile, reload, loading } = useProfile();
+  const gymLeaders = useGymLeaders();
   const startFight = useServerFn(arenaStart);
   const finishFight = useServerFn(arenaFinish);
   const [myTeam, setMyTeam] = useState<FullMonster[]>([]);
