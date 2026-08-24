@@ -735,6 +735,30 @@ export type Database = {
         }
         Relationships: []
       }
+      species_types: {
+        Row: {
+          created_at: string
+          element: string
+          id: string
+          retired: boolean
+          secondary_element: string | null
+        }
+        Insert: {
+          created_at?: string
+          element: string
+          id: string
+          retired?: boolean
+          secondary_element?: string | null
+        }
+        Update: {
+          created_at?: string
+          element?: string
+          id?: string
+          retired?: boolean
+          secondary_element?: string | null
+        }
+        Relationships: []
+      }
       tournament_champions: {
         Row: {
           last_win_at: string | null
@@ -1012,6 +1036,7 @@ export type Database = {
         Args: { p_bot: string; p_rarity: string }
         Returns: undefined
       }
+      _bot_pure_type: { Args: { p_bot: string }; Returns: string }
       _bot_random_species: { Args: { rarity: string }; Returns: string }
       _bot_rarity_allowed_for_age: {
         Args: { age_days: number; r: string }
@@ -1088,6 +1113,7 @@ export type Database = {
       }
       seasons_tick: { Args: never; Returns: undefined }
       simulate_bot_battles: { Args: never; Returns: undefined }
+      simulate_bot_gyms: { Args: never; Returns: undefined }
       tournaments_tick: { Args: never; Returns: undefined }
       train_bot_pets: { Args: never; Returns: undefined }
     }
