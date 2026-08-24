@@ -366,7 +366,7 @@ import vespanoxaImg from "@/assets/monsters/vespanoxa.png";
 import ventasaImg from "@/assets/monsters/ventasa.png";
 import dracomarinoImg from "@/assets/monsters/dracomarino.png";
 
-export type Element = "fire" | "water" | "grass" | "electric" | "shadow" | "earth";
+export type Element = "fire" | "water" | "grass" | "electric" | "shadow" | "earth" | "psychic" | "fairy";
 export type Role = "tank" | "dps" | "assassin" | "mage" | "healer";
 export type Rarity = "common" | "rare" | "super_rare" | "epic" | "legendary" | "mythic";
 
@@ -2172,14 +2172,14 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Abraço dos Tentáculos", emoji: "🌀", kind: "bleed_dot", cooldown: 4, description: "Aperta o alvo causando sangramento." },
   },
   mewtwo: {
-    id: "mewtwo", name: "Mewtwo", element: "shadow", role: "mage", rarity: "mythic",
+    id: "mewtwo", name: "Mewtwo", element: "psychic", role: "mage", rarity: "mythic",
     emoji: "🧠", image: mewtwoImg, shinyImage: mewtwoShinyImg, hidden: true,
     description: "Criado em laboratório, o poder psíquico mais devastador já visto.",
     base: { hp: 92, atk: 34, def: 26, spd: 38, int: 50 },
     skill: { name: "Explosão Psíquica", emoji: "🌌", kind: "true_damage_nuke", cooldown: 5, description: "Onda mental pura que ignora DEF e elemento." },
   },
   mew: {
-    id: "mew", name: "Mew", element: "shadow", role: "mage", rarity: "mythic",
+    id: "mew", name: "Mew", element: "psychic", secondaryElement: "fairy", role: "mage", rarity: "mythic",
     emoji: "✨", image: mewImg, shinyImage: mewShinyImg, hidden: true,
     description: "Ancestral de todos os pets, contém todo o DNA conhecido.",
     base: { hp: 90, atk: 30, def: 28, spd: 36, int: 48 },
