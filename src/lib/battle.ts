@@ -118,12 +118,11 @@ function getElement(species: string): PokeType {
   return getTypes(species)[0] ?? "normal";
 }
 
-/** Efetividade das SKILLS pelo novo sistema de 18 tipos (com clamp pra não travar batalha). */
+/** Efetividade pelo sistema de 18 tipos: multiplicativo puro (4x / 2x / 1x / 0.5x / 0.25x / 0x). */
 function defensiveMultiplier(atkType: PokeType, defSpecies: string): number {
-  const m = typeMultiplier(atkType, getTypes(defSpecies));
-  if (m <= 0) return 0.4;
-  return Math.max(0.4, Math.min(2.5, m));
+  return typeMultiplier(atkType, getTypes(defSpecies));
 }
+
 
 
 // ===== PASSIVAS DAS FÊNIX MÍTICAS =====
