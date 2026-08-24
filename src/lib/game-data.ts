@@ -2218,14 +2218,14 @@ export const ELEMENT_NAMES: Record<Element, string> = {
 
 // Type effectiveness (multiplier on damage)
 export const TYPE_CHART: Record<Element, Partial<Record<Element, number>>> = {
-  fire: { grass: 1.5, water: 0.7, fire: 0.8, earth: 0.7, steel: 1.5, bug: 1.5, ice: 1.5 },
-  water: { fire: 1.5, grass: 0.7, water: 0.8, earth: 1.5, steel: 0.8 },
-  grass: { water: 1.5, fire: 0.7, grass: 0.8, earth: 1.5, poison: 0.7, flying: 0.7, bug: 0.7, steel: 0.7 },
-  electric: { water: 1.5, grass: 0.7, electric: 0.8, earth: 0.5, flying: 1.5, steel: 0.7 },
-  shadow: { shadow: 0.8, ghost: 1.5, psychic: 1.5, fairy: 0.7, dark: 0.7 },
-  earth: { fire: 1.5, electric: 1.5, grass: 0.7, water: 0.7, earth: 0.8, steel: 1.5, poison: 1.5, rock: 1.5 },
-  psychic: { fighting: 1.5, poison: 1.5, psychic: 0.8, steel: 0.7, dark: 0, shadow: 0.7, bug: 0.7, ghost: 0.7 },
-  fairy: { fighting: 1.5, dragon: 1.5, dark: 1.5, fire: 0.7, poison: 0.7, steel: 0.7, shadow: 0.8 },
+  fire: { grass: 1.5, water: 0.7, fire: 0.8, earth: 0.7 },
+  water: { fire: 1.5, grass: 0.7, water: 0.8, earth: 1.5 },
+  grass: { water: 1.5, fire: 0.7, grass: 0.8, earth: 1.5 },
+  electric: { water: 1.5, grass: 0.7, electric: 0.8, earth: 0.5 },
+  shadow: { shadow: 0.8, psychic: 1.5, fairy: 0.7 },
+  earth: { fire: 1.5, electric: 1.5, grass: 0.7, water: 0.7, earth: 0.8 },
+  psychic: { psychic: 0.8, shadow: 1.5, fairy: 0.7 },
+  fairy: { fairy: 0.8, psychic: 0.7, shadow: 1.5 },
 };
 
 // ===== Items =====
