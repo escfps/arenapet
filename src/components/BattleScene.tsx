@@ -1,3 +1,4 @@
+import { speciesImage, shinyFallbackFilter } from "@/lib/game-data";
 import { useEffect, useMemo, useState } from "react";
 import type { BattleLogEntry } from "@/lib/battle";
 import { SPECIES, ELEMENT_COLORS, RARITY_INFO, MAX_RANK, skinFilter, totalStats, getSkill } from "@/lib/game-data";
@@ -194,7 +195,7 @@ export function BattleScene({
       const newItem = {
         id,
         side: actorSide,
-        image: sp.image,
+        image: speciesImage(actorMon.species, (actorMon as any).is_shiny === true),
         actorName: entry.actorName,
         skillEmoji,
         skillLabel,
@@ -639,14 +640,14 @@ function ArenaLineup({
             {/* Plataforma circular */}
             <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-16 h-3 rounded-full bg-black/40 blur-sm" />
             <img
-              src={sp.image}
+              src={speciesImage(m.species, (m as any).is_shiny === true)}
               alt={m.name}
               loading="lazy"
               className={`relative h-40 w-40 sm:h-44 sm:w-44 object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.6)] ${
                 isActor ? "ring-4 ring-yellow-300/80 rounded-full" : ""
               } ${isTarget ? "ring-4 ring-red-400/80 rounded-full" : ""}`}
               style={{
-                filter: skinFilter(m.skin),
+                filter: `${skinFilter(m.skin)} ${shinyFallbackFilter(m.species, (m as any).is_shiny === true)} ${(m as any).is_shiny ? "drop-shadow(0 0 12px rgba(253,224,71,0.9))" : ""}`.trim(),
                 transform: mirrored ? "scaleX(-1)" : undefined,
               }}
             />
@@ -1104,13 +1105,13 @@ function SideColumn({
               } transition-all`}
             >
               <img
-                src={sp.image}
+                src={speciesImage(m.species, (m as any).is_shiny === true)}
                 alt=""
                 className="h-8 w-8 sm:h-12 sm:w-12 object-contain drop-shadow-lg shrink-0"
-                style={{ filter: skinFilter(m.skin) }}
+                style={{ filter: `${skinFilter(m.skin)} ${shinyFallbackFilter(m.species, (m as any).is_shiny === true)}`.trim() }}
               />
               <div className="flex-1 min-w-0">
-                <div className="font-bold text-[10px] sm:text-xs text-white truncate leading-tight">{m.name}</div>
+                <div className="font-bold text-[10px] sm:text-xs text-white truncate leading-tight">{(m as any).is_shiny ? "✨ " : ""}{m.name}</div>
                 <div className="flex items-center gap-0.5 leading-none -mt-0.5" title={`${m.rank ?? 1} estrelas`}>
                   {Array.from({ length: m.rank ?? 1 }).map((_, i) => (
                     <span key={i} className="text-[8px] sm:text-[9px] text-yellow-300 drop-shadow-[0_0_2px_rgba(0,0,0,0.8)]">★</span>

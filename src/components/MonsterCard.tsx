@@ -1,4 +1,4 @@
-import { SPECIES, skinFilter, ELEMENT_COLORS, ELEMENT_NAMES, ROLE_INFO, RARITY_INFO, totalStats, rankStars, MAX_RANK, getSpeciesCategories, CATEGORY_INFO } from "@/lib/game-data";
+import { SPECIES, speciesImage, shinyFallbackFilter, skinFilter, ELEMENT_COLORS, ELEMENT_NAMES, ROLE_INFO, RARITY_INFO, totalStats, rankStars, MAX_RANK, getSpeciesCategories, CATEGORY_INFO } from "@/lib/game-data";
 
 export type MonsterRow = {
   id: string;
@@ -81,11 +81,11 @@ export function MonsterCard({ monster, onClick, compact, selected }: Props) {
         )}
         <div className={`flex items-center justify-center ${compact ? "h-20" : "h-32"}`}>
           <img
-            src={sp.image}
+            src={speciesImage(monster.species, shiny)}
             alt={sp.name}
             loading="lazy"
             className="h-full w-auto object-contain drop-shadow-2xl"
-            style={{ filter: shiny ? `${skinFilter(monster.skin)} hue-rotate(150deg) saturate(1.6) brightness(1.12) drop-shadow(0 0 10px rgba(253,224,71,0.9))` : skinFilter(monster.skin) }}
+            style={{ filter: `${skinFilter(monster.skin)} ${shinyFallbackFilter(monster.species, shiny)} ${shiny ? "drop-shadow(0 0 10px rgba(253,224,71,0.9))" : ""}`.trim() }}
           />
         </div>
       </div>

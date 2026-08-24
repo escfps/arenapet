@@ -201,6 +201,16 @@ import wartortleImg from "@/assets/monsters/wartortle.png";
 import blastoiseImg from "@/assets/monsters/blastoise.png";
 import bulbasaurImg from "@/assets/monsters/bulbasaur.png";
 import caterpieImg from "@/assets/monsters/caterpie.png";
+import bulbasaurShinyImg from "@/assets/monsters/shiny/bulbasaur.png";
+import ivysaurShinyImg from "@/assets/monsters/shiny/ivysaur.png";
+import venusaurShinyImg from "@/assets/monsters/shiny/venusaur.png";
+import charmanderShinyImg from "@/assets/monsters/shiny/charmander.png";
+import charmeleonShinyImg from "@/assets/monsters/shiny/charmeleon.png";
+import charizardShinyImg from "@/assets/monsters/shiny/charizard.png";
+import squirtleShinyImg from "@/assets/monsters/shiny/squirtle.png";
+import wartortleShinyImg from "@/assets/monsters/shiny/wartortle.png";
+import blastoiseShinyImg from "@/assets/monsters/shiny/blastoise.png";
+import caterpieShinyImg from "@/assets/monsters/shiny/caterpie.png";
 import metapodImg from "@/assets/monsters/metapod.png";
 import butterfreeImg from "@/assets/monsters/butterfree.png";
 import weedleImg from "@/assets/monsters/weedle.png";
@@ -239,6 +249,7 @@ export type Species = {
   rarity: Rarity;
   emoji: string;
   image: string;
+  shinyImage?: string; // ✨ arte alternativa shiny
   description: string;
   base: { hp: number; atk: number; def: number; spd: number; int: number };
   skill?: Skill; // unique skill per species (overrides ROLE_SKILLS)
@@ -966,70 +977,70 @@ export const SPECIES: Record<string, Species> = {
   },
   charmander: {
     id: "charmander", name: "Charmander", element: "fire", role: "dps", rarity: "super_rare",
-    emoji: "🔥🦎", image: charmanderImg, hidden: true,
+    emoji: "🔥🦎", image: charmanderImg, shinyImage: charmanderShinyImg, hidden: true,
     description: "Primeira forma da linhagem flamejante. Um lagartinho de cauda acesa — a chama nunca apaga e queima quem se aproxima demais.",
     base: { hp: 46, atk: 15, def: 8, spd: 17, int: 9 },
     skill: { name: "Brasa", emoji: "🔥", kind: "burn_dot", cooldown: 3, description: "Cospe brasa no alvo: dano agora + queimadura por 3 turnos." },
   },
   charmeleon: {
     id: "charmeleon", name: "Charmeleon", element: "fire", role: "dps", rarity: "legendary",
-    emoji: "🔥🦖", image: charmeleonImg, hidden: true,
+    emoji: "🔥🦖", image: charmeleonImg, shinyImage: charmeleonShinyImg, hidden: true,
     description: "Segunda forma da linhagem flamejante. Temperamento explosivo e garras afiadas — ataca duas vezes antes que o inimigo reaja.",
     base: { hp: 66, atk: 21, def: 12, spd: 19, int: 11 },
     skill: { name: "Garra Flamejante", emoji: "🗡️", kind: "double_strike", cooldown: 3, description: "Duas garradas em chamas no mesmo alvo (dano por golpe reduzido)." },
   },
   charizard: {
     id: "charizard", name: "Charizard", element: "fire", role: "dps", rarity: "mythic",
-    emoji: "🐉🔥", image: charizardImg, hidden: true,
+    emoji: "🐉🔥", image: charizardImg, shinyImage: charizardShinyImg, hidden: true,
     description: "Forma final da linhagem flamejante. Um dragão alado que cospe fogo capaz de derreter pedra — quanto mais ferido, mais furioso fica.",
     base: { hp: 88, atk: 26, def: 15, spd: 22, int: 14 },
     skill: { name: "Lança-Chamas", emoji: "🔥", kind: "phoenix_rage", cooldown: 4, description: "PASSIVA: cada 10% de HP perdido = +6% ATK (até +60% com 1 HP). ATIVA: jato de fogo devastador (2× dano)." },
   },
   squirtle: {
     id: "squirtle", name: "Squirtle", element: "water", role: "tank", rarity: "super_rare",
-    emoji: "💧🐢", image: squirtleImg, hidden: true,
+    emoji: "💧🐢", image: squirtleImg, shinyImage: squirtleShinyImg, hidden: true,
     description: "Primeira forma da linhagem aquática. Se esconde no casco pra aguentar o pior e responde com jatos de água pressurizada.",
     base: { hp: 58, atk: 10, def: 14, spd: 12, int: 9 },
     skill: { name: "Jato d'Água", emoji: "💧", kind: "turtle_shell", cooldown: 3, description: "Recolhe-se no casco: reduz o dano recebido por 2 turnos e devolve parte do dano em jato d'água." },
   },
   wartortle: {
     id: "wartortle", name: "Wartortle", element: "water", role: "tank", rarity: "legendary",
-    emoji: "🌊🐢", image: wartortleImg, hidden: true,
+    emoji: "🌊🐢", image: wartortleImg, shinyImage: wartortleShinyImg, hidden: true,
     description: "Segunda forma da linhagem aquática. As orelhas e a cauda peluda guiam seus contra-ataques — um passo antes de se tornar Blastoise.",
     base: { hp: 78, atk: 14, def: 19, spd: 14, int: 12 },
     skill: { name: "Redemoinho", emoji: "🌊", kind: "turtle_shell", cooldown: 3, description: "Gira no casco: reduz o dano recebido por 2 turnos e devolve parte do dano ao agressor." },
   },
   blastoise: {
     id: "blastoise", name: "Blastoise", element: "water", role: "tank", rarity: "mythic",
-    emoji: "🔫🐢", image: blastoiseImg, hidden: true,
+    emoji: "🔫🐢", image: blastoiseImg, shinyImage: blastoiseShinyImg, hidden: true,
     description: "Forma final da linhagem aquática. Dois canhões nas costas disparam jatos capazes de furar aço — muralha e artilharia no mesmo pet.",
     base: { hp: 104, atk: 19, def: 25, spd: 15, int: 14 },
     skill: { name: "Hidrocanhão", emoji: "🔫", kind: "aoe_strike_def_down", cooldown: 4, description: "Dispara os canhões em TODOS os inimigos (1.3× dano cada) e reduz a DEF de todos em 15% por 2 turnos." },
   },
   bulbasaur: {
     id: "bulbasaur", name: "Bulbasaur", element: "grass", role: "healer", rarity: "super_rare",
-    emoji: "🌱🦕", image: bulbasaurImg, hidden: true,
+    emoji: "🌱🦕", image: bulbasaurImg, shinyImage: bulbasaurShinyImg, hidden: true,
     description: "Primeira forma da linhagem vegetal. O bulbo nas costas guarda esporos que curam o aliado mais ferido.",
     base: { hp: 52, atk: 10, def: 12, spd: 11, int: 24 },
     skill: { name: "Esporo Vital", emoji: "🌱", kind: "heal_lowest", cooldown: 3, description: "Libera esporos curativos no aliado mais ferido (~INT×1.3)." },
   },
   ivysaur: {
     id: "ivysaur", name: "Ivysaur", element: "grass", role: "healer", rarity: "legendary",
-    emoji: "🌷🦕", image: ivysaurImg, hidden: true,
+    emoji: "🌷🦕", image: ivysaurImg, shinyImage: ivysaurShinyImg, hidden: true,
     description: "Segunda forma da linhagem vegetal. O botão floral já espalha pólen restaurador por todo o time.",
     base: { hp: 72, atk: 14, def: 17, spd: 13, int: 30 },
     skill: { name: "Pólen Restaurador", emoji: "🌷", kind: "team_heal", cooldown: 4, description: "Cura TODOS os aliados (~INT×0.9 cada)." },
   },
   venusaur: {
     id: "venusaur", name: "Venusaur", element: "grass", role: "healer", rarity: "mythic",
-    emoji: "🌸🦖", image: venusaurImg, hidden: true,
+    emoji: "🌸🦖", image: venusaurImg, shinyImage: venusaurShinyImg, hidden: true,
     description: "Forma final da linhagem vegetal. A flor gigantesca dispara espinhos em toda a arena enquanto sustenta o time.",
     base: { hp: 98, atk: 18, def: 22, spd: 14, int: 36 },
     skill: { name: "Tempestade de Folhas", emoji: "🌸", kind: "thorn_burst", cooldown: 4, description: "Golpeia TODOS os inimigos com folhas afiadas. PASSIVA: reflete parte do dano recebido." },
   },
   caterpie: {
     id: "caterpie", name: "Caterpie", element: "grass", role: "tank", rarity: "rare",
-    emoji: "🐛🌿", image: caterpieImg, hidden: true,
+    emoji: "🐛🌿", image: caterpieImg, shinyImage: caterpieShinyImg, hidden: true,
     description: "Primeira forma da linhagem inseto. Solta um fio grudento que atrasa o inimigo mais rápido.",
     base: { hp: 40, atk: 9, def: 10, spd: 12, int: 8 },
     skill: { name: "Fio da Seda", emoji: "🕸️", kind: "blind_debuff", cooldown: 3, description: "Cobre o alvo de seda: reduz a precisão dele por 2 turnos." },
@@ -2355,6 +2366,19 @@ export function rankStars(rank: number): string {
 
 // Multiplicador global de HP base — aumenta durabilidade pra evitar one-shots
 // quando bots de alto rank encontram pets squishy.
+
+/** Arte do pet: usa a arte shiny exclusiva quando existir. */
+export function speciesImage(species: string, shiny = false): string {
+  const sp = SPECIES[species];
+  if (!sp) return "";
+  return shiny && sp.shinyImage ? sp.shinyImage : sp.image;
+}
+/** Filtro visual usado quando o pet é shiny mas ainda não tem arte própria. */
+export function shinyFallbackFilter(species: string, shiny: boolean): string {
+  if (!shiny || SPECIES[species]?.shinyImage) return "";
+  return "hue-rotate(150deg) saturate(1.6) brightness(1.12)";
+}
+
 export const HP_BASE_MULT = 2.56;
 
 export function totalStats(species: string, rank = 1, bonus = { hp: 0, atk: 0, def: 0, spd: 0, int: 0 }, shiny = false) {

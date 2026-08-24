@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CHESTS, SPECIES, RARITY_INFO, type ChestTier, type ChestReward } from "@/lib/game-data";
+import { CHESTS, SPECIES, speciesImage, shinyFallbackFilter, RARITY_INFO, type ChestTier, type ChestReward } from "@/lib/game-data";
 
 export type PendingChest = {
   id: string;
@@ -84,10 +84,10 @@ export function ChestRewardPopup({
                   <div className="mb-1 text-sm font-black text-amber-200 animate-pulse">✨ SHINY ULTRA RARO! ✨</div>
                 )}
                 <img
-                  src={pet.image}
+                  src={speciesImage(pet.id, current.reward.petShiny === true)}
                   alt={pet.name}
                   className="h-32 mx-auto drop-shadow-2xl animate-in zoom-in duration-700"
-                  style={current.reward.petShiny ? { filter: "hue-rotate(150deg) saturate(1.6) brightness(1.12) drop-shadow(0 0 14px rgba(253,224,71,0.95))" } : undefined}
+                  style={current.reward.petShiny ? { filter: `${shinyFallbackFilter(pet.id, true)} drop-shadow(0 0 14px rgba(253,224,71,0.95))`.trim() } : undefined}
                 />
                 <div className="mt-2 font-extrabold text-base">
                   {current.reward.petShiny ? "✨ " : ""}{pet.emoji} {pet.name}

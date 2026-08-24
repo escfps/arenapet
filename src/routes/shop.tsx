@@ -1,3 +1,4 @@
+import { speciesImage, shinyFallbackFilter } from "@/lib/game-data";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -456,7 +457,7 @@ function ShopPage() {
                       <div className="mb-3 pb-3 border-b border-white/30">
                         <div className="text-xs opacity-90">🎉 BICHINHO RARO!</div>
                         <>{chestResult.reward.petShiny && (<div className="text-sm font-black text-amber-300 animate-pulse">✨ SHINY ULTRA RARO! ✨</div>)}
-                        <img src={SPECIES[chestResult.reward.petSpecies].image} alt="" className="h-36 mx-auto drop-shadow-2xl animate-in zoom-in duration-700" style={chestResult.reward.petShiny ? { filter: "hue-rotate(150deg) saturate(1.6) brightness(1.12) drop-shadow(0 0 14px rgba(253,224,71,0.95))" } : undefined} /></>
+                        <img src={speciesImage(chestResult.reward.petSpecies, chestResult.reward.petShiny === true)} alt="" className="h-36 mx-auto drop-shadow-2xl animate-in zoom-in duration-700" style={chestResult.reward.petShiny ? { filter: `${shinyFallbackFilter(chestResult.reward.petSpecies, true)} drop-shadow(0 0 14px rgba(253,224,71,0.95))`.trim() } : undefined} /></>
                         <div className="text-xl font-extrabold">
                           {SPECIES[chestResult.reward.petSpecies].emoji} {SPECIES[chestResult.reward.petSpecies].name}
                         </div>
