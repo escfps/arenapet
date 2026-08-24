@@ -15,9 +15,9 @@ export const Route = createFileRoute("/gyms")({
   component: GymsPage,
   head: () => ({
     meta: [
-      { title: "Ginásios Pokémon — Poke Arena" },
-      { name: "description", content: "Desafie os 18 ginásios de Poke Arena, conquiste insígnias e domine um ginásio para receber 50 diamantes a cada 24 horas." },
-      { property: "og:title", content: "Ginásios Pokémon — Poke Arena" },
+      { title: "Ginásios Pokémon — Duelo Pokemon" },
+      { name: "description", content: "Desafie os 18 ginásios de Duelo Pokemon, conquiste insígnias e domine um ginásio para receber 50 diamantes a cada 24 horas." },
+      { property: "og:title", content: "Ginásios Pokémon — Duelo Pokemon" },
       { property: "og:description", content: "Conquiste insígnias, torne-se líder de ginásio e receba diamantes todos os dias." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

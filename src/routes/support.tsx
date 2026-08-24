@@ -6,8 +6,8 @@ import { useProfile } from "@/lib/use-profile";
 export const Route = createFileRoute("/support")({
   head: () => ({
     meta: [
-      { title: "Suporte — Poke Arena" },
-      { name: "description", content: "Central de suporte do Poke Arena. Tire dúvidas, fale com a gente por email ou no Discord." },
+      { title: "Suporte — Duelo Pokemon" },
+      { name: "description", content: "Central de suporte do Duelo Pokemon. Tire dúvidas, fale com a gente por email ou no Discord." },
     ],
   }),
   component: SupportPage,
@@ -61,7 +61,7 @@ function SupportPage() {
 
         <div className="rounded-3xl bg-[oklch(0.18_0.06_290)]/90 backdrop-blur-xl border-2 border-fuchsia-400/30 p-6 shadow-2xl">
           <h1 className="text-2xl font-extrabold text-white mb-1 flex items-center gap-2">
-            <span>💬</span> Suporte Poke Arena
+            <span>💬</span> Suporte Duelo Pokemon
           </h1>
           <p className="text-white/60 text-sm">
             Tá com alguma dúvida ou problema? A gente tá aqui pra ajudar.

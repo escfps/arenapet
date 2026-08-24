@@ -12,9 +12,9 @@ import arenaBg from "@/assets/arena-bg.jpg";
 export const Route = createFileRoute("/market")({
   head: () => ({
     meta: [
-      { title: "Mercado de Jogadores — Poke Arena" },
+      { title: "Mercado de Jogadores — Duelo Pokemon" },
       { name: "description", content: "Compre e venda pokémons, baús, rações e insígnias com outros treinadores usando moedas ou diamantes. Taxa de 3% por venda." },
-      { property: "og:title", content: "Mercado de Jogadores — Poke Arena" },
+      { property: "og:title", content: "Mercado de Jogadores — Duelo Pokemon" },
       { property: "og:description", content: "Anuncie pokémons, itens e insígnias por moedas ou diamantes e negocie com outros treinadores." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

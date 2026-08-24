@@ -4,8 +4,8 @@ export const Route = createFileRoute("/terms")({
   component: TermsPage,
   head: () => ({
     meta: [
-      { title: "Termos de Uso — Poke Arena" },
-      { name: "description", content: "Termos e condições de uso do Poke Arena." },
+      { title: "Termos de Uso — Duelo Pokemon" },
+      { name: "description", content: "Termos e condições de uso do Duelo Pokemon." },
     ],
   }),
 });
@@ -21,14 +21,14 @@ function TermsPage() {
         <section className="space-y-3 text-sm leading-relaxed">
           <h2 className="text-xl font-bold mt-4">1. Sobre o vendedor</h2>
           <p>
-            O <b>POKE ARENA</b> é operado por Bruno Henrique Moura Bernardo (pessoa física),
+            O <b>DUELO POKEMON</b> é operado por Bruno Henrique Moura Bernardo (pessoa física),
             domiciliado no Brasil ("nós", "vendedor"). Ao utilizar o serviço, você aceita
             integralmente estes Termos. Caso não concorde, não utilize o serviço.
           </p>
 
           <h2 className="text-xl font-bold mt-4">2. Descrição do serviço</h2>
           <p>
-            O Poke Arena é um jogo digital online com sistema de batalhas, coleção de pets,
+            O Duelo Pokemon é um jogo digital online com sistema de batalhas, coleção de pets,
             torneios e itens cosméticos. O acesso é feito via navegador mediante cadastro.
           </p>
 
@@ -51,7 +51,7 @@ function TermsPage() {
 
           <h2 className="text-xl font-bold mt-4">5. Propriedade intelectual</h2>
           <p>
-            Todo o conteúdo do Poke Arena (código, arte, sons, marca, personagens) é de
+            Todo o conteúdo do Duelo Pokemon (código, arte, sons, marca, personagens) é de
             propriedade do vendedor. É concedida ao jogador apenas uma licença pessoal,
             limitada, não exclusiva e intransferível para uso do serviço.
           </p>
@@ -116,7 +116,7 @@ function TermsPage() {
 
           <h2 className="text-xl font-bold mt-4">12. Contato</h2>
           <p>
-            Dúvidas sobre estes Termos: entre em contato pelos canais oficiais do Poke Arena
+            Dúvidas sobre estes Termos: entre em contato pelos canais oficiais do Duelo Pokemon
             no app.
           </p>
         </section>
