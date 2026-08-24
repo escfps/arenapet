@@ -18,8 +18,8 @@ function effBadge(eff: number): { text: string; cls: string } | null {
   if (eff >= 4) return { text: "💥💥 SUPER EFETIVO 4x", cls: "from-fuchsia-400 via-red-500 to-orange-400 text-black border-fuchsia-200 shadow-[0_0_22px_rgba(232,121,249,.95)]" };
   if (eff >= 2) return { text: "💥 SUPER EFETIVO 2x", cls: "from-orange-300 via-red-500 to-red-600 text-black border-orange-200 shadow-[0_0_18px_rgba(249,115,22,.9)]" };
   if (eff === 0) return { text: "🚫 IMUNE", cls: "from-slate-500 via-slate-700 to-slate-900 text-slate-100 border-slate-400 shadow-[0_0_14px_rgba(148,163,184,.7)]" };
-  if (eff <= 0.25) return { text: "🛡️🛡️ MUITO RESISTIDO", cls: "from-sky-300 via-blue-500 to-indigo-600 text-black border-sky-200 shadow-[0_0_16px_rgba(56,189,248,.85)]" };
-  if (eff < 1) return { text: "🛡️ RESISTIDO", cls: "from-cyan-200 via-sky-400 to-blue-500 text-black border-cyan-100 shadow-[0_0_12px_rgba(34,211,238,.8)]" };
+  if (eff <= 0.25) return { text: "🛡️🛡️ MUITA RESISTÊNCIA", cls: "from-sky-300 via-blue-500 to-indigo-600 text-black border-sky-200 shadow-[0_0_16px_rgba(56,189,248,.85)]" };
+  if (eff < 1) return { text: "🛡️ RESISTÊNCIA", cls: "from-cyan-200 via-sky-400 to-blue-500 text-black border-cyan-100 shadow-[0_0_12px_rgba(34,211,238,.8)]" };
   return null;
 }
 type StatusKind = "burn" | "poison" | "bleed" | "blind" | "sleep" | "freeze" | "silence" | "rage" | "shield" | "stun" | "mark";
