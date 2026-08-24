@@ -809,6 +809,49 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
           attacker.atkDebuffTurns -= 1;
           if (attacker.atkDebuffTurns === 0) attacker.atkDebuffPct = 0;
         }
+        // tick atk buff (atk_up)
+        if (attacker.atkBuffTurns > 0) {
+          attacker.atkBuffTurns -= 1;
+          if (attacker.atkBuffTurns === 0) attacker.atkBuffPct = 0;
+        }
+        // ✨ Passiva Shiny: regeneração e vingança
+        {
+          const sp = attacker.shiny ? getShinyPassive(attacker.species) : undefined;
+          if (sp?.kind === "regen" && attacker.current > 0 && attacker.current < attacker.maxHp) {
+            const h = Math.max(1, Math.round(attacker.maxHp * sp.value));
+            const before = attacker.current;
+            attacker.current = Math.min(attacker.maxHp, attacker.current + h);
+            log.push({
+              turn, actor: side, actorName: attacker.name, targetName: attacker.name,
+              damage: -(attacker.current - before), crit: false, effective: 1,
+              remainingHp: attacker.current,
+              message: `${sp.emoji} ${attacker.name} regenerou ${attacker.current - before} HP (${sp.name})`,
+            });
+          }
+          if (sp?.kind === "vengeance" && attacker.maxHp > 0) {
+            const lostPct = 1 - attacker.current / attacker.maxHp;
+            if (lostPct > 0) {
+              attacker.atkBuffTurns = Math.max(attacker.atkBuffTurns, 1);
+              attacker.atkBuffPct = Math.max(attacker.atkBuffPct, lostPct * sp.value);
+            }
+          }
+          if (sp?.kind === "thorns") attacker.thornsPct = Math.max(attacker.thornsPct, sp.value);
+        }
+        // 💫 Confusão: pode se acertar e perder o turno
+        if (attacker.confuseTurns > 0) {
+          attacker.confuseTurns -= 1;
+          if (rand() < 0.33) {
+            const selfDmg = Math.max(1, Math.round(attacker.atk * 0.8));
+            applyDamage(attacker, selfDmg);
+            log.push({
+              turn, actor: side, actorName: attacker.name, targetName: attacker.name,
+              damage: selfDmg, crit: false, effective: 1, remainingHp: attacker.current,
+              message: `💫 ${attacker.name} está confuso e se feriu causando ${selfDmg} de dano!`,
+            });
+            return;
+          }
+        }
+
         // tick spd buff
         if (attacker.spdBuffTurns > 0) {
           attacker.spdBuffTurns -= 1;
