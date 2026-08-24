@@ -2472,10 +2472,24 @@ export function rollChest(tier: ChestTier, forceRarity?: Rarity): ChestReward {
         if (r <= 0) { chosenRarity = rarity as Rarity; break; }
       }
     }
-    const pool = Object.values(SPECIES).filter((s) => s.rarity === chosenRarity && !s.hidden && !s.retired);
+    const activeSpecies = Object.values(SPECIES).filter((s) => !s.hidden && !s.retired);
+    // Ordem de fallback: se não existir pet ativo na raridade sorteada, desce/sobe para a mais próxima
+    const RARITY_ORDER: Rarity[] = ["common", "rare", "super_rare", "epic", "legendary", "mythic"];
+    let pool = activeSpecies.filter((s) => s.rarity === chosenRarity);
+    if (pool.length === 0) {
+      const idx = RARITY_ORDER.indexOf(chosenRarity);
+      for (let d = 1; d < RARITY_ORDER.length && pool.length === 0; d++) {
+        for (const alt of [RARITY_ORDER[idx - d], RARITY_ORDER[idx + d]]) {
+          if (!alt) continue;
+          const p = activeSpecies.filter((s) => s.rarity === alt);
+          if (p.length > 0) { pool = p; break; }
+        }
+      }
+    }
     if (pool.length > 0) {
       petSpecies = pool[Math.floor(Math.random() * pool.length)].id;
     }
+
   }
 
   const petShiny = petSpecies ? rollShiny() : false;
