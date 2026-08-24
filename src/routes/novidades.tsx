@@ -4,8 +4,8 @@ export const Route = createFileRoute("/novidades")({
   component: NovidadesPage,
   head: () => ({
     meta: [
-      { title: "Novidades — Poke Arena" },
-      { name: "description", content: "Confira as novidades e o que vem por aí no Poke Arena." },
+      { title: "Novidades — Duelo Pokemon" },
+      { name: "description", content: "Confira as novidades e o que vem por aí no Duelo Pokemon." },
     ],
   }),
 });
@@ -43,7 +43,7 @@ function NovidadesPage() {
           <p className="text-white/70 text-sm">Fique por dentro do que tem de novo e do que está por vir!</p>
         </header>
 
-        <Section title="🎉 Bem vindo ao Poke Arena!">
+        <Section title="🎉 Bem vindo ao Duelo Pokemon!">
           <Bullet>Colete pets, monte seu time e batalhe contra jogadores do mundo todo</Bullet>
           <Bullet><b>Sistema de sinergias</b> — monte comps com categorias e ganhe buffs</Bullet>
           <Bullet><b>Copa</b>, <b>Ranking com Seasons</b> e recompensas exclusivas</Bullet>

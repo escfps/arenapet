@@ -54,8 +54,8 @@ export function HUD({ profile }: { profile: ProfileRow }) {
 
         <MobileDrawerButton onOpen={() => setDrawerOpen(true)} />
         <Link to="/" className="font-extrabold text-white items-center gap-1.5 hover:scale-105 transition hidden sm:flex">
-          <img src={pokeballIcon} alt="Poke Arena" width={20} height={20} className="inline-block" />
-          <span className="text-sm">POKE ARENA</span>
+          <img src={pokeballIcon} alt="Duelo Pokemon" width={20} height={20} className="inline-block" />
+          <span className="text-sm">DUELO POKEMON</span>
         </Link>
         <Link to="/profile" className="text-white hover:scale-105 transition min-w-0 flex-1">
           <div className="text-base font-extrabold flex items-center gap-1.5 hover:underline leading-tight">

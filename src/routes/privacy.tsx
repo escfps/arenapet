@@ -4,8 +4,8 @@ export const Route = createFileRoute("/privacy")({
   component: PrivacyPage,
   head: () => ({
     meta: [
-      { title: "Política de Privacidade — Poke Arena" },
-      { name: "description", content: "Como o Poke Arena coleta e trata seus dados pessoais." },
+      { title: "Política de Privacidade — Duelo Pokemon" },
+      { name: "description", content: "Como o Duelo Pokemon coleta e trata seus dados pessoais." },
     ],
   }),
 });
@@ -21,8 +21,8 @@ function PrivacyPage() {
         <section className="space-y-3 text-sm leading-relaxed">
           <h2 className="text-xl font-bold mt-4">1. Controlador dos dados</h2>
           <p>
-            <b>POKE ARENA</b>, operada por Bruno Henrique Moura Bernardo (pessoa física), é a controladora dos dados
-            pessoais coletados pelo Poke Arena, conforme a Lei Geral de Proteção de Dados
+            <b>DUELO POKEMON</b>, operada por Bruno Henrique Moura Bernardo (pessoa física), é a controladora dos dados
+            pessoais coletados pelo Duelo Pokemon, conforme a Lei Geral de Proteção de Dados
             (LGPD - Lei 13.709/2018).
           </p>
 
@@ -75,7 +75,7 @@ function PrivacyPage() {
             <li>informações sobre compartilhamentos.</li>
           </ul>
           <p>
-            Para exercer seus direitos, entre em contato pelos canais oficiais do Poke Arena
+            Para exercer seus direitos, entre em contato pelos canais oficiais do Duelo Pokemon
             no app. Responderemos em até 15 dias.
           </p>
 
@@ -100,7 +100,7 @@ function PrivacyPage() {
 
           <h2 className="text-xl font-bold mt-4">10. Contato</h2>
           <p>
-            Dúvidas sobre privacidade: entre em contato pelos canais oficiais do Poke Arena
+            Dúvidas sobre privacidade: entre em contato pelos canais oficiais do Duelo Pokemon
             no app.
           </p>
         </section>

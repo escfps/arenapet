@@ -13,7 +13,7 @@ type Step = {
 const STEPS: Step[] = [
   {
     emoji: "🎉",
-    title: "Bem-vindo à POKE ARENA!",
+    title: "Bem-vindo à DUELO POKEMON!",
     body: "Você acabou de ganhar seus 3 primeiros bichinhos. Bora dar um tour rápido pra você não se perder no jogo.",
   },
   {

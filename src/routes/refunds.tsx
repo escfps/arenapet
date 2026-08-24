@@ -4,8 +4,8 @@ export const Route = createFileRoute("/refunds")({
   component: RefundsPage,
   head: () => ({
     meta: [
-      { title: "Política de Reembolso — Poke Arena" },
-      { name: "description", content: "Como funciona o reembolso de compras no Poke Arena." },
+      { title: "Política de Reembolso — Duelo Pokemon" },
+      { name: "description", content: "Como funciona o reembolso de compras no Duelo Pokemon." },
     ],
   }),
 });
@@ -23,7 +23,7 @@ function RefundsPage() {
           <p>
             Oferecemos garantia de reembolso de <b>30 dias</b> a partir da data da compra.
             Se você não estiver satisfeito com sua aquisição de gemas ou do Passe VIP no
-            Poke Arena, pode solicitar reembolso integral dentro desse prazo.
+            Duelo Pokemon, pode solicitar reembolso integral dentro desse prazo.
           </p>
 
           <h2 className="text-xl font-bold mt-4">Como solicitar</h2>
@@ -49,7 +49,7 @@ function RefundsPage() {
             <li>Solicite o reembolso explicando brevemente o motivo.</li>
           </ol>
           <p>
-            Você também pode falar com nosso suporte pelos canais oficiais do Poke Arena no
+            Você também pode falar com nosso suporte pelos canais oficiais do Duelo Pokemon no
             app, que encaminhará seu pedido à Paddle.
           </p>
 
@@ -83,7 +83,7 @@ function RefundsPage() {
             >
               paddle.net
             </a>{" "}
-            ou pelos canais oficiais do Poke Arena no app.
+            ou pelos canais oficiais do Duelo Pokemon no app.
           </p>
         </section>
       </div>

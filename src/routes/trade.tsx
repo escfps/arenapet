@@ -12,7 +12,7 @@ import { GiftPanel } from "@/components/GiftPanel";
 
 export const Route = createFileRoute("/trade")({
   component: TradePage,
-  head: () => ({ meta: [{ title: "Trocas — POKE ARENA" }] }),
+  head: () => ({ meta: [{ title: "Trocas — DUELO POKEMON" }] }),
 });
 
 type Mon = {

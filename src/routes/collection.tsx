@@ -20,8 +20,8 @@ export const Route = createFileRoute("/collection")({
   component: CollectionPage,
   head: () => ({
     meta: [
-      { title: "Coleção — POKE ARENA" },
-      { name: "description", content: "Veja todos os pets do POKE ARENA: stats, skills, elementos, raridades e sinergias. Planeje seu time perfeito!" },
+      { title: "Coleção — DUELO POKEMON" },
+      { name: "description", content: "Veja todos os pets do DUELO POKEMON: stats, skills, elementos, raridades e sinergias. Planeje seu time perfeito!" },
     ],
   }),
 });
@@ -107,7 +107,7 @@ function CollectionPage() {
         <HUD profile={profile} />
       ) : (
         <div className="flex items-center justify-between px-4 py-3 bg-black/40 backdrop-blur-md border-b border-white/10">
-          <button onClick={() => navigate({ to: "/" })} className="text-white font-extrabold text-sm">🏠 POKE ARENA</button>
+          <button onClick={() => navigate({ to: "/" })} className="text-white font-extrabold text-sm">🏠 DUELO POKEMON</button>
           <button onClick={() => navigate({ to: "/login" })} className="px-4 py-1.5 rounded-full bg-yellow-400 text-yellow-950 text-xs font-extrabold shadow hover:scale-105 transition">
             🔓 Entrar / Criar conta
           </button>
