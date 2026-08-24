@@ -679,7 +679,8 @@ function PatioPage() {
           <div className="max-w-3xl w-full max-h-[85vh] overflow-y-auto rounded-3xl bg-gradient-to-br from-slate-900 to-slate-800 border-2 border-white/20 shadow-2xl p-5 text-white animate-in zoom-in" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-extrabold">
-                {SPECIES[groupModal]?.emoji} {SPECIES[groupModal]?.name}
+                {groupModal.endsWith("::shiny") ? "✨ " : ""}
+                {SPECIES[groupModal.replace("::shiny", "")]?.emoji} {SPECIES[groupModal.replace("::shiny", "")]?.name}
                 <span className="ml-2 text-sm font-bold text-white/60">x{groupModalList.length}</span>
               </h2>
               <button onClick={() => setGroupModal(null)} className="text-white/70 hover:text-white text-2xl leading-none">×</button>
