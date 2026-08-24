@@ -1,4 +1,5 @@
-import { speciesImage, shinyFallbackFilter, useEffect, useMemo, useState } from "react";
+import { speciesImage, shinyFallbackFilter } from "@/lib/game-data";
+import { useEffect, useMemo, useState } from "react";
 import type { BattleLogEntry } from "@/lib/battle";
 import { SPECIES, ELEMENT_COLORS, RARITY_INFO, MAX_RANK, skinFilter, totalStats, getSkill } from "@/lib/game-data";
 import type { MonsterRow } from "./MonsterCard";
