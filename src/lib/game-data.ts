@@ -2518,6 +2518,16 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   hypno: ["sombras"],
   krabby: ["abyssal"],
   kingler: ["abyssal"],
+  voltorb: ["relampago"],
+  electrode: ["relampago"],
+  exeggcute: ["floresta"],
+  exeggutor: ["floresta"],
+  cubone: ["pedra"],
+  marowak: ["pedra"],
+  hitmonlee: ["pedra"],
+  hitmonchan: ["pedra"],
+  lickitung: ["floresta"],
+  koffing: ["sombras"],
 };
 
 export function getSpeciesCategories(speciesId: string): Category[] {
