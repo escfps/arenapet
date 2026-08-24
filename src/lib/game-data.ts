@@ -2456,7 +2456,7 @@ export type ChestReward = {
   gems: number;
   rations: number;
   petSpecies?: string; // id da espécie sorteada (se caiu pet)
-  petShiny?: boolean; // ✨ ultra raro (1 em 1.000)
+  petShiny?: boolean; // ✨ ultra raro (1% de chance)
 };
 
 
