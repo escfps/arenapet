@@ -2186,6 +2186,13 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   primeape: ["macacos"],
   growlithe: ["fogo"],
   arcanine: ["fogo"],
+  poliwag: ["abyssal"],
+  poliwhirl: ["abyssal"],
+  poliwrath: ["abyssal"],
+  machop: ["macacos"],
+  machoke: ["macacos"],
+  machamp: ["macacos"],
+  bellsprout: ["floresta"],
 };
 
 export function getSpeciesCategories(speciesId: string): Category[] {
