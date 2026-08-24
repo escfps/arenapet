@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      battle_sessions: {
+        Row: {
+          applied: boolean
+          created_at: string
+          gym_type: string | null
+          id: string
+          kind: string
+          opponent_id: string | null
+          payload: Json
+          user_id: string
+          winner: string
+        }
+        Insert: {
+          applied?: boolean
+          created_at?: string
+          gym_type?: string | null
+          id?: string
+          kind: string
+          opponent_id?: string | null
+          payload?: Json
+          user_id: string
+          winner: string
+        }
+        Update: {
+          applied?: boolean
+          created_at?: string
+          gym_type?: string | null
+          id?: string
+          kind?: string
+          opponent_id?: string | null
+          payload?: Json
+          user_id?: string
+          winner?: string
+        }
+        Relationships: []
+      }
       battles: {
         Row: {
           attacker_id: string
@@ -1245,6 +1281,7 @@ export type Database = {
         Returns: Json
       }
       gym_start_challenge: { Args: { p_type: string }; Returns: Json }
+      is_client_role: { Args: never; Returns: boolean }
       join_tournament: { Args: { p_tournament_id: string }; Returns: Json }
       market_buy: { Args: { p_id: string }; Returns: Json }
       market_cancel_listing: { Args: { p_id: string }; Returns: Json }
