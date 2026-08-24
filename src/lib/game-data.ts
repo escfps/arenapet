@@ -67,6 +67,12 @@ import corujaNegraImg from "@/assets/monsters/coruja_negra.png";
 import corujaPsiquicaImg from "@/assets/monsters/coruja_psiquica.png";
 import gengarImg from "@/assets/monsters/gengar.png";
 import pikachuImg from "@/assets/monsters/pikachu.png";
+import arbokImg from "@/assets/monsters/arbok.png";
+import raichuImg from "@/assets/monsters/raichu.png";
+import sandshrewImg from "@/assets/monsters/sandshrew.png";
+import sandslashImg from "@/assets/monsters/sandslash.png";
+import nidoranFImg from "@/assets/monsters/nidoran_f.png";
+import nidorinaImg from "@/assets/monsters/nidorina.png";
 import alakazamImg from "@/assets/monsters/alakazam.png";
 import gastlyImg from "@/assets/monsters/gastly.png";
 import haunterImg from "@/assets/monsters/haunter.png";
@@ -997,6 +1003,48 @@ export const SPECIES: Record<string, Species> = {
     base: { hp: 32, atk: 11, def: 7, spd: 15, int: 8 },
     skill: { name: "Picada Venenosa", emoji: "☠️", kind: "bleed_dot", cooldown: 3, description: "Injeta veneno no alvo, causando dano por 3 turnos." },
   },
+  arbok: {
+    id: "arbok", name: "Arbok", element: "grass", role: "assassin", rarity: "rare",
+    emoji: "🐍💀", image: arbokImg, hidden: true,
+    description: "Cobra intimidadora com o padrão de terror no capuz. Aperta o alvo e injeta veneno letal.",
+    base: { hp: 52, atk: 19, def: 12, spd: 18, int: 10 },
+    skill: { name: "Aperto Venenoso", emoji: "💀", kind: "bleed_dot", cooldown: 3, description: "Enrola no alvo e aplica veneno forte por 3 turnos." },
+  },
+  raichu: {
+    id: "raichu", name: "Raichu", element: "electric", role: "assassin", rarity: "legendary",
+    emoji: "⚡🐭", image: raichuImg, hidden: true,
+    description: "Evolução elétrica. A cauda descarrega no chão e a corrente atravessa o campo inteiro.",
+    base: { hp: 82, atk: 21, def: 14, spd: 24, int: 18 },
+    skill: { name: "Trovão", emoji: "🌩️", kind: "chain_lightning", cooldown: 4, description: "Descarga que salta entre os inimigos, com chance de ⚡ paralisar." },
+  },
+  sandshrew: {
+    id: "sandshrew", name: "Sandshrew", element: "earth", role: "tank", rarity: "common",
+    emoji: "🏜️🛡️", image: sandshrewImg, hidden: true,
+    description: "Tatu do deserto. Se enrola numa bola blindada e deixa o inimigo se cansar.",
+    base: { hp: 38, atk: 10, def: 12, spd: 10, int: 5 },
+    skill: { name: "Enrolar", emoji: "🛡️", kind: "turtle_shell", cooldown: 3, description: "Se enrola numa bola: reduz o dano recebido por 2 turnos e devolve parte do dano." },
+  },
+  sandslash: {
+    id: "sandslash", name: "Sandslash", element: "earth", role: "dps", rarity: "rare",
+    emoji: "🏜️🗡️", image: sandslashImg, hidden: true,
+    description: "Espinhos nas costas e garras enormes. Rola pelo campo cortando tudo no caminho.",
+    base: { hp: 56, atk: 18, def: 16, spd: 14, int: 8 },
+    skill: { name: "Garra Perfurante", emoji: "🗡️", kind: "heavy_strike", cooldown: 3, description: "Golpe pesado com as garras, ignorando parte da DEF." },
+  },
+  nidoran_f: {
+    id: "nidoran_f", name: "Nidoran♀", element: "earth", role: "dps", rarity: "common",
+    emoji: "💠🐗", image: nidoranFImg, hidden: true,
+    description: "Pequena e territorial. As farpas carregam veneno suficiente pra assustar predadores.",
+    base: { hp: 34, atk: 11, def: 9, spd: 12, int: 6 },
+    skill: { name: "Farpa Tóxica", emoji: "💠", kind: "bleed_dot", cooldown: 3, description: "Espeta o alvo com farpas venenosas por 3 turnos." },
+  },
+  nidorina: {
+    id: "nidorina", name: "Nidorina", element: "earth", role: "dps", rarity: "rare",
+    emoji: "💠🦏", image: nidorinaImg, hidden: true,
+    description: "Mais robusta e protetora. Ataca de chifre e aguenta pancada no lugar do time.",
+    base: { hp: 54, atk: 17, def: 14, spd: 13, int: 9 },
+    skill: { name: "Chifrada", emoji: "🦏", kind: "horn_charge", cooldown: 3, description: "Investida de chifre com dano aumentado." },
+  },
 };
 
 
@@ -1814,6 +1862,12 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   rattata: ["floresta"],
   raticate: ["floresta"],
   ekans: ["repteis"],
+  arbok: ["repteis"],
+  raichu: ["relampago"],
+  sandshrew: ["pedra"],
+  sandslash: ["pedra"],
+  nidoran_f: ["pedra"],
+  nidorina: ["pedra"],
 };
 
 export function getSpeciesCategories(speciesId: string): Category[] {
