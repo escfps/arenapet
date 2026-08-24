@@ -2434,8 +2434,17 @@ export const CHESTS: Record<ChestTier, Chest> = {
 };
 
 // ===== SHINY =====
-/** Chance de um pet sorteado em baú vir Shiny: 1% (1 em 100) — bem difícil. */
+/** Chance base de um pet sorteado em baú vir Shiny: 1% (1 em 100). */
 export const SHINY_CHANCE = 0.01;
+/** Multiplicador de chance de Shiny por raridade — quanto mais raro o pet, MAIS raro o Shiny. */
+export const SHINY_RARITY_MULT: Record<Rarity, number> = {
+  common: 1,
+  rare: 0.6,
+  super_rare: 0.4,
+  epic: 0.25,
+  legendary: 0.12,
+  mythic: 0.05,
+};
 /** Shiny ganha +10% em TODOS os status. */
 export const SHINY_STAT_MULT = 1.1;
 /** Skill exclusiva passiva de todo pet Shiny. */
@@ -2449,6 +2458,10 @@ export const SHINY_SKILL = {
 } as const;
 export function rollShiny(rand: () => number = Math.random): boolean {
   return rand() < SHINY_CHANCE;
+}
+/** Roll de Shiny escalado por raridade: Míticos são ~20x mais raridos que Comuns. */
+export function rollShinyForRarity(rarity: Rarity, rand: () => number = Math.random): boolean {
+  return rand() < SHINY_CHANCE * (SHINY_RARITY_MULT[rarity] ?? 1);
 }
 
 export type ChestReward = {
