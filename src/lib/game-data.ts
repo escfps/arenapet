@@ -65,6 +65,7 @@ import corujaBrancaImg from "@/assets/monsters/coruja_branca.png";
 import escorpiaoDesertoImg from "@/assets/monsters/escorpiao_deserto.png";
 import corujaNegraImg from "@/assets/monsters/coruja_negra.png";
 import corujaPsiquicaImg from "@/assets/monsters/coruja_psiquica.png";
+import gengarImg from "@/assets/monsters/gengar.png";
 
 export type Element = "fire" | "water" | "grass" | "electric" | "shadow" | "earth";
 export type Role = "tank" | "dps" | "assassin" | "mage" | "healer";
@@ -485,6 +486,13 @@ export const SPECIES: Record<string, Species> = {
     description: "Fênix obsidiana de chamas violetas. Devora a essência dos inimigos e cresce sem fim.",
     base: { hp: 83, atk: 25.72, def: 13.14, spd: 14, int: 14 },
     skill: { name: "Comunhão Sombria", emoji: "🌑", kind: "phoenix_growth", cooldown: 4, description: "PASSIVA: cada dano causado vira +2% HP máx e cura na batalha (cap +50%). ATIVA: golpe sombrio (2× dano)." },
+  },
+  gengar: {
+    id: "gengar", name: "Gengar", element: "shadow", role: "mage", rarity: "mythic",
+    emoji: "👻", image: gengarImg,
+    description: "Fantasma púrpura de sorriso malicioso. Manipula as sombras para devorar os sonhos dos inimigos e crescer em poder.",
+    base: { hp: 86, atk: 12, def: 13, spd: 17, int: 34 },
+    skill: { name: "Esfera Sombria", emoji: "🔮", kind: "aoe_magic", cooldown: 4, description: "Bola de energia sombria atinge TODOS os inimigos (~INT×1.8) com 35% de chance de silenciar cada um por 1 turno. PASSIVA — Devora Sonhos: ao abater um inimigo, Gengar recupera 12% do HP máx." },
   },
   fenix_azul: {
     id: "fenix_azul", name: "Fênix Azul", element: "water", secondaryElement: "fire", role: "healer", rarity: "rare",
@@ -1450,6 +1458,7 @@ export const SPECIES_CATEGORIES: Record<string, Category[]> = {
   orangotango: ["floresta", "macacos"],
   porco_espinho: ["floresta", "pedra"],
   urubu_carniceiro: ["aves", "sombras"],
+  gengar: ["sombras"],
   // ===== PETS OCULTOS =====
   rinoceronte_guardiao: ["floresta", "pedra"],
   elefante_ancestral: ["floresta", "pedra"],
