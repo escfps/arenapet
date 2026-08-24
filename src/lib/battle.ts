@@ -14,6 +14,18 @@ import {
   type Role,
   type Rarity,
 } from "./game-data";
+import {
+  MOVES,
+  TYPE_INFO,
+  typeMultiplier,
+  getTypes,
+  getMoveset,
+  getShinyPassive,
+  stabBonus,
+  type Move,
+  type MoveEffect,
+} from "./moves";
+
 
 export type BattleMonster = {
   id: string;
