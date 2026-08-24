@@ -2813,8 +2813,26 @@ export function simulateBattle(teamA: BattleMonster[], teamB: BattleMonster[], s
 
         const rawEff = move
           ? typeMultiplier(move.type, getTypes(target.species))
-          : defensiveMultiplier(getElement(attacker.species), target.species);
-        const eff = rawEff <= 0 ? 0.25 : rawEff;
+          : typeMultiplier(getElement(attacker.species), getTypes(target.species));
+        // 🚫 IMUNIDADE REAL: multiplicador 0 = golpe não afeta (0 de dano, sem efeitos)
+        if (rawEff <= 0) {
+          if (move) attacker.moveCds[move.id] = move.cooldown;
+          log.push({
+            turn,
+            actor: side,
+            actorName: attacker.name,
+            targetName: target.name,
+            targetTeam: "opponent",
+            damage: 0,
+            crit: false,
+            effective: 0,
+            remainingHp: target.current,
+            message: `${attacker.name} usou ${move ? move.name : "ataque"} — 🚫 Não afeta ${target.name}!`,
+          });
+          return;
+        }
+        const eff = rawEff;
+
         const synCrit = side === "team_a" ? critBonusA : critBonusB;
         const baseCrit = attacker.role === "assassin" ? 0.35 : 0.12;
         const passiveCritFloor = attacker.species === "raposa_espectral" ? 0.3 : 0;
