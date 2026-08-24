@@ -113,9 +113,18 @@ export function toBattleMonster(m: DBMonster): BattleMonster {
   };
 }
 
-function getElement(species: string): Element {
-  return SPECIES[species]?.element ?? "shadow";
+/** Tipo principal (18 tipos) usado pelas skills antigas. */
+function getElement(species: string): PokeType {
+  return getTypes(species)[0] ?? "normal";
 }
+
+/** Efetividade das SKILLS pelo novo sistema de 18 tipos (com clamp pra não travar batalha). */
+function defensiveMultiplier(atkType: PokeType, defSpecies: string): number {
+  const m = typeMultiplier(atkType, getTypes(defSpecies));
+  if (m <= 0) return 0.4;
+  return Math.max(0.4, Math.min(2.5, m));
+}
+
 
 // ===== PASSIVAS DAS FÊNIX MÍTICAS =====
 // Fênix Vermelha: cada 10% HP perdido = +6% ATK (cap +60% com 1 HP)
