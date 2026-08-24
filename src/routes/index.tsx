@@ -38,6 +38,7 @@ function PatioPage() {
   const [elementFilter, setElementFilter] = useState<Element | "all">("all");
   const [roleFilter, setRoleFilter] = useState<Role | "all">("all");
   const [categoryFilter, setCategoryFilter] = useState<Category | "all">("all");
+  const [shinyFilter, setShinyFilter] = useState<"all" | "shiny" | "normal">("all");
   const [groupModal, setGroupModal] = useState<string | null>(null);
   const [slotPicker, setSlotPicker] = useState<number | null>(null);
   const [pickerSearch, setPickerSearch] = useState("");
