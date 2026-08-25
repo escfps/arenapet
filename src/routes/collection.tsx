@@ -305,13 +305,18 @@ function CollectionPage() {
   );
 }
 
-function DexCard({ sp, owned, locked = false }: { sp: (typeof SPECIES)[string]; owned: boolean; locked?: boolean }) {
+function DexCard({ sp, owned, locked = false, shiny = false }: { sp: (typeof SPECIES)[string]; owned: boolean; locked?: boolean; shiny?: boolean }) {
   const gradient = ELEMENT_COLORS[sp.element];
   const cats = getSpeciesCategories(sp.id);
+  const shinyPassive = shiny ? getShinyPassive(sp.id) : undefined;
   return (
     <div
       className={`relative rounded-2xl overflow-hidden border-2 shadow-xl transition ${
-        owned ? `border-yellow-300/60 ring-2 ${RARITY_INFO[sp.rarity].ringColor}` : `border-white/20 ring-1 ${RARITY_INFO[sp.rarity].ringColor}`
+        shiny
+          ? "border-fuchsia-300/70 ring-2 ring-fuchsia-400/70"
+          : owned
+            ? `border-yellow-300/60 ring-2 ${RARITY_INFO[sp.rarity].ringColor}`
+            : `border-white/20 ring-1 ${RARITY_INFO[sp.rarity].ringColor}`
       } ${locked ? "opacity-90" : ""}`}
       title={locked ? "Em breve…" : sp.description}
     >
@@ -328,6 +333,11 @@ function DexCard({ sp, owned, locked = false }: { sp: (typeof SPECIES)[string]; 
           🔒 EM BREVE
         </span>
       )}
+      {shiny && !locked && (
+        <span className="absolute bottom-2 left-2 z-10 px-1.5 py-0.5 rounded bg-gradient-to-r from-fuchsia-500 to-amber-400 text-white text-[9px] font-extrabold shadow">
+          ✨ SHINY
+        </span>
+      )}
       {owned && (
         <span className="absolute bottom-2 right-2 z-10 px-1.5 py-0.5 rounded bg-yellow-400 text-yellow-950 text-[9px] font-extrabold shadow">
           ✓ TENHO
@@ -337,14 +347,15 @@ function DexCard({ sp, owned, locked = false }: { sp: (typeof SPECIES)[string]; 
       <div className={`bg-gradient-to-br ${locked ? "from-slate-800 to-slate-950" : gradient} p-3`}>
         <div className="flex items-center justify-center h-28">
           <img
-            src={sp.image}
-            alt={locked ? "???" : sp.name}
+            src={shiny ? (sp.shinyImage ?? sp.image) : sp.image}
+            alt={locked ? "???" : shiny ? `${sp.name} shiny` : sp.name}
             loading="lazy"
             className={`h-full w-auto object-contain drop-shadow-2xl ${locked ? "" : ""}`}
             style={locked ? { filter: "brightness(0) saturate(0)", opacity: 0.55 } : undefined}
           />
         </div>
       </div>
+
 
       <div className="p-2 bg-card/95 backdrop-blur-sm space-y-1.5">
         <div className="text-center">
