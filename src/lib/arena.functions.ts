@@ -88,6 +88,35 @@ export const arenaStart = createServerFn({ method: "POST" })
 
     const a = myTeam.map((m) => toBattleMonster(m as never));
     const b = oppTeam.map((m) => toBattleMonster(m as never));
+
+    // 🤝 Anti-frustração: 4+ derrotas seguidas enfraquecem o time do BOT
+    // (10% de redução de stats por derrota a partir da 4ª, teto de 40%)
+    let lossStreak = 0;
+    if (oppProfile.is_bot) {
+      const { data: recent } = await supabaseAdmin
+        .from("battle_sessions")
+        .select("winner")
+        .eq("user_id", context.userId)
+        .eq("kind", "arena")
+        .eq("applied", true)
+        .order("created_at", { ascending: false })
+        .limit(12);
+      for (const r of (recent ?? []) as Array<{ winner: string }>) {
+        if (r.winner === "team_b") lossStreak++;
+        else break;
+      }
+      if (lossStreak >= 4) {
+        const handicap = Math.min(0.4, 0.1 * (lossStreak - 3));
+        for (const m of b) {
+          m.hp = Math.max(1, Math.round(m.hp * (1 - handicap)));
+          m.atk = Math.max(1, Math.round(m.atk * (1 - handicap)));
+          m.def = Math.max(1, Math.round(m.def * (1 - handicap)));
+          m.spd = Math.max(1, Math.round(m.spd * (1 - handicap)));
+          m.int = Math.max(1, Math.round(m.int * (1 - handicap)));
+        }
+      }
+    }
+
     const result = simulateBattle(a, b);
 
     const { data: session, error } = await supabaseAdmin
