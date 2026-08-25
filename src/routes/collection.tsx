@@ -244,6 +244,32 @@ function CollectionPage() {
             </div>
           </div>
 
+          <div className="space-y-1">
+            <div className="text-white/70 text-[10px] font-extrabold uppercase tracking-wider px-1">Variante</div>
+            <div className="flex flex-wrap gap-1.5">
+              {([
+                ["all", "Todas"],
+                ["normal", "Normais"],
+                ["shiny", "✨ Shinies"],
+              ] as [VariantFilter, string][]).map(([v, label]) => (
+                <button
+                  key={v}
+                  onClick={() => setVariantFilter(v)}
+                  className={`px-3 py-1 rounded-full text-[11px] font-extrabold transition ${
+                    variantFilter === v
+                      ? v === "shiny"
+                        ? "bg-gradient-to-r from-fuchsia-500 to-amber-400 text-white"
+                        : "bg-yellow-400 text-yellow-950"
+                      : "bg-white/10 text-white hover:bg-white/20"
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+
           {filtered.length === 0 && (
             <div className="text-center text-white/60 text-sm py-2">Nenhum bichinho com esses filtros.</div>
           )}
