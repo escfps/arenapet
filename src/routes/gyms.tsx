@@ -40,7 +40,7 @@ type GymRow = {
   defends: number;
 };
 
-const BADGES_REQUIRED = 5;
+const BADGES_REQUIRED = 3;
 const REWARD_GEMS = 50;
 
 function GymsPage() {
