@@ -59,6 +59,7 @@ function GymsPage() {
   const [outcome, setOutcome] = useState<{ badge: boolean; leader: boolean } | null>(null);
   const [pureTeam, setPureTeam] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [badgeCelebrate, setBadgeCelebrate] = useState(false);
   const appliedRef = useRef(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const startChallengeFn = useServerFn(gymChallengeStart);
