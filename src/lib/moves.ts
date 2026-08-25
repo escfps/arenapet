@@ -23,7 +23,7 @@ export const TYPE_INFO: Record<PokeType, { name: string; emoji: string; color: s
   fighting: { name: "Lutador",    emoji: "🥊", color: "bg-red-600 text-white" },
   poison:   { name: "Veneno",     emoji: "☠️", color: "bg-purple-600 text-white" },
   ground:   { name: "Terrestre",  emoji: "🌎", color: "bg-amber-600 text-white" },
-  flying:   { name: "Voador",     emoji: "🪽", color: "bg-indigo-300 text-indigo-950" },
+  flying:   { name: "Voador",     emoji: "🦅", color: "bg-indigo-300 text-indigo-950" },
   psychic:  { name: "Psíquico",   emoji: "🔮", color: "bg-fuchsia-500 text-white" },
   bug:      { name: "Inseto",     emoji: "🐛", color: "bg-lime-500 text-lime-950" },
   rock:     { name: "Pedra",      emoji: "🪨", color: "bg-yellow-700 text-white" },
