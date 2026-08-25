@@ -2729,6 +2729,7 @@ export function starterMonsterStats(speciesId: string) {
     atk: sp?.base.atk ?? 0,
     def: sp?.base.def ?? 0,
     spd: sp?.base.spd ?? 0,
+    int: sp?.base.int ?? 0,
   };
 }
 
