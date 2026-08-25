@@ -280,10 +280,6 @@ function CollectionPage() {
               </section>
             );
           })}
-                </div>
-              </section>
-            );
-          })}
         </div>
 
         {/* Legend */}
