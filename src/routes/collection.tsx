@@ -252,7 +252,7 @@ function CollectionPage() {
         {/* Grid grouped by element */}
         <div className="space-y-6">
           {[...ALL_ELEMENTS, "shadow" as Element, "earth" as Element].map((el) => {
-            const list = filtered.filter((s) => s.element === el);
+            const list = filtered.filter((e) => e.sp.element === el);
             if (list.length === 0) return null;
 
             return (
@@ -264,9 +264,22 @@ function CollectionPage() {
                   <span className="text-white/60 text-xs">{list.length} espécies</span>
                 </h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                  {list.map((sp) => (
-                    <DexCard key={sp.id} sp={sp} owned={ownedSpecies.has(sp.id)} locked={!!sp.hidden && !ownedSpecies.has(sp.id)} />
-                  ))}
+                  {list.map(({ sp, shiny }) => {
+                    const has = shiny ? ownedShiny.has(sp.id) : ownedSpecies.has(sp.id);
+                    return (
+                      <DexCard
+                        key={`${sp.id}${shiny ? "-shiny" : ""}`}
+                        sp={sp}
+                        shiny={shiny}
+                        owned={has}
+                        locked={!!sp.hidden && !has}
+                      />
+                    );
+                  })}
+                </div>
+              </section>
+            );
+          })}
                 </div>
               </section>
             );
