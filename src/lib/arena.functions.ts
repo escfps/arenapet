@@ -115,6 +115,17 @@ export const arenaStart = createServerFn({ method: "POST" })
           m.int = Math.max(1, Math.round(m.int * (1 - handicap)));
         }
       }
+      // 🎁 Primeira batalha: garante vitória do iniciante (só contra bots)
+      if ((recent ?? []).length === 0) {
+        const firstHandicap = 0.9;
+        for (const m of b) {
+          m.hp = Math.max(1, Math.round(m.hp * (1 - firstHandicap)));
+          m.atk = Math.max(1, Math.round(m.atk * (1 - firstHandicap)));
+          m.def = Math.max(1, Math.round(m.def * (1 - firstHandicap)));
+          m.spd = Math.max(1, Math.round(m.spd * (1 - firstHandicap)));
+          m.int = Math.max(1, Math.round(m.int * (1 - firstHandicap)));
+        }
+      }
     }
 
     const result = simulateBattle(a, b);
