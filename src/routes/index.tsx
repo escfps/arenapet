@@ -175,14 +175,15 @@ function PatioPage() {
     if (!profile) return;
     // If another monster occupies that slot, swap
     const occupant = monsters.find((x) => x.in_team && x.team_position === slot && x.id !== m.id);
-    // 🚫 Bloquear espécie duplicada no time (ignora o ocupante do slot, que vai sair)
+    // 🚫 Bloquear espécie duplicada no time (shiny e normal contam como diferentes)
     const duplicate = monsters.find(
-      (x) => x.in_team && x.id !== m.id && x.id !== occupant?.id && x.species === m.species,
+      (x) => x.in_team && x.id !== m.id && x.id !== occupant?.id && x.species === m.species && !!x.is_shiny === !!m.is_shiny,
     );
     if (duplicate) {
-      toast.error(`Você já tem um ${m.name || m.species} no time. Só 1 de cada espécie!`);
+      toast.error(`Você já tem um ${m.name || m.species}${m.is_shiny ? " ✨" : ""} no time. Só 1 de cada versão!`);
       return;
     }
+
     // 🛡️ Se m ainda não está no time e o slot está vazio, verificar limite
     if (!m.in_team && !occupant) {
       const currentTeam = monsters.filter((x) => x.in_team).length;
@@ -220,11 +221,12 @@ function PatioPage() {
         toast.error(`Time cheio (${TEAM_MAX}).`);
         return;
       }
-      // 🚫 Bloquear espécie duplicada no time
-      if (teamMembers.some((x) => x.species === m.species)) {
-        toast.error(`Você já tem um ${m.name || m.species} no time. Só 1 de cada espécie!`);
+      // 🚫 Bloquear espécie duplicada no time (shiny e normal contam como diferentes)
+      if (teamMembers.some((x) => x.species === m.species && !!x.is_shiny === !!m.is_shiny)) {
+        toast.error(`Você já tem um ${m.name || m.species}${m.is_shiny ? " ✨" : ""} no time. Só 1 de cada versão!`);
         return;
       }
+
       const used = new Set(teamMembers.map((x) => x.team_position ?? 0));
       let slot = 0;
       while (slot < TEAM_MAX && used.has(slot)) slot += 1;
