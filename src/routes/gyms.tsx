@@ -13,6 +13,7 @@ import arenaBg from "@/assets/arena-bg.jpg";
 import { vacantLeaderName } from "@/lib/gym-npc";
 import { useServerFn } from "@tanstack/react-start";
 import { gymChallengeStart, gymChallengeFinish } from "@/lib/gyms.functions";
+import { BadgeCelebration } from "@/components/BadgeCelebration";
 
 export const Route = createFileRoute("/gyms")({
   component: GymsPage,
