@@ -13,6 +13,7 @@ import {
   type Rarity,
   type Element,
 } from "@/lib/game-data";
+import { getShinyPassive } from "@/lib/moves";
 import { HUD, type ProfileRow } from "@/components/HUD";
 import arenaBg from "@/assets/arena-bg.jpg";
 
@@ -29,6 +30,7 @@ export const Route = createFileRoute("/collection")({
 type Filter = "all" | "owned" | "missing";
 type RarityFilter = Rarity | "all";
 type ElementFilter = Element | "all";
+type VariantFilter = "all" | "normal" | "shiny";
 
 const ALL_RARITIES: Rarity[] = ["common", "rare", "super_rare", "epic", "legendary", "mythic"];
 const ALL_ELEMENTS: Element[] = ["normal", "fire", "water", "grass", "electric", "ice", "fighting", "poison", "ground", "flying", "psychic", "bug", "rock", "ghost", "dragon", "dark", "steel", "fairy"];
@@ -38,9 +40,11 @@ function CollectionPage() {
   const [userId, setUserId] = useState<string | null>(null);
   const [profile, setProfile] = useState<ProfileRow | null>(null);
   const [ownedSpecies, setOwnedSpecies] = useState<Set<string>>(new Set());
+  const [ownedShiny, setOwnedShiny] = useState<Set<string>>(new Set());
   const [filter, setFilter] = useState<Filter>("all");
   const [rarityFilter, setRarityFilter] = useState<RarityFilter>("all");
   const [elementFilter, setElementFilter] = useState<ElementFilter>("all");
+  const [variantFilter, setVariantFilter] = useState<VariantFilter>("all");
   const [search, setSearch] = useState("");
 
   // Sessão opcional — visitantes podem navegar sem login
@@ -58,6 +62,7 @@ function CollectionPage() {
     if (!userId) {
       setProfile(null);
       setOwnedSpecies(new Set());
+      setOwnedShiny(new Set());
       return;
     }
     supabase.from("profiles").select("*").eq("id", userId).maybeSingle().then(({ data }) => {
@@ -65,32 +70,48 @@ function CollectionPage() {
     });
     supabase
       .from("monsters")
-      .select("species")
+      .select("species, is_shiny")
       .eq("owner_id", userId)
       .then(({ data }) => {
-        if (data) setOwnedSpecies(new Set(data.map((m) => m.species)));
+        if (data) {
+          setOwnedSpecies(new Set(data.filter((m) => !m.is_shiny).map((m) => m.species)));
+          setOwnedShiny(new Set(data.filter((m) => m.is_shiny).map((m) => m.species)));
+        }
       });
   }, [userId]);
 
   const allSpecies = useMemo(() => Object.values(SPECIES).filter((s) => !s.retired), []);
+
+  // Cada espécie gera 1 card normal + 1 card ✨ shiny (quando tem arte shiny)
+  const allEntries = useMemo(
+    () =>
+      allSpecies.flatMap((s) =>
+        s.shinyImage ? [{ sp: s, shiny: false }, { sp: s, shiny: true }] : [{ sp: s, shiny: false }],
+      ),
+    [allSpecies],
+  );
+
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    return allSpecies.filter((s) => {
-      const isLocked = !!s.hidden && !ownedSpecies.has(s.id);
+    return allEntries.filter(({ sp: s, shiny }) => {
+      if (variantFilter === "normal" && shiny) return false;
+      if (variantFilter === "shiny" && !shiny) return false;
+      const has = shiny ? ownedShiny.has(s.id) : ownedSpecies.has(s.id);
+      const isLocked = !!s.hidden && !has;
       // Pets ocultos aparecem como silhueta (não somem); ignoram filtros de busca/elemento
       if (isLocked) {
         if (filter === "owned") return false;
         if (rarityFilter !== "all" && s.rarity !== rarityFilter) return false;
         return true;
       }
-      if (filter === "owned" && !ownedSpecies.has(s.id)) return false;
-      if (filter === "missing" && ownedSpecies.has(s.id)) return false;
+      if (filter === "owned" && !has) return false;
+      if (filter === "missing" && has) return false;
       if (rarityFilter !== "all" && s.rarity !== rarityFilter) return false;
       if (elementFilter !== "all" && s.element !== elementFilter && s.secondaryElement !== elementFilter) return false;
       if (q && !s.name.toLowerCase().includes(q)) return false;
       return true;
     });
-  }, [allSpecies, ownedSpecies, filter, rarityFilter, elementFilter, search]);
+  }, [allEntries, ownedSpecies, ownedShiny, filter, rarityFilter, elementFilter, variantFilter, search]);
 
   // Progresso não conta pets ocultos (ainda não lançados)
   const releasedSpecies = useMemo(() => allSpecies.filter((s) => !s.hidden), [allSpecies]);
@@ -223,6 +244,32 @@ function CollectionPage() {
             </div>
           </div>
 
+          <div className="space-y-1">
+            <div className="text-white/70 text-[10px] font-extrabold uppercase tracking-wider px-1">Variante</div>
+            <div className="flex flex-wrap gap-1.5">
+              {([
+                ["all", "Todas"],
+                ["normal", "Normais"],
+                ["shiny", "✨ Shinies"],
+              ] as [VariantFilter, string][]).map(([v, label]) => (
+                <button
+                  key={v}
+                  onClick={() => setVariantFilter(v)}
+                  className={`px-3 py-1 rounded-full text-[11px] font-extrabold transition ${
+                    variantFilter === v
+                      ? v === "shiny"
+                        ? "bg-gradient-to-r from-fuchsia-500 to-amber-400 text-white"
+                        : "bg-yellow-400 text-yellow-950"
+                      : "bg-white/10 text-white hover:bg-white/20"
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+
           {filtered.length === 0 && (
             <div className="text-center text-white/60 text-sm py-2">Nenhum bichinho com esses filtros.</div>
           )}
@@ -231,7 +278,7 @@ function CollectionPage() {
         {/* Grid grouped by element */}
         <div className="space-y-6">
           {[...ALL_ELEMENTS, "shadow" as Element, "earth" as Element].map((el) => {
-            const list = filtered.filter((s) => s.element === el);
+            const list = filtered.filter((e) => e.sp.element === el);
             if (list.length === 0) return null;
 
             return (
@@ -243,9 +290,18 @@ function CollectionPage() {
                   <span className="text-white/60 text-xs">{list.length} espécies</span>
                 </h2>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                  {list.map((sp) => (
-                    <DexCard key={sp.id} sp={sp} owned={ownedSpecies.has(sp.id)} locked={!!sp.hidden && !ownedSpecies.has(sp.id)} />
-                  ))}
+                  {list.map(({ sp, shiny }) => {
+                    const has = shiny ? ownedShiny.has(sp.id) : ownedSpecies.has(sp.id);
+                    return (
+                      <DexCard
+                        key={`${sp.id}${shiny ? "-shiny" : ""}`}
+                        sp={sp}
+                        shiny={shiny}
+                        owned={has}
+                        locked={!!sp.hidden && !has}
+                      />
+                    );
+                  })}
                 </div>
               </section>
             );
@@ -275,13 +331,18 @@ function CollectionPage() {
   );
 }
 
-function DexCard({ sp, owned, locked = false }: { sp: (typeof SPECIES)[string]; owned: boolean; locked?: boolean }) {
+function DexCard({ sp, owned, locked = false, shiny = false }: { sp: (typeof SPECIES)[string]; owned: boolean; locked?: boolean; shiny?: boolean }) {
   const gradient = ELEMENT_COLORS[sp.element];
   const cats = getSpeciesCategories(sp.id);
+  const shinyPassive = shiny ? getShinyPassive(sp.id) : undefined;
   return (
     <div
       className={`relative rounded-2xl overflow-hidden border-2 shadow-xl transition ${
-        owned ? `border-yellow-300/60 ring-2 ${RARITY_INFO[sp.rarity].ringColor}` : `border-white/20 ring-1 ${RARITY_INFO[sp.rarity].ringColor}`
+        shiny
+          ? "border-fuchsia-300/70 ring-2 ring-fuchsia-400/70"
+          : owned
+            ? `border-yellow-300/60 ring-2 ${RARITY_INFO[sp.rarity].ringColor}`
+            : `border-white/20 ring-1 ${RARITY_INFO[sp.rarity].ringColor}`
       } ${locked ? "opacity-90" : ""}`}
       title={locked ? "Em breve…" : sp.description}
     >
@@ -298,6 +359,11 @@ function DexCard({ sp, owned, locked = false }: { sp: (typeof SPECIES)[string]; 
           🔒 EM BREVE
         </span>
       )}
+      {shiny && !locked && (
+        <span className="absolute bottom-2 left-2 z-10 px-1.5 py-0.5 rounded bg-gradient-to-r from-fuchsia-500 to-amber-400 text-white text-[9px] font-extrabold shadow">
+          ✨ SHINY
+        </span>
+      )}
       {owned && (
         <span className="absolute bottom-2 right-2 z-10 px-1.5 py-0.5 rounded bg-yellow-400 text-yellow-950 text-[9px] font-extrabold shadow">
           ✓ TENHO
@@ -307,8 +373,8 @@ function DexCard({ sp, owned, locked = false }: { sp: (typeof SPECIES)[string]; 
       <div className={`bg-gradient-to-br ${locked ? "from-slate-800 to-slate-950" : gradient} p-3`}>
         <div className="flex items-center justify-center h-28">
           <img
-            src={sp.image}
-            alt={locked ? "???" : sp.name}
+            src={shiny ? (sp.shinyImage ?? sp.image) : sp.image}
+            alt={locked ? "???" : shiny ? `${sp.name} shiny` : sp.name}
             loading="lazy"
             className={`h-full w-auto object-contain drop-shadow-2xl ${locked ? "" : ""}`}
             style={locked ? { filter: "brightness(0) saturate(0)", opacity: 0.55 } : undefined}
@@ -316,9 +382,15 @@ function DexCard({ sp, owned, locked = false }: { sp: (typeof SPECIES)[string]; 
         </div>
       </div>
 
+
       <div className="p-2 bg-card/95 backdrop-blur-sm space-y-1.5">
         <div className="text-center">
-          <div className="font-extrabold text-sm truncate">{locked ? "???" : sp.name}</div>
+          <div className="font-extrabold text-sm truncate">{locked ? "???" : shiny ? `✨ ${sp.name}` : sp.name}</div>
+          {!locked && shinyPassive && (
+            <div className="text-[9px] font-bold text-fuchsia-500 truncate" title={shinyPassive.description}>
+              {shinyPassive.emoji} {shinyPassive.name}
+            </div>
+          )}
           <div className="text-[10px] text-muted-foreground truncate">
             {locked ? "Pet misterioso — em breve" : (
               <>
