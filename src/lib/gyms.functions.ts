@@ -43,7 +43,7 @@ export const gymChallengeStart = createServerFn({ method: "POST" })
 
     // Ginásios não-iniciais consomem 5 insígnias diferentes
     if (!gym.starter) {
-      const { error: spendErr } = await supabaseAdmin.rpc("gym_start_challenge", { p_type: data.type });
+      const { error: spendErr } = await context.supabase.rpc("gym_start_challenge", { p_type: data.type });
       if (spendErr) throw new Error("Você precisa de 5 insígnias diferentes para desafiar! 🎖️");
     }
 
