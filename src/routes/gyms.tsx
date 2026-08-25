@@ -13,6 +13,7 @@ import arenaBg from "@/assets/arena-bg.jpg";
 import { vacantLeaderName } from "@/lib/gym-npc";
 import { useServerFn } from "@tanstack/react-start";
 import { gymChallengeStart, gymChallengeFinish } from "@/lib/gyms.functions";
+import { BadgeCelebration } from "@/components/BadgeCelebration";
 
 export const Route = createFileRoute("/gyms")({
   component: GymsPage,
@@ -58,6 +59,7 @@ function GymsPage() {
   const [outcome, setOutcome] = useState<{ badge: boolean; leader: boolean } | null>(null);
   const [pureTeam, setPureTeam] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [badgeCelebrate, setBadgeCelebrate] = useState(false);
   const appliedRef = useRef(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const startChallengeFn = useServerFn(gymChallengeStart);
@@ -119,6 +121,7 @@ function GymsPage() {
       try {
         const res = await finishChallengeFn({ data: { sessionId: sid, visibleTurns: turns, forfeit: false } });
         setOutcome({ badge: res.badge, leader: res.leader });
+        if (res.badge) setBadgeCelebrate(true);
         await Promise.all([loadAll(), reload()]);
       } catch (e: any) {
         toast.error(e?.message ?? "Erro ao registrar o desafio");
@@ -195,6 +198,7 @@ function GymsPage() {
     setWinner(null);
     setActive(null);
     setEnemy(null);
+    setBadgeCelebrate(false);
   }
 
   function readyIn(gym: GymRow): string | null {
@@ -325,6 +329,17 @@ function GymsPage() {
               )}
             </div>
           </div>
+        )}
+
+        {badgeCelebrate && outcome?.badge && active && (
+          <BadgeCelebration
+            badgeEmoji="🎖️"
+            typeName={TYPE_INFO[active].name}
+            typeColor={TYPE_INFO[active].color}
+            typeEmoji={TYPE_INFO[active].emoji}
+            becameLeader={!!outcome.leader}
+            onClose={() => setBadgeCelebrate(false)}
+          />
         )}
       </div>
     </div>
