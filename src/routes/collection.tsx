@@ -40,9 +40,11 @@ function CollectionPage() {
   const [userId, setUserId] = useState<string | null>(null);
   const [profile, setProfile] = useState<ProfileRow | null>(null);
   const [ownedSpecies, setOwnedSpecies] = useState<Set<string>>(new Set());
+  const [ownedShiny, setOwnedShiny] = useState<Set<string>>(new Set());
   const [filter, setFilter] = useState<Filter>("all");
   const [rarityFilter, setRarityFilter] = useState<RarityFilter>("all");
   const [elementFilter, setElementFilter] = useState<ElementFilter>("all");
+  const [variantFilter, setVariantFilter] = useState<VariantFilter>("all");
   const [search, setSearch] = useState("");
 
   // Sessão opcional — visitantes podem navegar sem login
@@ -60,6 +62,7 @@ function CollectionPage() {
     if (!userId) {
       setProfile(null);
       setOwnedSpecies(new Set());
+      setOwnedShiny(new Set());
       return;
     }
     supabase.from("profiles").select("*").eq("id", userId).maybeSingle().then(({ data }) => {
@@ -67,32 +70,48 @@ function CollectionPage() {
     });
     supabase
       .from("monsters")
-      .select("species")
+      .select("species, is_shiny")
       .eq("owner_id", userId)
       .then(({ data }) => {
-        if (data) setOwnedSpecies(new Set(data.map((m) => m.species)));
+        if (data) {
+          setOwnedSpecies(new Set(data.filter((m) => !m.is_shiny).map((m) => m.species)));
+          setOwnedShiny(new Set(data.filter((m) => m.is_shiny).map((m) => m.species)));
+        }
       });
   }, [userId]);
 
   const allSpecies = useMemo(() => Object.values(SPECIES).filter((s) => !s.retired), []);
+
+  // Cada espécie gera 1 card normal + 1 card ✨ shiny (quando tem arte shiny)
+  const allEntries = useMemo(
+    () =>
+      allSpecies.flatMap((s) =>
+        s.shinyImage ? [{ sp: s, shiny: false }, { sp: s, shiny: true }] : [{ sp: s, shiny: false }],
+      ),
+    [allSpecies],
+  );
+
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    return allSpecies.filter((s) => {
-      const isLocked = !!s.hidden && !ownedSpecies.has(s.id);
+    return allEntries.filter(({ sp: s, shiny }) => {
+      if (variantFilter === "normal" && shiny) return false;
+      if (variantFilter === "shiny" && !shiny) return false;
+      const has = shiny ? ownedShiny.has(s.id) : ownedSpecies.has(s.id);
+      const isLocked = !!s.hidden && !has;
       // Pets ocultos aparecem como silhueta (não somem); ignoram filtros de busca/elemento
       if (isLocked) {
         if (filter === "owned") return false;
         if (rarityFilter !== "all" && s.rarity !== rarityFilter) return false;
         return true;
       }
-      if (filter === "owned" && !ownedSpecies.has(s.id)) return false;
-      if (filter === "missing" && ownedSpecies.has(s.id)) return false;
+      if (filter === "owned" && !has) return false;
+      if (filter === "missing" && has) return false;
       if (rarityFilter !== "all" && s.rarity !== rarityFilter) return false;
       if (elementFilter !== "all" && s.element !== elementFilter && s.secondaryElement !== elementFilter) return false;
       if (q && !s.name.toLowerCase().includes(q)) return false;
       return true;
     });
-  }, [allSpecies, ownedSpecies, filter, rarityFilter, elementFilter, search]);
+  }, [allEntries, ownedSpecies, ownedShiny, filter, rarityFilter, elementFilter, variantFilter, search]);
 
   // Progresso não conta pets ocultos (ainda não lançados)
   const releasedSpecies = useMemo(() => allSpecies.filter((s) => !s.hidden), [allSpecies]);
