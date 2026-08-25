@@ -13,6 +13,7 @@ import {
   type Rarity,
   type Element,
 } from "@/lib/game-data";
+import { getShinyPassive } from "@/lib/moves";
 import { HUD, type ProfileRow } from "@/components/HUD";
 import arenaBg from "@/assets/arena-bg.jpg";
 
