@@ -121,6 +121,7 @@ function GymsPage() {
       try {
         const res = await finishChallengeFn({ data: { sessionId: sid, visibleTurns: turns, forfeit: false } });
         setOutcome({ badge: res.badge, leader: res.leader });
+        if (res.badge) setBadgeCelebrate(true);
         await Promise.all([loadAll(), reload()]);
       } catch (e: any) {
         toast.error(e?.message ?? "Erro ao registrar o desafio");
