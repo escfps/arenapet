@@ -177,7 +177,7 @@ export const gymChallengeFinish = createServerFn({ method: "POST" })
     }
 
     const won = finalWinner === "team_a";
-    const { data: res, error } = await supabaseAdmin.rpc("gym_report_result", {
+    const { data: res, error } = await context.supabase.rpc("gym_report_result", {
       p_type: claimed.gym_type as string,
       p_won: won,
       p_pure: won && payload.pure === true,
