@@ -221,11 +221,12 @@ function PatioPage() {
         toast.error(`Time cheio (${TEAM_MAX}).`);
         return;
       }
-      // 🚫 Bloquear espécie duplicada no time
-      if (teamMembers.some((x) => x.species === m.species)) {
-        toast.error(`Você já tem um ${m.name || m.species} no time. Só 1 de cada espécie!`);
+      // 🚫 Bloquear espécie duplicada no time (shiny e normal contam como diferentes)
+      if (teamMembers.some((x) => x.species === m.species && !!x.is_shiny === !!m.is_shiny)) {
+        toast.error(`Você já tem um ${m.name || m.species}${m.is_shiny ? " ✨" : ""} no time. Só 1 de cada versão!`);
         return;
       }
+
       const used = new Set(teamMembers.map((x) => x.team_position ?? 0));
       let slot = 0;
       while (slot < TEAM_MAX && used.has(slot)) slot += 1;
