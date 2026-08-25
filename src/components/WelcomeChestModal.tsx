@@ -115,10 +115,10 @@ export function WelcomeChestModal({ hatching, reveal, onOpen, onDone }: Props) {
                         <span className="text-4xl opacity-70 animate-pulse">❓</span>
                       )}
                     </div>
-                    <div className="bg-card/95 p-2 text-center">
+                    <div className="bg-zinc-900/95 p-2 text-center">
                       {shown ? (
                         <>
-                          <div className="font-extrabold text-xs truncate text-foreground">
+                          <div className="font-extrabold text-xs truncate text-white">
                             {sp.emoji} {sp.name}
                           </div>
                           <span
