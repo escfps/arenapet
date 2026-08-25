@@ -329,6 +329,17 @@ function GymsPage() {
             </div>
           </div>
         )}
+
+        {badgeCelebrate && outcome?.badge && active && (
+          <BadgeCelebration
+            badgeEmoji="🎖️"
+            typeName={TYPE_INFO[active].name}
+            typeColor={TYPE_INFO[active].color}
+            typeEmoji={TYPE_INFO[active].emoji}
+            becameLeader={!!outcome.leader}
+            onClose={() => setBadgeCelebrate(false)}
+          />
+        )}
       </div>
     </div>
   );
