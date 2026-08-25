@@ -198,6 +198,7 @@ function GymsPage() {
     setWinner(null);
     setActive(null);
     setEnemy(null);
+    setBadgeCelebrate(false);
   }
 
   function readyIn(gym: GymRow): string | null {
