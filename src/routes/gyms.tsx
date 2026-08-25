@@ -298,37 +298,40 @@ function GymsPage() {
                 🏛️ Ginásio {TYPE_INFO[active].emoji} {TYPE_INFO[active].name}
                 {!pureTeam && <div className="text-[11px] font-bold text-amber-300">Time fora do tipo — só vale insígnia</div>}
               </div>
-              <BattleScene
-                teamA={myTeam}
-                teamB={enemy.team}
-                log={battleLog}
-                step={shownLog.length}
-                playerAName={profile.username}
-                playerBName={enemy.name}
-              />
+              <div className="relative">
+                <BattleScene
+                  teamA={myTeam}
+                  teamB={enemy.team}
+                  log={battleLog}
+                  step={shownLog.length}
+                  playerAName={profile.username}
+                  playerBName={enemy.name}
+                />
 
-              {battleFinished && winner && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fade-in">
-                  <div className="w-full max-w-sm rounded-2xl border-4 p-6 text-center bg-purple-950 border-white/30 text-white shadow-2xl animate-scale-in">
-                    <div className="text-6xl mb-2">{winner === "team_a" ? "🏆" : winner === "draw" ? "🤝" : "💀"}</div>
-                    <div className="text-3xl font-black">
-                      {winner === "team_a" ? "VITÓRIA!" : winner === "draw" ? "EMPATE!" : "DERROTA"}
-                    </div>
-                    {outcome && (
-                      <div className="mt-3 text-sm space-y-1">
-                        <div>{outcome.badge ? `🎖️ Você conquistou a insígnia de ${TYPE_INFO[active].name}!` : badgeSet.has(active) ? "🎖️ Você já tinha esta insígnia." : "Sem insígnia desta vez (30% de chance)."}</div>
-                        {outcome.leader && <div className="text-yellow-300 font-black">👑 Você é o novo líder do Ginásio {TYPE_INFO[active].name}!</div>}
-                        {!outcome.leader && winner === "team_a" && !pureTeam && (
-                          <div className="text-amber-300">Para virar líder, use um time 100% {TYPE_INFO[active].name}.</div>
-                        )}
+                {battleFinished && winner && (
+                  <div className="absolute inset-0 z-50 flex items-center justify-center p-4 bg-black/60 rounded-xl animate-fade-in">
+                    <div className="w-full max-w-sm rounded-2xl border-4 p-5 text-center bg-purple-950/95 border-white/30 text-white shadow-2xl animate-scale-in">
+                      <div className="text-5xl mb-1">{winner === "team_a" ? "🏆" : winner === "draw" ? "🤝" : "💀"}</div>
+                      <div className="text-3xl font-black">
+                        {winner === "team_a" ? "VITÓRIA!" : winner === "draw" ? "EMPATE!" : "DERROTA"}
                       </div>
-                    )}
-                    <button onClick={closeBattle} className="mt-4 w-full px-5 py-3 rounded-xl font-black bg-white text-purple-950">
-                      Voltar aos ginásios
-                    </button>
+                      {outcome && (
+                        <div className="mt-2 text-sm space-y-1">
+                          <div>{outcome.badge ? `🎖️ Você conquistou a insígnia de ${TYPE_INFO[active].name}!` : badgeSet.has(active) ? "🎖️ Você já tinha esta insígnia." : "Sem insígnia desta vez (30% de chance)."}</div>
+                          {outcome.leader && <div className="text-yellow-300 font-black">👑 Você é o novo líder do Ginásio {TYPE_INFO[active].name}!</div>}
+                          {!outcome.leader && winner === "team_a" && !pureTeam && (
+                            <div className="text-amber-300">Para virar líder, use um time 100% {TYPE_INFO[active].name}.</div>
+                          )}
+                        </div>
+                      )}
+                      <button onClick={closeBattle} className="mt-3 w-full px-5 py-2.5 rounded-xl font-black bg-white text-purple-950">
+                        Voltar aos ginásios
+                      </button>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
+
 
             </div>
           </div>
