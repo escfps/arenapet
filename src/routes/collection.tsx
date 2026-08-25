@@ -359,7 +359,12 @@ function DexCard({ sp, owned, locked = false, shiny = false }: { sp: (typeof SPE
 
       <div className="p-2 bg-card/95 backdrop-blur-sm space-y-1.5">
         <div className="text-center">
-          <div className="font-extrabold text-sm truncate">{locked ? "???" : sp.name}</div>
+          <div className="font-extrabold text-sm truncate">{locked ? "???" : shiny ? `✨ ${sp.name}` : sp.name}</div>
+          {!locked && shinyPassive && (
+            <div className="text-[9px] font-bold text-fuchsia-500 truncate" title={shinyPassive.description}>
+              {shinyPassive.emoji} {shinyPassive.name}
+            </div>
+          )}
           <div className="text-[10px] text-muted-foreground truncate">
             {locked ? "Pet misterioso — em breve" : (
               <>
