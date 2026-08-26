@@ -93,7 +93,7 @@ function MarketPage() {
     if (!userId) return;
     const [all, m, inv, b] = await Promise.all([
       (supabase as any).from("market_listings").select("*").order("created_at", { ascending: false }).limit(300),
-      supabase.from("monsters").select("id, species, name, rank, is_shiny, in_team, hp, atk, def, spd").eq("owner_id", userId),
+      supabase.from("monsters").select("id, species, name, rank, is_shiny, in_team, hp, atk, def, spd, soulbound").eq("owner_id", userId),
       supabase.from("inventory").select("item_type, quantity").eq("user_id", userId),
       supabase.from("gym_badges").select("gym_type").eq("user_id", userId),
     ]);
@@ -117,7 +117,7 @@ function MarketPage() {
 
   useEffect(() => { void load(); }, [load]);
 
-  const sellableMonsters = useMemo(() => monsters.filter((m) => !m.in_team), [monsters]);
+  const sellableMonsters = useMemo(() => monsters.filter((m) => !m.in_team && !(m as { soulbound?: boolean }).soulbound), [monsters]);
   const sellableItems = useMemo(
     () => Object.entries(items).filter(([, q]) => q > 0),
     [items]
