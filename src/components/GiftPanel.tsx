@@ -19,7 +19,7 @@ type Gift = {
   created_at: string;
 };
 
-type Mon = { id: string; species: string; name: string; rank: number; in_team: boolean; is_shiny?: boolean };
+type Mon = { id: string; species: string; name: string; rank: number; in_team: boolean; is_shiny?: boolean; soulbound?: boolean };
 
 const ITEM_LABELS: Record<string, { label: string; emoji: string }> = {
   ration: { label: "Ração", emoji: "🍖" },
@@ -60,7 +60,7 @@ export function GiftPanel({
   const load = useCallback(async () => {
     const [gRes, mRes, iRes] = await Promise.all([
       supabase.from("player_gifts" as any).select("*").order("created_at", { ascending: false }).limit(60),
-      supabase.from("monsters").select("id,species,name,rank,in_team,is_shiny").eq("owner_id", userId),
+      supabase.from("monsters").select("id,species,name,rank,in_team,is_shiny,soulbound").eq("owner_id", userId),
       supabase.from("inventory").select("item_type,quantity").eq("user_id", userId),
     ]);
     const list = ((gRes.data ?? []) as unknown) as Gift[];
@@ -83,7 +83,7 @@ export function GiftPanel({
 
   const received = useMemo(() => gifts.filter((g) => g.receiver_id === userId && g.status === "pending"), [gifts, userId]);
   const sent = useMemo(() => gifts.filter((g) => g.sender_id === userId && g.status === "pending"), [gifts, userId]);
-  const giftable = useMemo(() => monsters.filter((m) => !m.in_team), [monsters]);
+  const giftable = useMemo(() => monsters.filter((m) => !m.in_team && !m.soulbound), [monsters]);
   const ownedItems = useMemo(
     () => Object.entries(inventory).filter(([, q]) => (q ?? 0) > 0),
     [inventory]

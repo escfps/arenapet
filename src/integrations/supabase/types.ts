@@ -495,6 +495,7 @@ export type Database = {
           owner_id: string
           rank: number
           skin: string
+          soulbound: boolean
           spd: number
           species: string
           team_position: number
@@ -520,6 +521,7 @@ export type Database = {
           owner_id: string
           rank?: number
           skin?: string
+          soulbound?: boolean
           spd?: number
           species: string
           team_position?: number
@@ -545,6 +547,7 @@ export type Database = {
           owner_id?: string
           rank?: number
           skin?: string
+          soulbound?: boolean
           spd?: number
           species?: string
           team_position?: number

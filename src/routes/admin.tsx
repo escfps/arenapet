@@ -123,7 +123,7 @@ function AdminPage() {
   };
   type CodeUse = { id: string; user_id: string; used_at: string; username: string };
   const [codes, setCodes] = useState<CodeRow[]>([]);
-  const [codeType, setCodeType] = useState<"pet" | "chest" | "gems" | "coins">("gems");
+  const [codeType, setCodeType] = useState<"pet" | "chest" | "gems" | "coins" | "random_shiny">("gems");
   const [codeSpecies, setCodeSpecies] = useState("flarepup");
   const [codeRank, setCodeRank] = useState(1);
   const [codeChest, setCodeChest] = useState<"wood" | "silver" | "gold" | "legendary">("gold");
@@ -174,11 +174,13 @@ function AdminPage() {
         | { reward_type: "pet"; species: string; rank: number }
         | { reward_type: "chest"; chestTier: "wood" | "silver" | "gold" | "legendary" }
         | { reward_type: "gems"; amount: number }
-        | { reward_type: "coins"; amount: number };
+        | { reward_type: "coins"; amount: number }
+        | { reward_type: "random_shiny" };
       let payload: CreatePayload;
       if (codeType === "pet") payload = { reward_type: "pet", species: codeSpecies, rank: codeRank };
       else if (codeType === "chest") payload = { reward_type: "chest", chestTier: codeChest };
       else if (codeType === "gems") payload = { reward_type: "gems", amount: codeAmount };
+      else if (codeType === "random_shiny") payload = { reward_type: "random_shiny" };
       else payload = { reward_type: "coins", amount: codeAmount };
       const r = await createCodeFn({ data: payload });
       toast.success(`Código gerado: ${r.code}`);
@@ -705,6 +707,7 @@ function AdminPage() {
                   <option value="coins">🪙 Moedas</option>
                   <option value="chest">📦 Baú</option>
                   <option value="pet">🐾 Pet</option>
+                  <option value="random_shiny">✨ Shiny aleatório (vinculado)</option>
                 </select>
               </div>
 
@@ -790,6 +793,8 @@ function AdminPage() {
                 desc = `💎 ${rd.amount} diamantes`;
               } else if (c.reward_type === "coins") {
                 desc = `🪙 ${rd.amount} moedas`;
+              } else if (c.reward_type === "random_shiny") {
+                desc = `✨ Shiny aleatório 🔒 (vinculado)`;
               }
               const maxUses = c.max_uses ?? 1;
               const usesCount = c.uses_count ?? 0;

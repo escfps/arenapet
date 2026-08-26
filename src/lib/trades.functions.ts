@@ -27,10 +27,11 @@ export const createTrade = createServerFn({ method: "POST" })
     // validate monster
     const { data: mon } = await supabaseAdmin
       .from("monsters")
-      .select("id,owner_id,species,rank,in_team")
+      .select("id,owner_id,species,rank,in_team,soulbound")
       .eq("id", data.fromMonsterId)
       .maybeSingle();
     if (!mon || mon.owner_id !== userId) throw new Error("Monstro inválido");
+    if ((mon as { soulbound?: boolean }).soulbound) throw new Error("Esse Pokémon é vinculado à sua conta e não pode ser trocado");
     if (mon.in_team) throw new Error("Tire o monstro do time antes");
     const sp = SPECIES[mon.species];
     if (sp?.rarity === "legendary" || sp?.rarity === "mythic") throw new Error("Lendários e Míticos não podem ser trocados");
@@ -81,10 +82,11 @@ export const respondToTrade = createServerFn({ method: "POST" })
 
     const { data: mon } = await supabaseAdmin
       .from("monsters")
-      .select("id,owner_id,species,rank,in_team")
+      .select("id,owner_id,species,rank,in_team,soulbound")
       .eq("id", data.withMonsterId)
       .maybeSingle();
     if (!mon || mon.owner_id !== userId) throw new Error("Monstro inválido");
+    if ((mon as { soulbound?: boolean }).soulbound) throw new Error("Esse Pokémon é vinculado à sua conta e não pode ser trocado");
     if (mon.in_team) throw new Error("Tire o monstro do time antes");
     const sp = SPECIES[mon.species];
     if (sp?.rarity === "legendary" || sp?.rarity === "mythic") throw new Error("Lendários e Míticos não podem ser trocados");
@@ -132,8 +134,8 @@ export const confirmTrade = createServerFn({ method: "POST" })
     const [{ data: fromProfile }, { data: toProfile }, { data: monFrom }, { data: monTo }] = await Promise.all([
       supabaseAdmin.from("profiles").select("id,coins,gems").eq("id", trade.from_user_id).single(),
       supabaseAdmin.from("profiles").select("id,coins,gems").eq("id", trade.to_user_id).single(),
-      supabaseAdmin.from("monsters").select("id,owner_id,in_team").eq("id", trade.from_monster_id).maybeSingle(),
-      supabaseAdmin.from("monsters").select("id,owner_id,in_team").eq("id", toMonsterId).maybeSingle(),
+      supabaseAdmin.from("monsters").select("id,owner_id,in_team,soulbound").eq("id", trade.from_monster_id).maybeSingle(),
+      supabaseAdmin.from("monsters").select("id,owner_id,in_team,soulbound").eq("id", toMonsterId).maybeSingle(),
     ]);
     if (!monFrom || monFrom.owner_id !== trade.from_user_id || monFrom.in_team) {
       await supabaseAdmin.from("trades").update({ status: "cancelled" }).eq("id", trade.id);
@@ -142,6 +144,10 @@ export const confirmTrade = createServerFn({ method: "POST" })
     if (!monTo || monTo.owner_id !== trade.to_user_id || monTo.in_team) {
       await supabaseAdmin.from("trades").update({ status: "cancelled" }).eq("id", trade.id);
       throw new Error("Monstro do destinatário não disponível — troca cancelada");
+    }
+    if ((monFrom as { soulbound?: boolean }).soulbound || (monTo as { soulbound?: boolean }).soulbound) {
+      await supabaseAdmin.from("trades").update({ status: "cancelled" }).eq("id", trade.id);
+      throw new Error("Pokémon vinculado à conta não pode ser trocado — troca cancelada");
     }
     if (!fromProfile || fromProfile.coins < TRADE_FEE_COINS || fromProfile.gems < TRADE_FEE_GEMS) {
       throw new Error("Remetente sem moedas/gemas suficientes pra taxa");
