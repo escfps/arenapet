@@ -193,6 +193,9 @@ function MonsterPage() {
               {(monster as any).is_shiny && (
                 <span className="inline-block mt-1 px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-400 text-amber-950 text-[10px] font-extrabold shadow animate-pulse">✨ SHINY • +10% status • Aura Prismática</span>
               )}
+              {(monster as any).soulbound === true && (
+                <span className="inline-block mt-1 ml-1 px-2 py-0.5 rounded-full bg-black/60 border border-white/40 text-white text-[10px] font-extrabold shadow" title="Não pode ser trocado, presenteado ou vendido no mercado">🔒 VINCULADO À CONTA</span>
+              )}
               <p className="text-sm opacity-90">{sp.emoji} {sp.name} • {"✦".repeat(monster.rank)}</p>
               <div className="mt-1 flex flex-wrap gap-1">
                 {getSpeciesCategories(monster.species).map((cat) => (
