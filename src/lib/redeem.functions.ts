@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { SPECIES, starterMonsterStats } from "@/lib/game-data";
 
 const ADMIN_USER_IDS = new Set<string>([
   "9efcc279-b110-4feb-862e-deea6acf858e",
@@ -26,6 +27,9 @@ const RewardSchema = z.discriminatedUnion("reward_type", [
     reward_type: z.literal("pet"),
     species: z.string().min(1).max(64),
     rank: z.number().int().min(1).max(10),
+  }),
+  z.object({
+    reward_type: z.literal("random_shiny"),
   }),
   z.object({
     reward_type: z.literal("chest"),
