@@ -27,10 +27,11 @@ export const createTrade = createServerFn({ method: "POST" })
     // validate monster
     const { data: mon } = await supabaseAdmin
       .from("monsters")
-      .select("id,owner_id,species,rank,in_team")
+      .select("id,owner_id,species,rank,in_team,soulbound")
       .eq("id", data.fromMonsterId)
       .maybeSingle();
     if (!mon || mon.owner_id !== userId) throw new Error("Monstro inválido");
+    if ((mon as { soulbound?: boolean }).soulbound) throw new Error("Esse Pokémon é vinculado à sua conta e não pode ser trocado");
     if (mon.in_team) throw new Error("Tire o monstro do time antes");
     const sp = SPECIES[mon.species];
     if (sp?.rarity === "legendary" || sp?.rarity === "mythic") throw new Error("Lendários e Míticos não podem ser trocados");
@@ -81,10 +82,11 @@ export const respondToTrade = createServerFn({ method: "POST" })
 
     const { data: mon } = await supabaseAdmin
       .from("monsters")
-      .select("id,owner_id,species,rank,in_team")
+      .select("id,owner_id,species,rank,in_team,soulbound")
       .eq("id", data.withMonsterId)
       .maybeSingle();
     if (!mon || mon.owner_id !== userId) throw new Error("Monstro inválido");
+    if ((mon as { soulbound?: boolean }).soulbound) throw new Error("Esse Pokémon é vinculado à sua conta e não pode ser trocado");
     if (mon.in_team) throw new Error("Tire o monstro do time antes");
     const sp = SPECIES[mon.species];
     if (sp?.rarity === "legendary" || sp?.rarity === "mythic") throw new Error("Lendários e Míticos não podem ser trocados");
