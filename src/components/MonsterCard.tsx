@@ -21,6 +21,7 @@ export type MonsterRow = {
   team_position?: number;
   train_count?: number;
   is_shiny?: boolean;
+  soulbound?: boolean;
 };
 
 type Props = {
@@ -74,8 +75,9 @@ export function MonsterCard({ monster, onClick, compact, selected }: Props) {
             </span>
           ))}
         </div>
+        <div className="absolute top-1 right-1 z-20 flex flex-col items-end gap-1">
         {shiny && (
-          <span className="absolute top-1 right-1 z-20 px-1.5 py-0.5 rounded-full bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-400 text-amber-950 text-[9px] font-extrabold shadow animate-pulse">
+          <span className="px-1.5 py-0.5 rounded-full bg-gradient-to-r from-amber-200 via-yellow-300 to-amber-400 text-amber-950 text-[9px] font-extrabold shadow animate-pulse">
             ✨ SHINY
           </span>
         )}
