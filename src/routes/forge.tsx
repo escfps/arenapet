@@ -153,6 +153,7 @@ function FuseCard({ group, onFuse, disabled }: { group: { species: string; rank:
   const inTeam = group.list.filter((m) => m.in_team).length;
   const available = group.list.length - inTeam;
   const hasShiny = group.list.some((m) => m.is_shiny === true);
+  const hasSoulbound = group.list.some((m) => m.soulbound === true);
   const canFuse = available >= 2 && group.rank < MAX_RANK;
   return (
     <div className={`rounded-xl bg-gradient-to-br ${ELEMENT_COLORS[sp.element]} p-3 shadow-xl ring-2 ${RARITY_INFO[sp.rarity].ringColor}`}>
@@ -161,6 +162,7 @@ function FuseCard({ group, onFuse, disabled }: { group: { species: string; rank:
         <div className="flex-1 min-w-0">
           <div className="font-extrabold text-white text-sm truncate">{hasShiny ? "✨ " : ""}{sp.name}</div>
           {hasShiny && <div className="text-[10px] font-bold text-yellow-200">Shiny é preservado na fusão</div>}
+          {hasSoulbound && <div className="text-[10px] font-bold text-amber-200">🔒 Vínculo é preservado na fusão</div>}
           <div className="text-[10px] text-white/90">
             {group.list.length}× no rank atual
             {inTeam > 0 && <span className="text-yellow-200"> ({inTeam} no time)</span>}
