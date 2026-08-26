@@ -134,8 +134,8 @@ export const confirmTrade = createServerFn({ method: "POST" })
     const [{ data: fromProfile }, { data: toProfile }, { data: monFrom }, { data: monTo }] = await Promise.all([
       supabaseAdmin.from("profiles").select("id,coins,gems").eq("id", trade.from_user_id).single(),
       supabaseAdmin.from("profiles").select("id,coins,gems").eq("id", trade.to_user_id).single(),
-      supabaseAdmin.from("monsters").select("id,owner_id,in_team").eq("id", trade.from_monster_id).maybeSingle(),
-      supabaseAdmin.from("monsters").select("id,owner_id,in_team").eq("id", toMonsterId).maybeSingle(),
+      supabaseAdmin.from("monsters").select("id,owner_id,in_team,soulbound").eq("id", trade.from_monster_id).maybeSingle(),
+      supabaseAdmin.from("monsters").select("id,owner_id,in_team,soulbound").eq("id", toMonsterId).maybeSingle(),
     ]);
     if (!monFrom || monFrom.owner_id !== trade.from_user_id || monFrom.in_team) {
       await supabaseAdmin.from("trades").update({ status: "cancelled" }).eq("id", trade.id);
@@ -144,6 +144,10 @@ export const confirmTrade = createServerFn({ method: "POST" })
     if (!monTo || monTo.owner_id !== trade.to_user_id || monTo.in_team) {
       await supabaseAdmin.from("trades").update({ status: "cancelled" }).eq("id", trade.id);
       throw new Error("Monstro do destinatário não disponível — troca cancelada");
+    }
+    if ((monFrom as { soulbound?: boolean }).soulbound || (monTo as { soulbound?: boolean }).soulbound) {
+      await supabaseAdmin.from("trades").update({ status: "cancelled" }).eq("id", trade.id);
+      throw new Error("Pokémon vinculado à conta não pode ser trocado — troca cancelada");
     }
     if (!fromProfile || fromProfile.coins < TRADE_FEE_COINS || fromProfile.gems < TRADE_FEE_GEMS) {
       throw new Error("Remetente sem moedas/gemas suficientes pra taxa");
