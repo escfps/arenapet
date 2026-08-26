@@ -200,6 +200,8 @@ export const redeemCode = createServerFn({ method: "POST" })
       chestTier?: string;
       coins?: number;
       gems?: number;
+      shiny?: boolean;
+      soulbound?: boolean;
     } = { type: row.reward_type };
 
     if (row.reward_type === "pet") {
@@ -219,6 +221,33 @@ export const redeemCode = createServerFn({ method: "POST" })
       });
       result.species = species;
       result.rank = rank;
+    } else if (row.reward_type === "random_shiny") {
+      // Sorteia 1 shiny aleatório (espécies ativas com arte shiny) — VINCULADO à conta:
+      // não pode ser presenteado, trocado nem vendido (anti-farm de contas).
+      const pool = Object.values(SPECIES).filter(
+        (s) => !s.retired && !s.hidden && !!s.shinyImage,
+      );
+      if (pool.length === 0) throw new Error("Nenhum shiny disponível no momento");
+      const sp = pool[Math.floor(Math.random() * pool.length)];
+      const base = starterMonsterStats(sp.id);
+      await supabaseAdmin.from("monsters").insert({
+        owner_id: context.userId,
+        species: sp.id,
+        name: sp.name,
+        rank: 1,
+        hp: base.hp,
+        atk: base.atk,
+        def: base.def,
+        spd: base.spd,
+        int: base.int,
+        is_shiny: true,
+        soulbound: true,
+        in_team: false,
+      } as never);
+      result.species = sp.id;
+      result.rank = 1;
+      result.shiny = true;
+      result.soulbound = true;
     } else if (row.reward_type === "gems") {
       const amount = Math.max(0, Number(rd.amount) || 0);
       const { data: p } = await supabaseAdmin
