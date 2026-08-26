@@ -19,6 +19,8 @@ type RewardResult = {
   chestTier?: string;
   coins?: number;
   gems?: number;
+  shiny?: boolean;
+  soulbound?: boolean;
 };
 
 function RedeemPage() {
@@ -115,12 +117,12 @@ function RedeemPage() {
             {sp && (
               <div className="my-4 p-3 rounded-2xl bg-black/30 animate-fade-in">
                 <img
-                  src={sp.image}
+                  src={reward.shiny ? (sp.shinyImage ?? sp.image) : sp.image}
                   alt={sp.name}
                   className="h-40 mx-auto drop-shadow-2xl animate-in zoom-in duration-700"
                 />
                 <div className="mt-2 font-extrabold text-lg">
-                  {sp.emoji} {sp.name}
+                  {reward.shiny && "✨ "}{sp.emoji} {sp.name}{reward.shiny && " ✨"}
                 </div>
                 <div className="text-yellow-300 text-xl">
                   {rankStars(reward.rank ?? 1)}
@@ -130,6 +132,16 @@ function RedeemPage() {
                 >
                   {RARITY_INFO[sp.rarity].emoji} {RARITY_INFO[sp.rarity].name}
                 </span>
+                {reward.shiny && (
+                  <span className="inline-block mt-1 ml-1 px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-400 to-yellow-500 text-black text-[10px] font-extrabold">
+                    ✨ SHINY
+                  </span>
+                )}
+                {reward.soulbound && (
+                  <div className="mt-2 text-[11px] font-bold text-amber-200/90 bg-amber-500/10 border border-amber-300/30 rounded-lg px-2 py-1">
+                    🔒 Vinculado à sua conta — não pode ser trocado, presenteado ou vendido
+                  </div>
+                )}
               </div>
             )}
 
