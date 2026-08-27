@@ -449,7 +449,35 @@
     from { background-position: -120% 0; }
     to   { background-position: 120% 0; }
   }
+  /* Público visível na arquibancada (pessoas + pokémon) */
+  .stadium-spectators {
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 46%;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .spectator-row {
+    position: absolute;
+    left: -2%;
+    right: -2%;
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+  }
+  .spectator {
+    display: inline-block;
+    line-height: 1;
+    animation: spectatorBob 1.4s ease-in-out infinite;
+    animation-delay: var(--sp-delay, 0s);
+    filter: drop-shadow(0 1px 1px rgba(0,0,0,0.6));
+  }
+  @keyframes spectatorBob {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50%      { transform: translateY(-22%) scale(1.04); }
+  }
   /* Flashes de câmera aleatórios na torcida */
+
   .stadium-flashes {
     position: absolute;
     inset: 0 0 auto 0;
