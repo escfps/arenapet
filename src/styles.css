@@ -357,44 +357,126 @@
   }
 }
 
-/* ===== Layout de batalha 3D (estilo Pokémon Red / Pokémon GO) ===== */
+/* ===== Layout de batalha estilo Pokémon Stadium (N64) ===== */
 @layer utilities {
   .battle3d-stage {
     perspective: 900px;
-    perspective-origin: 50% 35%;
+    perspective-origin: 50% 30%;
+    background: linear-gradient(180deg, #2b1c3a 0%, #3b2450 45%, #1a1024 100%);
   }
-  .battle3d-ground {
+
+  /* Arquibancada com torcida pixelada */
+  .stadium-crowd {
     position: absolute;
-    left: -20%;
-    right: -20%;
-    bottom: -10%;
-    height: 78%;
-    transform: rotateX(64deg);
-    transform-origin: bottom center;
+    inset: 0 0 auto 0;
+    height: 46%;
     background:
-      linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0)),
-      repeating-linear-gradient(0deg, rgba(255,255,255,0.10) 0 2px, transparent 2px 42px),
-      repeating-linear-gradient(90deg, rgba(255,255,255,0.10) 0 2px, transparent 2px 42px),
-      radial-gradient(ellipse at 50% 100%, #3f7f3a 0%, #24512c 60%, #12241c 100%);
-    animation: battle3dGround 6s linear infinite;
+      radial-gradient(ellipse at 50% 120%, rgba(0,0,0,0.55), rgba(0,0,0,0) 70%),
+      repeating-linear-gradient(90deg,
+        #6b5a7d 0 7px, #8a7399 7px 12px, #55486b 12px 19px, #9c86ab 19px 24px),
+      repeating-linear-gradient(0deg,
+        rgba(0,0,0,0.35) 0 8px, rgba(255,255,255,0.05) 8px 16px);
+    background-blend-mode: normal, multiply, overlay;
+    filter: blur(0.4px);
   }
-  @keyframes battle3dGround {
-    from { background-position: 0 0, 0 0, 0 0, 0 0; }
-    to   { background-position: 0 0, 0 84px, 42px 0, 0 0; }
+  .stadium-crowd::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle, rgba(255,235,180,0.9) 1.4px, transparent 1.6px),
+      radial-gradient(circle, rgba(255,170,170,0.7) 1.2px, transparent 1.4px);
+    background-size: 18px 14px, 26px 18px;
+    background-position: 0 0, 9px 7px;
+    animation: stadiumCrowd 3.2s steps(2) infinite;
+    opacity: 0.85;
   }
+  @keyframes stadiumCrowd {
+    0%, 100% { background-position: 0 0, 9px 7px; opacity: 0.85; }
+    50% { background-position: 2px 1px, 7px 6px; opacity: 0.6; }
+  }
+
+  /* Muro / barreira do estádio */
+  .stadium-wall {
+    position: absolute;
+    left: -10%;
+    right: -10%;
+    top: 42%;
+    height: 12%;
+    background:
+      repeating-linear-gradient(90deg, #cfc6d8 0 26px, #b0a5bd 26px 30px),
+      #c4bad0;
+    border-top: 3px solid #efe9f5;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.5) inset, 0 4px 10px rgba(0,0,0,0.45);
+  }
+
+  /* Campo de terra batida em perspectiva (elipse) */
+  .stadium-field {
+    position: absolute;
+    left: -18%;
+    right: -18%;
+    bottom: -16%;
+    height: 66%;
+    border-radius: 50%;
+    background:
+      radial-gradient(ellipse at 50% 40%, #f0b8a8 0%, #e39f8c 40%, #c9765f 75%, #a05744 100%);
+    box-shadow: 0 -6px 24px rgba(0,0,0,0.45), inset 0 6px 20px rgba(255,255,255,0.25);
+  }
+  /* Anel branco central e linha divisória */
+  .stadium-ring {
+    position: absolute;
+    left: 12%;
+    right: 12%;
+    bottom: 2%;
+    height: 46%;
+    border-radius: 50%;
+    border: 4px solid rgba(255,255,255,0.85);
+    box-shadow: inset 0 0 30px rgba(255,255,255,0.25);
+  }
+  .stadium-midline {
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    bottom: 24%;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8) 20%, rgba(255,255,255,0.8) 80%, transparent);
+  }
+  /* Holofotes */
+  .stadium-spotlight {
+    position: absolute;
+    top: 0;
+    width: 45%;
+    height: 85%;
+    background: linear-gradient(180deg, rgba(255,255,225,0.28), rgba(255,255,225,0) 75%);
+    filter: blur(6px);
+    animation: stadiumSpot 5s ease-in-out infinite alternate;
+  }
+  @keyframes stadiumSpot {
+    from { opacity: 0.35; transform: skewX(-6deg); }
+    to { opacity: 0.7; transform: skewX(6deg); }
+  }
+
+  /* Sombra elíptica sob cada Pokémon */
+  .stadium-shadow {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: -2px;
+    width: 5.5rem;
+    height: 1.1rem;
+    border-radius: 50%;
+    background: radial-gradient(ellipse at center, rgba(0,0,0,0.55), rgba(0,0,0,0) 70%);
+  }
+
   @keyframes battle3dIdle {
     0%, 100% { transform: translateY(0) scale(1); }
-    50%      { transform: translateY(-7px) scale(1.015); }
+    50%      { transform: translateY(-5px) scale(1.01); }
   }
   .animate-battle3d-idle { animation: battle3dIdle 2.2s ease-in-out infinite; }
-  @keyframes battle3dPlatform {
-    from { transform: translateX(-50%) rotate(0deg); }
-    to   { transform: translateX(-50%) rotate(360deg); }
-  }
-  .animate-battle3d-platform { animation: battle3dPlatform 9s linear infinite; }
   @keyframes battle3dPulse {
-    0%, 100% { opacity: 0.35; transform: translateX(-50%) scale(1); }
-    50%      { opacity: 0.75; transform: translateX(-50%) scale(1.12); }
+    0%, 100% { opacity: 0.3; transform: translateX(-50%) scale(1); }
+    50%      { opacity: 0.6; transform: translateX(-50%) scale(1.1); }
   }
   .animate-battle3d-pulse { animation: battle3dPulse 2.4s ease-in-out infinite; }
 }
+
