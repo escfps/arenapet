@@ -1377,3 +1377,189 @@ function SideColumn({
     </div>
   );
 }
+
+// === Efeito elemental do golpe (fogo, elétrico, água, etc.) ===
+const ELEMENT_FX: Record<string, { kind: "flame" | "bolt" | "wave" | "leaf" | "frost" | "psy" | "punch" | "rock" | "toxic" | "wind" | "spooky" | "metal" | "sparkleFx" | "dragon" | "plain"; c1: string; c2: string; icon: string }> = {
+  fire:     { kind: "flame",   c1: "#fb923c", c2: "#dc2626", icon: "🔥" },
+  electric: { kind: "bolt",    c1: "#fde047", c2: "#f59e0b", icon: "⚡" },
+  water:    { kind: "wave",    c1: "#67e8f9", c2: "#2563eb", icon: "💧" },
+  grass:    { kind: "leaf",    c1: "#86efac", c2: "#16a34a", icon: "🍃" },
+  bug:      { kind: "leaf",    c1: "#bef264", c2: "#4d7c0f", icon: "🐛" },
+  ice:      { kind: "frost",   c1: "#a5f3fc", c2: "#0ea5e9", icon: "❄️" },
+  psychic:  { kind: "psy",     c1: "#f0abfc", c2: "#9333ea", icon: "🌀" },
+  fairy:    { kind: "sparkleFx", c1: "#fbcfe8", c2: "#ec4899", icon: "✨" },
+  fighting: { kind: "punch",   c1: "#fdba74", c2: "#b91c1c", icon: "💥" },
+  normal:   { kind: "punch",   c1: "#e7e5e4", c2: "#78716c", icon: "💥" },
+  rock:     { kind: "rock",    c1: "#d6d3d1", c2: "#78350f", icon: "🪨" },
+  ground:   { kind: "rock",    c1: "#fcd34d", c2: "#92400e", icon: "🌋" },
+  earth:    { kind: "rock",    c1: "#fcd34d", c2: "#78350f", icon: "🪨" },
+  poison:   { kind: "toxic",   c1: "#d8b4fe", c2: "#7e22ce", icon: "☠️" },
+  flying:   { kind: "wind",    c1: "#bae6fd", c2: "#6366f1", icon: "🌪️" },
+  ghost:    { kind: "spooky",  c1: "#c4b5fd", c2: "#4c1d95", icon: "👻" },
+  shadow:   { kind: "spooky",  c1: "#e879f9", c2: "#6b21a8", icon: "🌑" },
+  dark:     { kind: "spooky",  c1: "#a8a29e", c2: "#0c0a09", icon: "🌑" },
+  steel:    { kind: "metal",   c1: "#e2e8f0", c2: "#475569", icon: "⚙️" },
+  dragon:   { kind: "dragon",  c1: "#818cf8", c2: "#1d4ed8", icon: "🐉" },
+};
+
+function ElementFxOverlay({
+  element,
+  keyId,
+  crit,
+  fromLeft,
+}: {
+  element: string;
+  keyId: string;
+  crit: boolean;
+  fromLeft: boolean;
+}) {
+  const cfg = ELEMENT_FX[element] ?? { kind: "plain" as const, c1: "#fff", c2: "#999", icon: "💥" };
+  const style = {
+    "--el1": cfg.c1,
+    "--el2": cfg.c2,
+    "--el-dir": fromLeft ? 1 : -1,
+  } as React.CSSProperties;
+  const parts = crit ? 12 : 8;
+  return (
+    <div key={keyId} className="elfx" style={style} aria-hidden="true">
+      {/* clarão elemental sempre presente */}
+      <div className="elfx-flash" />
+      <div className="elfx-ring" />
+
+      {cfg.kind === "flame" && (
+        <>
+          <div className="elfx-beam" />
+          {[...Array(7)].map((_, i) => (
+            <span key={i} className="elfx-flame" style={{ ["--i" as string]: i, animationDelay: `${i * 0.05}s` }}>
+              🔥
+            </span>
+          ))}
+        </>
+      )}
+
+      {cfg.kind === "bolt" && (
+        <>
+          <div className="elfx-strike" />
+          {[0, 1, 2].map((i) => (
+            <span key={i} className="elfx-bolt" style={{ ["--i" as string]: i, animationDelay: `${i * 0.07}s` }}>
+              ⚡
+            </span>
+          ))}
+          <div className="elfx-zap" />
+        </>
+      )}
+
+      {cfg.kind === "wave" && (
+        <>
+          <div className="elfx-wave" />
+          <div className="elfx-wave elfx-wave-2" />
+          {[...Array(parts)].map((_, i) => (
+            <span key={i} className="elfx-drop" style={{ ["--a" as string]: `${(360 / parts) * i}deg`, animationDelay: `${i * 0.03}s` }} />
+          ))}
+        </>
+      )}
+
+      {cfg.kind === "leaf" && (
+        <>
+          <div className="elfx-slashes" />
+          {[...Array(parts)].map((_, i) => (
+            <span key={i} className="elfx-leaf" style={{ ["--a" as string]: `${(360 / parts) * i}deg`, animationDelay: `${i * 0.04}s` }}>
+              {cfg.icon}
+            </span>
+          ))}
+        </>
+      )}
+
+      {cfg.kind === "frost" && (
+        <>
+          <div className="elfx-freeze" />
+          {[...Array(6)].map((_, i) => (
+            <span key={i} className="elfx-shard" style={{ ["--a" as string]: `${60 * i}deg`, animationDelay: `${i * 0.05}s` }}>
+              ❄️
+            </span>
+          ))}
+        </>
+      )}
+
+      {cfg.kind === "psy" && (
+        <>
+          <div className="elfx-psy" />
+          <div className="elfx-psy elfx-psy-2" />
+          <div className="elfx-warp" />
+        </>
+      )}
+
+      {cfg.kind === "sparkleFx" && (
+        <>
+          <div className="elfx-glow" />
+          {[...Array(parts)].map((_, i) => (
+            <span key={i} className="elfx-star" style={{ ["--a" as string]: `${(360 / parts) * i}deg`, animationDelay: `${i * 0.04}s` }}>
+              ✨
+            </span>
+          ))}
+        </>
+      )}
+
+      {cfg.kind === "punch" && (
+        <>
+          <div className="elfx-boom">{cfg.icon}</div>
+          <div className="elfx-lines" />
+        </>
+      )}
+
+      {cfg.kind === "rock" && (
+        <>
+          <div className="elfx-quake" />
+          {[...Array(parts)].map((_, i) => (
+            <span key={i} className="elfx-rock" style={{ ["--a" as string]: `${(360 / parts) * i}deg`, animationDelay: `${i * 0.03}s` }}>
+              {cfg.icon}
+            </span>
+          ))}
+        </>
+      )}
+
+      {cfg.kind === "toxic" && (
+        <>
+          <div className="elfx-cloud" />
+          {[...Array(5)].map((_, i) => (
+            <span key={i} className="elfx-bubble" style={{ ["--i" as string]: i, animationDelay: `${i * 0.08}s` }} />
+          ))}
+        </>
+      )}
+
+      {cfg.kind === "wind" && (
+        <>
+          <div className="elfx-gust" />
+          <div className="elfx-gust elfx-gust-2" />
+        </>
+      )}
+
+      {cfg.kind === "spooky" && (
+        <>
+          <div className="elfx-void" />
+          {[...Array(5)].map((_, i) => (
+            <span key={i} className="elfx-wisp" style={{ ["--i" as string]: i, animationDelay: `${i * 0.09}s` }}>
+              {cfg.icon}
+            </span>
+          ))}
+        </>
+      )}
+
+      {cfg.kind === "metal" && (
+        <>
+          <div className="elfx-clang" />
+          <div className="elfx-lines" />
+        </>
+      )}
+
+      {cfg.kind === "dragon" && (
+        <>
+          <div className="elfx-beam elfx-beam-dragon" />
+          <div className="elfx-psy" />
+        </>
+      )}
+
+      {cfg.kind === "plain" && <div className="elfx-boom">💥</div>}
+    </div>
+  );
+}
