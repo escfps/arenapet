@@ -658,7 +658,8 @@ export function BattleScene({
 const RIGHT_FACING_SPECIES = new Set<string>([
   "alakazam", "gengar", "mewtwo", "blastoise", "ivysaur", "pidgeot", "spearow",
   "sandslash", "wigglytuff", "persian", "machamp", "drowzee", "voltorb",
-  "goldeen", "moltres", "dratini",
+  "goldeen", "moltres", "dratini", "ninetales", "growlithe", "hitmonlee",
+  "hitmonchan", "dragonair",
 ]);
 
 // === Linha dos 3 pets no cenário (apenas sprite) ===
