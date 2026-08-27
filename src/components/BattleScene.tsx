@@ -653,6 +653,14 @@ export function BattleScene({
 }
 
 
+// Espécies cuja arte oficial olha para a DIREITA (precisa de flip oposto ao padrão).
+// Determinado por inspeção visual direta de cada sprite em resolução full.
+const RIGHT_FACING_SPECIES = new Set<string>([
+  "alakazam", "gengar", "mewtwo", "blastoise", "ivysaur", "pidgeot", "spearow",
+  "sandslash", "wigglytuff", "persian", "machamp", "drowzee", "voltorb",
+  "goldeen", "moltres", "dratini",
+]);
+
 // === Linha dos 3 pets no cenário (apenas sprite) ===
 function ArenaLineup({
   team,
@@ -681,6 +689,8 @@ function ArenaLineup({
 
         const sp = SPECIES[m.species];
         if (!sp) return null;
+        // Arte olha pra direita? Inverte a regra de flip por lado.
+        const facesRight = RIGHT_FACING_SPECIES.has(m.species);
         const key = `${side}:${m.name}`;
         const h = hp.get(key) ?? { cur: 0, max: 1 };
         const dead = h.cur <= 0;
@@ -776,7 +786,7 @@ function ArenaLineup({
               } ${isTarget ? "ring-4 ring-red-400/80 rounded-full" : ""}`}
               style={{
                 filter: `${skinFilter(m.skin)} ${shinyFallbackFilter(m.species, (m as any).is_shiny === true)} ${(m as any).is_shiny ? "drop-shadow(0 0 12px rgba(253,224,71,0.9))" : ""}`.trim(),
-                transform: mirrored ? undefined : "scaleX(-1)",
+                transform: (mirrored ? facesRight : !facesRight) ? "scaleX(-1)" : undefined,
               }}
             />
             </div>
