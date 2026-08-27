@@ -4,13 +4,30 @@ import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { toast } from "sonner";
 import { GEM_PACKS } from "@/lib/game-data";
+import charizardImg from "@/assets/monsters/charizard.png";
 
 export const Route = createFileRoute("/login")({
   component: LoginPage,
-  head: () => ({ meta: [{ title: "Entrar — Duelo Pokemon" }] }),
+  head: () => ({
+    meta: [{ title: "Entrar — Duelo Pokemon" }],
+    links: [
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700;800&display=swap",
+      },
+    ],
+  }),
 });
 
 const REMEMBER_KEY = "arenapet:remember";
+
+// Paleta travada: Fogo & Pokébola
+const C = {
+  bg: "#0d0d1a",
+  red: "#e3350d",
+  yellow: "#ffcb05",
+  blue: "#3b5ca8",
+};
 
 function LoginPage() {
   const navigate = useNavigate();
@@ -264,189 +281,286 @@ function LoginPage() {
     }
   }
 
-
+  const typeIcons = ["🔥", "💧", "🌿", "⚡", "🔮", "🥊", "🪨", "🐉"];
 
   return (
-    <main className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden bg-gradient-to-br from-[oklch(0.25_0.12_290)] via-[oklch(0.18_0.10_310)] to-[oklch(0.22_0.14_260)]">
-      {/* Glow orbs */}
-      <div className="pointer-events-none absolute -top-32 -left-32 w-96 h-96 rounded-full bg-fuchsia-500/30 blur-3xl animate-pulse" />
-      <div className="pointer-events-none absolute -bottom-32 -right-32 w-[28rem] h-[28rem] rounded-full bg-cyan-400/20 blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
-      <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40rem] h-[40rem] rounded-full bg-amber-400/10 blur-3xl" />
-
-      {/* Floating pet emojis */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden text-3xl opacity-30">
-        <span className="absolute top-[12%] left-[8%] animate-bounce" style={{ animationDuration: "3s" }}>🐉</span>
-        <span className="absolute top-[20%] right-[12%] animate-bounce" style={{ animationDuration: "4s", animationDelay: "0.5s" }}>🔥</span>
-        <span className="absolute bottom-[18%] left-[14%] animate-bounce" style={{ animationDuration: "3.5s", animationDelay: "1s" }}>⚡</span>
-        <span className="absolute bottom-[25%] right-[10%] animate-bounce" style={{ animationDuration: "4.5s", animationDelay: "1.5s" }}>🦁</span>
-        <span className="absolute top-[45%] left-[5%] animate-bounce text-2xl" style={{ animationDuration: "5s", animationDelay: "0.8s" }}>💎</span>
-        <span className="absolute top-[50%] right-[6%] animate-bounce text-2xl" style={{ animationDuration: "3.8s", animationDelay: "2s" }}>🐆</span>
+    <main
+      className="relative min-h-screen overflow-hidden font-[Barlow]"
+      style={{ background: `radial-gradient(circle at 50% 40%, #1a1a35 0%, ${C.bg} 70%)` }}
+    >
+      {/* Giant pokeball motif background */}
+      <div className="pointer-events-none fixed inset-0 overflow-hidden opacity-[0.05]">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[820px] h-[820px] border-[64px] border-white rounded-full" />
+        <div className="absolute top-1/2 left-0 -translate-y-1/2 w-full h-[64px] bg-white" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-white rounded-full border-[24px]" style={{ borderColor: C.bg }} />
       </div>
+      {/* Ambient glows */}
+      <div className="pointer-events-none fixed -top-32 -left-32 w-96 h-96 rounded-full blur-3xl animate-pulse" style={{ background: `${C.red}33` }} />
+      <div className="pointer-events-none fixed -bottom-32 -right-32 w-[28rem] h-[28rem] rounded-full blur-3xl animate-pulse" style={{ background: `${C.blue}2e`, animationDelay: "1s" }} />
 
-      {/* Card */}
-      <div className="relative w-full max-w-md">
-        {/* Glow ring */}
-        <div className="absolute -inset-1 rounded-3xl bg-gradient-to-br from-fuchsia-500 via-amber-400 to-cyan-400 opacity-70 blur-md" />
-
-        <div className="relative rounded-3xl bg-[oklch(0.18_0.06_290)]/90 backdrop-blur-xl border border-white/10 shadow-2xl overflow-hidden">
-          {/* Top banner */}
-          <div className="relative bg-gradient-to-br from-fuchsia-600 via-purple-600 to-indigo-700 p-6 text-center overflow-hidden">
-            <div className="absolute inset-0 opacity-20" style={{ backgroundImage: "radial-gradient(circle at 20% 20%, white 1px, transparent 1px), radial-gradient(circle at 70% 60%, white 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
-            <div className="relative">
-              <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-white/15 backdrop-blur-sm border border-white/30 shadow-xl mb-3 text-5xl rotate-3 hover:rotate-0 transition-transform">
-                🦊
-              </div>
-              <h1 className="text-3xl font-black text-white tracking-wider drop-shadow-lg">DUELO POKEMON</h1>
-              <p className="text-white/80 text-xs mt-1 font-medium">Colecione · Treine · Batalhe</p>
-            </div>
-          </div>
-
-          <div className="p-6">
-            {/* Tabs */}
-            <div className="flex gap-1 mb-5 bg-black/30 rounded-xl p-1 border border-white/5">
-              <button
-                onClick={() => setMode("signin")}
-                className={`flex-1 py-2.5 rounded-lg text-sm font-bold transition-all ${
-                  mode === "signin"
-                    ? "bg-gradient-to-b from-fuchsia-500 to-purple-600 text-white shadow-lg shadow-fuchsia-500/30"
-                    : "text-white/60 hover:text-white/90"
-                }`}
-              >Entrar</button>
-              <button
-                onClick={() => setMode("signup")}
-                className={`flex-1 py-2.5 rounded-lg text-sm font-bold transition-all ${
-                  mode === "signup"
-                    ? "bg-gradient-to-b from-amber-400 to-orange-500 text-amber-950 shadow-lg shadow-amber-500/30"
-                    : "text-white/60 hover:text-white/90"
-                }`}
-              >Criar conta</button>
-            </div>
-
-            {errorMsg && (
-              <div role="alert" className="mb-3 rounded-xl border-2 border-red-400/60 bg-red-500/15 px-3 py-2.5 text-sm font-semibold text-red-100 flex items-start gap-2">
-                <span className="text-base leading-none mt-0.5">⚠️</span>
-                <span className="flex-1">{errorMsg}</span>
-                <button type="button" onClick={() => setErrorMsg(null)} className="text-red-200/70 hover:text-white text-xs font-bold">✕</button>
-              </div>
-            )}
-            <form onSubmit={submit} className="space-y-3">
-              {mode === "signup" && (
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-lg">🎮</span>
-                  <input
-                    value={username} onChange={(e) => setUsername(e.target.value)}
-                    placeholder="Nome do treinador"
-                    className="w-full pl-10 pr-4 py-3 rounded-xl bg-black/40 border-2 border-white/10 text-white placeholder:text-white/40 focus:border-fuchsia-400 focus:bg-black/60 outline-none transition"
-                  />
-                </div>
-              )}
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-lg">📧</span>
-                <input
-                  type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Email"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-black/40 border-2 border-white/10 text-white placeholder:text-white/40 focus:border-fuchsia-400 focus:bg-black/60 outline-none transition"
-                />
-              </div>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-lg">🔒</span>
-                <input
-                  type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Senha (mín. 6 caracteres)"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-black/40 border-2 border-white/10 text-white placeholder:text-white/40 focus:border-fuchsia-400 focus:bg-black/60 outline-none transition"
-                />
-              </div>
-              <label className="flex items-center gap-2 mt-1 text-white/70 text-xs cursor-pointer select-none">
-                <input
-                  type="checkbox"
-                  checked={remember}
-                  onChange={(e) => setRemember(e.target.checked)}
-                  className="w-4 h-4 accent-fuchsia-500"
-                />
-                Lembrar de mim (entrar automático)
-              </label>
-              {mode === "signin" && (
-                <button
-                  type="button"
-                  onClick={() => { setForgotEmail(email); setForgotOpen(true); }}
-                  className="text-fuchsia-300 hover:text-fuchsia-200 text-xs font-bold underline self-start"
-                >
-                  Esqueci minha senha
-                </button>
-              )}
-              <button
-                type="submit" disabled={busy}
-                className="w-full py-3.5 mt-2 rounded-xl bg-gradient-to-b from-fuchsia-500 via-purple-600 to-indigo-700 text-white font-black tracking-wide text-base shadow-[0_6px_0_oklch(0.35_0.18_290)] hover:translate-y-[2px] hover:shadow-[0_4px_0_oklch(0.35_0.18_290)] active:translate-y-[6px] active:shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+      <div className="relative min-h-screen grid lg:grid-cols-2">
+        {/* ═══ LEFT: Hero panel ═══ */}
+        <section className="relative flex flex-col items-center justify-center px-6 pt-10 pb-4 lg:py-0 overflow-hidden">
+          {/* Type icon strip */}
+          <div className="flex gap-3 mb-4 lg:mb-6 text-xl lg:text-2xl opacity-80">
+            {typeIcons.map((t, i) => (
+              <span
+                key={i}
+                className="inline-block animate-bounce"
+                style={{ animationDuration: "3s", animationDelay: `${i * 0.25}s` }}
               >
-                {busy ? "⏳ AGUARDE..." : mode === "signin" ? "⚔️ ENTRAR NA ARENA" : "✨ COMEÇAR JORNADA"}
-              </button>
-            </form>
-
-            <p className="text-center text-white/40 text-[11px] mt-5">
-              Ao entrar você concorda em domar pets fofos 💜
-            </p>
-          </div>
-        </div>
-
-        {/* Public pricing — visible without login (Paddle readiness) */}
-        <section className="relative mt-8 rounded-3xl bg-[oklch(0.18_0.06_290)]/80 backdrop-blur-xl border border-white/10 p-5 text-white shadow-2xl">
-          <h2 className="text-lg font-black text-center mb-1">💎 Pacotes de Gemas</h2>
-          <p className="text-center text-white/60 text-xs mb-4">
-            Preços públicos — pagamentos processados por Paddle.com (Merchant of Record).
-          </p>
-          <ul className="grid grid-cols-2 gap-2">
-            {GEM_PACKS.map((p) => (
-              <li
-                key={p.id}
-                className="rounded-xl bg-gradient-to-br from-purple-600/70 to-fuchsia-700/70 border border-purple-300/40 p-3"
-              >
-                <div className="text-base font-extrabold">
-                  {p.gems.toLocaleString("pt-BR")} gemas
-                  {p.bonus > 0 && (
-                    <span className="text-yellow-300 text-xs font-bold"> +{p.bonus} 🎁</span>
-                  )}
-                </div>
-                <div className="text-emerald-300 font-black text-sm mt-1">
-                  R$ {p.priceBRL.toFixed(2).replace(".", ",")}
-                </div>
-              </li>
+                {t}
+              </span>
             ))}
-          </ul>
-          <p className="text-center text-white/50 text-[11px] mt-4">
-            Assinatura VIP também disponível dentro do app após login.
+          </div>
+
+          <h1
+            className="font-['Bebas_Neue'] text-6xl lg:text-8xl leading-none tracking-wide text-center select-none"
+            style={{
+              color: C.yellow,
+              WebkitTextStroke: "2px #2a4a8f",
+              textShadow: `0 4px 0 #2a4a8f, 0 8px 24px rgba(0,0,0,.6)`,
+            }}
+          >
+            DUELO
+            <br />
+            POKÉMON
+          </h1>
+          <p className="mt-3 text-xs lg:text-sm font-bold uppercase tracking-[0.35em] text-white/60">
+            Colecione · Treine · Batalhe
           </p>
+
+          {/* Featured pokémon */}
+          <div className="relative mt-4 lg:mt-8">
+            <div
+              className="absolute inset-0 rounded-full blur-2xl scale-90 animate-pulse"
+              style={{ background: `radial-gradient(circle, ${C.red}55, transparent 70%)` }}
+            />
+            <img
+              src={charizardImg}
+              alt="Charizard"
+              className="relative w-40 lg:w-72 drop-shadow-[0_20px_40px_rgba(227,53,13,0.45)] animate-[loginFloat_4s_ease-in-out_infinite]"
+            />
+          </div>
+
+          {/* Pokeball divider dots */}
+          <div className="mt-4 lg:mt-6 flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: C.red }} />
+            <div className="w-2 h-2 rounded-full" style={{ background: "#334155" }} />
+            <div className="w-2 h-2 rounded-full" style={{ background: "#334155" }} />
+          </div>
         </section>
 
-        {/* Public legal footer — required for Paddle readiness */}
-        <footer className="relative mt-6 text-center text-white/60 text-xs">
-          <nav className="flex flex-wrap justify-center gap-x-4 gap-y-1">
-            <Link to="/terms" className="underline hover:text-white">Termos de Uso</Link>
-            <Link to="/privacy" className="underline hover:text-white">Política de Privacidade</Link>
-            <Link to="/refunds" className="underline hover:text-white">Política de Reembolso</Link>
-          </nav>
-          <p className="mt-2 text-white/40 text-[11px]">
-            © {new Date().getFullYear()} DUELO POKEMON — Operado por Bruno Henrique Moura Bernardo.
-            Pagamentos por Paddle.com.
-          </p>
-        </footer>
+        {/* ═══ RIGHT: Auth panel ═══ */}
+        <section className="relative flex flex-col items-center justify-center px-4 pb-10 lg:py-10">
+          <div className="relative w-full max-w-md">
+            {/* Top accent */}
+            <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-24 h-4 rounded-t-lg blur-[2px] opacity-60" style={{ background: C.red }} />
+
+            <div className="relative rounded-3xl bg-[#14142a]/90 backdrop-blur-xl border border-white/10 overflow-hidden shadow-2xl" style={{ boxShadow: `0 25px 60px -15px ${C.red}26` }}>
+              {/* Tabs */}
+              <div className="flex border-b border-white/10">
+                <button
+                  onClick={() => setMode("signin")}
+                  className={`flex-1 py-4 text-sm font-extrabold uppercase tracking-widest transition-all ${
+                    mode === "signin" ? "text-white" : "text-slate-500 hover:text-slate-300"
+                  }`}
+                  style={mode === "signin" ? { background: `${C.red}1a`, borderBottom: `3px solid ${C.red}` } : undefined}
+                >
+                  Entrar
+                </button>
+                <button
+                  onClick={() => setMode("signup")}
+                  className={`flex-1 py-4 text-sm font-extrabold uppercase tracking-widest transition-all ${
+                    mode === "signup" ? "text-white" : "text-slate-500 hover:text-slate-300"
+                  }`}
+                  style={mode === "signup" ? { background: `${C.yellow}14`, borderBottom: `3px solid ${C.yellow}` } : undefined}
+                >
+                  Criar Conta
+                </button>
+              </div>
+
+              <div className="p-6 lg:p-8">
+                <div className="mb-6 text-center">
+                  <h2 className="font-['Bebas_Neue'] text-3xl tracking-wider text-white">
+                    {mode === "signin" ? (
+                      <>BEM-VINDO DE VOLTA, <span style={{ color: C.red }}>TREINADOR</span></>
+                    ) : (
+                      <>COMECE SUA <span style={{ color: C.yellow }}>JORNADA</span></>
+                    )}
+                  </h2>
+                  <p className="text-slate-400 text-[11px] mt-1 uppercase tracking-widest">
+                    Prepare-se para a batalha
+                  </p>
+                </div>
+
+                {errorMsg && (
+                  <div role="alert" className="mb-4 rounded-xl border-2 px-3 py-2.5 text-sm font-semibold flex items-start gap-2" style={{ borderColor: `${C.red}99`, background: `${C.red}22`, color: "#fecaca" }}>
+                    <span className="text-base leading-none mt-0.5">⚠️</span>
+                    <span className="flex-1">{errorMsg}</span>
+                    <button type="button" onClick={() => setErrorMsg(null)} className="text-red-200/70 hover:text-white text-xs font-bold">✕</button>
+                  </div>
+                )}
+
+                <form onSubmit={submit} className="space-y-4">
+                  {mode === "signup" && (
+                    <div>
+                      <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5 ml-1">Nome do Treinador</label>
+                      <input
+                        value={username} onChange={(e) => setUsername(e.target.value)}
+                        placeholder="Seu apelido de treinador"
+                        className="w-full bg-black/40 border border-white/10 text-white px-4 py-3 rounded-xl outline-none transition-all placeholder:text-slate-600 focus:ring-4"
+                        style={{ ["--tw-ring-color" as string]: `${C.red}1f` }}
+                        onFocus={(e) => (e.currentTarget.style.borderColor = `${C.red}80`)}
+                        onBlur={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)")}
+                      />
+                    </div>
+                  )}
+                  <div>
+                    <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5 ml-1">Identificador do Treinador</label>
+                    <input
+                      type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
+                      placeholder="seu@email.com"
+                      className="w-full bg-black/40 border border-white/10 text-white px-4 py-3 rounded-xl outline-none transition-all placeholder:text-slate-600"
+                      onFocus={(e) => (e.currentTarget.style.borderColor = `${C.red}80`)}
+                      onBlur={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)")}
+                    />
+                  </div>
+                  <div>
+                    <div className="flex justify-between items-end mb-1.5 px-1">
+                      <label className="block text-[10px] font-bold uppercase tracking-widest text-slate-500">Código de Acesso</label>
+                      {mode === "signin" && (
+                        <button
+                          type="button"
+                          onClick={() => { setForgotEmail(email); setForgotOpen(true); }}
+                          className="text-[10px] uppercase font-bold text-slate-500 hover:text-white transition-colors"
+                        >
+                          Esqueceu?
+                        </button>
+                      )}
+                    </div>
+                    <input
+                      type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Senha (mín. 6 caracteres)"
+                      className="w-full bg-black/40 border border-white/10 text-white px-4 py-3 rounded-xl outline-none transition-all placeholder:text-slate-600"
+                      onFocus={(e) => (e.currentTarget.style.borderColor = `${C.red}80`)}
+                      onBlur={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)")}
+                    />
+                  </div>
+
+                  <label className="flex items-center gap-2 text-white/70 text-xs cursor-pointer select-none pt-1">
+                    <input
+                      type="checkbox"
+                      checked={remember}
+                      onChange={(e) => setRemember(e.target.checked)}
+                      className="w-4 h-4"
+                      style={{ accentColor: C.red }}
+                    />
+                    Lembrar de mim (entrar automático)
+                  </label>
+
+                  <button
+                    type="submit" disabled={busy}
+                    className="w-full py-4 mt-2 rounded-xl text-white font-extrabold uppercase tracking-widest text-sm shadow-lg active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:brightness-110"
+                    style={{
+                      background: `linear-gradient(135deg, ${C.red}, #b3230a)`,
+                      boxShadow: `0 10px 30px -10px ${C.red}80`,
+                    }}
+                  >
+                    {busy ? "⏳ AGUARDE..." : mode === "signin" ? "⚔️ INICIAR DESAFIO" : "✨ COMEÇAR JORNADA"}
+                  </button>
+                </form>
+
+                {/* Divider */}
+                <div className="relative my-5">
+                  <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/10" /></div>
+                  <div className="relative flex justify-center">
+                    <span className="px-3 bg-[#14142a] text-[10px] font-bold uppercase tracking-widest text-slate-600">ou</span>
+                  </div>
+                </div>
+
+                <button
+                  type="button" onClick={googleSignIn} disabled={busy}
+                  className="w-full py-3 rounded-xl bg-white/95 hover:bg-white text-slate-800 font-bold text-sm flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-50"
+                >
+                  <svg className="w-4 h-4" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z"/>
+                    <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96H1.29v3.09C3.26 21.3 7.31 24 12 24z"/>
+                    <path fill="#FBBC05" d="M5.27 14.29c-.25-.72-.38-1.49-.38-2.29s.14-1.57.38-2.29V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.98-3.09z"/>
+                    <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.98 3.09C6.22 6.86 8.87 4.75 12 4.75z"/>
+                  </svg>
+                  Entrar com Google
+                </button>
+              </div>
+            </div>
+
+            {/* Public pricing — visible without login (Paddle readiness) */}
+            <section className="relative mt-6 rounded-3xl bg-[#14142a]/80 backdrop-blur-xl border border-white/10 p-5 shadow-2xl">
+              <h2 className="font-['Bebas_Neue'] text-2xl tracking-wider text-center text-white mb-1">💎 PACOTES DE GEMAS</h2>
+              <p className="text-center text-white/50 text-[11px] mb-4">
+                Preços públicos — pagamentos processados por Paddle.com (Merchant of Record).
+              </p>
+              <ul className="grid grid-cols-2 gap-2">
+                {GEM_PACKS.map((p) => (
+                  <li
+                    key={p.id}
+                    className="rounded-xl border p-3 transition-transform hover:scale-[1.03]"
+                    style={{ background: `linear-gradient(135deg, ${C.blue}66, ${C.red}55)`, borderColor: "rgba(255,255,255,0.12)" }}
+                  >
+                    <div className="text-sm font-extrabold text-white">
+                      {p.gems.toLocaleString("pt-BR")} gemas
+                      {p.bonus > 0 && (
+                        <span className="text-xs font-bold" style={{ color: C.yellow }}> +{p.bonus} 🎁</span>
+                      )}
+                    </div>
+                    <div className="font-black text-sm mt-1" style={{ color: "#4ade80" }}>
+                      R$ {p.priceBRL.toFixed(2).replace(".", ",")}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+              <p className="text-center text-white/40 text-[11px] mt-4">
+                Assinatura VIP também disponível dentro do app após login.
+              </p>
+            </section>
+
+            {/* Public legal footer — required for Paddle readiness */}
+            <footer className="relative mt-6 text-center text-white/50 text-xs">
+              <nav className="flex flex-wrap justify-center gap-x-4 gap-y-1">
+                <Link to="/terms" className="underline hover:text-white">Termos de Uso</Link>
+                <Link to="/privacy" className="underline hover:text-white">Política de Privacidade</Link>
+                <Link to="/refunds" className="underline hover:text-white">Política de Reembolso</Link>
+              </nav>
+              <p className="mt-2 text-white/30 text-[11px]">
+                © {new Date().getFullYear()} DUELO POKEMON — Operado por Bruno Henrique Moura Bernardo.
+                Pagamentos por Paddle.com.
+              </p>
+            </footer>
+          </div>
+        </section>
       </div>
+
+      <style>{`
+        @keyframes loginFloat {
+          0%, 100% { transform: translateY(0) rotate(-2deg); }
+          50% { transform: translateY(-14px) rotate(2deg); }
+        }
+      `}</style>
+
       {forgotOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4" onClick={() => !forgotBusy && setForgotOpen(false)}>
-          <div className="relative w-full max-w-sm rounded-2xl bg-[oklch(0.18_0.06_290)] border-2 border-fuchsia-400/40 p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-xl font-extrabold text-white mb-1 flex items-center gap-2">🔑 Esqueci minha senha</h3>
+          <div className="relative w-full max-w-sm rounded-2xl bg-[#14142a] border-2 p-6 shadow-2xl" style={{ borderColor: `${C.red}66` }} onClick={(e) => e.stopPropagation()}>
+            <h3 className="font-['Bebas_Neue'] text-2xl tracking-wider text-white mb-1 flex items-center gap-2">🔑 ESQUECI MINHA SENHA</h3>
             <p className="text-white/60 text-xs mb-4">Digite seu email e enviaremos um link para redefinir sua senha.</p>
             <form onSubmit={sendReset} className="space-y-3">
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-lg">📧</span>
-                <input
-                  type="email" required autoFocus value={forgotEmail} onChange={(e) => setForgotEmail(e.target.value)}
-                  placeholder="seu@email.com"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-black/40 border-2 border-white/10 text-white placeholder:text-white/40 focus:border-fuchsia-400 outline-none transition"
-                />
-              </div>
+              <input
+                type="email" required autoFocus value={forgotEmail} onChange={(e) => setForgotEmail(e.target.value)}
+                placeholder="seu@email.com"
+                className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 text-white placeholder:text-slate-600 outline-none transition"
+              />
               <div className="flex gap-2">
                 <button type="button" onClick={() => setForgotOpen(false)} disabled={forgotBusy} className="flex-1 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-white font-bold text-sm transition disabled:opacity-50">Cancelar</button>
-                <button type="submit" disabled={forgotBusy} className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-fuchsia-500 to-purple-600 text-white font-extrabold text-sm shadow-lg disabled:opacity-50 transition">
+                <button type="submit" disabled={forgotBusy} className="flex-1 py-2.5 rounded-xl text-white font-extrabold text-sm shadow-lg disabled:opacity-50 transition" style={{ background: `linear-gradient(135deg, ${C.red}, #b3230a)` }}>
                   {forgotBusy ? "Enviando..." : "Enviar link"}
                 </button>
               </div>
