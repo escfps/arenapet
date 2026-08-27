@@ -777,7 +777,7 @@ function ArenaLineup({
               className={`relative ${!dead ? "animate-battle3d-idle" : ""} ${
                 isActor && !dead ? "animate-pet-attack" : ""
               } ${isTarget && !dead && fx.dmg !== null && fx.dmg > 0 ? "animate-pet-hurt" : ""}`}
-              style={{ "--atk-dir": mirrored ? -1 : 1 } as React.CSSProperties}
+              style={{ "--atk-dir": mirrored ? -1 : 1, "--idle-delay": idleDelay } as React.CSSProperties}
             >
             <img
               src={speciesImage(m.species, (m as any).is_shiny === true)}
