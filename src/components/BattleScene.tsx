@@ -713,20 +713,16 @@ function ArenaLineup({
           >
             {depth3d ? (
               <>
-                {/* Disco de energia estilo Pokémon GO */}
+                {/* Sombra elíptica no chão (estilo Pokémon Stadium) */}
+                <div className="stadium-shadow" />
                 <div
-                  className={`absolute -bottom-1 left-1/2 w-24 h-6 rounded-[50%] border-2 ${
-                    side === "a" ? "border-sky-300/70 bg-sky-400/20" : "border-rose-300/70 bg-rose-400/20"
-                  } animate-battle3d-platform`}
-                  style={{ boxShadow: side === "a" ? "0 0 18px rgba(56,189,248,.6)" : "0 0 18px rgba(251,113,133,.6)" }}
-                />
-                <div
-                  className={`absolute -bottom-2 left-1/2 w-28 h-7 rounded-[50%] ${
-                    side === "a" ? "bg-sky-400/20" : "bg-rose-400/20"
+                  className={`absolute -bottom-1 left-1/2 w-20 h-4 rounded-[50%] ${
+                    side === "a" ? "bg-sky-300/25" : "bg-rose-300/25"
                   } blur-md animate-battle3d-pulse`}
                 />
               </>
             ) : (
+
               /* Plataforma circular */
               <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-16 h-3 rounded-full bg-black/40 blur-sm" />
             )}
