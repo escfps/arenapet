@@ -154,6 +154,22 @@ export function BattleScene({
     healing: boolean;
   }[]>([]);
 
+  // Layout do campo: clássico (grid) ou 3D em perspectiva (estilo Pokémon Red / GO)
+  const [layout3d, setLayout3d] = useState(false);
+  useEffect(() => {
+    try {
+      setLayout3d(localStorage.getItem("battleLayout3d") === "1");
+    } catch { /* ignore */ }
+  }, []);
+  const toggleLayout = () => {
+    setLayout3d((v) => {
+      const next = !v;
+      try { localStorage.setItem("battleLayout3d", next ? "1" : "0"); } catch { /* ignore */ }
+      return next;
+    });
+  };
+
+
 
   // Turno atual derivado da última entrada exibida
   const currentTurn = step > 0 && step <= log.length ? log[step - 1].turn : 1;
@@ -502,13 +518,36 @@ export function BattleScene({
         </div>
       </div>
 
+      {/* Botão de troca de layout do campo */}
+      <button
+        type="button"
+        onClick={toggleLayout}
+        className="absolute top-2 right-2 z-40 px-2.5 py-1 rounded-full bg-black/70 border border-white/30 text-white text-[10px] font-extrabold tracking-wide shadow-lg backdrop-blur-sm hover:bg-black/85 transition"
+        title="Trocar o layout do campo de batalha"
+      >
+        {layout3d ? "🎮 3D" : "🗺️ Clássico"}
+      </button>
+
       {/* === ARENA: pets na grama embaixo === */}
-      <div className="relative px-4 pt-2 pb-16">
-        <div className="grid grid-cols-2 gap-3 items-end min-h-[140px]">
-          <ArenaLineup team={teamA} side="a" hp={hp} fx={fx} />
-          <ArenaLineup team={teamB} side="b" hp={hp} fx={fx} mirrored />
+      {layout3d ? (
+        <div className="relative px-2 pt-4 pb-16 battle3d-stage overflow-hidden min-h-[300px]">
+          {/* Céu / horizonte */}
+          <div className="absolute inset-x-0 top-0 h-1/2 pointer-events-none bg-gradient-to-b from-sky-900/70 via-indigo-900/30 to-transparent" />
+          {/* Chão em perspectiva */}
+          <div className="battle3d-ground pointer-events-none" />
+          <div className="relative grid grid-cols-2 gap-1 items-end min-h-[230px] [transform-style:preserve-3d]">
+            <ArenaLineup team={teamA} side="a" hp={hp} fx={fx} depth3d />
+            <ArenaLineup team={teamB} side="b" hp={hp} fx={fx} mirrored depth3d />
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="relative px-4 pt-2 pb-16">
+          <div className="grid grid-cols-2 gap-3 items-end min-h-[140px]">
+            <ArenaLineup team={teamA} side="a" hp={hp} fx={fx} />
+            <ArenaLineup team={teamB} side="b" hp={hp} fx={fx} mirrored />
+          </div>
+        </div>
+      )}
 
 
       {/* Overlay central de efeito */}
@@ -607,16 +646,23 @@ function ArenaLineup({
   hp,
   fx,
   mirrored,
+  depth3d,
 }: {
   team: Team;
   side: "a" | "b";
   hp: HpMap;
   fx: Fx;
   mirrored?: boolean;
+  depth3d?: boolean;
 }) {
+  const ordered = [...team].sort((a, b) => (b.team_position ?? 0) - (a.team_position ?? 0));
   return (
-    <div className={`flex ${mirrored ? "justify-end flex-row-reverse" : "justify-start"} items-end gap-3 sm:gap-5`}>
-      {[...team].sort((a, b) => (b.team_position ?? 0) - (a.team_position ?? 0)).map((m) => {
+    <div
+      className={`flex ${mirrored ? "justify-end flex-row-reverse" : "justify-start"} items-end ${
+        depth3d ? "gap-0 sm:gap-1" : "gap-3 sm:gap-5"
+      }`}
+    >
+      {ordered.map((m, idx) => {
 
 
         const sp = SPECIES[m.species];
@@ -640,20 +686,48 @@ function ArenaLineup({
           : sceneHasFocus
           ? "scale-90 opacity-60 blur-[1px] z-0"
           : "";
+        // No modo 3D cada pet fica numa "profundidade" diferente do palco
+        const depthStyle = depth3d
+          ? {
+              transform: `translateZ(${idx * -70}px) translateY(${idx * -16}px) translateX(${
+                (mirrored ? -1 : 1) * idx * 6
+              }px)`,
+              zIndex: 10 - idx,
+            }
+          : undefined;
         return (
+          <div key={m.id} style={depthStyle} className={depth3d ? "relative [transform-style:preserve-3d]" : "relative"}>
           <div
-            key={m.id}
             className={`relative transition-all duration-300 ease-out ${cameraZoom} ${lunge} ${
               dead ? "opacity-20 grayscale rotate-90" : ""
             } ${isTarget ? "animate-battle-shake" : ""}`}
           >
-            {/* Plataforma circular */}
-            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-16 h-3 rounded-full bg-black/40 blur-sm" />
+            {depth3d ? (
+              <>
+                {/* Disco de energia estilo Pokémon GO */}
+                <div
+                  className={`absolute -bottom-1 left-1/2 w-24 h-6 rounded-[50%] border-2 ${
+                    side === "a" ? "border-sky-300/70 bg-sky-400/20" : "border-rose-300/70 bg-rose-400/20"
+                  } animate-battle3d-platform`}
+                  style={{ boxShadow: side === "a" ? "0 0 18px rgba(56,189,248,.6)" : "0 0 18px rgba(251,113,133,.6)" }}
+                />
+                <div
+                  className={`absolute -bottom-2 left-1/2 w-28 h-7 rounded-[50%] ${
+                    side === "a" ? "bg-sky-400/20" : "bg-rose-400/20"
+                  } blur-md animate-battle3d-pulse`}
+                />
+              </>
+            ) : (
+              /* Plataforma circular */
+              <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-16 h-3 rounded-full bg-black/40 blur-sm" />
+            )}
             <img
               src={speciesImage(m.species, (m as any).is_shiny === true)}
               alt={m.name}
               loading="lazy"
-              className={`relative h-40 w-40 sm:h-44 sm:w-44 object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.6)] ${
+              className={`relative object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.6)] ${
+                depth3d ? "h-36 w-36 sm:h-44 sm:w-44" : "h-40 w-40 sm:h-44 sm:w-44"
+              } ${!dead && depth3d ? "animate-battle3d-idle" : ""} ${
                 isActor ? "ring-4 ring-yellow-300/80 rounded-full" : ""
               } ${isTarget ? "ring-4 ring-red-400/80 rounded-full" : ""}`}
               style={{
@@ -732,6 +806,7 @@ function ArenaLineup({
                 {fx.miss.kind === "dodge" ? "💨 ESQUIVOU!" : "😵‍💫 ERROU!"}
               </div>
             )}
+          </div>
           </div>
         );
       })}

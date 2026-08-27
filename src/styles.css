@@ -356,3 +356,45 @@
     animation: tutorialArrow 1s ease-in-out infinite;
   }
 }
+
+/* ===== Layout de batalha 3D (estilo Pokémon Red / Pokémon GO) ===== */
+@layer utilities {
+  .battle3d-stage {
+    perspective: 900px;
+    perspective-origin: 50% 35%;
+  }
+  .battle3d-ground {
+    position: absolute;
+    left: -20%;
+    right: -20%;
+    bottom: -10%;
+    height: 78%;
+    transform: rotateX(64deg);
+    transform-origin: bottom center;
+    background:
+      linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0)),
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.10) 0 2px, transparent 2px 42px),
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.10) 0 2px, transparent 2px 42px),
+      radial-gradient(ellipse at 50% 100%, #3f7f3a 0%, #24512c 60%, #12241c 100%);
+    animation: battle3dGround 6s linear infinite;
+  }
+  @keyframes battle3dGround {
+    from { background-position: 0 0, 0 0, 0 0, 0 0; }
+    to   { background-position: 0 0, 0 84px, 42px 0, 0 0; }
+  }
+  @keyframes battle3dIdle {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50%      { transform: translateY(-7px) scale(1.015); }
+  }
+  .animate-battle3d-idle { animation: battle3dIdle 2.2s ease-in-out infinite; }
+  @keyframes battle3dPlatform {
+    from { transform: translateX(-50%) rotate(0deg); }
+    to   { transform: translateX(-50%) rotate(360deg); }
+  }
+  .animate-battle3d-platform { animation: battle3dPlatform 9s linear infinite; }
+  @keyframes battle3dPulse {
+    0%, 100% { opacity: 0.35; transform: translateX(-50%) scale(1); }
+    50%      { opacity: 0.75; transform: translateX(-50%) scale(1.12); }
+  }
+  .animate-battle3d-pulse { animation: battle3dPulse 2.4s ease-in-out infinite; }
+}
