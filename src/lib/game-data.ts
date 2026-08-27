@@ -1675,7 +1675,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Ferrão Tóxico", emoji: "☠️", kind: "bleed_dot", cooldown: 3, description: "Ferroada venenosa que causa dano contínuo." },
   },
   tentacruel: {
-    id: "tentacruel", name: "Tentacruel", element: "water", secondaryElement: "poison", role: "mage", rarity: "epic",
+    id: "tentacruel", name: "Tentacruel", element: "water", secondaryElement: "poison", role: "mage", rarity: "legendary",
     emoji: "🪼⚡", image: tentacruelImg, shinyImage: tentacruelShinyImg,
     description: "Oitenta tentáculos paralisantes nas profundezas.",
     base: { hp: 74, atk: 25, def: 19, spd: 18, int: 29 },
@@ -2018,14 +2018,14 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Beijo Congelante", emoji: "❄️", kind: "sleep_strike", cooldown: 4, description: "Congela o alvo, impedindo sua ação." },
   },
   electabuzz: {
-    id: "electabuzz", name: "Electabuzz", element: "electric", role: "dps", rarity: "epic",
+    id: "electabuzz", name: "Electabuzz", element: "electric", role: "dps", rarity: "legendary",
     emoji: "⚡🐯", image: electabuzzImg, shinyImage: electabuzzShinyImg,
     description: "Corpo carregado que faz o ar crepitar.",
     base: { hp: 70, atk: 32, def: 20, spd: 30, int: 26 },
     skill: { name: "Punho Trovão", emoji: "⚡", kind: "lightning_charge", cooldown: 5, description: "Soco elétrico que paralisa o alvo." },
   },
   magmar: {
-    id: "magmar", name: "Magmar", element: "fire", role: "dps", rarity: "epic",
+    id: "magmar", name: "Magmar", element: "fire", role: "dps", rarity: "legendary",
     emoji: "🔥🦎", image: magmarImg, shinyImage: magmarShinyImg,
     description: "Nasce nas crateras e respira chamas vivas.",
     base: { hp: 72, atk: 34, def: 22, spd: 24, int: 26 },
