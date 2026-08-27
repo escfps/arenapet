@@ -715,14 +715,19 @@ function ArenaLineup({
           ? "scale-90 opacity-60 blur-[1px] z-0"
           : "";
         // No modo 3D cada pet fica numa "profundidade" diferente do palco
+        // e cada um respira num offset próprio (sprite + sombra sincronizados)
+        const idleDelay = `${(idx * 0.35 + (side === "b" ? 0.18 : 0)).toFixed(2)}s`;
         const depthStyle = depth3d
-          ? {
+          ? ({
               transform: `translateZ(${idx * -70}px) translateY(${idx * -16}px) translateX(${
                 (mirrored ? -1 : 1) * idx * 6
               }px)`,
               zIndex: 10 - idx,
-            }
+              "--idle-delay": idleDelay,
+            } as React.CSSProperties)
           : undefined;
+        const hitFx3d = depth3d && isTarget && fx.dmg !== null && fx.dmg > 0 && !dead;
+        const fxKey = `${fx.actor}-${key}-${fx.dmg}`;
         return (
           <div key={m.id} style={depthStyle} className={depth3d ? "relative [transform-style:preserve-3d]" : "relative"}>
           <div
@@ -739,8 +744,30 @@ function ArenaLineup({
                     side === "a" ? "bg-sky-300/25" : "bg-rose-300/25"
                   } blur-md animate-battle3d-pulse`}
                 />
+                {hitFx3d && (
+                  <div key={`fx3d-${fxKey}`} className="absolute inset-0 pointer-events-none">
+                    <div className="fx3d-dust" />
+                    <div className="fx3d-ground" />
+                    <div className="fx3d-hitflash" />
+                    {Array.from({ length: fx.crit ? 12 : 8 }).map((_, i) => {
+                      const total = fx.crit ? 12 : 8;
+                      return (
+                        <div
+                          key={i}
+                          className="fx3d-particle"
+                          style={{
+                            "--p-angle": `${(360 / total) * i}deg`,
+                            "--p-dist": `${(fx.crit ? 78 : 56) + (i % 3) * 10}px`,
+                            "--p-delay": `${(i % 4) * 0.04}s`,
+                          } as React.CSSProperties}
+                        />
+                      );
+                    })}
+                  </div>
+                )}
               </>
             ) : (
+
 
               /* Plataforma circular */
               <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-16 h-3 rounded-full bg-black/40 blur-sm" />
