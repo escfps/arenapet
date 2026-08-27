@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { toast } from "sonner";
-import { GEM_PACKS } from "@/lib/game-data";
+
 import charizardImg from "@/assets/monsters/charizard.png";
 
 export const Route = createFileRoute("/login")({
@@ -494,35 +494,6 @@ function LoginPage() {
               </div>
             </div>
 
-            {/* Public pricing — visible without login (Paddle readiness) */}
-            <section className="relative mt-6 rounded-3xl bg-[#14142a]/80 backdrop-blur-xl border border-white/10 p-5 shadow-2xl">
-              <h2 className="font-['Bebas_Neue'] text-2xl tracking-wider text-center text-white mb-1">💎 PACOTES DE GEMAS</h2>
-              <p className="text-center text-white/50 text-[11px] mb-4">
-                Preços públicos — pagamentos processados por Paddle.com (Merchant of Record).
-              </p>
-              <ul className="grid grid-cols-2 gap-2">
-                {GEM_PACKS.map((p) => (
-                  <li
-                    key={p.id}
-                    className="rounded-xl border p-3 transition-transform hover:scale-[1.03]"
-                    style={{ background: `linear-gradient(135deg, ${C.blue}66, ${C.red}55)`, borderColor: "rgba(255,255,255,0.12)" }}
-                  >
-                    <div className="text-sm font-extrabold text-white">
-                      {p.gems.toLocaleString("pt-BR")} gemas
-                      {p.bonus > 0 && (
-                        <span className="text-xs font-bold" style={{ color: C.yellow }}> +{p.bonus} 🎁</span>
-                      )}
-                    </div>
-                    <div className="font-black text-sm mt-1" style={{ color: "#4ade80" }}>
-                      R$ {p.priceBRL.toFixed(2).replace(".", ",")}
-                    </div>
-                  </li>
-                ))}
-              </ul>
-              <p className="text-center text-white/40 text-[11px] mt-4">
-                Assinatura VIP também disponível dentro do app após login.
-              </p>
-            </section>
 
             {/* Public legal footer — required for Paddle readiness */}
             <footer className="relative mt-6 text-center text-white/50 text-xs">
