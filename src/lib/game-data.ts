@@ -1696,7 +1696,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Rolagem", emoji: "🌀", kind: "shield_taunt", cooldown: 4, description: "Provoca os inimigos e endurece a rocha." },
   },
   golem: {
-    id: "golem", name: "Golem", element: "rock", secondaryElement: "ground", role: "tank", rarity: "legendary",
+    id: "golem", name: "Golem", element: "rock", secondaryElement: "ground", role: "tank", rarity: "epic",
     emoji: "🗿", image: golemImg, shinyImage: golemShinyImg,
     description: "Couraça de pedra viva, praticamente indestrutível.",
     base: { hp: 96, atk: 26, def: 30, spd: 11, int: 8 },
