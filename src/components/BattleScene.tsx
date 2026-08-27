@@ -836,7 +836,7 @@ function ArenaLineup({
               } ${isTarget ? "ring-4 ring-red-400/80 rounded-full" : ""}`}
               style={{
                 filter: `${skinFilter(m.skin)} ${shinyFallbackFilter(m.species, (m as any).is_shiny === true)} ${(m as any).is_shiny ? "drop-shadow(0 0 12px rgba(253,224,71,0.9))" : ""}`.trim(),
-                transform: mirrored ? "scaleX(-1)" : undefined,
+                transform: mirrored ? undefined : "scaleX(-1)",
               }}
             />
             </div>
