@@ -1,7 +1,7 @@
 import { speciesImage, shinyFallbackFilter } from "@/lib/game-data";
 import { useEffect, useMemo, useState } from "react";
 import type { BattleLogEntry } from "@/lib/battle";
-import { SPECIES, ELEMENT_COLORS, RARITY_INFO, MAX_RANK, skinFilter, totalStats, getSkill } from "@/lib/game-data";
+import { SPECIES, ELEMENT_COLORS, ELEMENT_NAMES, RARITY_INFO, MAX_RANK, skinFilter, totalStats, getSkill } from "@/lib/game-data";
 import type { MonsterRow } from "./MonsterCard";
 import grassBg from "@/assets/battle-grass-bg.jpg";
 import { playSfx } from "@/lib/sound";
@@ -600,8 +600,12 @@ export function BattleScene({
           {impact && (
             <div key={`flash-${fx.actor}-${fx.target}-${fx.dmg}`} className="stadium-flash" />
           )}
+          <FieldFxLayer fx={fx} />
           <div
-            className={`battle3d-camera ${focused ? "is-focused" : ""} ${impact ? "is-impact" : ""}`}
+            className={`battle3d-camera ${focused ? "is-focused" : ""} ${impact ? "is-impact" : ""} ${
+              impact ? "battle-hitstop" : ""
+            }`}
+            style={{ "--shake-i": hitPower(fx) } as React.CSSProperties}
             key={impact ? `cam-${fx.actor}-${fx.target}-${fx.dmg}` : "cam-idle"}
           >
             <div className="relative grid grid-cols-2 gap-1 items-end min-h-[230px] [transform-style:preserve-3d]">
@@ -615,8 +619,15 @@ export function BattleScene({
 
 
       ) : (
-        <div className="relative px-4 pt-2 pb-16">
-          <div className="grid grid-cols-2 gap-3 items-end min-h-[140px]">
+        <div className="relative px-4 pt-2 pb-16 overflow-hidden">
+          <FieldFxLayer fx={fx} />
+          <div
+            key={fx.target !== null && fx.dmg !== null && fx.dmg > 0 ? `hit-${fx.actor}-${fx.target}-${fx.dmg}` : "hit-idle"}
+            className={`grid grid-cols-2 gap-3 items-end min-h-[140px] ${
+              fx.target !== null && fx.dmg !== null && fx.dmg > 0 ? "battle-hitstop" : ""
+            }`}
+            style={{ "--shake-i": hitPower(fx) } as React.CSSProperties}
+          >
             <ArenaLineup team={teamA} side="a" hp={hp} fx={fx} />
             <ArenaLineup team={teamB} side="b" hp={hp} fx={fx} mirrored />
           </div>
@@ -850,6 +861,7 @@ function ArenaLineup({
                 keyId={`el-${fx.actor}-${key}-${fx.dmg}`}
                 crit={fx.crit}
                 fromLeft={!mirrored}
+                eff={fx.eff}
               />
             )}
             {isTarget && (() => {
@@ -1407,21 +1419,29 @@ function ElementFxOverlay({
   keyId,
   crit,
   fromLeft,
+  eff = 1,
 }: {
   element: string;
   keyId: string;
   crit: boolean;
   fromLeft: boolean;
+  eff?: number;
 }) {
   const cfg = ELEMENT_FX[element] ?? { kind: "plain" as const, c1: "#fff", c2: "#999", icon: "💥" };
   const style = {
     "--el1": cfg.c1,
     "--el2": cfg.c2,
     "--el-dir": fromLeft ? 1 : -1,
+    "--el-boost": eff >= 4 ? 1.6 : eff >= 2 ? 1.3 : eff > 0 && eff <= 0.5 ? 0.7 : 1,
   } as React.CSSProperties;
   const parts = crit ? 12 : 8;
   return (
-    <div key={keyId} className="elfx" style={style} aria-hidden="true">
+    <div
+      key={keyId}
+      className={`elfx ${eff >= 2 ? "is-super" : ""} ${eff > 0 && eff <= 0.5 ? "is-weak" : ""}`}
+      style={style}
+      aria-hidden="true"
+    >
       {/* clarão elemental sempre presente */}
       <div className="elfx-flash" />
       <div className="elfx-ring" />
