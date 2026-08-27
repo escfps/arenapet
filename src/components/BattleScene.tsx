@@ -538,8 +538,10 @@ export function BattleScene({
         <div className="relative px-2 pt-4 pb-16 battle3d-stage overflow-hidden min-h-[320px]">
           {/* Arquibancada com torcida */}
           <div className="stadium-crowd pointer-events-none" />
+          <StadiumSpectators />
           <div className="stadium-crowd-wave" />
           <div className="stadium-flashes" />
+
           {/* Holofotes */}
           <div className={`stadium-spotlight pointer-events-none left-[2%] ${spotCls}`} />
           <div className={`stadium-spotlight pointer-events-none right-[2%] ${spotCls}`} />
