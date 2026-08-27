@@ -530,12 +530,19 @@ export function BattleScene({
 
       {/* === ARENA: pets na grama embaixo === */}
       {layout3d ? (
+        (() => {
+          const focused = fx.actor !== null || fx.target !== null;
+          const impact = fx.target !== null && fx.dmg !== null && fx.dmg > 0;
+          const spotCls = fx.crit ? "is-crit" : focused ? "is-hot" : "";
+          return (
         <div className="relative px-2 pt-4 pb-16 battle3d-stage overflow-hidden min-h-[320px]">
           {/* Arquibancada com torcida */}
           <div className="stadium-crowd pointer-events-none" />
+          <div className="stadium-crowd-wave" />
+          <div className="stadium-flashes" />
           {/* Holofotes */}
-          <div className="stadium-spotlight pointer-events-none left-[2%]" />
-          <div className="stadium-spotlight pointer-events-none right-[2%]" />
+          <div className={`stadium-spotlight pointer-events-none left-[2%] ${spotCls}`} />
+          <div className={`stadium-spotlight pointer-events-none right-[2%] ${spotCls}`} />
           {/* Muro do estádio */}
           <div className="stadium-wall pointer-events-none" />
           {/* Campo de terra batida + marcações */}
@@ -543,11 +550,23 @@ export function BattleScene({
             <div className="stadium-ring" />
             <div className="stadium-midline" />
           </div>
-          <div className="relative grid grid-cols-2 gap-1 items-end min-h-[230px] [transform-style:preserve-3d]">
-            <ArenaLineup team={teamA} side="a" hp={hp} fx={fx} depth3d />
-            <ArenaLineup team={teamB} side="b" hp={hp} fx={fx} mirrored depth3d />
+          {/* Flash global do estádio no impacto */}
+          {impact && (
+            <div key={`flash-${fx.actor}-${fx.target}-${fx.dmg}`} className="stadium-flash" />
+          )}
+          <div
+            className={`battle3d-camera ${focused ? "is-focused" : ""} ${impact ? "is-impact" : ""}`}
+            key={impact ? `cam-${fx.actor}-${fx.target}-${fx.dmg}` : "cam-idle"}
+          >
+            <div className="relative grid grid-cols-2 gap-1 items-end min-h-[230px] [transform-style:preserve-3d]">
+              <ArenaLineup team={teamA} side="a" hp={hp} fx={fx} depth3d />
+              <ArenaLineup team={teamB} side="b" hp={hp} fx={fx} mirrored depth3d />
+            </div>
           </div>
         </div>
+          );
+        })()
+
 
       ) : (
         <div className="relative px-4 pt-2 pb-16">
