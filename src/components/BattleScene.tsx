@@ -530,16 +530,25 @@ export function BattleScene({
 
       {/* === ARENA: pets na grama embaixo === */}
       {layout3d ? (
-        <div className="relative px-2 pt-4 pb-16 battle3d-stage overflow-hidden min-h-[300px]">
-          {/* Céu / horizonte */}
-          <div className="absolute inset-x-0 top-0 h-1/2 pointer-events-none bg-gradient-to-b from-sky-900/70 via-indigo-900/30 to-transparent" />
-          {/* Chão em perspectiva */}
-          <div className="battle3d-ground pointer-events-none" />
+        <div className="relative px-2 pt-4 pb-16 battle3d-stage overflow-hidden min-h-[320px]">
+          {/* Arquibancada com torcida */}
+          <div className="stadium-crowd pointer-events-none" />
+          {/* Holofotes */}
+          <div className="stadium-spotlight pointer-events-none left-[2%]" />
+          <div className="stadium-spotlight pointer-events-none right-[2%]" />
+          {/* Muro do estádio */}
+          <div className="stadium-wall pointer-events-none" />
+          {/* Campo de terra batida + marcações */}
+          <div className="stadium-field pointer-events-none">
+            <div className="stadium-ring" />
+            <div className="stadium-midline" />
+          </div>
           <div className="relative grid grid-cols-2 gap-1 items-end min-h-[230px] [transform-style:preserve-3d]">
             <ArenaLineup team={teamA} side="a" hp={hp} fx={fx} depth3d />
             <ArenaLineup team={teamB} side="b" hp={hp} fx={fx} mirrored depth3d />
           </div>
         </div>
+
       ) : (
         <div className="relative px-4 pt-2 pb-16">
           <div className="grid grid-cols-2 gap-3 items-end min-h-[140px]">
@@ -704,20 +713,16 @@ function ArenaLineup({
           >
             {depth3d ? (
               <>
-                {/* Disco de energia estilo Pokémon GO */}
+                {/* Sombra elíptica no chão (estilo Pokémon Stadium) */}
+                <div className="stadium-shadow" />
                 <div
-                  className={`absolute -bottom-1 left-1/2 w-24 h-6 rounded-[50%] border-2 ${
-                    side === "a" ? "border-sky-300/70 bg-sky-400/20" : "border-rose-300/70 bg-rose-400/20"
-                  } animate-battle3d-platform`}
-                  style={{ boxShadow: side === "a" ? "0 0 18px rgba(56,189,248,.6)" : "0 0 18px rgba(251,113,133,.6)" }}
-                />
-                <div
-                  className={`absolute -bottom-2 left-1/2 w-28 h-7 rounded-[50%] ${
-                    side === "a" ? "bg-sky-400/20" : "bg-rose-400/20"
+                  className={`absolute -bottom-1 left-1/2 w-20 h-4 rounded-[50%] ${
+                    side === "a" ? "bg-sky-300/25" : "bg-rose-300/25"
                   } blur-md animate-battle3d-pulse`}
                 />
               </>
             ) : (
+
               /* Plataforma circular */
               <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-16 h-3 rounded-full bg-black/40 blur-sm" />
             )}
