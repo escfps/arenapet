@@ -84,7 +84,7 @@
     -webkit-text-size-adjust: 100%;
   }
   body {
-    background: oklch(0.18 0.05 290);
+    background: var(--color-background);
     color: var(--color-foreground);
     font-family: 'Nunito', 'Quicksand', system-ui, sans-serif;
     touch-action: manipulation;
