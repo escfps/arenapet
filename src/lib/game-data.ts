@@ -1738,7 +1738,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Choque Magnético", emoji: "⚡", kind: "chain_lightning", cooldown: 4, description: "Descarga que salta entre inimigos." },
   },
   magneton: {
-    id: "magneton", name: "Magneton", element: "electric", secondaryElement: "steel", role: "mage", rarity: "epic",
+    id: "magneton", name: "Magneton", element: "electric", secondaryElement: "steel", role: "mage", rarity: "legendary",
     emoji: "🧲⚡", image: magnetonImg, shinyImage: magnetonShinyImg,
     description: "Três ímãs unidos gerando campo elétrico brutal.",
     base: { hp: 70, atk: 22, def: 22, spd: 17, int: 32 },
