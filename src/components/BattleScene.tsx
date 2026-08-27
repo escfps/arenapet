@@ -530,12 +530,19 @@ export function BattleScene({
 
       {/* === ARENA: pets na grama embaixo === */}
       {layout3d ? (
+        (() => {
+          const focused = fx.actor !== null || fx.target !== null;
+          const impact = fx.target !== null && fx.dmg !== null && fx.dmg > 0;
+          const spotCls = fx.crit ? "is-crit" : focused ? "is-hot" : "";
+          return (
         <div className="relative px-2 pt-4 pb-16 battle3d-stage overflow-hidden min-h-[320px]">
           {/* Arquibancada com torcida */}
           <div className="stadium-crowd pointer-events-none" />
+          <div className="stadium-crowd-wave" />
+          <div className="stadium-flashes" />
           {/* Holofotes */}
-          <div className="stadium-spotlight pointer-events-none left-[2%]" />
-          <div className="stadium-spotlight pointer-events-none right-[2%]" />
+          <div className={`stadium-spotlight pointer-events-none left-[2%] ${spotCls}`} />
+          <div className={`stadium-spotlight pointer-events-none right-[2%] ${spotCls}`} />
           {/* Muro do estádio */}
           <div className="stadium-wall pointer-events-none" />
           {/* Campo de terra batida + marcações */}
@@ -543,11 +550,23 @@ export function BattleScene({
             <div className="stadium-ring" />
             <div className="stadium-midline" />
           </div>
-          <div className="relative grid grid-cols-2 gap-1 items-end min-h-[230px] [transform-style:preserve-3d]">
-            <ArenaLineup team={teamA} side="a" hp={hp} fx={fx} depth3d />
-            <ArenaLineup team={teamB} side="b" hp={hp} fx={fx} mirrored depth3d />
+          {/* Flash global do estádio no impacto */}
+          {impact && (
+            <div key={`flash-${fx.actor}-${fx.target}-${fx.dmg}`} className="stadium-flash" />
+          )}
+          <div
+            className={`battle3d-camera ${focused ? "is-focused" : ""} ${impact ? "is-impact" : ""}`}
+            key={impact ? `cam-${fx.actor}-${fx.target}-${fx.dmg}` : "cam-idle"}
+          >
+            <div className="relative grid grid-cols-2 gap-1 items-end min-h-[230px] [transform-style:preserve-3d]">
+              <ArenaLineup team={teamA} side="a" hp={hp} fx={fx} depth3d />
+              <ArenaLineup team={teamB} side="b" hp={hp} fx={fx} mirrored depth3d />
+            </div>
           </div>
         </div>
+          );
+        })()
+
 
       ) : (
         <div className="relative px-4 pt-2 pb-16">
@@ -696,14 +715,19 @@ function ArenaLineup({
           ? "scale-90 opacity-60 blur-[1px] z-0"
           : "";
         // No modo 3D cada pet fica numa "profundidade" diferente do palco
+        // e cada um respira num offset próprio (sprite + sombra sincronizados)
+        const idleDelay = `${(idx * 0.35 + (side === "b" ? 0.18 : 0)).toFixed(2)}s`;
         const depthStyle = depth3d
-          ? {
+          ? ({
               transform: `translateZ(${idx * -70}px) translateY(${idx * -16}px) translateX(${
                 (mirrored ? -1 : 1) * idx * 6
               }px)`,
               zIndex: 10 - idx,
-            }
+              "--idle-delay": idleDelay,
+            } as React.CSSProperties)
           : undefined;
+        const hitFx3d = depth3d && isTarget && fx.dmg !== null && fx.dmg > 0 && !dead;
+        const fxKey = `${fx.actor}-${key}-${fx.dmg}`;
         return (
           <div key={m.id} style={depthStyle} className={depth3d ? "relative [transform-style:preserve-3d]" : "relative"}>
           <div
@@ -720,8 +744,30 @@ function ArenaLineup({
                     side === "a" ? "bg-sky-300/25" : "bg-rose-300/25"
                   } blur-md animate-battle3d-pulse`}
                 />
+                {hitFx3d && (
+                  <div key={`fx3d-${fxKey}`} className="absolute inset-0 pointer-events-none">
+                    <div className="fx3d-dust" />
+                    <div className="fx3d-ground" />
+                    <div className="fx3d-hitflash" />
+                    {Array.from({ length: fx.crit ? 12 : 8 }).map((_, i) => {
+                      const total = fx.crit ? 12 : 8;
+                      return (
+                        <div
+                          key={i}
+                          className="fx3d-particle"
+                          style={{
+                            "--p-angle": `${(360 / total) * i}deg`,
+                            "--p-dist": `${(fx.crit ? 78 : 56) + (i % 3) * 10}px`,
+                            "--p-delay": `${(i % 4) * 0.04}s`,
+                          } as React.CSSProperties}
+                        />
+                      );
+                    })}
+                  </div>
+                )}
               </>
             ) : (
+
 
               /* Plataforma circular */
               <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-16 h-3 rounded-full bg-black/40 blur-sm" />
