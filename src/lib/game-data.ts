@@ -1178,7 +1178,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Gás Venenoso", emoji: "☠️", kind: "ash_breath", cooldown: 3, description: "Sopra gás tóxico no alvo (~INT×1.5) e reduz a DEF dele em 20% por 2 turnos." },
   },
   haunter: {
-    id: "haunter", name: "Haunter", element: "ghost", secondaryElement: "poison", role: "mage", rarity: "legendary",
+    id: "haunter", name: "Haunter", element: "ghost", secondaryElement: "poison", role: "mage", rarity: "epic",
     emoji: "🖐️👻", image: haunterImg, shinyImage: haunterShinyImg,
     description: "Segunda forma da linhagem sombria. Mãos flutuantes que lambem a alma dos inimigos — um passo antes de se tornar Gengar.",
     base: { hp: 64, atk: 10, def: 10, spd: 18, int: 29 },
@@ -1192,7 +1192,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Onda Mental", emoji: "🌀", kind: "spectral_hunger", cooldown: 3, description: "Esmaga a mente do inimigo mais fraco (INT×1.6, ignora DEF). PASSIVA — Teleporte: +15% de esquiva enquanto estiver acima de 50% do HP." },
   },
   kadabra: {
-    id: "kadabra", name: "Kadabra", element: "psychic", role: "mage", rarity: "legendary",
+    id: "kadabra", name: "Kadabra", element: "psychic", role: "mage", rarity: "epic",
     emoji: "🥄🦊", image: kadabraImg, shinyImage: kadabraShinyImg,
     description: "Segunda forma da linhagem psíquica. Com a colher em mãos, amplifica seus poderes mentais — um passo antes de se tornar Alakazam.",
     base: { hp: 60, atk: 9, def: 9, spd: 23, int: 31 },
@@ -1206,7 +1206,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Brasa", emoji: "🔥", kind: "burn_dot", cooldown: 3, description: "Cospe brasa no alvo: dano agora + queimadura por 3 turnos." },
   },
   charmeleon: {
-    id: "charmeleon", name: "Charmeleon", element: "fire", role: "dps", rarity: "legendary",
+    id: "charmeleon", name: "Charmeleon", element: "fire", role: "dps", rarity: "epic",
     emoji: "🔥🦖", image: charmeleonImg, shinyImage: charmeleonShinyImg,
     description: "Segunda forma da linhagem flamejante. Temperamento explosivo e garras afiadas — ataca duas vezes antes que o inimigo reaja.",
     base: { hp: 66, atk: 21, def: 12, spd: 19, int: 11 },
@@ -1227,7 +1227,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Jato d'Água", emoji: "💧", kind: "turtle_shell", cooldown: 3, description: "Recolhe-se no casco: reduz o dano recebido por 2 turnos e devolve parte do dano em jato d'água." },
   },
   wartortle: {
-    id: "wartortle", name: "Wartortle", element: "water", role: "tank", rarity: "legendary",
+    id: "wartortle", name: "Wartortle", element: "water", role: "tank", rarity: "epic",
     emoji: "🌊🐢", image: wartortleImg, shinyImage: wartortleShinyImg,
     description: "Segunda forma da linhagem aquática. As orelhas e a cauda peluda guiam seus contra-ataques — um passo antes de se tornar Blastoise.",
     base: { hp: 78, atk: 14, def: 19, spd: 14, int: 12 },
@@ -1248,7 +1248,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Esporo Vital", emoji: "🌱", kind: "heal_lowest", cooldown: 3, description: "Libera esporos curativos no aliado mais ferido (~INT×1.3)." },
   },
   ivysaur: {
-    id: "ivysaur", name: "Ivysaur", element: "grass", secondaryElement: "poison", role: "healer", rarity: "legendary",
+    id: "ivysaur", name: "Ivysaur", element: "grass", secondaryElement: "poison", role: "healer", rarity: "epic",
     emoji: "🌷🦕", image: ivysaurImg, shinyImage: ivysaurShinyImg,
     description: "Segunda forma da linhagem vegetal. O botão floral já espalha pólen restaurador por todo o time.",
     base: { hp: 72, atk: 14, def: 17, spd: 13, int: 30 },
@@ -1276,7 +1276,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Endurecer", emoji: "🛡️", kind: "turtle_shell", cooldown: 3, description: "Endurece a casca: reduz muito o dano recebido por 2 turnos e devolve parte do dano." },
   },
   butterfree: {
-    id: "butterfree", name: "Butterfree", element: "bug", secondaryElement: "flying", role: "mage", rarity: "legendary",
+    id: "butterfree", name: "Butterfree", element: "bug", secondaryElement: "flying", role: "mage", rarity: "epic",
     emoji: "🦋✨", image: butterfreeImg, shinyImage: butterfreeShinyImg,
     description: "Forma final da linhagem inseto. Espalha pó soporífero em toda a arena e ataca com poder psíquico.",
     base: { hp: 70, atk: 14, def: 14, spd: 21, int: 29 },
@@ -1297,7 +1297,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Casca de Ferro", emoji: "🛡️", kind: "turtle_shell", cooldown: 3, description: "Fecha o casulo: reduz o dano recebido por 2 turnos e devolve parte do dano." },
   },
   beedrill: {
-    id: "beedrill", name: "Beedrill", element: "bug", secondaryElement: "poison", role: "assassin", rarity: "legendary",
+    id: "beedrill", name: "Beedrill", element: "bug", secondaryElement: "poison", role: "assassin", rarity: "epic",
     emoji: "🐝🗡️", image: beedrillImg, shinyImage: beedrillShinyImg,
     description: "Forma final da linhagem ferroada. Três lanças venenosas atacando em velocidade absurda.",
     base: { hp: 66, atk: 22, def: 12, spd: 23, int: 11 },
@@ -1367,7 +1367,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Aperto Venenoso", emoji: "💀", kind: "bleed_dot", cooldown: 3, description: "Enrola no alvo e aplica veneno forte por 3 turnos." },
   },
   raichu: {
-    id: "raichu", name: "Raichu", element: "electric", role: "assassin", rarity: "legendary",
+    id: "raichu", name: "Raichu", element: "electric", role: "assassin", rarity: "epic",
     emoji: "⚡🐭", image: raichuImg, shinyImage: raichuShinyImg,
     description: "Evolução elétrica. A cauda descarrega no chão e a corrente atravessa o campo inteiro.",
     base: { hp: 82, atk: 21, def: 14, spd: 24, int: 18 },
@@ -1437,7 +1437,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Luz Lunar", emoji: "🌙", kind: "heal_lowest", cooldown: 3, description: "Cura o aliado mais ferido." },
   },
   clefable: {
-    id: "clefable", name: "Clefable", element: "fairy", role: "healer", rarity: "legendary",
+    id: "clefable", name: "Clefable", element: "fairy", role: "healer", rarity: "epic",
     emoji: "🌟🌸", image: clefableImg, shinyImage: clefableShinyImg,
     description: "Fada mística. Cura o time inteiro com magia estelar.",
     base: { hp: 70, atk: 13, def: 16, spd: 14, int: 31 },
@@ -1465,7 +1465,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Canção de Ninar", emoji: "🎵", kind: "sleep_strike", cooldown: 4, description: "Canta e pode fazer o alvo dormir." },
   },
   wigglytuff: {
-    id: "wigglytuff", name: "Wigglytuff", element: "normal", secondaryElement: "fairy", role: "healer", rarity: "legendary",
+    id: "wigglytuff", name: "Wigglytuff", element: "normal", secondaryElement: "fairy", role: "healer", rarity: "epic",
     emoji: "🎀✨", image: wigglytuffImg, shinyImage: wigglytuffShinyImg,
     description: "Canto encantado que cura todo o time.",
     base: { hp: 74, atk: 14, def: 14, spd: 13, int: 29 },
@@ -1500,7 +1500,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Fedor Tóxico", emoji: "💜", kind: "burn_dot", cooldown: 4, description: "Nuvem tóxica que causa dano contínuo em todos." },
   },
   vileplume: {
-    id: "vileplume", name: "Vileplume", element: "grass", secondaryElement: "poison", role: "mage", rarity: "legendary",
+    id: "vileplume", name: "Vileplume", element: "grass", secondaryElement: "poison", role: "mage", rarity: "epic",
     emoji: "🌺", image: vileplumeImg,
     description: "Pétalas gigantes que liberam esporos devastadores.",
     base: { hp: 68, atk: 15, def: 17, spd: 12, int: 31 },
@@ -1556,7 +1556,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Garra Afiada", emoji: "💥", kind: "guaranteed_crit", cooldown: 3, description: "Ataque com crítico garantido." },
   },
   persian: {
-    id: "persian", name: "Persian", element: "normal", role: "assassin", rarity: "legendary",
+    id: "persian", name: "Persian", element: "normal", role: "assassin", rarity: "epic",
     emoji: "🐆✨", image: persianImg, shinyImage: persianShinyImg,
     description: "Felino elegante e letal. Salta sobre a presa mais frágil.",
     base: { hp: 62, atk: 26, def: 14, spd: 27, int: 11 },
@@ -1570,7 +1570,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Dor de Cabeça", emoji: "🌀", kind: "silence_disable", cooldown: 4, description: "Confunde e silencia o alvo." },
   },
   golduck: {
-    id: "golduck", name: "Golduck", element: "water", role: "mage", rarity: "legendary",
+    id: "golduck", name: "Golduck", element: "water", role: "mage", rarity: "epic",
     emoji: "🦆🌊", image: golduckImg, shinyImage: golduckShinyImg,
     description: "Nadador psíquico. Domina as ondas e a mente.",
     base: { hp: 68, atk: 16, def: 16, spd: 21, int: 32 },
@@ -1619,7 +1619,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Soco Aquático", emoji: "💦", kind: "double_strike", cooldown: 3, description: "Dois socos encharcados no alvo." },
   },
   poliwrath: {
-    id: "poliwrath", name: "Poliwrath", element: "water", secondaryElement: "fighting", role: "tank", rarity: "legendary",
+    id: "poliwrath", name: "Poliwrath", element: "water", secondaryElement: "fighting", role: "tank", rarity: "epic",
     emoji: "🌀🥊", image: poliwrathImg, shinyImage: poliwrathShinyImg,
     description: "Lutador aquático de força bruta e couro grosso.",
     base: { hp: 82, atk: 24, def: 22, spd: 14, int: 14 },
@@ -1661,7 +1661,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Pó Ácido", emoji: "🧪", kind: "bleed_dot", cooldown: 3, description: "Cobre o alvo de ácido causando dano contínuo." },
   },
   victreebel: {
-    id: "victreebel", name: "Victreebel", element: "grass", secondaryElement: "poison", role: "mage", rarity: "legendary",
+    id: "victreebel", name: "Victreebel", element: "grass", secondaryElement: "poison", role: "mage", rarity: "epic",
     emoji: "🪴", image: victreebelImg, shinyImage: victreebelShinyImg,
     description: "Planta devoradora que engole presas inteiras.",
     base: { hp: 76, atk: 26, def: 18, spd: 16, int: 30 },
@@ -1675,7 +1675,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Ferrão Tóxico", emoji: "☠️", kind: "bleed_dot", cooldown: 3, description: "Ferroada venenosa que causa dano contínuo." },
   },
   tentacruel: {
-    id: "tentacruel", name: "Tentacruel", element: "water", secondaryElement: "poison", role: "mage", rarity: "legendary",
+    id: "tentacruel", name: "Tentacruel", element: "water", secondaryElement: "poison", role: "mage", rarity: "epic",
     emoji: "🪼⚡", image: tentacruelImg, shinyImage: tentacruelShinyImg,
     description: "Oitenta tentáculos paralisantes nas profundezas.",
     base: { hp: 74, atk: 25, def: 19, spd: 18, int: 29 },
@@ -1710,7 +1710,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Investida Ardente", emoji: "🔥", kind: "bleed_dot", cooldown: 3, description: "Corrida flamejante que queima o alvo." },
   },
   rapidash: {
-    id: "rapidash", name: "Rapidash", element: "fire", role: "dps", rarity: "legendary",
+    id: "rapidash", name: "Rapidash", element: "fire", role: "dps", rarity: "epic",
     emoji: "🦄🔥", image: rapidashImg, shinyImage: rapidashShinyImg,
     description: "Galopa a 240 km/h com chamas na crina.",
     base: { hp: 72, atk: 32, def: 17, spd: 34, int: 12 },
@@ -1724,7 +1724,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Bocejo Lento", emoji: "💤", kind: "sleep_strike", cooldown: 4, description: "Bocejo contagioso que pode fazer o alvo dormir." },
   },
   slowbro: {
-    id: "slowbro", name: "Slowbro", element: "water", secondaryElement: "psychic", role: "tank", rarity: "legendary",
+    id: "slowbro", name: "Slowbro", element: "water", secondaryElement: "psychic", role: "tank", rarity: "epic",
     emoji: "🐚🧠", image: slowbroImg, shinyImage: slowbroShinyImg,
     description: "Com a concha na cauda, ficou surpreendentemente resistente.",
     base: { hp: 92, atk: 22, def: 28, spd: 9, int: 26 },
@@ -1738,7 +1738,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Choque Magnético", emoji: "⚡", kind: "chain_lightning", cooldown: 4, description: "Descarga que salta entre inimigos." },
   },
   magneton: {
-    id: "magneton", name: "Magneton", element: "electric", secondaryElement: "steel", role: "mage", rarity: "legendary",
+    id: "magneton", name: "Magneton", element: "electric", secondaryElement: "steel", role: "mage", rarity: "epic",
     emoji: "🧲⚡", image: magnetonImg, shinyImage: magnetonShinyImg,
     description: "Três ímãs unidos gerando campo elétrico brutal.",
     base: { hp: 70, atk: 22, def: 22, spd: 17, int: 32 },
@@ -1773,7 +1773,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Sopro Gélido", emoji: "❄️", kind: "freeze_strike", cooldown: 4, description: "Sopro frio com chance de congelar." },
   },
   dewgong: {
-    id: "dewgong", name: "Dewgong", element: "water", secondaryElement: "ice", role: "tank", rarity: "legendary",
+    id: "dewgong", name: "Dewgong", element: "water", secondaryElement: "ice", role: "tank", rarity: "epic",
     emoji: "🦭❄️", image: dewgongImg, shinyImage: dewgongShinyImg,
     description: "Elegante e letal sob o gelo do ártico.",
     base: { hp: 88, atk: 24, def: 26, spd: 16, int: 22 },
@@ -1787,7 +1787,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Lodo Tóxico", emoji: "🧪", kind: "bleed_dot", cooldown: 3, description: "Cobre o alvo de lodo causando dano contínuo." },
   },
   muk: {
-    id: "muk", name: "Muk", element: "poison", role: "tank", rarity: "legendary",
+    id: "muk", name: "Muk", element: "poison", role: "tank", rarity: "epic",
     emoji: "☣️", image: mukImg, shinyImage: mukShinyImg,
     description: "Montanha de lodo venenoso que corrói tudo.",
     base: { hp: 94, atk: 27, def: 24, spd: 10, int: 14 },
@@ -1801,14 +1801,14 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Casco Duro", emoji: "🛡️", kind: "turtle_shell", cooldown: 4, description: "Fecha a concha e reduz o dano recebido." },
   },
   cloyster: {
-    id: "cloyster", name: "Cloyster", element: "water", secondaryElement: "ice", role: "tank", rarity: "legendary",
+    id: "cloyster", name: "Cloyster", element: "water", secondaryElement: "ice", role: "tank", rarity: "epic",
     emoji: "🐚❄️", image: cloysterImg, shinyImage: cloysterShinyImg,
     description: "Armadura de gelo com espinhos afiadíssimos.",
     base: { hp: 86, atk: 28, def: 30, spd: 12, int: 16 },
     skill: { name: "Lança de Gelo", emoji: "🧊", kind: "frost_pounce", cooldown: 4, description: "Espinhos gelados com chance de congelar." },
   },
   onix: {
-    id: "onix", name: "Onix", element: "rock", secondaryElement: "ground", role: "tank", rarity: "legendary",
+    id: "onix", name: "Onix", element: "rock", secondaryElement: "ground", role: "tank", rarity: "epic",
     emoji: "🪨🐍", image: onixImg, shinyImage: onixShinyImg,
     description: "Serpente de rocha que cava túneis a alta velocidade.",
     base: { hp: 100, atk: 24, def: 32, spd: 11, int: 8 },
@@ -1822,7 +1822,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Hipnose", emoji: "💤", kind: "sleep_strike", cooldown: 4, description: "Adormece o alvo com ondas mentais." },
   },
   hypno: {
-    id: "hypno", name: "Hypno", element: "psychic", role: "mage", rarity: "legendary",
+    id: "hypno", name: "Hypno", element: "psychic", role: "mage", rarity: "epic",
     emoji: "🌀", image: hypnoImg, shinyImage: hypnoShinyImg,
     description: "Com o pêndulo, domina a mente dos inimigos.",
     base: { hp: 74, atk: 20, def: 22, spd: 15, int: 34 },
@@ -1836,7 +1836,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Pinça Dupla", emoji: "🦀", kind: "double_strike", cooldown: 3, description: "Duas pinçadas rápidas." },
   },
   kingler: {
-    id: "kingler", name: "Kingler", element: "water", role: "dps", rarity: "legendary",
+    id: "kingler", name: "Kingler", element: "water", role: "dps", rarity: "epic",
     emoji: "🦀💪", image: kinglerImg, shinyImage: kinglerShinyImg,
     description: "Sua pinça gigante esmaga qualquer armadura.",
     base: { hp: 76, atk: 34, def: 22, spd: 16, int: 10 },
@@ -1850,7 +1850,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Autodestruição", emoji: "💥", kind: "chain_lightning", cooldown: 4, description: "Descarga explosiva que salta entre inimigos." },
   },
   electrode: {
-    id: "electrode", name: "Electrode", element: "electric", role: "mage", rarity: "legendary",
+    id: "electrode", name: "Electrode", element: "electric", role: "mage", rarity: "epic",
     emoji: "⚪⚡", image: electrodeImg, shinyImage: electrodeShinyImg,
     description: "Armazena energia até não caber mais — e solta tudo.",
     base: { hp: 68, atk: 24, def: 20, spd: 26, int: 32 },
@@ -1878,21 +1878,21 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Bumerangue de Osso", emoji: "🦴", kind: "double_strike", cooldown: 3, description: "Dois golpes com o osso." },
   },
   marowak: {
-    id: "marowak", name: "Marowak", element: "ground", role: "dps", rarity: "legendary",
+    id: "marowak", name: "Marowak", element: "ground", role: "dps", rarity: "epic",
     emoji: "🦴💀", image: marowakImg, shinyImage: marowakShinyImg,
     description: "Guerreiro endurecido pela dor, mestre do osso.",
     base: { hp: 78, atk: 32, def: 26, spd: 16, int: 10 },
     skill: { name: "Fúria Óssea", emoji: "💀", kind: "berserker_rage", cooldown: 4, description: "Frenesi de golpes que aumenta o ATK." },
   },
   hitmonlee: {
-    id: "hitmonlee", name: "Hitmonlee", element: "fighting", role: "assassin", rarity: "legendary",
+    id: "hitmonlee", name: "Hitmonlee", element: "fighting", role: "assassin", rarity: "epic",
     emoji: "🦵", image: hitmonleeImg, shinyImage: hitmonleeShinyImg,
     description: "Pernas elásticas que golpeiam como chicotes.",
     base: { hp: 68, atk: 34, def: 18, spd: 26, int: 8 },
     skill: { name: "Chute Relâmpago", emoji: "🦵", kind: "guaranteed_crit", cooldown: 4, description: "Chute crítico no ponto fraco." },
   },
   hitmonchan: {
-    id: "hitmonchan", name: "Hitmonchan", element: "fighting", role: "assassin", rarity: "legendary",
+    id: "hitmonchan", name: "Hitmonchan", element: "fighting", role: "assassin", rarity: "epic",
     emoji: "🥊", image: hitmonchanImg, shinyImage: hitmonchanShinyImg,
     description: "Punhos mais rápidos que um trem-bala.",
     base: { hp: 70, atk: 32, def: 20, spd: 25, int: 10 },
@@ -1913,7 +1913,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Nuvem Tóxica", emoji: "☠️", kind: "bleed_dot", cooldown: 3, description: "Gás venenoso que causa dano contínuo." },
   },
   weezing: {
-    id: "weezing", name: "Weezing", element: "poison", role: "tank", rarity: "legendary",
+    id: "weezing", name: "Weezing", element: "poison", role: "tank", rarity: "epic",
     emoji: "☠️☠️", image: weezingImg, shinyImage: weezingShinyImg,
     description: "Duas cabeças de gás venenoso que envenenam o ar.",
     base: { hp: 82, atk: 22, def: 28, spd: 10, int: 28 },
@@ -1962,7 +1962,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Jato d'Água", emoji: "💧", kind: "chain_lightning", cooldown: 3, description: "Jato preciso que atravessa os inimigos." },
   },
   seadra: {
-    id: "seadra", name: "Seadra", element: "water", role: "mage", rarity: "legendary",
+    id: "seadra", name: "Seadra", element: "water", role: "mage", rarity: "epic",
     emoji: "🐉💧", image: seadraImg, shinyImage: seadraShinyImg,
     description: "Espinhos venenosos e correntes que ele domina.",
     base: { hp: 70, atk: 24, def: 22, spd: 24, int: 34 },
@@ -1997,7 +1997,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Onda Psíquica", emoji: "🔮", kind: "thorn_burst", cooldown: 5, description: "Pulso mental que atinge todos os inimigos." },
   },
   mrmime: {
-    id: "mrmime", name: "Mr. Mime", element: "psychic", secondaryElement: "fairy", role: "healer", rarity: "legendary",
+    id: "mrmime", name: "Mr. Mime", element: "psychic", secondaryElement: "fairy", role: "healer", rarity: "epic",
     emoji: "🤡", image: mrmimeImg, shinyImage: mrmimeShinyImg,
     description: "Ergue barreiras invisíveis com pura mímica.",
     base: { hp: 74, atk: 18, def: 24, spd: 20, int: 34 },
@@ -2011,28 +2011,28 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Dança das Lâminas", emoji: "🗡️", kind: "double_strike", cooldown: 3, description: "Dois cortes velozes com as foices." },
   },
   jynx: {
-    id: "jynx", name: "Jynx", element: "ice", secondaryElement: "psychic", role: "mage", rarity: "legendary",
+    id: "jynx", name: "Jynx", element: "ice", secondaryElement: "psychic", role: "mage", rarity: "epic",
     emoji: "💋❄️", image: jynxImg, shinyImage: jynxShinyImg,
     description: "Sua dança hipnótica congela a mente do inimigo.",
     base: { hp: 66, atk: 20, def: 18, spd: 22, int: 36 },
     skill: { name: "Beijo Congelante", emoji: "❄️", kind: "sleep_strike", cooldown: 4, description: "Congela o alvo, impedindo sua ação." },
   },
   electabuzz: {
-    id: "electabuzz", name: "Electabuzz", element: "electric", role: "dps", rarity: "legendary",
+    id: "electabuzz", name: "Electabuzz", element: "electric", role: "dps", rarity: "epic",
     emoji: "⚡🐯", image: electabuzzImg, shinyImage: electabuzzShinyImg,
     description: "Corpo carregado que faz o ar crepitar.",
     base: { hp: 70, atk: 32, def: 20, spd: 30, int: 26 },
     skill: { name: "Punho Trovão", emoji: "⚡", kind: "lightning_charge", cooldown: 5, description: "Soco elétrico que paralisa o alvo." },
   },
   magmar: {
-    id: "magmar", name: "Magmar", element: "fire", role: "dps", rarity: "legendary",
+    id: "magmar", name: "Magmar", element: "fire", role: "dps", rarity: "epic",
     emoji: "🔥🦎", image: magmarImg, shinyImage: magmarShinyImg,
     description: "Nasce nas crateras e respira chamas vivas.",
     base: { hp: 72, atk: 34, def: 22, spd: 24, int: 26 },
     skill: { name: "Punho de Fogo", emoji: "🔥", kind: "bleed_dot", cooldown: 4, description: "Soco flamejante que queima o alvo por turnos." },
   },
   pinsir: {
-    id: "pinsir", name: "Pinsir", element: "bug", role: "dps", rarity: "legendary",
+    id: "pinsir", name: "Pinsir", element: "bug", role: "dps", rarity: "epic",
     emoji: "🪲", image: pinsirImg, shinyImage: pinsirShinyImg,
     description: "As pinças esmagam tudo que conseguem agarrar.",
     base: { hp: 76, atk: 36, def: 24, spd: 22, int: 8 },
@@ -2081,21 +2081,21 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Investida Adaptável", emoji: "✨", kind: "double_strike", cooldown: 3, description: "Dois golpes rápidos e precisos." },
   },
   vaporeon: {
-    id: "vaporeon", name: "Vaporeon", element: "water", role: "healer", rarity: "legendary",
+    id: "vaporeon", name: "Vaporeon", element: "water", role: "healer", rarity: "epic",
     emoji: "💧", image: vaporeonImg, shinyImage: vaporeonShinyImg,
     description: "Suas células se fundem com a água.",
     base: { hp: 84, atk: 24, def: 22, spd: 20, int: 32 },
     skill: { name: "Cura Aquática", emoji: "💧", kind: "team_heal", cooldown: 5, description: "Banha o time em água curativa." },
   },
   jolteon: {
-    id: "jolteon", name: "Jolteon", element: "electric", role: "assassin", rarity: "legendary",
+    id: "jolteon", name: "Jolteon", element: "electric", role: "assassin", rarity: "epic",
     emoji: "⚡", image: jolteonImg, shinyImage: jolteonShinyImg,
     description: "Pelos que disparam agulhas elétricas.",
     base: { hp: 62, atk: 34, def: 16, spd: 40, int: 20 },
     skill: { name: "Agulhas de Raio", emoji: "⚡", kind: "lightning_charge", cooldown: 4, description: "Descarga que paralisa o alvo." },
   },
   flareon: {
-    id: "flareon", name: "Flareon", element: "fire", role: "dps", rarity: "legendary",
+    id: "flareon", name: "Flareon", element: "fire", role: "dps", rarity: "epic",
     emoji: "🔥", image: flareonImg, shinyImage: flareonShinyImg,
     description: "Sua bolsa de fogo queima a mais de 900 graus.",
     base: { hp: 70, atk: 40, def: 20, spd: 26, int: 18 },
@@ -2123,7 +2123,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Carapaça Fóssil", emoji: "🛡️", kind: "turtle_shell", cooldown: 4, description: "Endurece a carapaça e reduz o dano recebido." },
   },
   kabutops: {
-    id: "kabutops", name: "Kabutops", element: "rock", secondaryElement: "water", role: "assassin", rarity: "legendary",
+    id: "kabutops", name: "Kabutops", element: "rock", secondaryElement: "water", role: "assassin", rarity: "epic",
     emoji: "🗡️", image: kabutopsImg, shinyImage: kabutopsShinyImg,
     description: "Ceifa as presas com foices afiadíssimas.",
     base: { hp: 74, atk: 42, def: 26, spd: 32, int: 12 },
@@ -2186,7 +2186,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Cometa Dracônico", emoji: "☄️", kind: "true_damage_nuke", cooldown: 5, description: "Impacto puro que ignora DEF e elemento." },
   },
   omastar: {
-    id: "omastar", name: "Omastar", element: "rock", secondaryElement: "water", role: "tank", rarity: "legendary",
+    id: "omastar", name: "Omastar", element: "rock", secondaryElement: "water", role: "tank", rarity: "epic",
     emoji: "🦑", image: omastarImg, shinyImage: omastarShinyImg,
     description: "Prende a presa com tentáculos e quebra a casca dela.",
     base: { hp: 88, atk: 30, def: 36, spd: 14, int: 22 },
