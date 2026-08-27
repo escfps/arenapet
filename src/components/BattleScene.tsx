@@ -518,13 +518,36 @@ export function BattleScene({
         </div>
       </div>
 
+      {/* Botão de troca de layout do campo */}
+      <button
+        type="button"
+        onClick={toggleLayout}
+        className="absolute top-2 right-2 z-40 px-2.5 py-1 rounded-full bg-black/70 border border-white/30 text-white text-[10px] font-extrabold tracking-wide shadow-lg backdrop-blur-sm hover:bg-black/85 transition"
+        title="Trocar o layout do campo de batalha"
+      >
+        {layout3d ? "🎮 3D" : "🗺️ Clássico"}
+      </button>
+
       {/* === ARENA: pets na grama embaixo === */}
-      <div className="relative px-4 pt-2 pb-16">
-        <div className="grid grid-cols-2 gap-3 items-end min-h-[140px]">
-          <ArenaLineup team={teamA} side="a" hp={hp} fx={fx} />
-          <ArenaLineup team={teamB} side="b" hp={hp} fx={fx} mirrored />
+      {layout3d ? (
+        <div className="relative px-2 pt-4 pb-16 battle3d-stage overflow-hidden min-h-[300px]">
+          {/* Céu / horizonte */}
+          <div className="absolute inset-x-0 top-0 h-1/2 pointer-events-none bg-gradient-to-b from-sky-900/70 via-indigo-900/30 to-transparent" />
+          {/* Chão em perspectiva */}
+          <div className="battle3d-ground pointer-events-none" />
+          <div className="relative grid grid-cols-2 gap-1 items-end min-h-[230px] [transform-style:preserve-3d]">
+            <ArenaLineup team={teamA} side="a" hp={hp} fx={fx} depth3d />
+            <ArenaLineup team={teamB} side="b" hp={hp} fx={fx} mirrored depth3d />
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="relative px-4 pt-2 pb-16">
+          <div className="grid grid-cols-2 gap-3 items-end min-h-[140px]">
+            <ArenaLineup team={teamA} side="a" hp={hp} fx={fx} />
+            <ArenaLineup team={teamB} side="b" hp={hp} fx={fx} mirrored />
+          </div>
+        </div>
+      )}
 
 
       {/* Overlay central de efeito */}
