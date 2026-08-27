@@ -198,20 +198,6 @@ export function BattleScene({
     healing: boolean;
   }[]>([]);
 
-  // Layout do campo: clássico (grid) ou 3D em perspectiva (estilo Pokémon Red / GO)
-  const [layout3d, setLayout3d] = useState(false);
-  useEffect(() => {
-    try {
-      setLayout3d(localStorage.getItem("battleLayout3d") === "1");
-    } catch { /* ignore */ }
-  }, []);
-  const toggleLayout = () => {
-    setLayout3d((v) => {
-      const next = !v;
-      try { localStorage.setItem("battleLayout3d", next ? "1" : "0"); } catch { /* ignore */ }
-      return next;
-    });
-  };
 
 
 
@@ -562,77 +548,20 @@ export function BattleScene({
         </div>
       </div>
 
-      {/* Botão de troca de layout do campo */}
-      <button
-        type="button"
-        onClick={toggleLayout}
-        className="absolute top-2 right-2 z-40 px-2.5 py-1 rounded-full bg-black/70 border border-white/30 text-white text-[10px] font-extrabold tracking-wide shadow-lg backdrop-blur-sm hover:bg-black/85 transition"
-        title="Trocar o layout do campo de batalha"
-      >
-        {layout3d ? "🎮 3D" : "🗺️ Clássico"}
-      </button>
-
-      {/* === ARENA: pets na grama embaixo === */}
-      {layout3d ? (
-        (() => {
-          const focused = fx.actor !== null || fx.target !== null;
-          const impact = fx.target !== null && fx.dmg !== null && fx.dmg > 0;
-          const spotCls = fx.crit ? "is-crit" : focused ? "is-hot" : "";
-          return (
-        <div className="relative px-2 pt-4 pb-16 battle3d-stage overflow-hidden min-h-[320px]">
-          {/* Arquibancada com torcida */}
-          <div className="stadium-crowd pointer-events-none" />
-          <StadiumSpectators />
-          <div className="stadium-crowd-wave" />
-          <div className="stadium-flashes" />
-
-          {/* Holofotes */}
-          <div className={`stadium-spotlight pointer-events-none left-[2%] ${spotCls}`} />
-          <div className={`stadium-spotlight pointer-events-none right-[2%] ${spotCls}`} />
-          {/* Muro do estádio */}
-          <div className="stadium-wall pointer-events-none" />
-          {/* Campo de terra batida + marcações */}
-          <div className="stadium-field pointer-events-none">
-            <div className="stadium-ring" />
-            <div className="stadium-midline" />
-          </div>
-          {/* Flash global do estádio no impacto */}
-          {impact && (
-            <div key={`flash-${fx.actor}-${fx.target}-${fx.dmg}`} className="stadium-flash" />
-          )}
-          <FieldFxLayer fx={fx} />
-          <div
-            className={`battle3d-camera ${focused ? "is-focused" : ""} ${impact ? "is-impact" : ""} ${
-              impact ? "battle-hitstop" : ""
-            }`}
-            style={{ "--shake-i": hitPower(fx) } as React.CSSProperties}
-            key={impact ? `cam-${fx.actor}-${fx.target}-${fx.dmg}` : "cam-idle"}
-          >
-            <div className="relative grid grid-cols-2 gap-1 items-end min-h-[230px] [transform-style:preserve-3d]">
-              <ArenaLineup team={teamA} side="a" hp={hp} fx={fx} depth3d />
-              <ArenaLineup team={teamB} side="b" hp={hp} fx={fx} mirrored depth3d />
-            </div>
-          </div>
+      {/* === ARENA: pets na grama embaixo (modo clássico) === */}
+      <div className="relative px-4 pt-2 pb-16 overflow-hidden">
+        <FieldFxLayer fx={fx} />
+        <div
+          key={fx.target !== null && fx.dmg !== null && fx.dmg > 0 ? `hit-${fx.actor}-${fx.target}-${fx.dmg}` : "hit-idle"}
+          className={`grid grid-cols-2 gap-3 items-end min-h-[140px] ${
+            fx.target !== null && fx.dmg !== null && fx.dmg > 0 ? "battle-hitstop" : ""
+          }`}
+          style={{ "--shake-i": hitPower(fx) } as React.CSSProperties}
+        >
+          <ArenaLineup team={teamA} side="a" hp={hp} fx={fx} />
+          <ArenaLineup team={teamB} side="b" hp={hp} fx={fx} mirrored />
         </div>
-          );
-        })()
-
-
-      ) : (
-        <div className="relative px-4 pt-2 pb-16 overflow-hidden">
-          <FieldFxLayer fx={fx} />
-          <div
-            key={fx.target !== null && fx.dmg !== null && fx.dmg > 0 ? `hit-${fx.actor}-${fx.target}-${fx.dmg}` : "hit-idle"}
-            className={`grid grid-cols-2 gap-3 items-end min-h-[140px] ${
-              fx.target !== null && fx.dmg !== null && fx.dmg > 0 ? "battle-hitstop" : ""
-            }`}
-            style={{ "--shake-i": hitPower(fx) } as React.CSSProperties}
-          >
-            <ArenaLineup team={teamA} side="a" hp={hp} fx={fx} />
-            <ArenaLineup team={teamB} side="b" hp={hp} fx={fx} mirrored />
-          </div>
-        </div>
-      )}
+      </div>
 
 
       {/* Overlay central de efeito */}
