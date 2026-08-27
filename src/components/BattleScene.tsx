@@ -530,16 +530,25 @@ export function BattleScene({
 
       {/* === ARENA: pets na grama embaixo === */}
       {layout3d ? (
-        <div className="relative px-2 pt-4 pb-16 battle3d-stage overflow-hidden min-h-[300px]">
-          {/* Céu / horizonte */}
-          <div className="absolute inset-x-0 top-0 h-1/2 pointer-events-none bg-gradient-to-b from-sky-900/70 via-indigo-900/30 to-transparent" />
-          {/* Chão em perspectiva */}
-          <div className="battle3d-ground pointer-events-none" />
+        <div className="relative px-2 pt-4 pb-16 battle3d-stage overflow-hidden min-h-[320px]">
+          {/* Arquibancada com torcida */}
+          <div className="stadium-crowd pointer-events-none" />
+          {/* Holofotes */}
+          <div className="stadium-spotlight pointer-events-none left-[2%]" />
+          <div className="stadium-spotlight pointer-events-none right-[2%]" />
+          {/* Muro do estádio */}
+          <div className="stadium-wall pointer-events-none" />
+          {/* Campo de terra batida + marcações */}
+          <div className="stadium-field pointer-events-none">
+            <div className="stadium-ring" />
+            <div className="stadium-midline" />
+          </div>
           <div className="relative grid grid-cols-2 gap-1 items-end min-h-[230px] [transform-style:preserve-3d]">
             <ArenaLineup team={teamA} side="a" hp={hp} fx={fx} depth3d />
             <ArenaLineup team={teamB} side="b" hp={hp} fx={fx} mirrored depth3d />
           </div>
         </div>
+
       ) : (
         <div className="relative px-4 pt-2 pb-16">
           <div className="grid grid-cols-2 gap-3 items-end min-h-[140px]">
