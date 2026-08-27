@@ -768,6 +768,7 @@ function ArenaLineup({
               </div>
             )}
           </div>
+          </div>
         );
       })}
     </div>
