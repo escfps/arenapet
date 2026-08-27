@@ -751,3 +751,304 @@
   }
 }
 
+
+/* ===================== EFEITOS ELEMENTAIS DOS GOLPES ===================== */
+.elfx {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 25;
+  overflow: visible;
+}
+.elfx > * { position: absolute; }
+
+/* clarão + anel base (todo golpe) */
+.elfx-flash {
+  inset: -20%;
+  border-radius: 9999px;
+  background: radial-gradient(circle, var(--el1) 0%, color-mix(in srgb, var(--el2) 70%, transparent) 45%, transparent 72%);
+  mix-blend-mode: screen;
+  animation: elfx-flash 0.5s ease-out forwards;
+}
+@keyframes elfx-flash {
+  0% { opacity: 0; transform: scale(0.3); }
+  25% { opacity: 0.95; transform: scale(1.05); }
+  100% { opacity: 0; transform: scale(1.35); }
+}
+.elfx-ring {
+  left: 50%; top: 55%;
+  width: 90px; height: 90px;
+  margin: -45px 0 0 -45px;
+  border-radius: 9999px;
+  border: 3px solid var(--el1);
+  box-shadow: 0 0 18px var(--el1), inset 0 0 14px var(--el2);
+  animation: elfx-ring 0.55s ease-out forwards;
+}
+@keyframes elfx-ring {
+  0% { opacity: 1; transform: scale(0.2); }
+  100% { opacity: 0; transform: scale(1.9); }
+}
+
+/* FOGO — lança-chamas */
+.elfx-beam {
+  left: calc(50% - var(--el-dir) * 130px);
+  top: 42%;
+  width: 150px; height: 46px;
+  transform-origin: calc(50% - var(--el-dir) * 75px) 50%;
+  background: linear-gradient(90deg, transparent, var(--el2) 25%, var(--el1) 70%, #fff 100%);
+  filter: blur(4px) saturate(1.4);
+  border-radius: 40% 60% 60% 40% / 50%;
+  clip-path: polygon(0 45%, 100% 0, 100% 100%, 0 55%);
+  animation: elfx-beam 0.5s ease-out forwards;
+}
+.elfx-beam-dragon { filter: blur(6px) hue-rotate(10deg); }
+@keyframes elfx-beam {
+  0% { opacity: 0; transform: scaleX(0.1); }
+  30% { opacity: 1; transform: scaleX(1); }
+  100% { opacity: 0; transform: scaleX(1.15); }
+}
+.elfx-flame {
+  left: 50%; top: 55%;
+  font-size: 22px;
+  animation: elfx-flame 0.6s ease-out forwards;
+  filter: drop-shadow(0 0 8px var(--el1));
+}
+@keyframes elfx-flame {
+  0% { opacity: 0; transform: translate(-50%, 0) scale(0.4); }
+  30% { opacity: 1; }
+  100% { opacity: 0; transform: translate(calc(-50% + (var(--i) - 3) * 16px), -60px) scale(1.3) rotate(calc((var(--i) - 3) * 15deg)); }
+}
+
+/* ELÉTRICO — clarão de choque */
+.elfx-strike {
+  left: 50%; top: -60%;
+  width: 12px; height: 160%;
+  margin-left: -6px;
+  background: linear-gradient(180deg, transparent, #fff 20%, var(--el1) 60%, var(--el2));
+  filter: blur(1.5px) drop-shadow(0 0 14px var(--el1));
+  clip-path: polygon(35% 0, 65% 0, 45% 30%, 75% 32%, 30% 68%, 55% 66%, 40% 100%, 25% 66%, 50% 62%, 20% 30%, 45% 28%);
+  animation: elfx-strike 0.42s steps(3) forwards;
+}
+@keyframes elfx-strike {
+  0% { opacity: 0; transform: scaleY(0.2); }
+  20% { opacity: 1; transform: scaleY(1); }
+  60% { opacity: 0.7; }
+  100% { opacity: 0; }
+}
+.elfx-zap {
+  inset: -10%;
+  background: #fff;
+  mix-blend-mode: screen;
+  animation: elfx-zap 0.35s steps(2) forwards;
+}
+@keyframes elfx-zap { 0%,100% { opacity: 0; } 15% { opacity: 0.85; } 45% { opacity: 0.25; } }
+.elfx-bolt {
+  left: 50%; top: 45%;
+  font-size: 26px;
+  filter: drop-shadow(0 0 10px var(--el1));
+  animation: elfx-bolt 0.5s ease-out forwards;
+}
+@keyframes elfx-bolt {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.3) rotate(calc(var(--i) * 25deg)); }
+  35% { opacity: 1; transform: translate(calc(-50% + (var(--i) - 1) * 26px), -50%) scale(1.35) rotate(calc(var(--i) * 25deg)); }
+  100% { opacity: 0; transform: translate(calc(-50% + (var(--i) - 1) * 32px), -60%) scale(1); }
+}
+
+/* ÁGUA — onda / mar */
+.elfx-wave {
+  left: -25%; top: 40%;
+  width: 150%; height: 80px;
+  border-radius: 50% 50% 45% 45%;
+  background: linear-gradient(180deg, #fff, var(--el1) 35%, var(--el2));
+  opacity: 0.75;
+  filter: blur(2px);
+  animation: elfx-wave 0.65s ease-out forwards;
+}
+.elfx-wave-2 { top: 52%; height: 55px; opacity: 0.5; animation-delay: 0.1s; }
+@keyframes elfx-wave {
+  0% { opacity: 0; transform: translateX(calc(var(--el-dir) * -60%)) scaleY(0.3); }
+  40% { opacity: 0.8; transform: translateX(0) scaleY(1); }
+  100% { opacity: 0; transform: translateX(calc(var(--el-dir) * 25%)) scaleY(0.6); }
+}
+.elfx-drop {
+  left: 50%; top: 55%;
+  width: 8px; height: 8px;
+  border-radius: 9999px;
+  background: radial-gradient(circle, #fff, var(--el1));
+  box-shadow: 0 0 8px var(--el1);
+  animation: elfx-radial 0.6s ease-out forwards;
+}
+@keyframes elfx-radial {
+  0% { opacity: 1; transform: translate(-50%, -50%) rotate(var(--a)) translateY(0) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) rotate(var(--a)) translateY(-70px) scale(0.4); }
+}
+
+/* GRAMA / BUG — folhas cortantes */
+.elfx-slashes {
+  inset: 0;
+  background:
+    linear-gradient(115deg, transparent 45%, var(--el1) 49%, transparent 53%),
+    linear-gradient(65deg, transparent 45%, var(--el2) 49%, transparent 53%);
+  filter: drop-shadow(0 0 8px var(--el1));
+  animation: elfx-flash 0.45s ease-out forwards;
+}
+.elfx-leaf {
+  left: 50%; top: 50%;
+  font-size: 18px;
+  animation: elfx-spin-out 0.62s ease-out forwards;
+}
+@keyframes elfx-spin-out {
+  0% { opacity: 1; transform: translate(-50%, -50%) rotate(var(--a)) translateY(-6px) rotate(0deg); }
+  100% { opacity: 0; transform: translate(-50%, -50%) rotate(var(--a)) translateY(-72px) rotate(540deg); }
+}
+
+/* GELO — congelamento */
+.elfx-freeze {
+  inset: -8%;
+  border-radius: 12px;
+  background: linear-gradient(160deg, color-mix(in srgb, var(--el1) 65%, transparent), color-mix(in srgb, var(--el2) 45%, transparent));
+  clip-path: polygon(50% 0, 92% 22%, 100% 70%, 62% 100%, 20% 94%, 0 45%, 12% 12%);
+  animation: elfx-freeze 0.7s ease-out forwards;
+}
+@keyframes elfx-freeze {
+  0% { opacity: 0; transform: scale(0.5); }
+  30% { opacity: 0.9; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.1); }
+}
+.elfx-shard { left: 50%; top: 50%; font-size: 18px; animation: elfx-radial 0.65s ease-out forwards; }
+
+/* PSÍQUICO / DRAGÃO — ondas mentais */
+.elfx-psy {
+  left: 50%; top: 50%;
+  width: 120px; height: 120px;
+  margin: -60px 0 0 -60px;
+  border-radius: 9999px;
+  border: 4px dashed var(--el1);
+  box-shadow: 0 0 22px var(--el2);
+  animation: elfx-psy 0.75s linear forwards;
+}
+.elfx-psy-2 { animation-delay: 0.12s; border-style: dotted; }
+@keyframes elfx-psy {
+  0% { opacity: 0; transform: scale(0.25) rotate(0deg); }
+  35% { opacity: 1; }
+  100% { opacity: 0; transform: scale(1.7) rotate(220deg); }
+}
+.elfx-warp {
+  inset: 0;
+  backdrop-filter: hue-rotate(80deg) saturate(1.6);
+  animation: elfx-flash 0.5s ease-out forwards;
+}
+
+/* FADA — brilhos */
+.elfx-glow {
+  inset: -15%;
+  border-radius: 9999px;
+  background: radial-gradient(circle, #fff 0%, var(--el1) 35%, transparent 70%);
+  mix-blend-mode: screen;
+  animation: elfx-flash 0.6s ease-out forwards;
+}
+.elfx-star { left: 50%; top: 50%; font-size: 16px; animation: elfx-radial 0.7s ease-out forwards; }
+
+/* LUTA / NORMAL / AÇO — impacto */
+.elfx-boom {
+  left: 50%; top: 48%;
+  font-size: 52px;
+  transform-origin: center;
+  filter: drop-shadow(0 0 12px var(--el1));
+  animation: elfx-boom 0.45s ease-out forwards;
+}
+@keyframes elfx-boom {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.3) rotate(-15deg); }
+  30% { opacity: 1; transform: translate(-50%, -50%) scale(1.25) rotate(6deg); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.5); }
+}
+.elfx-lines {
+  inset: -10%;
+  background: repeating-conic-gradient(from 0deg at 50% 50%, var(--el1) 0deg 4deg, transparent 4deg 22deg);
+  mask-image: radial-gradient(circle, transparent 28%, #000 45%, transparent 70%);
+  animation: elfx-ring 0.45s ease-out forwards;
+}
+.elfx-clang {
+  inset: -5%;
+  background: linear-gradient(100deg, transparent 40%, #fff 48%, var(--el1) 52%, transparent 60%);
+  animation: elfx-flash 0.4s ease-out forwards;
+}
+
+/* PEDRA / TERRA — tremor */
+.elfx-quake {
+  left: 50%; bottom: -6px;
+  width: 130px; height: 26px;
+  margin-left: -65px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, var(--el1), transparent 70%);
+  animation: elfx-quake 0.5s ease-out forwards;
+}
+@keyframes elfx-quake {
+  0% { opacity: 0; transform: scale(0.3); }
+  35% { opacity: 1; transform: scale(1.1); }
+  100% { opacity: 0; transform: scale(1.6); }
+}
+.elfx-rock { left: 50%; top: 62%; font-size: 16px; animation: elfx-radial 0.6s ease-out forwards; }
+
+/* VENENO — nuvem tóxica */
+.elfx-cloud {
+  inset: -10%;
+  border-radius: 9999px;
+  background: radial-gradient(circle at 40% 60%, var(--el1), transparent 60%),
+              radial-gradient(circle at 65% 40%, var(--el2), transparent 65%);
+  filter: blur(6px);
+  animation: elfx-cloud 0.8s ease-out forwards;
+}
+@keyframes elfx-cloud {
+  0% { opacity: 0; transform: scale(0.4); }
+  35% { opacity: 0.9; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.2) translateY(-14px); }
+}
+.elfx-bubble {
+  left: 50%; top: 60%;
+  width: 12px; height: 12px;
+  border-radius: 9999px;
+  background: var(--el1);
+  box-shadow: 0 0 10px var(--el2);
+  animation: elfx-bubble 0.75s ease-out forwards;
+}
+@keyframes elfx-bubble {
+  0% { opacity: 0.9; transform: translate(-50%, 0) scale(0.5); }
+  100% { opacity: 0; transform: translate(calc(-50% + (var(--i) - 2) * 20px), -66px) scale(1.2); }
+}
+
+/* VOADOR — rajada de vento */
+.elfx-gust {
+  left: -20%; top: 42%;
+  width: 140%; height: 40px;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, transparent, var(--el1), transparent);
+  filter: blur(3px);
+  animation: elfx-gust 0.55s ease-out forwards;
+}
+.elfx-gust-2 { top: 58%; height: 24px; animation-delay: 0.09s; }
+@keyframes elfx-gust {
+  0% { opacity: 0; transform: translateX(calc(var(--el-dir) * -50%)) scaleX(0.4); }
+  40% { opacity: 0.9; transform: translateX(0) scaleX(1); }
+  100% { opacity: 0; transform: translateX(calc(var(--el-dir) * 40%)) scaleX(1.1); }
+}
+
+/* FANTASMA / SOMBRA / TREVAS — vazio */
+.elfx-void {
+  inset: -12%;
+  border-radius: 9999px;
+  background: radial-gradient(circle, var(--el2) 10%, color-mix(in srgb, var(--el1) 50%, transparent) 45%, transparent 72%);
+  filter: blur(4px);
+  animation: elfx-cloud 0.75s ease-out forwards;
+}
+.elfx-wisp {
+  left: 50%; top: 55%;
+  font-size: 20px;
+  filter: drop-shadow(0 0 10px var(--el1));
+  animation: elfx-wisp 0.8s ease-out forwards;
+}
+@keyframes elfx-wisp {
+  0% { opacity: 0; transform: translate(-50%, 0) scale(0.5); }
+  35% { opacity: 1; }
+  100% { opacity: 0; transform: translate(calc(-50% + (var(--i) - 2) * 22px), -60px) scale(1.2) rotate(calc((var(--i) - 2) * 20deg)); }
+}
