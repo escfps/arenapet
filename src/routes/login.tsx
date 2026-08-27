@@ -495,7 +495,7 @@ function LoginPage() {
             </div>
 
 
-            {/* Public legal footer — required for Paddle readiness */}
+            {/* Public legal footer */}
             <footer className="relative mt-6 text-center text-white/50 text-xs">
               <nav className="flex flex-wrap justify-center gap-x-4 gap-y-1">
                 <Link to="/terms" className="underline hover:text-white">Termos de Uso</Link>
@@ -504,7 +504,6 @@ function LoginPage() {
               </nav>
               <p className="mt-2 text-white/30 text-[11px]">
                 © {new Date().getFullYear()} DUELO POKEMON — Operado por Bruno Henrique Moura Bernardo.
-                Pagamentos por Paddle.com.
               </p>
             </footer>
           </div>
