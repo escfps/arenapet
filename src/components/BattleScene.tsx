@@ -772,13 +772,20 @@ function ArenaLineup({
               /* Plataforma circular */
               <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-16 h-3 rounded-full bg-black/40 blur-sm" />
             )}
+            <div
+              key={`anim-${isActor ? fxKey : isTarget && fx.dmg ? fxKey : "idle"}`}
+              className={`relative ${!dead ? "animate-battle3d-idle" : ""} ${
+                isActor && !dead ? "animate-pet-attack" : ""
+              } ${isTarget && !dead && fx.dmg !== null && fx.dmg > 0 ? "animate-pet-hurt" : ""}`}
+              style={{ "--atk-dir": mirrored ? -1 : 1, "--idle-delay": idleDelay } as React.CSSProperties}
+            >
             <img
               src={speciesImage(m.species, (m as any).is_shiny === true)}
               alt={m.name}
               loading="lazy"
               className={`relative object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.6)] ${
                 depth3d ? "h-36 w-36 sm:h-44 sm:w-44" : "h-40 w-40 sm:h-44 sm:w-44"
-              } ${!dead && depth3d ? "animate-battle3d-idle" : ""} ${
+              } ${
                 isActor ? "ring-4 ring-yellow-300/80 rounded-full" : ""
               } ${isTarget ? "ring-4 ring-red-400/80 rounded-full" : ""}`}
               style={{
@@ -786,6 +793,8 @@ function ArenaLineup({
                 transform: mirrored ? "scaleX(-1)" : undefined,
               }}
             />
+            </div>
+
             {hasSkillFx && fx.skillFx && (
               <SkillFxOverlay kind={fx.skillFx} keyId={`${fx.actor}-${key}-${fx.dmg}`} />
             )}
