@@ -154,6 +154,22 @@ export function BattleScene({
     healing: boolean;
   }[]>([]);
 
+  // Layout do campo: clássico (grid) ou 3D em perspectiva (estilo Pokémon Red / GO)
+  const [layout3d, setLayout3d] = useState(false);
+  useEffect(() => {
+    try {
+      setLayout3d(localStorage.getItem("battleLayout3d") === "1");
+    } catch { /* ignore */ }
+  }, []);
+  const toggleLayout = () => {
+    setLayout3d((v) => {
+      const next = !v;
+      try { localStorage.setItem("battleLayout3d", next ? "1" : "0"); } catch { /* ignore */ }
+      return next;
+    });
+  };
+
+
 
   // Turno atual derivado da última entrada exibida
   const currentTurn = step > 0 && step <= log.length ? log[step - 1].turn : 1;
