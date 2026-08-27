@@ -11,7 +11,7 @@ type HpMap = Map<string, { cur: number; max: number }>;
 type ShieldMap = Map<string, number>;
 type SkillFxKind = "heal" | "bite" | "explosion" | "lightning" | "fire" | "shield" | "slash" | "skull" | "fury" | "silence" | "magic" | "revive" | "true" | "cooldown" | "impact";
 type MissLabel = { key: string; kind: "dodge" | "miss" } | null;
-type Fx = { actor: string | null; target: string | null; dmg: number | null; shieldGain: number | null; crit: boolean; skillFx: SkillFxKind | null; targets: string[]; miss: MissLabel; eff: number };
+type Fx = { actor: string | null; target: string | null; dmg: number | null; shieldGain: number | null; crit: boolean; skillFx: SkillFxKind | null; targets: string[]; miss: MissLabel; eff: number; element?: string | null };
 
 /** Público da arquibancada: cabeças de pokémon de verdade assistindo (estilo N64). */
 function StadiumSpectators() {
@@ -181,7 +181,7 @@ export function BattleScene({
 
   const [hp, setHp] = useState<HpMap>(initialHp);
   const [shields, setShields] = useState<ShieldMap>(new Map());
-  const [fx, setFx] = useState<Fx>({ actor: null, target: null, dmg: null, shieldGain: null, crit: false, skillFx: null, targets: [], miss: null, eff: 1 });
+  const [fx, setFx] = useState<Fx>({ actor: null, target: null, dmg: null, shieldGain: null, crit: false, skillFx: null, targets: [], miss: null, eff: 1, element: null });
   const [banner, setBanner] = useState<EffectBanner>(null);
   const [statuses, setStatuses] = useState<StatusMap>(new Map());
   const [turnFlash, setTurnFlash] = useState<{ id: number; turn: number } | null>(null);
@@ -221,7 +221,7 @@ export function BattleScene({
   useEffect(() => {
     setHp(new Map(initialHp));
     setShields(new Map());
-    setFx({ actor: null, target: null, dmg: null, shieldGain: null, crit: false, skillFx: null, targets: [], miss: null, eff: 1 });
+    setFx({ actor: null, target: null, dmg: null, shieldGain: null, crit: false, skillFx: null, targets: [], miss: null, eff: 1, element: null });
     setBanner(null);
     setStatuses(new Map());
     setTurnFlash(null);
@@ -408,7 +408,7 @@ export function BattleScene({
       miss = { key: actorKey, kind: "miss" };
     }
 
-    setFx({ actor: actorKey, target: effectiveTarget, dmg: entry.damage, shieldGain, crit: entry.crit, skillFx, targets, miss, eff: entry.effective ?? 1 });
+    setFx({ actor: actorKey, target: effectiveTarget, dmg: entry.damage, shieldGain, crit: entry.crit, skillFx, targets, miss, eff: entry.effective ?? 1, element: actorMon ? (SPECIES[actorMon.species]?.element ?? null) : null });
 
     // ===== Sound FX =====
     if (miss?.kind === "dodge") {
@@ -485,7 +485,7 @@ export function BattleScene({
 
 
     const t = setTimeout(
-      () => setFx({ actor: null, target: null, dmg: null, shieldGain: null, crit: false, skillFx: null, targets: [], miss: null, eff: 1 }),
+      () => setFx({ actor: null, target: null, dmg: null, shieldGain: null, crit: false, skillFx: null, targets: [], miss: null, eff: 1, element: null }),
       1400
     );
     const tb = setTimeout(() => setBanner(null), 1100);
@@ -843,6 +843,14 @@ function ArenaLineup({
 
             {hasSkillFx && fx.skillFx && (
               <SkillFxOverlay kind={fx.skillFx} keyId={`${fx.actor}-${key}-${fx.dmg}`} />
+            )}
+            {!dead && fx.element && (fx.targets.includes(key) || isTarget) && fx.dmg !== null && fx.dmg > 0 && (
+              <ElementFxOverlay
+                element={fx.element}
+                keyId={`el-${fx.actor}-${key}-${fx.dmg}`}
+                crit={fx.crit}
+                fromLeft={!mirrored}
+              />
             )}
             {isTarget && (() => {
               const b = effBadge(fx.eff);
