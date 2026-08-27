@@ -13,19 +13,21 @@ type SkillFxKind = "heal" | "bite" | "explosion" | "lightning" | "fire" | "shiel
 type MissLabel = { key: string; kind: "dodge" | "miss" } | null;
 type Fx = { actor: string | null; target: string | null; dmg: number | null; shieldGain: number | null; crit: boolean; skillFx: SkillFxKind | null; targets: string[]; miss: MissLabel; eff: number };
 
-/** Público da arquibancada: pessoas e pokémon assistindo (estilo N64). */
-const SPECTATOR_EMOJIS = ["🧑", "👩", "🧒", "👨", "👧", "🧢", "🐭", "🐲", "🦅", "🐸", "🐰", "🐺", "🐧", "🐢", "🦊", "👦", "👵", "🧑‍🎤"];
+/** Público da arquibancada: cabeças de pokémon de verdade assistindo (estilo N64). */
 function StadiumSpectators() {
   const rows = useMemo(() => {
-    let seed = 1337;
+    const pool = Object.keys(SPECIES).filter((k) => !(SPECIES[k] as { retired?: boolean }).retired);
+    if (pool.length === 0) return [];
+    let seed = 20260827;
     const rnd = () => ((seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff);
-    return [0, 1, 2, 3].map((r) => ({
-      top: 6 + r * 22,
-      size: 9 + r * 2.5,
-      opacity: 0.55 + r * 0.13,
-      people: Array.from({ length: 26 - r * 2 }, () => ({
-        e: SPECTATOR_EMOJIS[Math.floor(rnd() * SPECTATOR_EMOJIS.length)],
+    return [0, 1, 2, 3, 4].map((r) => ({
+      top: 2 + r * 17,
+      size: 13 + r * 3,
+      opacity: 0.6 + r * 0.1,
+      people: Array.from({ length: 34 - r * 3 }, () => ({
+        sp: pool[Math.floor(rnd() * pool.length)],
         d: `${(rnd() * 1.4).toFixed(2)}s`,
+        flip: rnd() > 0.5,
       })),
     }));
   }, []);
@@ -34,8 +36,18 @@ function StadiumSpectators() {
       {rows.map((row, ri) => (
         <div key={ri} className="spectator-row" style={{ top: `${row.top}%`, opacity: row.opacity }}>
           {row.people.map((p, i) => (
-            <span key={i} className="spectator" style={{ fontSize: `${row.size}px`, ["--sp-delay" as string]: p.d }}>
-              {p.e}
+            <span
+              key={i}
+              className="spectator"
+              style={{ width: `${row.size}px`, height: `${row.size}px`, ["--sp-delay" as string]: p.d }}
+            >
+              <img
+                src={speciesImage(p.sp, false)}
+                alt=""
+                loading="lazy"
+                draggable={false}
+                style={{ transform: p.flip ? "scaleX(-1)" : undefined }}
+              />
             </span>
           ))}
         </div>
@@ -43,6 +55,7 @@ function StadiumSpectators() {
     </div>
   );
 }
+
 
 /** Badge de efetividade de tipo (multiplicativo: 4x / 2x / 0.5x / 0.25x / 0x). */
 function effBadge(eff: number): { text: string; cls: string } | null {
