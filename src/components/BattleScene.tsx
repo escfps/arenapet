@@ -13,6 +13,37 @@ type SkillFxKind = "heal" | "bite" | "explosion" | "lightning" | "fire" | "shiel
 type MissLabel = { key: string; kind: "dodge" | "miss" } | null;
 type Fx = { actor: string | null; target: string | null; dmg: number | null; shieldGain: number | null; crit: boolean; skillFx: SkillFxKind | null; targets: string[]; miss: MissLabel; eff: number };
 
+/** Público da arquibancada: pessoas e pokémon assistindo (estilo N64). */
+const SPECTATOR_EMOJIS = ["🧑", "👩", "🧒", "👨", "👧", "🧢", "🐭", "🐲", "🦅", "🐸", "🐰", "🐺", "🐧", "🐢", "🦊", "👦", "👵", "🧑‍🎤"];
+function StadiumSpectators() {
+  const rows = useMemo(() => {
+    let seed = 1337;
+    const rnd = () => ((seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff);
+    return [0, 1, 2, 3].map((r) => ({
+      top: 6 + r * 22,
+      size: 9 + r * 2.5,
+      opacity: 0.55 + r * 0.13,
+      people: Array.from({ length: 26 - r * 2 }, () => ({
+        e: SPECTATOR_EMOJIS[Math.floor(rnd() * SPECTATOR_EMOJIS.length)],
+        d: `${(rnd() * 1.4).toFixed(2)}s`,
+      })),
+    }));
+  }, []);
+  return (
+    <div className="stadium-spectators" aria-hidden="true">
+      {rows.map((row, ri) => (
+        <div key={ri} className="spectator-row" style={{ top: `${row.top}%`, opacity: row.opacity }}>
+          {row.people.map((p, i) => (
+            <span key={i} className="spectator" style={{ fontSize: `${row.size}px`, ["--sp-delay" as string]: p.d }}>
+              {p.e}
+            </span>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 /** Badge de efetividade de tipo (multiplicativo: 4x / 2x / 0.5x / 0.25x / 0x). */
 function effBadge(eff: number): { text: string; cls: string } | null {
   if (eff >= 4) return { text: "💥💥 SUPER EFETIVO 4x", cls: "from-fuchsia-400 via-red-500 to-orange-400 text-black border-fuchsia-200 shadow-[0_0_22px_rgba(232,121,249,.95)]" };
