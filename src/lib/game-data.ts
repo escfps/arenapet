@@ -1822,7 +1822,7 @@ export const SPECIES: Record<string, Species> = {
     skill: { name: "Hipnose", emoji: "💤", kind: "sleep_strike", cooldown: 4, description: "Adormece o alvo com ondas mentais." },
   },
   hypno: {
-    id: "hypno", name: "Hypno", element: "psychic", role: "mage", rarity: "epic",
+    id: "hypno", name: "Hypno", element: "psychic", role: "mage", rarity: "legendary",
     emoji: "🌀", image: hypnoImg, shinyImage: hypnoShinyImg,
     description: "Com o pêndulo, domina a mente dos inimigos.",
     base: { hp: 74, atk: 20, def: 22, spd: 15, int: 34 },
