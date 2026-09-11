@@ -180,6 +180,8 @@ function LoginPage() {
         navigate({ to: "/" });
         return;
       } else {
+        // limpa sessão antiga/inválida (token expirado) antes de entrar
+        try { await supabase.auth.signOut({ scope: "local" }); } catch {}
         const { error } = await supabase.auth.signInWithPassword({ email: cleanEmail, password });
         if (error) throw error;
         if (remember) {
