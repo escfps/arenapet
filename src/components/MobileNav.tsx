@@ -83,7 +83,7 @@ export function MobileNav({ open, onClose }: { open: boolean; onClose: () => voi
     <>
       {/* Bottom Navigation Bar (mobile only) */}
       <nav
-        className="fixed bottom-0 inset-x-0 z-30 bg-purple-950/95 backdrop-blur-md border-t-2 border-purple-400/30 shadow-[0_-4px_20px_rgba(0,0,0,0.3)]"
+        className="fixed bottom-0 inset-x-0 z-30 bg-[oklch(0.16_0.04_35)]/95 backdrop-blur-md border-t-2 border-orange-400/30 shadow-[0_-4px_20px_rgba(0,0,0,0.3)]"
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       >
         <ul className="flex items-stretch justify-around">
@@ -118,7 +118,7 @@ export function MobileNav({ open, onClose }: { open: boolean; onClose: () => voi
             onClick={onClose}
             aria-hidden
           />
-          <aside className="absolute left-0 top-0 bottom-0 w-72 max-w-[80%] bg-purple-950 border-r-2 border-purple-400/30 shadow-2xl flex flex-col animate-in slide-in-from-left duration-200">
+          <aside className="absolute left-0 top-0 bottom-0 w-72 max-w-[80%] bg-[oklch(0.16_0.04_35)] border-r-2 border-orange-400/30 shadow-2xl flex flex-col animate-in slide-in-from-left duration-200">
             <div className="flex items-center justify-between p-4 border-b border-white/10">
               <span className="font-extrabold text-white flex items-center gap-2">
                 <img src={pokeballIcon} alt="Duelo Pokemon" width={24} height={24} className="inline-block" /> DUELO POKEMON
@@ -176,10 +176,10 @@ export function MobileNav({ open, onClose }: { open: boolean; onClose: () => voi
                   <Link
                     to="/admin"
                     onClick={onClose}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-xl text-base font-bold transition border border-fuchsia-400/30 mt-2 ${
+                    className={`flex items-center gap-3 px-4 py-3 rounded-xl text-base font-bold transition border border-orange-400/30 mt-2 ${
                       pathname.startsWith("/admin")
-                        ? "bg-fuchsia-500/30 text-fuchsia-200"
-                        : "bg-fuchsia-500/10 text-fuchsia-200 hover:bg-fuchsia-500/20"
+                        ? "bg-orange-500/30 text-orange-200"
+                        : "bg-orange-500/10 text-orange-200 hover:bg-orange-500/20"
                     }`}
                   >
                     <span className="text-2xl">🛠️</span>

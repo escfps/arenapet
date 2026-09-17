@@ -311,12 +311,14 @@ export const fusePets = createServerFn({ method: "POST" })
 
     const { data: rows } = await S.supabaseAdmin
       .from("monsters")
-      .select("id, name, is_shiny, in_team")
+      .select("id, name, is_shiny, in_team, soulbound")
       .eq("owner_id", context.userId)
       .eq("species", data.species)
       .eq("rank", data.rank)
       .eq("in_team", false);
-    const available = rows ?? [];
+    const available = (rows ?? []) as Array<{
+      id: string; name: string; is_shiny: boolean; in_team: boolean; soulbound: boolean;
+    }>;
     if (available.length < 2) throw new Error("Tire os bichinhos do time antes de fundir!");
 
     const sorted = [...available].sort(
@@ -325,10 +327,12 @@ export const fusePets = createServerFn({ method: "POST" })
     const keep = sorted[0];
     const consume = [...sorted].reverse().find((m) => m.id !== keep.id)!;
     const keepShiny = keep.is_shiny === true || consume.is_shiny === true;
+    // Pet vinculado (ex.: shiny do código) continua vinculado após fundir
+    const keepSoulbound = keep.soulbound === true || consume.soulbound === true;
 
     const { error: delErr } = await S.supabaseAdmin.from("monsters").delete().eq("id", consume.id);
     if (delErr) throw new Error(delErr.message);
-    await S.patchMonster(keep.id, { rank: data.rank + 1, is_shiny: keepShiny });
+    await S.patchMonster(keep.id, { rank: data.rank + 1, is_shiny: keepShiny, soulbound: keepSoulbound });
     return { ok: true, name: keep.name, rank: data.rank + 1, shiny: keepShiny };
   });
 

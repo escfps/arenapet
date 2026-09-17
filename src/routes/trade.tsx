@@ -22,6 +22,7 @@ type Mon = {
   name: string;
   rank: number;
   in_team: boolean;
+  soulbound?: boolean;
 };
 
 type Trade = {
@@ -62,7 +63,7 @@ function TradePage() {
     if (!userId) return;
     const [tRes, mRes] = await Promise.all([
       supabase.from("trades").select("*").order("created_at", { ascending: false }).limit(50),
-      supabase.from("monsters").select("id,owner_id,species,name,rank,in_team,is_shiny").eq("owner_id", userId),
+      supabase.from("monsters").select("id,owner_id,species,name,rank,in_team,is_shiny,soulbound").eq("owner_id", userId),
     ]);
     const tradesData = (tRes.data ?? []) as Trade[];
     setTrades(tradesData);
@@ -102,7 +103,7 @@ function TradePage() {
   const received = useMemo(() => trades.filter((t) => t.to_user_id === userId && t.status !== "cancelled"), [trades, userId]);
   const sent = useMemo(() => trades.filter((t) => t.from_user_id === userId && t.status !== "cancelled"), [trades, userId]);
   const tradeableMonsters = useMemo(
-    () => myMonsters.filter((m) => !m.in_team && (m.rank ?? 1) <= MAX_TRADEABLE_RANK && SPECIES[m.species]?.rarity !== "legendary"),
+    () => myMonsters.filter((m) => !m.in_team && !m.soulbound && (m.rank ?? 1) <= MAX_TRADEABLE_RANK && SPECIES[m.species]?.rarity !== "legendary"),
     [myMonsters]
   );
 

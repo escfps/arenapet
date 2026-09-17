@@ -47,7 +47,7 @@ export function HUD({ profile }: { profile: ProfileRow }) {
   return (
     <>
     <header
-      className="sticky top-0 z-20 backdrop-blur-md bg-purple-950/70 border-b-2 border-purple-400/30 shadow-lg"
+      className="sticky top-0 z-20 backdrop-blur-md bg-[oklch(0.16_0.04_35)]/70 border-b-2 border-orange-400/30 shadow-lg"
       style={{ paddingTop: "env(safe-area-inset-top, 0px)" }}
     >
       <div className="max-w-6xl mx-auto px-2 py-1.5 flex items-center gap-1.5">

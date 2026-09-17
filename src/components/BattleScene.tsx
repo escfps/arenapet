@@ -1,7 +1,7 @@
 import { speciesImage, shinyFallbackFilter } from "@/lib/game-data";
 import { useEffect, useMemo, useState } from "react";
 import type { BattleLogEntry } from "@/lib/battle";
-import { SPECIES, ELEMENT_COLORS, RARITY_INFO, MAX_RANK, skinFilter, totalStats, getSkill } from "@/lib/game-data";
+import { SPECIES, ELEMENT_COLORS, ELEMENT_NAMES, RARITY_INFO, MAX_RANK, skinFilter, totalStats, getSkill } from "@/lib/game-data";
 import type { MonsterRow } from "./MonsterCard";
 import grassBg from "@/assets/battle-grass-bg.jpg";
 import { playSfx } from "@/lib/sound";
@@ -11,7 +11,51 @@ type HpMap = Map<string, { cur: number; max: number }>;
 type ShieldMap = Map<string, number>;
 type SkillFxKind = "heal" | "bite" | "explosion" | "lightning" | "fire" | "shield" | "slash" | "skull" | "fury" | "silence" | "magic" | "revive" | "true" | "cooldown" | "impact";
 type MissLabel = { key: string; kind: "dodge" | "miss" } | null;
-type Fx = { actor: string | null; target: string | null; dmg: number | null; shieldGain: number | null; crit: boolean; skillFx: SkillFxKind | null; targets: string[]; miss: MissLabel; eff: number };
+type Fx = { actor: string | null; target: string | null; dmg: number | null; shieldGain: number | null; crit: boolean; skillFx: SkillFxKind | null; targets: string[]; miss: MissLabel; eff: number; element?: string | null };
+
+/** Público da arquibancada: cabeças de pokémon de verdade assistindo (estilo N64). */
+function StadiumSpectators() {
+  const rows = useMemo(() => {
+    const pool = Object.keys(SPECIES).filter((k) => !(SPECIES[k] as { retired?: boolean }).retired);
+    if (pool.length === 0) return [];
+    let seed = 20260827;
+    const rnd = () => ((seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff);
+    return [0, 1, 2, 3, 4].map((r) => ({
+      top: 2 + r * 17,
+      size: 13 + r * 3,
+      opacity: 0.6 + r * 0.1,
+      people: Array.from({ length: 34 - r * 3 }, () => ({
+        sp: pool[Math.floor(rnd() * pool.length)],
+        d: `${(rnd() * 1.4).toFixed(2)}s`,
+        flip: rnd() > 0.5,
+      })),
+    }));
+  }, []);
+  return (
+    <div className="stadium-spectators" aria-hidden="true">
+      {rows.map((row, ri) => (
+        <div key={ri} className="spectator-row" style={{ top: `${row.top}%`, opacity: row.opacity }}>
+          {row.people.map((p, i) => (
+            <span
+              key={i}
+              className="spectator"
+              style={{ width: `${row.size}px`, height: `${row.size}px`, ["--sp-delay" as string]: p.d }}
+            >
+              <img
+                src={speciesImage(p.sp, false)}
+                alt=""
+                loading="lazy"
+                draggable={false}
+                style={{ transform: p.flip ? "scaleX(-1)" : undefined }}
+              />
+            </span>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 
 /** Badge de efetividade de tipo (multiplicativo: 4x / 2x / 0.5x / 0.25x / 0x). */
 function effBadge(eff: number): { text: string; cls: string } | null {
@@ -137,7 +181,7 @@ export function BattleScene({
 
   const [hp, setHp] = useState<HpMap>(initialHp);
   const [shields, setShields] = useState<ShieldMap>(new Map());
-  const [fx, setFx] = useState<Fx>({ actor: null, target: null, dmg: null, shieldGain: null, crit: false, skillFx: null, targets: [], miss: null, eff: 1 });
+  const [fx, setFx] = useState<Fx>({ actor: null, target: null, dmg: null, shieldGain: null, crit: false, skillFx: null, targets: [], miss: null, eff: 1, element: null });
   const [banner, setBanner] = useState<EffectBanner>(null);
   const [statuses, setStatuses] = useState<StatusMap>(new Map());
   const [turnFlash, setTurnFlash] = useState<{ id: number; turn: number } | null>(null);
@@ -155,13 +199,15 @@ export function BattleScene({
   }[]>([]);
 
 
+
+
   // Turno atual derivado da última entrada exibida
   const currentTurn = step > 0 && step <= log.length ? log[step - 1].turn : 1;
 
   useEffect(() => {
     setHp(new Map(initialHp));
     setShields(new Map());
-    setFx({ actor: null, target: null, dmg: null, shieldGain: null, crit: false, skillFx: null, targets: [], miss: null, eff: 1 });
+    setFx({ actor: null, target: null, dmg: null, shieldGain: null, crit: false, skillFx: null, targets: [], miss: null, eff: 1, element: null });
     setBanner(null);
     setStatuses(new Map());
     setTurnFlash(null);
@@ -348,7 +394,7 @@ export function BattleScene({
       miss = { key: actorKey, kind: "miss" };
     }
 
-    setFx({ actor: actorKey, target: effectiveTarget, dmg: entry.damage, shieldGain, crit: entry.crit, skillFx, targets, miss, eff: entry.effective ?? 1 });
+    setFx({ actor: actorKey, target: effectiveTarget, dmg: entry.damage, shieldGain, crit: entry.crit, skillFx, targets, miss, eff: entry.effective ?? 1, element: actorMon ? (SPECIES[actorMon.species]?.element ?? null) : null });
 
     // ===== Sound FX =====
     if (miss?.kind === "dodge") {
@@ -425,7 +471,7 @@ export function BattleScene({
 
 
     const t = setTimeout(
-      () => setFx({ actor: null, target: null, dmg: null, shieldGain: null, crit: false, skillFx: null, targets: [], miss: null, eff: 1 }),
+      () => setFx({ actor: null, target: null, dmg: null, shieldGain: null, crit: false, skillFx: null, targets: [], miss: null, eff: 1, element: null }),
       1400
     );
     const tb = setTimeout(() => setBanner(null), 1100);
@@ -502,9 +548,16 @@ export function BattleScene({
         </div>
       </div>
 
-      {/* === ARENA: pets na grama embaixo === */}
-      <div className="relative px-4 pt-2 pb-16">
-        <div className="grid grid-cols-2 gap-3 items-end min-h-[140px]">
+      {/* === ARENA: pets na grama embaixo (modo clássico) === */}
+      <div className="relative px-4 pt-2 pb-16 overflow-hidden">
+        <FieldFxLayer fx={fx} />
+        <div
+          key={fx.target !== null && fx.dmg !== null && fx.dmg > 0 ? `hit-${fx.actor}-${fx.target}-${fx.dmg}` : "hit-idle"}
+          className={`grid grid-cols-2 gap-3 items-end min-h-[140px] ${
+            fx.target !== null && fx.dmg !== null && fx.dmg > 0 ? "battle-hitstop" : ""
+          }`}
+          style={{ "--shake-i": hitPower(fx) } as React.CSSProperties}
+        >
           <ArenaLineup team={teamA} side="a" hp={hp} fx={fx} />
           <ArenaLineup team={teamB} side="b" hp={hp} fx={fx} mirrored />
         </div>
@@ -600,6 +653,15 @@ export function BattleScene({
 }
 
 
+// Espécies cuja arte oficial olha para a DIREITA (precisa de flip oposto ao padrão).
+// Determinado por inspeção visual direta de cada sprite em resolução full.
+const RIGHT_FACING_SPECIES = new Set<string>([
+  "alakazam", "gengar", "mewtwo", "blastoise", "ivysaur", "pidgeot", "spearow",
+  "sandslash", "wigglytuff", "persian", "machamp", "drowzee", "voltorb",
+  "goldeen", "moltres", "dratini", "ninetales", "growlithe", "hitmonlee",
+  "hitmonchan", "dragonair",
+]);
+
 // === Linha dos 3 pets no cenário (apenas sprite) ===
 function ArenaLineup({
   team,
@@ -607,20 +669,29 @@ function ArenaLineup({
   hp,
   fx,
   mirrored,
+  depth3d,
 }: {
   team: Team;
   side: "a" | "b";
   hp: HpMap;
   fx: Fx;
   mirrored?: boolean;
+  depth3d?: boolean;
 }) {
+  const ordered = [...team].sort((a, b) => (b.team_position ?? 0) - (a.team_position ?? 0));
   return (
-    <div className={`flex ${mirrored ? "justify-end flex-row-reverse" : "justify-start"} items-end gap-3 sm:gap-5`}>
-      {[...team].sort((a, b) => (b.team_position ?? 0) - (a.team_position ?? 0)).map((m) => {
+    <div
+      className={`flex ${mirrored ? "justify-end flex-row-reverse" : "justify-start"} items-end ${
+        depth3d ? "gap-0 sm:gap-1" : "gap-3 sm:gap-5"
+      }`}
+    >
+      {ordered.map((m, idx) => {
 
 
         const sp = SPECIES[m.species];
         if (!sp) return null;
+        // Arte olha pra direita? Inverte a regra de flip por lado.
+        const facesRight = RIGHT_FACING_SPECIES.has(m.species);
         const key = `${side}:${m.name}`;
         const h = hp.get(key) ?? { cur: 0, max: 1 };
         const dead = h.cur <= 0;
@@ -640,29 +711,98 @@ function ArenaLineup({
           : sceneHasFocus
           ? "scale-90 opacity-60 blur-[1px] z-0"
           : "";
+        // No modo 3D cada pet fica numa "profundidade" diferente do palco
+        // e cada um respira num offset próprio (sprite + sombra sincronizados)
+        const idleDelay = `${(idx * 0.35 + (side === "b" ? 0.18 : 0)).toFixed(2)}s`;
+        const depthStyle = depth3d
+          ? ({
+              transform: `translateZ(${idx * -70}px) translateY(${idx * -16}px) translateX(${
+                (mirrored ? -1 : 1) * idx * 6
+              }px)`,
+              zIndex: 10 - idx,
+              "--idle-delay": idleDelay,
+            } as React.CSSProperties)
+          : undefined;
+        const hitFx3d = depth3d && isTarget && fx.dmg !== null && fx.dmg > 0 && !dead;
+        const fxKey = `${fx.actor}-${key}-${fx.dmg}`;
         return (
+          <div key={m.id} style={depthStyle} className={depth3d ? "relative [transform-style:preserve-3d]" : "relative"}>
           <div
-            key={m.id}
             className={`relative transition-all duration-300 ease-out ${cameraZoom} ${lunge} ${
               dead ? "opacity-20 grayscale rotate-90" : ""
             } ${isTarget ? "animate-battle-shake" : ""}`}
           >
-            {/* Plataforma circular */}
-            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-16 h-3 rounded-full bg-black/40 blur-sm" />
+            {depth3d ? (
+              <>
+                {/* Sombra elíptica no chão (estilo Pokémon Stadium) */}
+                <div className="stadium-shadow" />
+                <div
+                  className={`absolute -bottom-1 left-1/2 w-20 h-4 rounded-[50%] ${
+                    side === "a" ? "bg-sky-300/25" : "bg-rose-300/25"
+                  } blur-md animate-battle3d-pulse`}
+                />
+                {hitFx3d && (
+                  <div key={`fx3d-${fxKey}`} className="absolute inset-0 pointer-events-none">
+                    <div className="fx3d-dust" />
+                    <div className="fx3d-ground" />
+                    <div className="fx3d-hitflash" />
+                    {Array.from({ length: fx.crit ? 12 : 8 }).map((_, i) => {
+                      const total = fx.crit ? 12 : 8;
+                      return (
+                        <div
+                          key={i}
+                          className="fx3d-particle"
+                          style={{
+                            "--p-angle": `${(360 / total) * i}deg`,
+                            "--p-dist": `${(fx.crit ? 78 : 56) + (i % 3) * 10}px`,
+                            "--p-delay": `${(i % 4) * 0.04}s`,
+                          } as React.CSSProperties}
+                        />
+                      );
+                    })}
+                  </div>
+                )}
+              </>
+            ) : (
+
+
+              /* Plataforma circular */
+              <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-16 h-3 rounded-full bg-black/40 blur-sm" />
+            )}
+            <div
+              key={`anim-${isActor ? fxKey : isTarget && fx.dmg ? fxKey : "idle"}`}
+              className={`relative ${!dead ? "animate-battle3d-idle" : ""} ${
+                isActor && !dead ? "animate-pet-attack" : ""
+              } ${isTarget && !dead && fx.dmg !== null && fx.dmg > 0 ? "animate-pet-hurt" : ""}`}
+              style={{ "--atk-dir": mirrored ? -1 : 1, "--idle-delay": idleDelay } as React.CSSProperties}
+            >
             <img
               src={speciesImage(m.species, (m as any).is_shiny === true)}
               alt={m.name}
               loading="lazy"
-              className={`relative h-40 w-40 sm:h-44 sm:w-44 object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.6)] ${
+              className={`relative object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.6)] ${
+                depth3d ? "h-36 w-36 sm:h-44 sm:w-44" : "h-40 w-40 sm:h-44 sm:w-44"
+              } ${
                 isActor ? "ring-4 ring-yellow-300/80 rounded-full" : ""
               } ${isTarget ? "ring-4 ring-red-400/80 rounded-full" : ""}`}
               style={{
                 filter: `${skinFilter(m.skin)} ${shinyFallbackFilter(m.species, (m as any).is_shiny === true)} ${(m as any).is_shiny ? "drop-shadow(0 0 12px rgba(253,224,71,0.9))" : ""}`.trim(),
-                transform: mirrored ? "scaleX(-1)" : undefined,
+                transform: (mirrored ? facesRight : !facesRight) ? "scaleX(-1)" : undefined,
               }}
             />
+            </div>
+
             {hasSkillFx && fx.skillFx && (
               <SkillFxOverlay kind={fx.skillFx} keyId={`${fx.actor}-${key}-${fx.dmg}`} />
+            )}
+            {!dead && fx.element && (fx.targets.includes(key) || isTarget) && fx.dmg !== null && fx.dmg > 0 && (
+              <ElementFxOverlay
+                element={fx.element}
+                keyId={`el-${fx.actor}-${key}-${fx.dmg}`}
+                crit={fx.crit}
+                fromLeft={!mirrored}
+                eff={fx.eff}
+              />
             )}
             {isTarget && (() => {
               const b = effBadge(fx.eff);
@@ -732,6 +872,7 @@ function ArenaLineup({
                 {fx.miss.kind === "dodge" ? "💨 ESQUIVOU!" : "😵‍💫 ERROU!"}
               </div>
             )}
+          </div>
           </div>
         );
       })}
@@ -1185,6 +1326,270 @@ function SideColumn({
           </div>
         );
       })}
+    </div>
+  );
+}
+
+// === Efeito elemental do golpe (fogo, elétrico, água, etc.) ===
+const ELEMENT_FX: Record<string, { kind: "flame" | "bolt" | "wave" | "leaf" | "frost" | "psy" | "punch" | "rock" | "toxic" | "wind" | "spooky" | "metal" | "sparkleFx" | "dragon" | "plain"; c1: string; c2: string; icon: string }> = {
+  fire:     { kind: "flame",   c1: "#fb923c", c2: "#dc2626", icon: "🔥" },
+  electric: { kind: "bolt",    c1: "#fde047", c2: "#f59e0b", icon: "⚡" },
+  water:    { kind: "wave",    c1: "#67e8f9", c2: "#2563eb", icon: "💧" },
+  grass:    { kind: "leaf",    c1: "#86efac", c2: "#16a34a", icon: "🍃" },
+  bug:      { kind: "leaf",    c1: "#bef264", c2: "#4d7c0f", icon: "🐛" },
+  ice:      { kind: "frost",   c1: "#a5f3fc", c2: "#0ea5e9", icon: "❄️" },
+  psychic:  { kind: "psy",     c1: "#f0abfc", c2: "#9333ea", icon: "🌀" },
+  fairy:    { kind: "sparkleFx", c1: "#fbcfe8", c2: "#ec4899", icon: "✨" },
+  fighting: { kind: "punch",   c1: "#fdba74", c2: "#b91c1c", icon: "💥" },
+  normal:   { kind: "punch",   c1: "#e7e5e4", c2: "#78716c", icon: "💥" },
+  rock:     { kind: "rock",    c1: "#d6d3d1", c2: "#78350f", icon: "🪨" },
+  ground:   { kind: "rock",    c1: "#fcd34d", c2: "#92400e", icon: "🌋" },
+  earth:    { kind: "rock",    c1: "#fcd34d", c2: "#78350f", icon: "🪨" },
+  poison:   { kind: "toxic",   c1: "#d8b4fe", c2: "#7e22ce", icon: "☠️" },
+  flying:   { kind: "wind",    c1: "#bae6fd", c2: "#6366f1", icon: "🌪️" },
+  ghost:    { kind: "spooky",  c1: "#c4b5fd", c2: "#4c1d95", icon: "👻" },
+  shadow:   { kind: "spooky",  c1: "#e879f9", c2: "#6b21a8", icon: "🌑" },
+  dark:     { kind: "spooky",  c1: "#a8a29e", c2: "#0c0a09", icon: "🌑" },
+  steel:    { kind: "metal",   c1: "#e2e8f0", c2: "#475569", icon: "⚙️" },
+  dragon:   { kind: "dragon",  c1: "#818cf8", c2: "#1d4ed8", icon: "🐉" },
+};
+
+function ElementFxOverlay({
+  element,
+  keyId,
+  crit,
+  fromLeft,
+  eff = 1,
+}: {
+  element: string;
+  keyId: string;
+  crit: boolean;
+  fromLeft: boolean;
+  eff?: number;
+}) {
+  const cfg = ELEMENT_FX[element] ?? { kind: "plain" as const, c1: "#fff", c2: "#999", icon: "💥" };
+  const style = {
+    "--el1": cfg.c1,
+    "--el2": cfg.c2,
+    "--el-dir": fromLeft ? 1 : -1,
+    "--el-boost": eff >= 4 ? 1.6 : eff >= 2 ? 1.3 : eff > 0 && eff <= 0.5 ? 0.7 : 1,
+  } as React.CSSProperties;
+  const parts = crit ? 12 : 8;
+  return (
+    <div
+      key={keyId}
+      className={`elfx ${eff >= 2 ? "is-super" : ""} ${eff > 0 && eff <= 0.5 ? "is-weak" : ""}`}
+      style={style}
+      aria-hidden="true"
+    >
+      {/* clarão elemental sempre presente */}
+      <div className="elfx-flash" />
+      <div className="elfx-ring" />
+
+      {cfg.kind === "flame" && (
+        <>
+          <div className="elfx-beam" />
+          {[...Array(7)].map((_, i) => (
+            <span key={i} className="elfx-flame" style={{ ["--i" as string]: i, animationDelay: `${i * 0.05}s` }}>
+              🔥
+            </span>
+          ))}
+        </>
+      )}
+
+      {cfg.kind === "bolt" && (
+        <>
+          <div className="elfx-strike" />
+          {[0, 1, 2].map((i) => (
+            <span key={i} className="elfx-bolt" style={{ ["--i" as string]: i, animationDelay: `${i * 0.07}s` }}>
+              ⚡
+            </span>
+          ))}
+          <div className="elfx-zap" />
+        </>
+      )}
+
+      {cfg.kind === "wave" && (
+        <>
+          <div className="elfx-wave" />
+          <div className="elfx-wave elfx-wave-2" />
+          {[...Array(parts)].map((_, i) => (
+            <span key={i} className="elfx-drop" style={{ ["--a" as string]: `${(360 / parts) * i}deg`, animationDelay: `${i * 0.03}s` }} />
+          ))}
+        </>
+      )}
+
+      {cfg.kind === "leaf" && (
+        <>
+          <div className="elfx-slashes" />
+          {[...Array(parts)].map((_, i) => (
+            <span key={i} className="elfx-leaf" style={{ ["--a" as string]: `${(360 / parts) * i}deg`, animationDelay: `${i * 0.04}s` }}>
+              {cfg.icon}
+            </span>
+          ))}
+        </>
+      )}
+
+      {cfg.kind === "frost" && (
+        <>
+          <div className="elfx-freeze" />
+          {[...Array(6)].map((_, i) => (
+            <span key={i} className="elfx-shard" style={{ ["--a" as string]: `${60 * i}deg`, animationDelay: `${i * 0.05}s` }}>
+              ❄️
+            </span>
+          ))}
+        </>
+      )}
+
+      {cfg.kind === "psy" && (
+        <>
+          <div className="elfx-psy" />
+          <div className="elfx-psy elfx-psy-2" />
+          <div className="elfx-warp" />
+        </>
+      )}
+
+      {cfg.kind === "sparkleFx" && (
+        <>
+          <div className="elfx-glow" />
+          {[...Array(parts)].map((_, i) => (
+            <span key={i} className="elfx-star" style={{ ["--a" as string]: `${(360 / parts) * i}deg`, animationDelay: `${i * 0.04}s` }}>
+              ✨
+            </span>
+          ))}
+        </>
+      )}
+
+      {cfg.kind === "punch" && (
+        <>
+          <div className="elfx-boom">{cfg.icon}</div>
+          <div className="elfx-lines" />
+        </>
+      )}
+
+      {cfg.kind === "rock" && (
+        <>
+          <div className="elfx-quake" />
+          {[...Array(parts)].map((_, i) => (
+            <span key={i} className="elfx-rock" style={{ ["--a" as string]: `${(360 / parts) * i}deg`, animationDelay: `${i * 0.03}s` }}>
+              {cfg.icon}
+            </span>
+          ))}
+        </>
+      )}
+
+      {cfg.kind === "toxic" && (
+        <>
+          <div className="elfx-cloud" />
+          {[...Array(5)].map((_, i) => (
+            <span key={i} className="elfx-bubble" style={{ ["--i" as string]: i, animationDelay: `${i * 0.08}s` }} />
+          ))}
+        </>
+      )}
+
+      {cfg.kind === "wind" && (
+        <>
+          <div className="elfx-gust" />
+          <div className="elfx-gust elfx-gust-2" />
+        </>
+      )}
+
+      {cfg.kind === "spooky" && (
+        <>
+          <div className="elfx-void" />
+          {[...Array(5)].map((_, i) => (
+            <span key={i} className="elfx-wisp" style={{ ["--i" as string]: i, animationDelay: `${i * 0.09}s` }}>
+              {cfg.icon}
+            </span>
+          ))}
+        </>
+      )}
+
+      {cfg.kind === "metal" && (
+        <>
+          <div className="elfx-clang" />
+          <div className="elfx-lines" />
+        </>
+      )}
+
+      {cfg.kind === "dragon" && (
+        <>
+          <div className="elfx-beam elfx-beam-dragon" />
+          <div className="elfx-psy" />
+        </>
+      )}
+
+      {cfg.kind === "plain" && <div className="elfx-boom">💥</div>}
+    </div>
+  );
+}
+
+/** Intensidade do tremor da câmera conforme dano/crítico/efetividade. */
+function hitPower(fx: Fx): number {
+  if (fx.target === null || fx.dmg === null || fx.dmg <= 0) return 0;
+  let p = 1;
+  if (fx.crit) p += 0.6;
+  if (fx.eff >= 4) p += 0.8;
+  else if (fx.eff >= 2) p += 0.4;
+  else if (fx.eff > 0 && fx.eff <= 0.5) p -= 0.35;
+  return Math.max(0.4, Math.min(2.2, p));
+}
+
+/**
+ * Camada do campo: trilha do projétil (do atacante até o alvo) + destaque
+ * de efetividade na tela, sincronizados com o efeito elemental.
+ */
+function FieldFxLayer({ fx }: { fx: Fx }) {
+  const element = fx.element ?? null;
+  const hit = fx.target !== null && fx.dmg !== null && fx.dmg > 0;
+  if (!element || !hit || !fx.actor) return null;
+  const cfg = ELEMENT_FX[element] ?? { kind: "plain" as const, c1: "#fff", c2: "#999", icon: "💥" };
+  const fromLeft = fx.actor.startsWith("a:");
+  const eff = fx.eff;
+  const superEff = eff >= 2;
+  const weakEff = eff > 0 && eff <= 0.5;
+  const immune = eff === 0;
+  const label = immune
+    ? "🚫 IMUNE"
+    : eff >= 4
+    ? "💥💥 SUPER EFETIVO"
+    : eff >= 2
+    ? "💥 SUPER EFETIVO"
+    : eff <= 0.25
+    ? "🛡️🛡️ MUITO RESISTIDO"
+    : eff <= 0.5
+    ? "🛡️ RESISTIDO"
+    : null;
+  const typeName = ELEMENT_NAMES[element as keyof typeof ELEMENT_NAMES] ?? element;
+  const style = {
+    "--el1": cfg.c1,
+    "--el2": cfg.c2,
+    "--el-dir": fromLeft ? 1 : -1,
+  } as React.CSSProperties;
+  const trailKey = `${fx.actor}-${fx.target}-${fx.dmg}`;
+  return (
+    <div key={trailKey} className="pointer-events-none absolute inset-0 z-[26] overflow-hidden" style={style} aria-hidden="true">
+      {/* Trilha do projétil atravessando o campo */}
+      <div className={`elproj ${fromLeft ? "" : "is-rtl"}`}>
+        <div className="elproj-core">{cfg.icon}</div>
+        <div className="elproj-tail" />
+        {[...Array(10)].map((_, i) => (
+          <span key={i} className="elproj-spark" style={{ ["--i" as string]: i, animationDelay: `${i * 0.03}s` }} />
+        ))}
+      </div>
+
+      {/* Tinta de tela conforme efetividade */}
+      {(superEff || weakEff || immune) && (
+        <div className={`eff-tint ${superEff ? "is-super" : immune ? "is-immune" : "is-weak"}`} />
+      )}
+
+      {/* Destaque central com o tipo do golpe */}
+      {label && (
+        <div className={`eff-banner ${superEff ? "is-super" : "is-weak"}`}>
+          <span className="eff-banner-type">{typeName}</span>
+          <span className="eff-banner-label">{label}</span>
+        </div>
+      )}
     </div>
   );
 }
